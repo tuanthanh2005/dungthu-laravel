@@ -163,7 +163,7 @@
                             <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">Hoặc đăng nhập bằng</span>
                         </div>
 
-                        <a href="{{ url('/auth/google') }}" class="btn btn-outline-danger w-100 py-3 rounded-pill fw-bold shadow-sm">
+                        <a href="{{ url('/auth/google/redirect') }}" class="btn btn-outline-danger w-100 py-3 rounded-pill fw-bold shadow-sm">
                             <i class="fab fa-google me-2"></i> Đăng Nhập Bằng Google
                         </a>
                     </div>

@@ -7,7 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\TiktokDealController;
 use App\Http\Controllers\UserController;
@@ -38,8 +38,8 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Google OAuth routes
-Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect']);
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 
 // Debug route
 Route::get('/test-callback', function () {

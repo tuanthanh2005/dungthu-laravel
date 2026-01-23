@@ -86,7 +86,7 @@
         </div>
     </header>
 
-    <div class="container" style="margin-top: -40px; position: relative; z-index: 10;">
+    <div class="container" style="margin-top: -80px; position: relative; z-index: 10;">
         <div class="category-row"></div>
     </div>
 
@@ -116,7 +116,7 @@
         </div>
     </div>
 
-    <div class="container" style="margin-top: 80px; padding-top: 40px;">
+    <div class="container" style="margin-top: 20px; padding-top: 10px;">
         <div class="row">
             
             <div class="col-12">

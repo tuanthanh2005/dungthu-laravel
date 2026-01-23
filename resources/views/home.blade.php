@@ -51,6 +51,26 @@
             margin-bottom: 8px;
         }
         .category-fab-menu .cat-box:last-child { margin-bottom: 0; }
+        
+        /* Mobile: Giảm font size section titles */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: calc(1.5rem - 3px) !important;
+            }
+        }
+        
+        /* Mobile: Giảm font size hero section */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: calc(1.5rem + 1vw) !important;
+            }
+            .hero-section .typing-text {
+                font-size: calc(1.5rem + 1vw) !important;
+            }
+            .hero-section .lead {
+                font-size: calc(1rem - 5px) !important;
+            }
+        }
     </style>
 @endpush
 
@@ -105,7 +125,7 @@
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
                         <div>
                             <span class="text-primary fw-bold text-uppercase ls-1">Dành cho bạn</span>
-                            <h2 class="fw-bold">Sản Phẩm Nổi Bật</h2>
+                            <h2 class="fw-bold section-title">Sản Phẩm Nổi Bật</h2>
                         </div>
                         <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
@@ -143,7 +163,7 @@
                             <span class="text-danger fw-bold text-uppercase ls-1">
                                 <i class="fab fa-tiktok"></i> HOT DEAL
                             </span>
-                            <h2 class="fw-bold">Săn Sale Tiktok Shop</h2>
+                            <h2 class="fw-bold section-title">Săn Sale Tiktok Shop</h2>
                             <p class="text-muted mb-0">Giảm giá cực sốc, số lượng có hạn!</p>
                         </div>
                         <a href="{{ route('shop', ['category' => 'tiktok']) }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
@@ -193,7 +213,7 @@
                 <div id="blog" class="pt-4 border-top">
                     <div class="mb-4" data-aos="fade-right">
                         <span class="text-warning fw-bold text-uppercase ls-1">Kiến thức & Thủ thuật</span>
-                        <h2 class="fw-bold">Blog Chia Sẻ</h2>
+                        <h2 class="fw-bold section-title">Blog Chia Sẻ</h2>
                         <p class="text-muted">Cập nhật xu hướng công nghệ, mẹo phối đồ và hướng dẫn dùng tool.</p>
                     </div>
 

@@ -10,6 +10,14 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transition: transform 0.3s;
         }
+        .description-content {
+            font-size: 1rem;
+        }
+        @media (max-width: 768px) {
+            .description-content {
+                font-size: calc(1rem - 5px);
+            }
+        }
         .product-detail-image:hover {
             transform: scale(1.02);
         }
@@ -276,7 +284,7 @@
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-align-left text-primary me-2"></i>Mô Tả Chi Tiết
                             </h4>
-                            <div class="text-muted mb-4" style="line-height: 1.8;" >{{ $product->description }}</div>
+                            <div class="text-muted mb-4 description-content" style="line-height: 1.8;" >{{ $product->description }}</div>
                             
                             <div class="border-top pt-4 mt-4">
                                 <h5 class="fw-bold text-primary mb-4">

@@ -9,8 +9,14 @@
             background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #80deea 100%);
             padding: 40px 0;
             min-height: 100vh;
+        }        .description-content {
+            font-size: 1rem;
         }
-        .tech-card {
+        @media (max-width: 768px) {
+            .description-content {
+                font-size: calc(1rem - 5px);
+            }
+        }        .tech-card {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
             padding: 30px;
@@ -308,7 +314,7 @@
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-align-left text-info me-2"></i>Mô Tả Chi Tiết
                             </h4>
-                            <div class="text-muted" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
+                            <div class="text-muted description-content" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             <hr class="my-4">
                             <div class="alert alert-info rounded-4">
                                 <i class="fas fa-info-circle me-2"></i>

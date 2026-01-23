@@ -9,8 +9,14 @@
             background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #80deea 100%);
             padding: 40px 0;
             min-height: 100vh;
+        }        .description-content {
+            font-size: 1rem;
         }
-        .doc-card {
+        @media (max-width: 768px) {
+            .description-content {
+                font-size: calc(1rem - 5px);
+            }
+        }        .doc-card {
             background: white;
             border-radius: 20px;
             padding: 35px;
@@ -302,7 +308,7 @@
                             <h4 class="fw-bold mb-4" style="color: #00695c;">
                                 <i class="fas fa-file-alt text-info me-2"></i>Mô Tả Chi Tiết
                             </h4>
-                            <div class="text-muted mb-4" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
+                            <div class="text-muted mb-4 description-content" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             
                             <div class="row">
                                 <div class="col-md-6">

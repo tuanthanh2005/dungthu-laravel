@@ -10,6 +10,14 @@
             padding: 40px 0;
             min-height: 100vh;
         }
+        .description-content {
+            font-size: 1rem;
+        }
+        @media (max-width: 768px) {
+            .description-content {
+                font-size: calc(1rem - 5px);
+            }
+        }
         .ebook-card {
             background: white;
             border-radius: 25px;
@@ -300,7 +308,7 @@
                             <h4 class="fw-bold mb-4" style="color: #8b4513;">
                                 <i class="fas fa-book text-danger me-2"></i>Hướng Dẫn Sử Dụng & Bảo Quản
                             </h4>
-                            <div class="text-muted mb-4" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
+                            <div class="text-muted mb-4 description-content" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             
                             <div class="row">
                                 <div class="col-md-6">

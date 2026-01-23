@@ -84,6 +84,20 @@ body {
         padding: 80px 0 45px !important;
     }
 
+    /* Giảm font size tất cả text xuống 5px trên mobile */
+    body {
+        font-size: calc(1rem - 5px) !important;
+    }
+
+    .text-muted,
+    .lead,
+    p,
+    li,
+    span,
+    .description-content {
+        font-size: calc(1rem - 5px) !important;
+    }
+
     /* Typography */
     h1,
     .h1 {

@@ -38,6 +38,25 @@
         margin-bottom: 15px;
     }
 
+    @media (max-width: 991.98px) {
+        .orders-wrapper {
+            padding: 80px 0 40px;
+        }
+        .orders-card {
+            padding: 20px 15px;
+            border-radius: 15px;
+        }
+        .order-item {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        .order-header {
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+    }
+
     .order-type-badge {
         padding: 5px 15px;
         border-radius: 20px;

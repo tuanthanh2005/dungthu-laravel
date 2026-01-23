@@ -183,7 +183,7 @@
                         <div class="card-body text-center p-4">
                             <h6 class="fw-bold mb-3">Thanh toán qua QR Code</h6>
                             <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=DungThu.com-{{ number_format($total, 0, '', '') }}" 
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MB BANK|0783704196|TRAN THANH TUAN|{{ number_format($total, 0, '', '') }}|AI GIA RE THUDUNG" 
                                      alt="QR Code" 
                                      style="max-width: 200px;">
                             </div>

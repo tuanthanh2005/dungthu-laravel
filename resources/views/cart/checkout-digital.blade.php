@@ -105,7 +105,7 @@
                         </div>
 
                         <div class="qr-code-box">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DungThu.com-{{ number_format($total ?? 0, 0, '', '') }}" 
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=MB BANK|0783704196|TRAN THANH TUAN|{{ number_format($total ?? 0, 0, '', '') }}|AI GIA RE THUDUNG" 
                                  alt="QR Code" 
                                  class="img-fluid"
                                  style="max-width: 250px;">

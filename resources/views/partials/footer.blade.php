@@ -23,7 +23,7 @@
         </div>
         <hr class="border-secondary">
         <div class="text-center small opacity-50">
-            &copy; 2024 DungThu.com. All rights reserved.
+            &copy; {{ date('Y') }} DungThu.com. All rights reserved.
         </div>
     </div>
 </footer>

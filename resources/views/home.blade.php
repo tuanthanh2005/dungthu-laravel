@@ -68,6 +68,12 @@
                     <div class="fw-bold">Tài Liệu Kiếm Tiền</div>
                 </div>
             </div>
+            <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="500">
+                <div class="cat-box text-center" onclick="handleCardExchangeClick()">
+                    <i class="fas fa-credit-card cat-icon"></i>
+                    <div class="fw-bold">Đổi Thẻ Cào</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -202,6 +208,18 @@
 
 @push('scripts')
     <script src="{{ asset('js/home.js') }}"></script>
+    <script>
+        function handleCardExchangeClick() {
+            @auth
+                // Nếu đã đăng nhập, chuyển thẳng qua trang đổi thẻ cào
+                window.location.href = "{{ route('card-exchange.index') }}";
+            @else
+                // Nếu chưa đăng nhập, yêu cầu đăng nhập
+                alert('Vui lòng đăng nhập để sử dụng tính năng đổi thẻ cào!');
+                window.location.href = "{{ route('login') }}";
+            @endauth
+        }
+    </script>
     @if(session('scrollTo'))
     <script>
         document.addEventListener('DOMContentLoaded', function() {

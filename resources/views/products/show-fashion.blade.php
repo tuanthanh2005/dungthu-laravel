@@ -150,7 +150,7 @@
                         <i class="fas fa-tshirt me-2"></i>{{ strtoupper($product->category) }}
                     </span>
                     <h1 class="fw-bold mb-3" style="color: #8b4513;">{{ $product->name }}</h1>
-                    <p class="lead text-muted mb-4">{{ $product->description }}</p>
+                    <p class="lead text-muted mb-4">{{ Str::limit($product->description, 150, '......') }}</p>
                     
                     <div class="mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%);">
                         <h2 class="fw-bold mb-0" style="color: #ff6b6b;">{{ $product->formatted_price }}</h2>
@@ -308,7 +308,7 @@
                             <h4 class="fw-bold mb-4" style="color: #8b4513;">
                                 <i class="fas fa-book text-danger me-2"></i>Hướng Dẫn Sử Dụng & Bảo Quản
                             </h4>
-                            <p class="lead text-muted mb-4">{{ $product->description }}</p>
+                            <div class="text-muted mb-4" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             
                             <div class="row">
                                 <div class="col-md-6">

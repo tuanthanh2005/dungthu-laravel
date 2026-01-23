@@ -176,7 +176,7 @@
                         <i class="fas fa-microchip me-2"></i>{{ strtoupper($product->category) }}
                     </span>
                     <h1 class="fw-bold mb-3" style="color: #0f2027;">{{ $product->name }}</h1>
-                    <p class="lead text-muted mb-4">{{ $product->description }}</p>
+                    <p class="lead text-muted mb-4">{{ Str::limit($product->description, 150, '......') }}</p>
                     
                     <div class="mb-4 p-4 bg-light rounded-4">
                         <h2 class="text-info fw-bold mb-0">{{ $product->formatted_price }}</h2>
@@ -308,7 +308,7 @@
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-align-left text-info me-2"></i>Mô Tả Chi Tiết
                             </h4>
-                            <p class="lead text-muted">{{ $product->description }}</p>
+                            <div class="text-muted" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             <hr class="my-4">
                             <div class="alert alert-info rounded-4">
                                 <i class="fas fa-info-circle me-2"></i>

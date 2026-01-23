@@ -276,7 +276,7 @@
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-align-left text-primary me-2"></i>Mô Tả Chi Tiết
                             </h4>
-                            <p class="text-muted mb-4">{{ $product->description }}</p>
+                            <div class="text-muted mb-4" style="line-height: 1.8;" >{{ $product->description }}</div>
                             
                             <div class="border-top pt-4 mt-4">
                                 <h5 class="fw-bold text-primary mb-4">
@@ -304,6 +304,19 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @if($product->specs)
+                                    <div class="row g-4 mt-2">
+                                        @foreach($product->specs as $key => $value)
+                                            <div class="col-lg-6">
+                                                <div class="p-3 bg-light rounded-3 mb-3">
+                                                    <i class="fas fa-info-circle text-primary me-2"></i><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                    <p class="ms-4 mb-0 text-muted">{{ $value }}</p>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="border-top pt-4 mt-4">

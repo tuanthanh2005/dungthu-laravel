@@ -302,7 +302,7 @@
                             <h4 class="fw-bold mb-4" style="color: #00695c;">
                                 <i class="fas fa-file-alt text-info me-2"></i>Mô Tả Chi Tiết
                             </h4>
-                            <p class="lead text-muted mb-4">{{ $product->description }}</p>
+                            <div class="text-muted mb-4" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             
                             <div class="row">
                                 <div class="col-md-6">

@@ -11,6 +11,9 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog Chia Sẻ</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('card-exchange.index') }}">Đổi Thẻ Cào</a></li>
+                @auth
+                <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>
+                @endauth
                 <li class="nav-item">
                     <a class="nav-link position-relative" href="{{ route('cart.index') }}">
                         <i class="fas fa-shopping-cart"></i>

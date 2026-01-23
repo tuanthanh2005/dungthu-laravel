@@ -10,8 +10,12 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\TiktokDealController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CardExchangeController;
+use App\Http\Controllers\SitemapController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Product routes
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');

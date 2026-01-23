@@ -116,15 +116,15 @@
                             <div class="row g-3 text-start">
                                 <div class="col-6">
                                     <small class="opacity-75">Ngân hàng:</small>
-                                    <div class="fw-bold">Vietcombank</div>
+                                    <div class="fw-bold">MB BANK</div>
                                 </div>
                                 <div class="col-6">
                                     <small class="opacity-75">Số tài khoản:</small>
-                                    <div class="fw-bold">1234567890</div>
+                                    <div class="fw-bold">0783704196</div>
                                 </div>
                                 <div class="col-6">
                                     <small class="opacity-75">Chủ tài khoản:</small>
-                                    <div class="fw-bold">DUNGTHU.COM</div>
+                                    <div class="fw-bold">TRAN THANH TUAN</div>
                                 </div>
                                 <div class="col-6">
                                     <small class="opacity-75">Số tiền:</small>
@@ -132,7 +132,7 @@
                                 </div>
                                 <div class="col-12">
                                     <small class="opacity-75">Nội dung:</small>
-                                    <div class="fw-bold">DT {{ auth()->user()->name ?? 'GUEST' }}</div>
+                                    <div class="fw-bold">AI GIA RE THUDUNG</div>
                                 </div>
                             </div>
                         </div>

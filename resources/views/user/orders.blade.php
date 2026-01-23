@@ -269,7 +269,6 @@
                 </div>
             @empty
                 <div class="empty-state">
-                    <i class="fas fa-shopping-bag"></i>
                     <h5 class="text-muted">Chưa có đơn hàng nào</h5>
                     <p class="text-muted mb-4">Bắt đầu mua sắm ngay để tạo đơn hàng đầu tiên!</p>
                     <a href="{{ route('shop') }}" class="btn btn-primary rounded-pill px-5">
@@ -345,7 +344,6 @@
                     </div>
                 @empty
                     <div class="empty-state">
-                        <i class="fas fa-credit-card"></i>
                         <h5 class="text-muted">Chưa có lịch sử đổi thẻ</h5>
                         <p class="text-muted mb-0">Bạn chưa thực hiện giao dịch đổi thẻ cào nào</p>
                     </div>

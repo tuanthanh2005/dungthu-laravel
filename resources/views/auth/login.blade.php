@@ -144,7 +144,7 @@
                                         Ghi nhớ đăng nhập
                                     </label>
                                 </div>
-                                <a href="javascript:void(0)" class="text-decoration-none" title="Liên hệ admin để reset mật khẩu">Quên mật khẩu?</a>
+                                <a href="{{ route('password.request') }}" class="text-decoration-none text-primary fw-bold">Quên mật khẩu?</a>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">

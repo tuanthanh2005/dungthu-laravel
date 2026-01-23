@@ -16,29 +16,6 @@
         <div class="container mt-5" data-aos="zoom-in">
             <h1 class="display-4 fw-bold mb-3">Nơi Bạn Có Thể <span class="typing-text text-warning" id="typewriter"></span></h1>
             <p class="lead opacity-75 mb-4">Kho tài nguyên số, thời trang và công cụ tiện ích miễn phí hàng đầu.</p>
-            
-            <!-- Search Box -->
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-8 col-lg-6">
-                    <form action="{{ route('shop') }}" method="GET" class="search-hero">
-                        <div class="input-group input-group-lg shadow-lg" style="border-radius: 50px; overflow: hidden;">
-                            <input type="text" 
-                                   class="form-control border-0 px-4" 
-                                   name="search" 
-                                   placeholder="Tìm kiếm sản phẩm..." 
-                                   style="background: rgba(255,255,255,0.95);">
-                            <button class="btn btn-warning px-4" type="submit" style="border: none;">
-                                <i class="fas fa-search"></i> Tìm kiếm
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="d-flex justify-content-center gap-3">
-                <a href="#shop" class="btn btn-light btn-lg rounded-pill text-primary fw-bold shadow">Mua Sắm Ngay</a>
-                <a href="{{ route('shop') }}" class="btn btn-outline-light btn-lg rounded-pill fw-bold">Khám Phá Cửa Hàng</a>
-            </div>
         </div>
     </header>
 

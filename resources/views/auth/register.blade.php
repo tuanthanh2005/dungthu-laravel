@@ -6,19 +6,24 @@
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <style>
         .auth-container {
-            min-height: calc(100vh - 200px);
+            min-height: calc(100vh - 80px);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 50px 0;
+            padding: 100px 20px 80px;
+        }
+        .auth-container > .container {
+            display: flex;
+            justify-content: center;
         }
         .auth-card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             overflow: hidden;
-            max-width: 900px;
             width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
         }
         .auth-left {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -34,6 +39,12 @@
         .form-control:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+        }
+        @media (max-width: 991.98px) {
+            .auth-container {
+                padding: 100px 16px 60px;
+                min-height: calc(100vh - 80px);
+            }
         }
     </style>
 @endpush

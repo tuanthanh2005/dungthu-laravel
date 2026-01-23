@@ -54,8 +54,11 @@ Route::post('/cart/increment/{id}', [CartController::class, 'increment'])->name(
 Route::post('/cart/decrement/{id}', [CartController::class, 'decrement'])->name('cart.decrement');
 Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 
-Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
-Route::post('/checkout/place', [CartController::class, 'placeOrder'])->name('checkout.place');
+// Checkout routes (requires auth)
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/place', [CartController::class, 'placeOrder'])->name('checkout.place');
+});
 
 // User Account routes (requires auth)
 Route::middleware('auth')->group(function () {

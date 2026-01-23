@@ -25,31 +25,31 @@
                         <label class="form-label fw-bold mb-3 text-center d-block" style="font-size: 1.1rem;">
                             <i class="fas fa-filter me-2 text-primary"></i>Danh mục
                         </label>
-                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
                             <a href="{{ route('shop') }}" 
-                               class="btn btn-{{ $currentCategory == 'all' ? 'primary' : 'outline-primary' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
+                               class="btn btn-{{ $currentCategory == 'all' ? 'primary' : 'outline-primary' }} px-3 py-2" 
+                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
                                 Tất cả
                             </a>
                             <a href="{{ route('shop', ['category' => 'tiktok']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tiktok' ? 'warning' : 'outline-warning' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
-                                <i class="fab fa-tiktok me-2"></i>Săn Sale Tiktok
+                               class="btn btn-{{ $currentCategory == 'tiktok' ? 'warning' : 'outline-warning' }} px-3 py-2" 
+                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
+                                <i class="fab fa-tiktok me-2"></i>Săn Sale
                             </a>
                             <a href="{{ route('shop', ['category' => 'tech']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tech' ? 'info' : 'outline-info' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
+                               class="btn btn-{{ $currentCategory == 'tech' ? 'info' : 'outline-info' }} px-3 py-2" 
+                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
                                 <i class="fas fa-microchip me-2"></i>Công nghệ
                             </a>
                             <a href="{{ route('shop', ['category' => 'ebooks']) }}" 
-                               class="btn btn-{{ $currentCategory == 'ebooks' ? 'success' : 'outline-success' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
-                                <i class="fas fa-file-pdf me-2"></i>Tài liệu kiếm tiền
+                               class="btn btn-{{ $currentCategory == 'ebooks' ? 'success' : 'outline-success' }} px-3 py-2" 
+                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
+                                <i class="fas fa-file-pdf me-2"></i>Tài liệu
                             </a>
                             <a href="{{ route('card-exchange.index') }}" 
-                               class="btn btn-outline-danger px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
-                                <i class="fas fa-credit-card me-2"></i>Đổi Thẻ Cào
+                               class="btn btn-outline-danger px-3 py-2" 
+                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
+                                <i class="fas fa-credit-card me-2"></i>Đổi Thẻ
                             </a>
                         </div>
                     </div>

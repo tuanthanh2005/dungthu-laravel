@@ -1,5 +1,5 @@
 // 1. KHỞI TẠO ANIMATION
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     AOS.init({
         duration: 800, // Tốc độ animation
         once: true // Chỉ chạy 1 lần khi cuộn xuống
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 2. HIỆU ỨNG GÕ CHỮ (TYPING EFFECT)
 const textElement = document.getElementById('typewriter');
 if (textElement) {
-    const phrases = ["Mua Sắm Thả Ga.", "Dùng Tool Miễn Phí.", "Tìm Code Giá Rẻ.", "Đọc Blog Hay."];
+    const phrases = ["Mua Sắm Thả Ga.", "Mua AI Giá Rẻ.", "Đổi Thẻ Cào.", "Đọc Blog Hay."];
     let phraseIndex = 0;
     let charIndex = 0;
     let isDeleting = false;

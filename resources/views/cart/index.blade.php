@@ -113,50 +113,49 @@
             @foreach(session('cart') as $id => $details)
             @php $total += $details['price'] * $details['quantity'] @endphp
             <div class="cart-item" data-aos="fade-up">
-                <div class="row align-items-center">
-                    <div class="col-md-2 col-3">
+                <div class="row align-items-center g-1">
+                    <div class="col-2">
                         <img src="{{ $details['image'] ?? 'https://via.placeholder.com/100' }}" 
                              class="cart-item-image w-100" 
                              alt="{{ $details['name'] }}">
                     </div>
-                    <div class="col-md-4 col-9">
-                        <h6 class="fw-bold mb-1">{{ $details['name'] }}</h6>
-                        <p class="text-muted small mb-0">Đơn giá: {{ number_format($details['price'], 0, ',', '.') }}đ</p>
+                    <div class="col-5">
+                        <h6 class="fw-bold mb-1" style="font-size: 0.85rem;">{{ Str::limit($details['name'], 25) }}</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.75rem;">{{ number_format($details['price'], 0, ',', '.') }}đ</p>
                     </div>
-                    <div class="col-md-2 col-4 text-center mt-3 mt-md-0">
-                        <label class="small text-muted d-block mb-1">Số lượng</label>
-                        <div class="qty-control">
-                            <form action="{{ route('cart.decrement', $id) }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-primary btn-qty" aria-label="Giảm số lượng">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </form>
-
-                            <input type="number"
-                                   value="{{ $details['quantity'] }}"
-                                   class="form-control quantity-input"
-                                   readonly>
-
-                            <form action="{{ route('cart.increment', $id) }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-primary btn-qty" aria-label="Tăng số lượng">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-4 text-center mt-3 mt-md-0">
-                        <label class="small text-muted d-block mb-1">Tổng</label>
-                        <span class="fw-bold text-primary fs-5">
+                    <div class="col-5 text-end">
+                        <span class="fw-bold text-primary" style="font-size: 0.85rem;">
                             {{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}đ
                         </span>
                     </div>
-                    <div class="col-md-1 col-4 text-end mt-3 mt-md-0">
+                </div>
+                <div class="d-flex gap-1 align-items-center mt-2">
+                    <form action="{{ route('cart.decrement', $id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary" style="width: 24px; height: 24px; padding: 0; font-size: 0.7rem;" aria-label="Giảm">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </form>
+
+                    <input type="number"
+                           value="{{ $details['quantity'] }}"
+                           class="form-control"
+                           readonly
+                           style="width: 35px; height: 24px; font-size: 0.75rem; padding: 2px; text-align: center;">
+
+                    <form action="{{ route('cart.increment', $id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary" style="width: 24px; height: 24px; padding: 0; font-size: 0.7rem;" aria-label="Tăng">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="ms-auto">
                         <a href="{{ route('cart.remove', $id) }}" 
-                           class="btn btn-delete"
-                           onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
-                            <i class="fas fa-trash"></i>
+                           class="btn btn-delete btn-sm"
+                           style="padding: 4px 10px; font-size: 0.75rem;"
+                           onclick="return confirm('Xóa?')">
+                            <i class="fas fa-trash"></i> Xóa
                         </a>
                     </div>
                 </div>

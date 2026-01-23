@@ -5,6 +5,53 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <style>
+        .category-row {
+            display: none;
+        }
+        .category-item {
+            min-width: 0;
+        }
+        .category-row .cat-box {
+            padding: 12px;
+        }
+        .category-fab {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c5ce7, #00cec9);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1050;
+        }
+        .category-fab i { font-size: 22px; }
+        .category-fab-menu {
+            position: fixed;
+            right: 20px;
+            bottom: 90px;
+            width: 240px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            padding: 12px;
+            display: none;
+            z-index: 1050;
+        }
+        .category-fab-menu.show { display: block; }
+        .category-fab-menu .cat-box {
+            padding: 12px;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 8px;
+        }
+        .category-fab-menu .cat-box:last-child { margin-bottom: 0; }
+    </style>
 @endpush
 
 @section('content')
@@ -20,41 +67,36 @@
     </header>
 
     <div class="container" style="margin-top: -40px; position: relative; z-index: 10;">
-        <div class="row g-3 justify-content-center">
-            <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="100">
-                <div class="cat-box text-center" onclick="filterData('all')">
-                    <i class="fas fa-th-large cat-icon"></i>
-                    <div class="fw-bold">Tất Cả</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="200">
-                <div class="cat-box text-center" onclick="filterData('tech')">
-                    <i class="fas fa-laptop-code cat-icon"></i>
-                    <div class="fw-bold">Công Nghệ</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="300">
-                <div class="cat-box text-center" onclick="filterData('tiktok')">
-                    <i class="fab fa-tiktok cat-icon"></i>
-                    <div class="fw-bold">Săn Sale TikTok</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="400">
-                <div class="cat-box text-center" onclick="filterData('ebooks')">
-                    <i class="fas fa-file-invoice-dollar cat-icon"></i>
-                    <div class="fw-bold">Tài Liệu Kiếm Tiền</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="500">
-                <div class="cat-box text-center" onclick="handleCardExchangeClick()">
-                    <i class="fas fa-credit-card cat-icon"></i>
-                    <div class="fw-bold">Đổi Thẻ Cào</div>
-                </div>
-            </div>
+        <div class="category-row"></div>
+    </div>
+
+    <div class="category-fab" onclick="toggleCategoryMenu(event)">
+        <i class="fas fa-th"></i>
+    </div>
+    <div class="category-fab-menu" id="categoryFabMenu">
+        <div class="cat-box text-center" onclick="filterData('all'); toggleCategoryMenu(event);">
+            <i class="fas fa-th-large cat-icon"></i>
+            <div class="fw-bold">Tất Cả</div>
+        </div>
+        <div class="cat-box text-center" onclick="filterData('tech'); toggleCategoryMenu(event);">
+            <i class="fas fa-laptop-code cat-icon"></i>
+            <div class="fw-bold">Công Nghệ</div>
+        </div>
+        <div class="cat-box text-center" onclick="filterData('tiktok'); toggleCategoryMenu(event);">
+            <i class="fab fa-tiktok cat-icon"></i>
+            <div class="fw-bold">Săn Sale TikTok</div>
+        </div>
+        <div class="cat-box text-center" onclick="filterData('ebooks'); toggleCategoryMenu(event);">
+            <i class="fas fa-file-invoice-dollar cat-icon"></i>
+            <div class="fw-bold">Tài Liệu Kiếm Tiền</div>
+        </div>
+        <div class="cat-box text-center" onclick="handleCardExchangeClick(); toggleCategoryMenu(event);">
+            <i class="fas fa-credit-card cat-icon"></i>
+            <div class="fw-bold">Đổi Thẻ Cào</div>
         </div>
     </div>
 
-    <div class="container py-5">
+    <div class="container" style="margin-top: 80px; padding-top: 40px;">
         <div class="row">
             
             <div class="col-12">
@@ -157,7 +199,7 @@
 
                     <div class="row">
                         @foreach($latestBlogs as $index => $blog)
-                        <div class="col-12" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                        <div class="col-6" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                             <div class="blog-card">
                                 <img src="{{ $blog->image ?? 'https://via.placeholder.com/300' }}" class="blog-thumb" alt="{{ $blog->title }}">
                                 <div class="blog-content">
@@ -186,6 +228,15 @@
 @push('scripts')
     <script src="{{ asset('js/home.js') }}"></script>
     <script>
+        const categoryMenu = document.getElementById('categoryFabMenu');
+        function toggleCategoryMenu(event) {
+            event.stopPropagation();
+            categoryMenu.classList.toggle('show');
+        }
+        document.addEventListener('click', function() {
+            categoryMenu.classList.remove('show');
+        });
+
         function handleCardExchangeClick() {
             @auth
                 // Nếu đã đăng nhập, chuyển thẳng qua trang đổi thẻ cào

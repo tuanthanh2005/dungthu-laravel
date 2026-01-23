@@ -171,6 +171,9 @@ class CartController extends Controller
 
             DB::commit();
             
+            // Clear the "new user" flag after order is placed
+            session()->forget('is_new_user');
+            
             // Gửi thông báo Telegram cho admin
             TelegramHelper::sendNewOrderNotification($order);
             

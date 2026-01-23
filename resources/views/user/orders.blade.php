@@ -343,20 +343,19 @@
                             @endif
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="empty-state">
+                        <i class="fas fa-credit-card"></i>
+                        <h5 class="text-muted">Chưa có lịch sử đổi thẻ</h5>
+                        <p class="text-muted mb-0">Bạn chưa thực hiện giao dịch đổi thẻ cào nào</p>
+                    </div>
+                @endforelse
 
                 @if($cardExchanges->hasPages())
                     <div class="mt-4">
                         {{ $cardExchanges->links() }}
                     </div>
                 @endif
-            @empty
-                <div class="empty-state">
-                    <i class="fas fa-credit-card"></i>
-                    <h5 class="text-muted">Chưa có lịch sử đổi thẻ</h5>
-                    <p class="text-muted mb-0">Bạn chưa thực hiện giao dịch đổi thẻ cào nào</p>
-                </div>
-            @endforelse
         </div>
     </div>
 </div>

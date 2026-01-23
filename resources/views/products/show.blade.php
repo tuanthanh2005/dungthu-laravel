@@ -91,7 +91,7 @@
         <div class="col-lg-6" data-aos="fade-left">
             <span class="badge bg-primary mb-2">{{ strtoupper($product->category) }}</span>
             <h1 class="fw-bold mb-3">{{ $product->name }}</h1>
-            <p class="lead text-muted mb-4">{{ $product->description }}</p>
+            <p class="lead text-muted mb-4">{{ Str::limit($product->description, 150, '......') }}</p>
             
             <div class="mb-4">
                 <h2 class="text-primary fw-bold mb-0">{{ $product->formatted_price }}</h2>
@@ -279,25 +279,25 @@
                             <p class="lead text-muted">{{ $product->description }}</p>
                             <hr class="my-4">
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <h6 class="fw-bold text-primary">
+                                <div class="col-12 mb-3">
+                                    <h6 class="fw-bold text-primary mb-3">
                                         <i class="fas fa-cube me-2"></i>Thông Số Kỹ Thuật
                                     </h6>
-                                    <ul class="list-unstyled ms-4 mt-3">
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Danh mục: <strong>{{ strtoupper($product->category) }}</strong></li>
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>SKU: <strong>#{{ $product->id }}</strong></li>
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Tình trạng: <strong>{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</strong></li>
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Xuất xứ: <strong>Chính hãng</strong></li>
+                                    <ul class="list-unstyled ms-4">
+                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Danh mục: <strong>{{ strtoupper($product->category) }}</strong></li>
+                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>SKU: <strong>#{{ $product->id }}</strong></li>
+                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Tình trạng: <strong>{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</strong></li>
+                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Xuất xứ: <strong>Chính hãng</strong></li>
                                     </ul>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <h6 class="fw-bold text-primary">
+                                <div class="col-12 mb-3">
+                                    <h6 class="fw-bold text-primary mb-3">
                                         <i class="fas fa-box-open me-2"></i>Thông Tin Thêm
                                     </h6>
-                                    <ul class="list-unstyled ms-4 mt-3">
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Bảo hành: <strong>12 tháng</strong></li>
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Giao hàng: <strong>Toàn quốc</strong></li>
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Đổi trả: <strong>7 ngày</strong></li>
+                                    <ul class="list-unstyled ms-4">
+                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Bảo hành: <strong>12 tháng</strong></li>
+                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Giao hàng: <strong>Toàn quốc</strong></li>
+                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Đổi trả: <strong>7 ngày</strong></li>
                                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Thanh toán: <strong>COD, Banking</strong></li>
                                     </ul>
                                 </div>

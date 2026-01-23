@@ -350,7 +350,7 @@ class AdminController extends Controller
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
             
-            $imagePath = 'images/products/' . $fileName;
+            $imagePath = '/images/products/' . $fileName;
         }
         
         // Xử lý file upload cho ebooks
@@ -484,7 +484,7 @@ class AdminController extends Controller
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
             
-            $product->image = asset('images/products/' . $fileName);
+            $product->image = asset('/images/products/' . $fileName);
         }
         
         // Xử lý upload file mới cho ebooks
@@ -704,7 +704,7 @@ class AdminController extends Controller
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
             
-            $imagePath = 'images/blogs/' . $fileName;
+            $imagePath = '/images/blogs/' . $fileName;
         }
 
         Blog::create([
@@ -757,7 +757,7 @@ class AdminController extends Controller
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
             
-            $imagePath = asset('images/blogs/' . $fileName);
+            $blog->image = asset('/images/blogs/' . $fileName);
         }
 
         $blog->update([

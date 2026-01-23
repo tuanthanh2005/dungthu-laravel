@@ -21,14 +21,14 @@
             <div class="row justify-content-center mb-4">
                 <div class="col-md-8 col-lg-6">
                     <form action="{{ route('shop') }}" method="GET" class="search-hero">
-                        <div class="input-group input-group-lg shadow-lg" style="border-radius: 50px; overflow: hidden;">
+                        <div class="input-group shadow-lg" style="border-radius: 50px; overflow: hidden; height: 48px;">
                             <input type="text" 
-                                   class="form-control border-0 px-4" 
+                                   class="form-control border-0 ps-4" 
                                    name="search" 
-                                   placeholder="Tìm kiếm sản phẩm..." 
-                                   style="background: rgba(255,255,255,0.95);">
-                            <button class="btn btn-warning px-4" type="submit" style="border: none;">
-                                <i class="fas fa-search"></i> Tìm kiếm
+                                   placeholder="Tìm kiếm sản phẩm..."
+                                   style="background: rgba(255,255,255,0.98); font-size: 15px; font-weight: 500;">
+                            <button class="btn btn-warning px-5" type="submit" style="border: none; font-weight: 700; letter-spacing: 0.5px; font-size: 16px;">
+                                <i class="fas fa-search me-2"></i>Tìm kiếm
                             </button>
                         </div>
                     </form>
@@ -66,6 +66,12 @@
                 <div class="cat-box text-center" onclick="filterData('ebooks')">
                     <i class="fas fa-file-invoice-dollar cat-icon"></i>
                     <div class="fw-bold">Tài Liệu Kiếm Tiền</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="500">
+                <div class="cat-box text-center" onclick="filterData('cardexchange')">
+                    <i class="fas fa-credit-card cat-icon"></i>
+                    <div class="fw-bold">Đổi Thẻ Cào</div>
                 </div>
             </div>
         </div>
@@ -172,9 +178,9 @@
                         <p class="text-muted">Cập nhật xu hướng công nghệ, mẹo phối đồ và hướng dẫn dùng tool.</p>
                     </div>
 
-                    <div class="row">
+                    <div class="row g-3">
                         @foreach($latestBlogs as $index => $blog)
-                        <div class="col-12" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                        <div class="col-6 col-md-6" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                             <div class="blog-card">
                                 <img src="{{ $blog->image ?? 'https://via.placeholder.com/300' }}" class="blog-thumb" alt="{{ $blog->title }}">
                                 <div class="blog-content">

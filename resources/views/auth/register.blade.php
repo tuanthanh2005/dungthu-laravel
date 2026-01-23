@@ -6,34 +6,76 @@
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <style>
         .auth-container {
-            min-height: calc(100vh - 200px);
+            min-height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 50px 0;
+            padding: 80px 12px 20px 12px;
+            margin-top: 0;
         }
         .auth-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             overflow: hidden;
-            max-width: 900px;
+            max-width: 700px;
             width: 100%;
+            margin: 0 auto;
         }
         .auth-left {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
-            padding: 60px 40px;
+            padding: 40px 32px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
         .auth-right {
-            padding: 60px 40px;
+            padding: 36px 32px;
+        }
+        .auth-form {
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        .form-control {
+            font-size: 14px;
+            padding: 10px 12px;
+            border-radius: 6px;
         }
         .form-control:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.15);
+        }
+        .input-group-text {
+            border-radius: 6px 0 0 6px;
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+        .btn-primary {
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 15px;
+        }
+        h3 {
+            font-size: 22px;
+            margin-bottom: 16px !important;
+        }
+        .form-label {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .mb-3 {
+            margin-bottom: 10px !important;
+        }
+        @media (max-width: 991.98px) {
+            .auth-container {
+                min-height: auto;
+                padding: 80px 12px 20px 12px;
+                margin-top: 0;
+            }
+            .auth-right {
+                padding: 24px 20px;
+            }
         }
     </style>
 @endpush
@@ -65,98 +107,100 @@
                 </div>
                 <div class="col-lg-7">
                     <div class="auth-right">
-                        <h3 class="fw-bold mb-4">Đăng Ký Tài Khoản</h3>
+                        <div class="auth-form">
+                            <h3 class="fw-bold mb-3">Đăng Ký Tài Khoản</h3>
                         
-                        @if($errors->any())
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <ul class="mb-0">
-                                @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        @endif
+                            @if($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <ul class="mb-0">
+                                    @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            @endif
 
-                        <form action="{{ route('register.post') }}" method="POST">
-                            @csrf
+                            <form action="{{ route('register.post') }}" method="POST">
+                                @csrf
                             
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Họ và tên</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" 
-                                           name="name" 
-                                           class="form-control @error('name') is-invalid @enderror" 
-                                           placeholder="Nguyễn Văn A"
-                                           value="{{ old('name') }}"
-                                           required>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Họ và tên</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" 
+                                               name="name" 
+                                               class="form-control @error('name') is-invalid @enderror" 
+                                               placeholder="Nguyễn Văn A"
+                                               value="{{ old('name') }}"
+                                               required>
+                                    </div>
+                                    @error('name')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                @error('name')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" 
-                                           name="email" 
-                                           class="form-control @error('email') is-invalid @enderror" 
-                                           placeholder="email@example.com"
-                                           value="{{ old('email') }}"
-                                           required>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Email</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" 
+                                               name="email" 
+                                               class="form-control @error('email') is-invalid @enderror" 
+                                               placeholder="email@example.com"
+                                               value="{{ old('email') }}"
+                                               required>
+                                    </div>
+                                    @error('email')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                @error('email')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Mật khẩu</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" 
-                                           name="password" 
-                                           class="form-control @error('password') is-invalid @enderror" 
-                                           placeholder="Tối thiểu 6 ký tự"
-                                           required>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Mật khẩu</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                        <input type="password" 
+                                               name="password" 
+                                               class="form-control @error('password') is-invalid @enderror" 
+                                               placeholder="Tối thiểu 6 ký tự"
+                                               required>
+                                    </div>
+                                    @error('password')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                @error('password')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
 
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Xác nhận mật khẩu</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" 
-                                           name="password_confirmation" 
-                                           class="form-control" 
-                                           placeholder="Nhập lại mật khẩu"
-                                           required>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Xác nhận mật khẩu</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                        <input type="password" 
+                                               name="password_confirmation" 
+                                               class="form-control" 
+                                               placeholder="Nhập lại mật khẩu"
+                                               required>
+                                    </div>
                                 </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        Tôi đồng ý với <a href="#" class="text-primary">Điều khoản dịch vụ</a> 
+                                        và <a href="#" class="text-primary">Chính sách bảo mật</a>
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow">
+                                    <i class="fas fa-user-plus me-2"></i> Đăng Ký
+                                </button>
+                            </form>
+
+                            <div class="text-center mt-3">
+                                <p class="text-muted mb-0">Đã có tài khoản? 
+                                    <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none">Đăng nhập ngay</a>
+                                </p>
                             </div>
-
-                            <div class="form-check mb-4">
-                                <input class="form-check-input" type="checkbox" id="terms" required>
-                                <label class="form-check-label" for="terms">
-                                    Tôi đồng ý với <a href="#" class="text-primary">Điều khoản dịch vụ</a> 
-                                    và <a href="#" class="text-primary">Chính sách bảo mật</a>
-                                </label>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">
-                                <i class="fas fa-user-plus me-2"></i> Đăng Ký
-                            </button>
-                        </form>
-
-                        <div class="text-center mt-4">
-                            <p class="text-muted mb-0">Đã có tài khoản? 
-                                <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none">Đăng nhập ngay</a>
-                            </p>
                         </div>
                     </div>
                 </div>

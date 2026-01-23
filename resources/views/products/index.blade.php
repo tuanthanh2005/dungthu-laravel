@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-<div class="container py-5" style="margin-top: 80px;">
+<div class="container py-3 py-md-5" style="margin-top: 80px;">
     <div class="row mb-4" data-aos="fade-down">
         <div class="col-12 text-center">
             <h1 class="fw-bold mb-3">Cửa Hàng</h1>
@@ -18,61 +18,61 @@
     <!-- Filter và Search -->
     <div class="row mb-4" data-aos="fade-up">
         <div class="col-12">
-            <div class="card shadow-sm border-0" style="border-radius: 15px;">
-                <div class="card-body p-4">
+            <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                <div class="card-body p-2 p-md-4">
                     <!-- Quick Filter Badges - Moved to Top -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold mb-3 text-center d-block" style="font-size: 1.1rem;">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold mb-2 text-center d-block" style="font-size: 0.95rem;">
                             <i class="fas fa-filter me-2 text-primary"></i>Danh mục
                         </label>
-                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
                             <a href="{{ route('shop') }}" 
-                               class="btn btn-{{ $currentCategory == 'all' ? 'primary' : 'outline-primary' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
+                               class="btn btn-{{ $currentCategory == 'all' ? 'primary' : 'outline-primary' }} px-2 px-md-4 py-2" 
+                               style="border-radius: 12px; font-size: 0.85rem; font-weight: 600; min-width: auto;">
                                 Tất cả
                             </a>
                             <a href="{{ route('shop', ['category' => 'tiktok']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tiktok' ? 'warning' : 'outline-warning' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
-                                <i class="fab fa-tiktok me-2"></i>Săn Sale Tiktok
+                               class="btn btn-{{ $currentCategory == 'tiktok' ? 'warning' : 'outline-warning' }} px-2 px-md-4 py-2" 
+                               style="border-radius: 12px; font-size: 0.85rem; font-weight: 600; min-width: auto;">
+                                <i class="fab fa-tiktok me-1"></i>Săn Sale Tiktok
                             </a>
                             <a href="{{ route('shop', ['category' => 'tech']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tech' ? 'info' : 'outline-info' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
-                                <i class="fas fa-microchip me-2"></i>Công nghệ
+                               class="btn btn-{{ $currentCategory == 'tech' ? 'info' : 'outline-info' }} px-2 px-md-4 py-2" 
+                               style="border-radius: 12px; font-size: 0.85rem; font-weight: 600; min-width: auto;">
+                                <i class="fas fa-microchip me-1"></i>Công nghệ
                             </a>
                             <a href="{{ route('shop', ['category' => 'ebooks']) }}" 
-                               class="btn btn-{{ $currentCategory == 'ebooks' ? 'success' : 'outline-success' }} px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
-                                <i class="fas fa-file-pdf me-2"></i>Tài liệu kiếm tiền
+                               class="btn btn-{{ $currentCategory == 'ebooks' ? 'success' : 'outline-success' }} px-2 px-md-4 py-2" 
+                               style="border-radius: 12px; font-size: 0.85rem; font-weight: 600; min-width: auto;">
+                                <i class="fas fa-file-pdf me-1"></i>Tài liệu kiếm tiền
                             </a>
                             <a href="{{ route('card-exchange.index') }}" 
-                               class="btn btn-outline-danger px-4 py-3" 
-                               style="border-radius: 15px; font-size: 1rem; font-weight: 600; min-width: 150px;">
-                                <i class="fas fa-credit-card me-2"></i>Đổi Thẻ Cào
+                               class="btn btn-outline-danger px-2 px-md-4 py-2" 
+                               style="border-radius: 12px; font-size: 0.85rem; font-weight: 600; min-width: auto;">
+                                <i class="fas fa-credit-card me-1"></i>Đổi Thẻ Cào
                             </a>
                         </div>
                     </div>
 
-                    <form action="{{ route('shop') }}" method="GET" class="row g-3">
+                    <form action="{{ route('shop') }}" method="GET" class="row g-2">
                         <!-- Search Box -->
-                        <div class="col-md-10">
-                            <label class="form-label fw-bold">
+                        <div class="col-12 col-md-10">
+                            <label class="form-label fw-bold small">
                                 <i class="fas fa-search me-2 text-primary"></i>Tìm kiếm sản phẩm
                             </label>
                             <input type="text" 
-                                   class="form-control form-control-lg" 
+                                   class="form-control form-control-sm" 
                                    name="search" 
                                    placeholder="Nhập tên sản phẩm..." 
                                    value="{{ $searchTerm }}"
-                                   style="border-radius: 10px; border: 2px solid #e0e0e0;">
+                                   style="border-radius: 8px; border: 1px solid #e0e0e0;">
                             <input type="hidden" name="category" value="{{ $currentCategory }}">
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary btn-lg w-100" style="border-radius: 10px;">
-                                <i class="fas fa-search me-2"></i>Tìm
+                        <div class="col-12 col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100" style="border-radius: 8px; font-size: 0.9rem;">
+                                <i class="fas fa-search"></i> <span class="d-none d-sm-inline">Tìm</span>
                             </button>
                         </div>
                     </form>
@@ -83,9 +83,9 @@
 
     <!-- Results Count -->
     @if($searchTerm || $currentCategory != 'all')
-    <div class="row mb-3">
+    <div class="row mb-2">
         <div class="col-12">
-            <div class="alert alert-info">
+            <div class="alert alert-info small mb-0" style="padding: 8px 12px; font-size: 0.9rem;">
                 <i class="fas fa-info-circle me-2"></i>
                 Tìm thấy <strong>{{ $items->total() }}</strong> {{ $isTiktok ? 'deal' : 'sản phẩm' }}
                 @if($searchTerm) cho "<strong>{{ $searchTerm }}</strong>" @endif
@@ -96,7 +96,7 @@
     @endif
 
     @if($items->count() > 0)
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2 g-md-4">
         @if($isTiktok)
             {{-- Hiển thị Tiktok Deals --}}
             @foreach($items as $deal)

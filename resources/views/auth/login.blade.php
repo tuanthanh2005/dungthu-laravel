@@ -6,44 +6,65 @@
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <style>
         .auth-container {
-            min-height: calc(100vh - 200px);
+            min-height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 50px 0;
+            padding: 80px 12px 20px 12px;
+            margin-top: 0;
         }
         .auth-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             overflow: hidden;
-            max-width: 900px;
+            max-width: 700px;
             width: 100%;
+            margin: 0 auto;
         }
         .auth-left {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
-            padding: 60px 40px;
+            padding: 40px 32px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
         .auth-right {
-            padding: 60px 40px;
+            padding: 30px 28px;
+        }
+        .auth-form {
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        .form-control {
+            font-size: 14px;
+            padding: 10px 12px;
+            border-radius: 6px;
         }
         .form-control:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.15);
+        }
+        .input-group-text {
+            border-radius: 6px 0 0 6px;
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+        .btn-primary {
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 15px;
         }
         .social-login {
             display: flex;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 16px;
         }
         .social-btn {
             flex: 1;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 6px;
             border: 1px solid #ddd;
             background: white;
             transition: all 0.3s;
@@ -51,6 +72,27 @@
         .social-btn:hover {
             border-color: var(--primary);
             transform: translateY(-2px);
+        }
+        h3 {
+            font-size: 22px;
+            margin-bottom: 16px !important;
+        }
+        .form-label {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .mb-3 {
+            margin-bottom: 10px !important;
+        }
+        @media (max-width: 991.98px) {
+            .auth-container {
+                min-height: auto;
+                padding: 80px 12px 20px 12px;
+                margin-top: 0;
+            }
+            .auth-right {
+                padding: 24px 20px;
+            }
         }
     </style>
 @endpush
@@ -82,86 +124,88 @@
                 </div>
                 <div class="col-lg-7">
                     <div class="auth-right">
-                        <h3 class="fw-bold mb-4">Đăng Nhập</h3>
+                        <div class="auth-form">
+                            <h3 class="fw-bold mb-3">Đăng Nhập</h3>
                         
-                        @if($errors->any())
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            {{ $errors->first() }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        @endif
+                            @if($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                {{ $errors->first() }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            @endif
 
-                        <form action="{{ route('login.post') }}" method="POST">
-                            @csrf
+                            <form action="{{ route('login.post') }}" method="POST">
+                                @csrf
                             
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" 
-                                           name="email" 
-                                           class="form-control @error('email') is-invalid @enderror" 
-                                           placeholder="email@example.com"
-                                           value="{{ old('email') }}"
-                                           required>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Email</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" 
+                                               name="email" 
+                                               class="form-control @error('email') is-invalid @enderror" 
+                                               placeholder="email@example.com"
+                                               value="{{ old('email') }}"
+                                               required>
+                                    </div>
+                                    @error('email')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                @error('email')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Mật khẩu</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                        <input type="password" 
+                                               name="password" 
+                                               class="form-control @error('password') is-invalid @enderror" 
+                                               placeholder="••••••••"
+                                               required>
+                                    </div>
+                                    @error('password')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                                        <label class="form-check-label" for="remember">
+                                            Ghi nhớ đăng nhập
+                                        </label>
+                                    </div>
+                                    <a href="#" class="text-decoration-none">Quên mật khẩu?</a>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Đăng Nhập
+                                </button>
+                            </form>
+
+                            <div class="text-center mt-3">
+                                <p class="text-muted mb-0">Chưa có tài khoản? 
+                                    <a href="{{ route('register') }}" class="text-primary fw-bold text-decoration-none">Đăng ký ngay</a>
+                                </p>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Mật khẩu</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" 
-                                           name="password" 
-                                           class="form-control @error('password') is-invalid @enderror" 
-                                           placeholder="••••••••"
-                                           required>
-                                </div>
-                                @error('password')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
+                            <div class="position-relative my-3">
+                                <hr>
+                                <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">Hoặc</span>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                                    <label class="form-check-label" for="remember">
-                                        Ghi nhớ đăng nhập
-                                    </label>
-                                </div>
-                                <a href="#" class="text-decoration-none">Quên mật khẩu?</a>
+                            <div class="social-login">
+                                <button class="social-btn" type="button">
+                                    <i class="fab fa-google text-danger"></i>
+                                </button>
+                                <button class="social-btn" type="button">
+                                    <i class="fab fa-facebook text-primary"></i>
+                                </button>
+                                <button class="social-btn" type="button">
+                                    <i class="fab fa-github text-dark"></i>
+                                </button>
                             </div>
-
-                            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">
-                                <i class="fas fa-sign-in-alt me-2"></i> Đăng Nhập
-                            </button>
-                        </form>
-
-                        <div class="text-center mt-4">
-                            <p class="text-muted mb-0">Chưa có tài khoản? 
-                                <a href="{{ route('register') }}" class="text-primary fw-bold text-decoration-none">Đăng ký ngay</a>
-                            </p>
-                        </div>
-
-                        <div class="position-relative my-4">
-                            <hr>
-                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">Hoặc</span>
-                        </div>
-
-                        <div class="social-login">
-                            <button class="social-btn">
-                                <i class="fab fa-google text-danger"></i>
-                            </button>
-                            <button class="social-btn">
-                                <i class="fab fa-facebook text-primary"></i>
-                            </button>
-                            <button class="social-btn">
-                                <i class="fab fa-github text-dark"></i>
-                            </button>
                         </div>
                     </div>
                 </div>

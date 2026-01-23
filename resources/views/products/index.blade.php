@@ -146,7 +146,7 @@
                         <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                     </div>
                     <div class="p-3">
-                        <h6 class="fw-bold text-truncate">{{ $product->name }}</h6>
+                        <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
                         <p class="text-muted small mb-2" style="font-size: 0.85rem; height: 2.5rem; overflow: hidden;">
                             {{ Str::limit($product->description, 50) }}
                         </p>

@@ -139,7 +139,7 @@
                                     <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                 </div>
                                 <div class="p-3">
-                                    <h6 class="fw-bold text-truncate">{{ $product->name }}</h6>
+                                    <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                         <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">

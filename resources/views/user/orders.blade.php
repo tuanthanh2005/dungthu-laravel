@@ -188,7 +188,7 @@
                                     @if($order->order_type == 'qr')
                                         <i class="fas fa-qrcode me-1"></i>QR Deal
                                     @elseif($order->order_type == 'document')
-                                        <i class="fas fa-file-pdf me-1"></i>Tài liệu kiếm tiền
+                                        <i class="fas fa-file-pdf me-1"></i>Tài liệu
                                     @elseif($order->order_type == 'shipping')
                                         <i class="fas fa-shipping-fast me-1"></i>Giao hàng
                                     @else

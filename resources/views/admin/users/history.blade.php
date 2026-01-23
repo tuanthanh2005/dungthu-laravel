@@ -240,7 +240,7 @@
                                 </span>
                                 <div class="mt-2">
                                     <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                        {{ $order->order_type == 'qr' ? '🎫 QR Deal' : ($order->order_type == 'document' ? '📄 Tài liệu kiếm tiền' : ($order->order_type == 'shipping' ? '🚚 Giao hàng' : '💾 Digital')) }}
+                                        {{ $order->order_type == 'qr' ? '🎫 QR Deal' : ($order->order_type == 'document' ? '📄 Tài liệu' : ($order->order_type == 'shipping' ? '🚚 Giao hàng' : '💾 Digital')) }}
                                     </span>
                                 </div>
                             </div>

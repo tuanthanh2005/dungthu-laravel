@@ -193,7 +193,7 @@
                     </a>
                     <a href="{{ route('admin.products', ['category' => 'doc']) }}" 
                        class="btn {{ request('category') == 'doc' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-4">
-                        <i class="fas fa-file-alt me-2"></i>Tài liệu kiếm tiền
+                        <i class="fas fa-file-alt me-2"></i>Tài liệu
                     </a>
                 </div>
             </div>
@@ -232,7 +232,7 @@
                                 @elseif($product->category === 'fashion')
                                     <span class="badge-category badge-fashion">Thời trang</span>
                                 @else
-                                    <span class="badge-category badge-doc">Tài liệu kiếm tiền</span>
+                                    <span class="badge-category badge-doc">Tài liệu</span>
                                 @endif
                             </td>
                             <td>

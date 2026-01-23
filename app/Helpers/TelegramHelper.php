@@ -94,7 +94,7 @@ class TelegramHelper
     {
         $labels = [
             'qr' => '🎫 QR Deal',
-            'document' => '📄 Tài liệu kiếm tiền',
+            'document' => '📄 Tài liệu',
             'shipping' => '🚚 Giao hàng',
             'digital' => '💾 Digital',
         ];
@@ -102,4 +102,3 @@ class TelegramHelper
         return $labels[$type] ?? 'Không xác định';
     }
 }
-//////////////////////

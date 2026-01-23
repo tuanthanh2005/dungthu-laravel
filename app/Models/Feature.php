@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Feature extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'icon',
+        'color',
+        'description',
+        'category',
+    ];
+
+    // Relationship với Products
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_features');
+    }
+}

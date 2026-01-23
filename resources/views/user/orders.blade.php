@@ -270,9 +270,7 @@
             @empty
                 <div class="empty-state">
                     <h5 class="text-muted">Chưa có đơn hàng nào</h5>
-                    <p class="text-muted mb-4">Bắt đầu mua sắm ngay để tạo đơn hàng đầu tiên!</p>
-                    <a href="{{ route('shop') }}" class="btn btn-primary rounded-pill px-4 py-2">
-                        <i class="fas fa-shopping-cart me-2"></i>Mua sắm ngay
+                    <a href="{{ route('shop') }}">Mua sắm ngay
                     </a>
                 </div>
             @endforelse

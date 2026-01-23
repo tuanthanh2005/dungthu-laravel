@@ -149,6 +149,19 @@
                 </div>
             @endif
 
+            <!-- Order Status Alert -->
+            @if($order->status == 'completed')
+                <div class="alert alert-success mb-4" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; color: white;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle fs-4 me-3"></i>
+                        <div>
+                            <h5 class="mb-1 text-white">✅ Đơn hàng đã được xác nhận</h5>
+                            <p class="mb-0" style="font-size: 0.95rem;">Admin đã xác nhận đơn hàng và gửi tài khoản demo cho khách hàng</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Order Type Specific Guide -->
             <div class="action-guide">
                 <h6 class="fw-bold mb-2">

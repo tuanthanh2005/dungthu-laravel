@@ -462,7 +462,15 @@
                     </div>
                     <div>
                         <i class="fab fa-telegram text-primary me-2"></i>
-                        <strong>Telegram:</strong> @dungthu_support
+                        <strong>Telegram:</strong> <a href="https://t.me/tuanthanh0952" target="_blank">Chat ngay</a>
+                    </div>
+                    <div>
+                        <i class="fas fa-envelope text-primary me-2"></i>
+                        <strong>Email:</strong> tranthanhtuanfix@gmail.com
+                    </div>
+                    <div>
+                        <i class="fas fa-comments text-success me-2"></i>
+                        <strong>Zalo:</strong> <a href="https://zalo.me/0708910952" target="_blank">Chat ngay</a>
                     </div>
                 </div>
                 <div class="modal-footer border-0">

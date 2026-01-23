@@ -144,7 +144,7 @@
                                         Ghi nhớ đăng nhập
                                     </label>
                                 </div>
-                                <a href="#" class="text-decoration-none">Quên mật khẩu?</a>
+                                <a href="javascript:void(0)" class="text-decoration-none" title="Liên hệ admin để reset mật khẩu">Quên mật khẩu?</a>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">
@@ -160,20 +160,12 @@
 
                         <div class="position-relative my-4">
                             <hr>
-                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">Hoặc</span>
+                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">Hoặc đăng nhập bằng</span>
                         </div>
 
-                        <div class="social-login">
-                            <button class="social-btn">
-                                <i class="fab fa-google text-danger"></i>
-                            </button>
-                            <button class="social-btn">
-                                <i class="fab fa-facebook text-primary"></i>
-                            </button>
-                            <button class="social-btn">
-                                <i class="fab fa-github text-dark"></i>
-                            </button>
-                        </div>
+                        <a href="{{ url('/auth/google') }}" class="btn btn-outline-danger w-100 py-3 rounded-pill fw-bold shadow-sm">
+                            <i class="fab fa-google me-2"></i> Đăng Nhập Bằng Google
+                        </a>
                     </div>
                 </div>
             </div>

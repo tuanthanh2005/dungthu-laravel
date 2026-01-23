@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
+        
+        // Exclude CSRF for OAuth callbacks
+        $middleware->validateCsrfTokens(except: [
+            'auth/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

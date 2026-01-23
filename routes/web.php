@@ -5,7 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\TiktokDealController;
 use App\Http\Controllers\UserController;
@@ -34,6 +36,16 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Google OAuth routes
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+
+// Debug route
+Route::get('/test-callback', function () {
+    \Illuminate\Support\Facades\Log::info('Test callback route accessed');
+    return response()->json(['message' => 'callback route works']);
+});
 
 // Cart routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -110,4 +122,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     // Card Exchange Management
     Route::get('/card-exchanges', [AdminController::class, 'cardExchanges'])->name('admin.card-exchanges');
     Route::put('/card-exchanges/{cardExchange}/status', [AdminController::class, 'updateCardExchangeStatus'])->name('admin.card-exchanges.update-status');
+});
+
+// Newsletter subscription
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+
+// Test email route
+Route::get('/test-email', function() {
+    $order = \App\Models\Order::first();
+    if (!$order) {
+        return 'Không tìm thấy đơn hàng nào để test';
+    }
+    
+    try {
+        \Illuminate\Support\Facades\Mail::to($order->customer_email)->send(
+            new \App\Mail\OrderCompletedMail($order, 'testuser_demo_' . $order->id, 'Cudanmangorg_1')
+        );
+        return 'Email đã được gửi đến: ' . $order->customer_email;
+    } catch (\Exception $e) {
+        return 'Lỗi: ' . $e->getMessage();
+    }
 });

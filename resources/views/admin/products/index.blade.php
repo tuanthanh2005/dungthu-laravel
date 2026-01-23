@@ -148,12 +148,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0)" title="Tính năng sắp có">
                         <i class="fas fa-users me-2"></i>Người dùng
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0)" title="Tính năng sắp có">
                         <i class="fas fa-blog me-2"></i>Bài viết
                     </a>
                 </li>

@@ -177,6 +177,11 @@
                             <span class="badge bg-{{ $order->status_color }} px-3 py-2">
                                 {{ $order->status_label }}
                             </span>
+                            @if($order->status == 'completed')
+                                <div class="mt-2">
+                                    <small class="badge bg-success">✅ Đã xác nhận</small>
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-2">
                             <small class="text-muted">{{ $order->created_at->format('d/m/Y H:i') }}</small>

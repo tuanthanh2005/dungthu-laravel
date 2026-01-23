@@ -215,13 +215,13 @@
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-6">
-                            <a href="#" class="btn btn-outline-info w-100 py-3 rounded-3">
+                            <a href="javascript:void(0)" class="btn btn-outline-info w-100 py-3 rounded-3" title="Tính năng sắp có">
                                 <i class="fas fa-chart-bar d-block fs-3 mb-2"></i>
                                 Xem báo cáo
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-6">
-                            <a href="#" class="btn btn-outline-danger w-100 py-3 rounded-3">
+                            <a href="javascript:void(0)" class="btn btn-outline-danger w-100 py-3 rounded-3" title="Tính năng sắp có">
                                 <i class="fas fa-cog d-block fs-3 mb-2"></i>
                                 Cài đặt
                             </a>
@@ -252,7 +252,7 @@
                         @foreach($latestOrders as $order)
                         <tr>
                             <td><strong>#{{ $order->id }}</strong></td>
-                            <td>{{ $order->user->name }}</td>
+                            <td>{{ $order->user->name ?? 'admin' }}</td>
                             <td><strong class="text-primary">{{ number_format($order->total_amount, 0, ',', '.') }}đ</strong></td>
                             <td>
                                 @if($order->status === 'pending')

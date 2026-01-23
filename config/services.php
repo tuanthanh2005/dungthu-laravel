@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_CLIENT_CALLBACK'),
+        'project_id' => env('GOOGLE_PROJECT_ID'),
+        'auth_uri' => env('GOOGLE_AUTH_URI'),
+        'token_uri' => env('GOOGLE_TOKEN_URI'),
+        'auth_provider_cert_url' => env('GOOGLE_AUTH_PROVIDER_CERT_URL'),
+    ],
+
 ];

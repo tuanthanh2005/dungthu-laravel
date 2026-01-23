@@ -374,29 +374,29 @@
                 <p class="text-center mb-4">Vui lòng chọn phương thức liên hệ bên dưới để được hỗ trợ:</p>
                 
                 <!-- Email Contact -->
-                <a href="mailto:admin@dungthu.com?subject=Yêu cầu cấp tài khoản&body=Xin chào Admin,%0A%0ATôi đã thanh toán đơn hàng QR thành công và muốn được cấp tài khoản.%0A%0AThông tin đơn hàng:%0A- Mã đơn hàng: [Mã đơn hàng]%0A- Email: [Email của bạn]%0A%0AXin cảm ơn!" class="contact-option email">
+                <a href="mailto:tranthanhtuanfix@gmail.com?subject=Yêu cầu cấp tài khoản&body=Xin chào Admin,%0A%0ATôi đã thanh toán đơn hàng QR thành công và muốn được cấp tài khoản.%0A%0AThông tin đơn hàng:%0A- Mã đơn hàng: [Mã đơn hàng]%0A- Email: [Email của bạn]%0A%0AXin cảm ơn!" class="contact-option email">
                     <div class="text-center">
                         <i class="fas fa-envelope icon-email"></i>
                         <h6 class="fw-bold mt-2 mb-1">Liên hệ qua Email</h6>
-                        <small class="text-muted">admin@dungthu.com</small>
+                        <small class="text-muted">tranthanhtuanfix@gmail.com</small>
                     </div>
                 </a>
 
                 <!-- Telegram Contact -->
-                <a href="https://t.me/dungthu_support" target="_blank" class="contact-option telegram">
+                <a href="https://t.me/tuanthanh0952" target="_blank" class="contact-option telegram">
                     <div class="text-center">
                         <i class="fab fa-telegram icon-telegram"></i>
                         <h6 class="fw-bold mt-2 mb-1">Liên hệ qua Telegram</h6>
-                        <small class="text-muted">@dungthu_support</small>
+                        <small class="text-muted"><i class="fab fa-telegram me-1"></i>Chat ngay</small>
                     </div>
                 </a>
 
                 <!-- Zalo Contact -->
-                <a href="https://zalo.me/0123456789" target="_blank" class="contact-option zalo">
+                <a href="https://zalo.me/0708910952" target="_blank" class="contact-option zalo">
                     <div class="text-center">
                         <i class="fas fa-comments icon-zalo"></i>
                         <h6 class="fw-bold mt-2 mb-1">Liên hệ qua Zalo</h6>
-                        <small class="text-muted">0123456789</small>
+                        <small class="text-muted"><i class="fas fa-comments me-1"></i>Chat ngay</small>
                     </div>
                 </a>
 

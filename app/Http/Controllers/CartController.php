@@ -168,15 +168,64 @@ class CartController extends Controller
 
             DB::commit();
             
-            // Gửi thông báo Telegram
+            // Gửi thông báo Telegram cho admin
             TelegramHelper::sendNewOrderNotification($order);
             
             session()->forget('cart');
-            return redirect()->route('home')->with('success', 'Đặt hàng thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+            return redirect()->route('home')->with('success', 'Đặt hàng thành công! Vui lòng chờ admin xác nhận.');
 
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'Có lỗi xảy ra! Vui lòng thử lại.');
         }
+    }
+
+    /**
+     * Tạo username demo từ thông tin khách hàng
+     */
+    private function generateDemoUsername(Order $order)
+    {
+        // Lấy phần trước @ từ email
+        if ($order->customer_email) {
+            $emailParts = explode('@', $order->customer_email);
+            $username = strtolower($emailParts[0]);
+            // Thêm số đơn hàng để unique
+            return $username . '_demo_' . $order->id;
+        }
+        
+        // Fallback: dùng tên khách hàng
+        $name = strtolower(str_replace(' ', '', $order->customer_name));
+        return $name . '_demo_' . $order->id;
+    }
+
+    /**
+     * Generate mật khẩu random mạnh
+     */
+    private function generateRandomPassword($length = 12)
+    {
+        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        $numbers = '0123456789';
+        $special = '!@#$%^&*';
+        
+        $allChars = $uppercase . $lowercase . $numbers . $special;
+        $password = '';
+        
+        // Đảm bảo có ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt
+        $password .= $uppercase[rand(0, strlen($uppercase) - 1)];
+        $password .= $lowercase[rand(0, strlen($lowercase) - 1)];
+        $password .= $numbers[rand(0, strlen($numbers) - 1)];
+        $password .= $special[rand(0, strlen($special) - 1)];
+        
+        // Tạo phần còn lại
+        for ($i = 4; $i < $length; $i++) {
+            $password .= $allChars[rand(0, strlen($allChars) - 1)];
+        }
+        
+        // Shuffle password để ngẫu nhiên hơn
+        $passwordArray = str_split($password);
+        shuffle($passwordArray);
+        
+        return implode('', $passwordArray);
     }
 }

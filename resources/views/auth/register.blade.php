@@ -154,8 +154,8 @@
                             <div class="form-check mb-4">
                                 <input class="form-check-input" type="checkbox" id="terms" required>
                                 <label class="form-check-label" for="terms">
-                                    Tôi đồng ý với <a href="#" class="text-primary">Điều khoản dịch vụ</a> 
-                                    và <a href="#" class="text-primary">Chính sách bảo mật</a>
+                                    Tôi đồng ý với <a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#termsModal">Điều khoản dịch vụ</a> 
+                                    và <a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#privacyRegisterModal">Chính sách bảo mật</a>
                                 </label>
                             </div>
 
@@ -182,3 +182,104 @@
         AOS.init({ duration: 800, once: true });
     </script>
 @endpush
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border: none; padding: 25px 30px;">
+                <h5 class="modal-title fw-bold" id="termsModalLabel">
+                    <i class="fas fa-file-contract me-2"></i>Điều Khoản Dịch Vụ
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <div class="modal-body p-4" style="font-size: 15px; line-height: 1.8; color: #4a5568;">
+                <h6 class="fw-bold mb-3" style="color: #667eea;">1. Quyền và Trách Vụ Người Dùng</h6>
+                <p>Người dùng đồng ý rằng:</p>
+                <ul class="ms-3">
+                    <li>Sẽ cung cấp thông tin chính xác khi đăng ký</li>
+                    <li>Chịu trách nhiệm bảo mật tài khoản của mình</li>
+                    <li>Sẽ không sử dụng dịch vụ cho mục đích bất hợp pháp</li>
+                    <li>Sẽ tuân thủ tất cả các quy định hiện hành</li>
+                </ul>
+
+                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">2. Quyền và Trách Vụ DungThu</h6>
+                <p>DungThu.com có quyền:</p>
+                <ul class="ms-3">
+                    <li>Cung cấp các dịch vụ với chất lượng tốt nhất</li>
+                    <li>Thay đổi hoặc cập nhật dịch vụ</li>
+                    <li>Vô hiệu hóa tài khoản vi phạm điều khoản</li>
+                </ul>
+
+                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">3. Giới Hạn Trách Nhiệm</h6>
+                <p>DungThu.com không chịu trách nhiệm về:</p>
+                <ul class="ms-3">
+                    <li>Mất dữ liệu do người dùng không cập nhật backup</li>
+                    <li>Thiệt hại do sử dụng không đúng cách</li>
+                    <li>Các vấn đề liên quan đến kết nối internet</li>
+                </ul>
+
+                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">4. Thanh Toán và Hoàn Tiền</h6>
+                <ul class="ms-3">
+                    <li>Tất cả giá trị được liệt kê đã bao gồm thuế</li>
+                    <li>Chính sách hoàn tiền được áp dụng trong 7 ngày</li>
+                    <li>Hoàn tiền sẽ được xử lý trong 5-7 ngày làm việc</li>
+                </ul>
+
+                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">5. Thay Đổi Điều Khoản</h6>
+                <p>DungThu.com có quyền thay đổi điều khoản này bất kỳ lúc nào. Người dùng sẽ được thông báo về những thay đổi quan trọng.</p>
+
+                <div class="alert alert-success mt-4" style="border-radius: 12px;">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Cảm ơn</strong> vì đã đồng ý với điều khoản dịch vụ của chúng tôi!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Register Modal -->
+<div class="modal fade" id="privacyRegisterModal" tabindex="-1" aria-labelledby="privacyRegisterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border: none; padding: 25px 30px;">
+                <h5 class="modal-title fw-bold" id="privacyRegisterModalLabel">
+                    <i class="fas fa-shield-alt me-2"></i>Chính Sách Bảo Mật
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <div class="modal-body p-4" style="font-size: 15px; line-height: 1.8; color: #4a5568;">
+                <h6 class="fw-bold mb-3" style="color: #667eea;">📋 Thông Tin Chúng Tôi Thu Thập</h6>
+                <p>Chúng tôi thu thập những thông tin sau:</p>
+                <ul class="ms-3">
+                    <li>Tên, email, số điện thoại khi bạn đăng ký</li>
+                    <li>Địa chỉ giao hàng để xử lý đơn hàng</li>
+                    <li>Lịch sử mua hàng và sở thích sản phẩm</li>
+                </ul>
+
+                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">🔒 Bảo Vệ Thông Tin</h6>
+                <p>Chúng tôi sử dụng mã hóa SSL/TLS cho tất cả giao tiếp và không chia sẻ thông tin cá nhân với bên thứ ba.</p>
+
+                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">💾 Cách Sử Dụng Thông Tin</h6>
+                <ul class="ms-3">
+                    <li>Xử lý và giao hàng đơn hàng</li>
+                    <li>Gửi thông báo về tình trạng đơn hàng</li>
+                    <li>Cải thiện dịch vụ và sản phẩm</li>
+                    <li>Tuân thủ pháp luật</li>
+                </ul>
+
+                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">👥 Quyền Của Bạn</h6>
+                <ul class="ms-3">
+                    <li>Truy cập và xem thông tin cá nhân</li>
+                    <li>Chỉnh sửa hoặc cập nhật thông tin</li>
+                    <li>Yêu cầu xóa tài khoản</li>
+                </ul>
+
+                <div class="alert alert-info mt-4" style="border-radius: 12px;">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Cần hỗ trợ?</strong> Liên hệ email: tranthanhtuanfix@gmail.com
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

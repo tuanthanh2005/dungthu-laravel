@@ -265,6 +265,74 @@
                     {{ $orders->links() }}
                 </div>
             @endif
+
+            <!-- Card Exchange History -->
+            @if($cardExchanges->isNotEmpty())
+                <h3 class="fw-bold mb-4 mt-5">
+                    <i class="fas fa-credit-card text-success me-3"></i>Lịch sử đổi thẻ cào
+                </h3>
+
+                @foreach($cardExchanges as $exchange)
+                    <div class="order-item">
+                        <div class="order-header">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <div class="fw-bold mb-2">Giao dịch #{{ $exchange->id }}</div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{ $exchange->created_at->format('d/m/Y H:i') }}
+                                    </small>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="order-type-badge" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+                                        <i class="fas fa-credit-card me-1"></i>Đổi thẻ cào
+                                    </span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="badge 
+                                        @if($exchange->status == 'pending') bg-warning
+                                        @elseif($exchange->status == 'approved') bg-success
+                                        @elseif($exchange->status == 'rejected') bg-danger
+                                        @endif px-3 py-2">
+                                        @if($exchange->status == 'pending') Đang xử lý
+                                        @elseif($exchange->status == 'approved') Đã chuyển tiền
+                                        @elseif($exchange->status == 'rejected') Từ chối
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <div class="fw-bold text-success fs-5">{{ number_format($exchange->card_value, 0, ',', '.') }}đ</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><i class="fas fa-sim-card me-2 text-muted"></i><strong>Loại thẻ:</strong> {{ $exchange->card_type }}</p>
+                                    <p class="mb-1"><i class="fas fa-hashtag me-2 text-muted"></i><strong>Seri:</strong> {{ $exchange->card_serial }}</p>
+                                    <p class="mb-1"><i class="fas fa-key me-2 text-muted"></i><strong>Mã thẻ:</strong> {{ substr($exchange->card_code, 0, 4) }}****</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><i class="fas fa-university me-2 text-muted"></i><strong>Ngân hàng:</strong> {{ $exchange->bank_name }}</p>
+                                    <p class="mb-1"><i class="fas fa-credit-card me-2 text-muted"></i><strong>STK:</strong> {{ $exchange->bank_account_number }}</p>
+                                    <p class="mb-1"><i class="fas fa-user me-2 text-muted"></i><strong>Chủ TK:</strong> {{ $exchange->bank_account_name }}</p>
+                                </div>
+                            </div>
+                            @if($exchange->admin_note)
+                                <div class="alert alert-info mt-3 mb-0">
+                                    <i class="fas fa-info-circle me-2"></i><strong>Ghi chú:</strong> {{ $exchange->admin_note }}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+
+                @if($cardExchanges->hasPages())
+                    <div class="mt-4">
+                        {{ $cardExchanges->links() }}
+                    </div>
+                @endif
+            @endif
         </div>
     </div>
 </div>

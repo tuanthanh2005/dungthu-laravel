@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\CardExchange;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -78,7 +79,11 @@ class UserController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('user.orders', compact('orders'));
+        $cardExchanges = CardExchange::where('user_id', Auth::id())
+            ->latest()
+            ->paginate(10);
+
+        return view('user.orders', compact('orders', 'cardExchanges'));
     }
 
     // Chi tiết đơn hàng

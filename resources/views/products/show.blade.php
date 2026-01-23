@@ -276,30 +276,61 @@
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-align-left text-primary me-2"></i>Mô Tả Chi Tiết
                             </h4>
-                            <p class="lead text-muted">{{ $product->description }}</p>
-                            <hr class="my-4">
-                            <div class="row">
-                                <div class="col-12 mb-3">
-                                    <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-cube me-2"></i>Thông Số Kỹ Thuật
-                                    </h6>
-                                    <ul class="list-unstyled ms-4">
-                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Danh mục: <strong>{{ strtoupper($product->category) }}</strong></li>
-                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>SKU: <strong>#{{ $product->id }}</strong></li>
-                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Tình trạng: <strong>{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</strong></li>
-                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Xuất xứ: <strong>Chính hãng</strong></li>
-                                    </ul>
+                            <p class="text-muted mb-4">{{ $product->description }}</p>
+                            
+                            <div class="border-top pt-4 mt-4">
+                                <h5 class="fw-bold text-primary mb-4">
+                                    <i class="fas fa-cube me-2"></i>Thông Số Kỹ Thuật
+                                </h5>
+                                <div class="row g-4">
+                                    <div class="col-lg-6">
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-list-ul text-primary me-2"></i><strong>Danh mục:</strong>
+                                            <p class="ms-4 mb-0 text-muted">{{ strtoupper($product->category) }}</p>
+                                        </div>
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-barcode text-primary me-2"></i><strong>SKU:</strong>
+                                            <p class="ms-4 mb-0 text-muted">#{{ $product->id }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-check-circle text-success me-2"></i><strong>Tình trạng:</strong>
+                                            <p class="ms-4 mb-0 text-muted">{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</p>
+                                        </div>
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-globe text-primary me-2"></i><strong>Xuất xứ:</strong>
+                                            <p class="ms-4 mb-0 text-muted">Chính hãng</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-12 mb-3">
-                                    <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-box-open me-2"></i>Thông Tin Thêm
-                                    </h6>
-                                    <ul class="list-unstyled ms-4">
-                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Bảo hành: <strong>12 tháng</strong></li>
-                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Giao hàng: <strong>Toàn quốc</strong></li>
-                                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Đổi trả: <strong>7 ngày</strong></li>
-                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Thanh toán: <strong>COD, Banking</strong></li>
-                                    </ul>
+                            </div>
+
+                            <div class="border-top pt-4 mt-4">
+                                <h5 class="fw-bold text-primary mb-4">
+                                    <i class="fas fa-box-open me-2"></i>Thông Tin Thêm
+                                </h5>
+                                <div class="row g-4">
+                                    <div class="col-lg-6">
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-shield-alt text-primary me-2"></i><strong>Bảo hành:</strong>
+                                            <p class="ms-4 mb-0 text-muted">12 tháng</p>
+                                        </div>
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-credit-card text-primary me-2"></i><strong>Thanh toán:</strong>
+                                            <p class="ms-4 mb-0 text-muted">COD, Banking, Transfer</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-shipping-fast text-primary me-2"></i><strong>Giao hàng:</strong>
+                                            <p class="ms-4 mb-0 text-muted">Toàn quốc (24-48h)</p>
+                                        </div>
+                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                            <i class="fas fa-undo text-primary me-2"></i><strong>Đổi trả:</strong>
+                                            <p class="ms-4 mb-0 text-muted">7 ngày từ ngày mua</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="alert alert-info mt-4 rounded-4">

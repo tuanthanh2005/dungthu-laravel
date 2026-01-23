@@ -86,6 +86,9 @@ class CartController extends Controller
             return redirect()->route('shop')->with('error', 'Giỏ hàng của bạn đang trống!');
         }
         
+        // Check if user is logged in and new user (from Google OAuth)
+        $isNewUser = auth()->check() && session()->has('is_new_user');
+        
         // Phân tích loại sản phẩm trong giỏ hàng
         $hasDigital = false;
         $hasPhysical = false;
@@ -104,13 +107,13 @@ class CartController extends Controller
         // Chọn view thanh toán phù hợp
         if($hasDigital && $hasPhysical) {
             // Có cả 2 loại
-            return view('cart.checkout-mixed', compact('cart'));
+            return view('cart.checkout-mixed', compact('cart', 'isNewUser'));
         } elseif($hasDigital) {
             // Chỉ sản phẩm số/dịch vụ - thanh toán QR
-            return view('cart.checkout-digital', compact('cart'));
+            return view('cart.checkout-digital', compact('cart', 'isNewUser'));
         } else {
             // Chỉ sản phẩm vật lý - cần địa chỉ giao hàng
-            return view('cart.checkout-physical', compact('cart'));
+            return view('cart.checkout-physical', compact('cart', 'isNewUser'));
         }
     }
 

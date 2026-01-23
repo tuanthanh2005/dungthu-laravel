@@ -46,6 +46,10 @@ class GoogleController extends Controller
             ]);
 
             Auth::login($newUser);
+            
+            // Mark as newly registered user to allow checkout without verification
+            session()->put('is_new_user', true);
+            
             return redirect('/')->with('success', 'Đăng nhập Google thành công!');
         } catch (\Exception $e) {
             Log::error('Google OAuth error', ['error' => $e->getMessage()]);

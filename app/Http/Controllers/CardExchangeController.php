@@ -62,7 +62,7 @@ class CardExchangeController extends Controller
         // Gửi thông báo qua Telegram
         $this->sendTelegramNotification($exchange);
 
-        return redirect()->route('card-exchange')->with('success', 'Gửi yêu cầu đổi thẻ thành công! Chúng tôi sẽ xử lý trong 5-10 phút.');
+        return redirect()->route('card-exchange.index')->with('success', 'Gửi yêu cầu đổi thẻ thành công! Chúng tôi sẽ xử lý trong 5-10 phút.');
     }
 
     private function sendTelegramNotification($exchange)

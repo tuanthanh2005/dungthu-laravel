@@ -8,6 +8,34 @@ use Illuminate\Support\Facades\Log;
 class TelegramHelper
 {
     /**
+     * Gửi tin nhắn tùy chỉnh qua Telegram
+     */
+    public static function sendMessage($text)
+    {
+        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
+        $chatId = '8199725778';
+
+        try {
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Telegram message sent successfully');
+                return true;
+            } else {
+                Log::error('Telegram send failed: ' . $response->body());
+                return false;
+            }
+        } catch (\Exception $e) {
+            Log::error('Telegram error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Gửi thông báo đơn hàng mới qua Telegram
      */
     public static function sendNewOrderNotification($order)

@@ -286,12 +286,11 @@
             @endif
 
             <!-- Card Exchange History -->
-            @if($cardExchanges->isNotEmpty())
-                <h3 class="fw-bold mb-4 mt-5">
-                    <i class="fas fa-credit-card text-success me-3"></i>Lịch sử đổi thẻ cào
-                </h3>
+            <h3 class="fw-bold mb-4 mt-5">
+                <i class="fas fa-credit-card text-success me-3"></i>Lịch sử đổi thẻ cào
+            </h3>
 
-                @foreach($cardExchanges as $exchange)
+            @forelse($cardExchanges as $exchange)
                     <div class="order-item">
                         <div class="order-header">
                             <div class="row align-items-center">
@@ -351,7 +350,13 @@
                         {{ $cardExchanges->links() }}
                     </div>
                 @endif
-            @endif
+            @empty
+                <div class="empty-state">
+                    <i class="fas fa-credit-card"></i>
+                    <h5 class="text-muted">Chưa có lịch sử đổi thẻ</h5>
+                    <p class="text-muted mb-0">Bạn chưa thực hiện giao dịch đổi thẻ cào nào</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </div>

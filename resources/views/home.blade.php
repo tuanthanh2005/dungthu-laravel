@@ -155,7 +155,46 @@
                         </div>
                         @endforeach
                     </div>
-                </div>             
+                </div>
+
+                <!-- Sản Phẩm Đặc Biệt -->
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
+                        <div>
+                            <span class="text-success fw-bold text-uppercase ls-1">⭐ Đặc biệt</span>
+                            <h3 class="fw-bold section-title">Sản Phẩm Độc Quyền</h3>
+                            <p class="text-muted mb-0">Những sản phẩm chất lượng cao được chọn lọc kỹ càng</p>
+                        </div>
+                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                    <div class="row row-cols-2 row-cols-md-3 g-4">
+                        @foreach($highlightProducts as $product)
+                        <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
+                            <div class="product-card">
+                                <div class="card-img-wrap">
+                                    <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
+                                    <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
+                                </div>
+                                <div class="p-3">
+                                    <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
+                                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+             
                 <!-- Săn Sale Tiktok Shop -->
                 <div id="tiktok-deals" class="mb-5" data-tiktok-section>
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">

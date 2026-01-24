@@ -717,6 +717,7 @@ class AdminController extends Controller
             'category' => $request->category,
             'image' => $imagePath ? asset($imagePath) : null,
             'is_featured' => $request->has('is_featured'),
+            'user_id' => auth()->id(),
             'views' => 0,
         ]);
 

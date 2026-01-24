@@ -14,8 +14,8 @@ class HomeController extends Controller
         // Lấy 4 sản phẩm featured cho trang home - Hàng 1
         $featuredProducts = Product::featured(4)->get();
         
-        // Lấy 6 sản phẩm độc quyền - Hàng 2
-        $highlightProducts = Product::where('is_exclusive', true)->latest()->take(6)->get();
+        // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
+        $highlightProducts = Product::where('is_exclusive', true)->latest()->take(8)->get();
         
         // Lấy deals Tiktok nổi bật (4 items)
         $tiktokDeals = TiktokDeal::featured()->active()->ordered()->take(4)->get();

@@ -719,6 +719,8 @@ class AdminController extends Controller
             'is_featured' => $request->has('is_featured'),
             'user_id' => auth()->id(),
             'views' => 0,
+            'is_published' => true,
+            'published_at' => now(),
         ]);
 
         return redirect()->route('admin.blogs')->with('success', 'Thêm bài viết thành công!');

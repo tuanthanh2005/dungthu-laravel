@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3065867660863139"
+     crossorigin="anonymous"></script>
+    <meta name="google-adsense-account" content="ca-pub-3065867660863139">
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-K1EFHMNDGK"></script>
     <script>

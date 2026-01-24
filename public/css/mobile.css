@@ -376,3 +376,55 @@ body {
         white-space: nowrap;
     }
 }
+
+/* --- Responsive CSS cho Tiktok Deals --- */
+@media (max-width: 767.98px) {
+
+    /* Tăng kích thước card trên mobile để dễ nhìn hơn */
+    .tiktok-deal-card .tiktok-img-wrap {
+        height: 180px;
+    }
+
+    /* Giảm kích thước font cho title */
+    .tiktok-deal-card h6 {
+        font-size: 0.88rem;
+    }
+
+    /* Giảm padding để tiết kiệm không gian */
+    .tiktok-deal-card .p-3 {
+        padding: 0.75rem !important;
+    }
+
+    /* Giảm kích thước badge giảm giá */
+    .deal-badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        top: 8px;
+        right: 8px;
+    }
+
+    /* Nút mua ngay responsive */
+    .tiktok-deal-card .btn-danger {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    /* Trên mobile nhỏ, hiển thị 2 cột */
+    .row-cols-2>* {
+        width: 50% !important;
+    }
+
+    /* Giảm khoảng cách giữa các card */
+    .g-4 {
+        --bs-gutter-x: 0.75rem;
+        --bs-gutter-y: 0.75rem;
+    }
+
+    /* Giảm chiều cao ảnh trên mobile nhỏ */
+    .tiktok-deal-card .tiktok-img-wrap {
+        height: 150px;
+    }
+}

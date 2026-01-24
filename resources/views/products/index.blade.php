@@ -101,11 +101,11 @@
             {{-- Hiển thị Tiktok Deals --}}
             @foreach($items as $deal)
             <div class="col" data-aos="fade-up">
-                <div class="product-deal-card">
+                <div class="tiktok-deal-card">
                     @if($deal->discount_percent)
                         <span class="deal-badge">-{{ $deal->discount_percent }}%</span>
                     @endif
-                    <div class="deal-img-wrap">
+                    <div class="tiktok-img-wrap">
                         <img src="{{ $deal->image ? asset('images/products/' . $deal->image) : 'https://via.placeholder.com/300' }}" 
                              alt="{{ $deal->name }}">
                     </div>

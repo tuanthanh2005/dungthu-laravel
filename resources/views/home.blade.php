@@ -168,7 +168,7 @@
                         <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
 
-                    <div class="row row-cols-2 row-cols-md-3 g-4">
+                    <div class="row row-cols-2 row-cols-md-4 g-4">
                         @foreach($highlightProducts as $product)
                         <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
                             <div class="product-card">

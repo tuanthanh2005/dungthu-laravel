@@ -11,11 +11,11 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Lấy 4 sản phẩm featured cho trang home
+        // Lấy 4 sản phẩm featured cho trang home - Hàng 1
         $featuredProducts = Product::featured(4)->get();
         
-        // Lấy 6 sản phẩm nổi bật
-        $highlightProducts = Product::where('is_featured', true)->latest()->take(6)->get();
+        // Lấy 6 sản phẩm độc quyền - Hàng 2
+        $highlightProducts = Product::where('is_exclusive', true)->latest()->take(6)->get();
         
         // Lấy deals Tiktok nổi bật (4 items)
         $tiktokDeals = TiktokDeal::featured()->active()->ordered()->take(4)->get();

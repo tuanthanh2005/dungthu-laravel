@@ -241,7 +241,25 @@
                                style="width: 50px; height: 25px; cursor: pointer;">
                         <label class="form-check-label fw-bold" for="is_featured" style="margin-left: 10px; cursor: pointer;">
                             <i class="fas fa-star text-warning me-2"></i>Sản phẩm nổi bật
-                            <small class="text-muted d-block">Hiển thị trên trang chủ</small>
+                            <small class="text-muted d-block">Hiển thị trên trang chủ - Hàng đầu tiên</small>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Exclusive Product -->
+                <div class="mb-4">
+                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               role="switch" 
+                               id="is_exclusive" 
+                               name="is_exclusive" 
+                               value="1"
+                               {{ old('is_exclusive') ? 'checked' : '' }}
+                               style="width: 50px; height: 25px; cursor: pointer;">
+                        <label class="form-check-label fw-bold" for="is_exclusive" style="margin-left: 10px; cursor: pointer;">
+                            <i class="fas fa-gem text-success me-2"></i>Sản phẩm độc quyền
+                            <small class="text-muted d-block">Hiển thị trên trang chủ - Hàng thứ 2</small>
                         </label>
                     </div>
                 </div>

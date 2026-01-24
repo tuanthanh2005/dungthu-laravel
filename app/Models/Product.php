@@ -23,6 +23,7 @@ class Product extends Model
         'stock',
         'specs',
         'is_featured',
+        'is_exclusive',
     ];
 
     protected $casts = [
@@ -30,6 +31,7 @@ class Product extends Model
         'stock' => 'integer',
         'specs' => 'array',
         'is_featured' => 'boolean',
+        'is_exclusive' => 'boolean',
     ];
 
     // Relationship với OrderItems

@@ -124,10 +124,9 @@
                 <!-- Nội dung -->
                 <div class="mb-4">
                     <label for="content" class="form-label">
-                        <i class="fas fa-file-alt me-2"></i>Nội dung bài viết
+                        <i class="fas fa-file-alt me-2"></i>Nội dung bài viết <span class="text-danger">*</span>
                     </label>
                     <textarea class="form-control" id="content" name="content" 
-                              required 
                               placeholder="Nhập nội dung chi tiết bài viết...">{{ old('content', $blog->content) }}</textarea>
                 </div>
 
@@ -226,6 +225,17 @@ function previewImage(event) {
         reader.readAsDataURL(file);
     }
 }
+
+// Validate content trước khi submit
+document.querySelector('form').addEventListener('submit', function(e) {
+    const content = tinymce.get('content').getContent();
+    if (!content || content.trim() === '') {
+        e.preventDefault();
+        alert('Vui lòng nhập nội dung bài viết!');
+        tinymce.get('content').focus();
+        return false;
+    }
+});
 </script>
 @endpush
 @endsection

@@ -106,7 +106,7 @@
                         <span class="deal-badge">-{{ $deal->discount_percent }}%</span>
                     @endif
                     <div class="deal-img-wrap">
-                        <img src="{{ $deal->image ? asset('storage/' . $deal->image) : 'https://via.placeholder.com/300' }}" 
+                        <img src="{{ $deal->image ? asset('images/products/' . $deal->image) : 'https://via.placeholder.com/300' }}" 
                              alt="{{ $deal->name }}">
                     </div>
                     <div class="p-3">

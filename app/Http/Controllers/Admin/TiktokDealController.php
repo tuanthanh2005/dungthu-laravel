@@ -47,7 +47,10 @@ class TiktokDealController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('tiktok-deals', 'public');
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/products'), $imageName);
+            $validated['image'] = $imageName;
         }
 
         TiktokDeal::create($validated);
@@ -86,10 +89,13 @@ class TiktokDealController extends Controller
 
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có
-            if ($tiktokDeal->image) {
-                Storage::disk('public')->delete($tiktokDeal->image);
+            if ($tiktokDeal->image && file_exists(public_path('images/products/' . $tiktokDeal->image))) {
+                unlink(public_path('images/products/' . $tiktokDeal->image));
             }
-            $validated['image'] = $request->file('image')->store('tiktok-deals', 'public');
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/products'), $imageName);
+            $validated['image'] = $imageName;
         }
 
         $tiktokDeal->update($validated);
@@ -104,8 +110,8 @@ class TiktokDealController extends Controller
     public function destroy(TiktokDeal $tiktokDeal)
     {
         // Xóa ảnh nếu có
-        if ($tiktokDeal->image) {
-            Storage::disk('public')->delete($tiktokDeal->image);
+        if ($tiktokDeal->image && file_exists(public_path('images/products/' . $tiktokDeal->image))) {
+            unlink(public_path('images/products/' . $tiktokDeal->image));
         }
 
         $tiktokDeal->delete();

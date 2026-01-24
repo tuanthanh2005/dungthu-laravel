@@ -127,7 +127,7 @@
                                 <td>{{ $deal->order }}</td>
                                 <td>
                                     @if($deal->image)
-                                        <img src="{{ asset('storage/' . $deal->image) }}" 
+                                        <img src="{{ asset('images/products/' . $deal->image) }}" 
                                              alt="{{ $deal->name }}" 
                                              class="img-thumbnail"
                                              style="width: 50px; height: 50px; object-fit: cover;">

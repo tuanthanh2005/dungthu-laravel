@@ -133,7 +133,7 @@
                             
                             @if($tiktokDeal->image)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $tiktokDeal->image) }}" 
+                                    <img src="{{ asset('images/products/' . $tiktokDeal->image) }}" 
                                          alt="{{ $tiktokDeal->name }}" 
                                          class="img-thumbnail"
                                          style="max-width: 200px;">

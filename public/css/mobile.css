@@ -9,19 +9,21 @@ body {
 
 /* Allow long unbroken strings (e.g., product/blog titles) to wrap instead of overflowing */
 .blog-title,
-.card-title,
 .breadcrumb,
 .breadcrumb-item,
 .container h1,
 .container h2,
-.container h3,
+.container h3 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Card titles on mobile - show full text, no truncation */
+.card-title,
 .product-title-2lines {
     overflow-wrap: anywhere;
     word-break: break-word;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    /* Remove line clamp to show full title on mobile */
 }
 
 /* Breadcrumbs: allow wrapping on small/long slugs */
@@ -78,6 +80,16 @@ body {
 }
 
 @media (max-width: 767.98px) {
+
+    /* Remove line clamp on mobile for full title display */
+    .tiktok-deal-card h6,
+    .blog-excerpt {
+        display: block !important;
+        -webkit-line-clamp: unset !important;
+        -webkit-box-orient: initial !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
 
     /* Reduce huge hero paddings on phones */
     .hero-section {

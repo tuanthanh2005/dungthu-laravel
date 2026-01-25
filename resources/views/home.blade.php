@@ -259,8 +259,11 @@
                     <div class="row">
                         @foreach($latestBlogs as $index => $blog)
                         <div class="col-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-                            <div class="blog-card w-100 text-center p-3" style="min-height:120px;display:flex;align-items:center;justify-content:center;">
-                                <a href="{{ route('blog.show', $blog->slug) }}" class="blog-title fw-bold" style="font-size:1.1rem;line-height:1.4;">{{ $blog->title }}</a>
+                            <div class="blog-card w-100 text-center p-3" style="min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                                <a href="{{ route('blog.show', $blog->slug) }}">
+                                    <img src="{{ $blog->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $blog->title }}" style="max-width:100%;max-height:80px;object-fit:cover;border-radius:10px;">
+                                </a>
+                                <a href="{{ route('blog.show', $blog->slug) }}" class="blog-title fw-bold mt-2 d-block" style="font-size:1.05rem;line-height:1.4;">{{ $blog->title }}</a>
                             </div>
                         </div>
                         @endforeach

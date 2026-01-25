@@ -148,6 +148,11 @@
                         <i class="fas fa-credit-card me-2"></i>Đổi thẻ cào
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.chat.index') }}">
+                        <i class="fas fa-comments me-2"></i>Chat
+                    </a>
+                </li>
             </ul>
         </nav>
 

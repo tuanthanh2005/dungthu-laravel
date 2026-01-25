@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\TiktokDealController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CardExchangeController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\ChatController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -75,6 +76,20 @@ Route::middleware('auth')->group(function () {
     Route::put('/account/password', [UserController::class, 'updatePassword'])->name('user.password.update');
     Route::get('/orders', [UserController::class, 'orders'])->name('user.orders');
     Route::get('/orders/{order}', [UserController::class, 'orderDetail'])->name('user.orders.detail');
+});
+
+// Chat routes (requires auth)
+Route::middleware('auth')->prefix('chat')->group(function () {
+    Route::get('/messages', [ChatController::class, 'index'])->name('chat.messages');
+    Route::post('/send', [ChatController::class, 'store'])->name('chat.send');
+    Route::get('/new', [ChatController::class, 'getNewMessages'])->name('chat.new');
+});
+
+// Admin Chat routes
+Route::middleware(['auth', 'admin'])->prefix('admin/chat')->group(function () {
+    Route::get('/', [ChatController::class, 'adminIndex'])->name('admin.chat.index');
+    Route::get('/messages/{userId}', [ChatController::class, 'adminMessages'])->name('admin.chat.messages');
+    Route::post('/reply/{userId}', [ChatController::class, 'adminReply'])->name('admin.chat.reply');
 });
 
 // Card Exchange routes

@@ -119,6 +119,13 @@ body {
         height: auto !important;
     }
 
+    /* Tăng font-size giá tiền trên mobile lên 3px */
+    .product-card .text-primary.fw-bold,
+    .product-card .text-success.fw-bold,
+    .tiktok-deal-card .text-danger.fw-bold {
+        font-size: calc(1rem + 3px) !important;
+    }
+
     /* Reduce huge hero paddings on phones */
     .hero-section {
         padding: 60px 0 45px !important;

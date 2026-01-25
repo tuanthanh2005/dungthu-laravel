@@ -35,47 +35,75 @@ body {
 
     /* Navbar: better spacing when collapsed */
     .navbar {
-        padding-top: 0.35rem;
-        padding-bottom: 0.35rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
 
     .navbar-glass .navbar-brand {
-        font-size: 1.25rem !important;
+        font-size: 1.4rem !important;
     }
 
     .navbar-glass .navbar-toggler {
-        padding: 0.35rem 0.55rem;
+        padding: 0.5rem 0.7rem;
         border-radius: 10px;
     }
 
     .navbar-glass .navbar-collapse {
-        padding-top: 0.5rem;
+        padding-top: 1rem;
+        padding-bottom: 0.5rem;
+        background: white;
+        margin-top: 0.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .navbar-glass .navbar-nav {
-        padding: 0.5rem 0;
+        padding: 0.5rem 1rem;
         align-items: flex-start !important;
     }
 
     .navbar-glass .nav-link {
         margin: 0 !important;
-        padding: 0.6rem 0 !important;
+        padding: 0.85rem 1rem !important;
+        font-size: 1.05rem !important;
+        font-weight: 500 !important;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-glass .nav-link:hover,
+    .navbar-glass .nav-link:active {
+        background: #f8f9fa;
+        color: var(--primary) !important;
+    }
+
+    .navbar-glass .nav-link i {
+        width: 20px;
+        margin-right: 8px;
     }
 
     .navbar-glass .dropdown-menu {
         border-radius: 12px;
+        font-size: 1.05rem;
     }
 
     /* If navbar is collapsed, make CTA buttons easy to tap */
     .navbar-glass .navbar-collapse .btn {
         width: 100%;
         justify-content: center;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.05rem;
+        margin-top: 0.5rem;
     }
 
     /* Dropdown items: bigger tap targets */
     .dropdown-menu .dropdown-item {
-        padding-top: 0.6rem;
-        padding-bottom: 0.6rem;
+        padding: 0.85rem 1.2rem;
+        font-size: 1.05rem;
+    }
+
+    .dropdown-menu .dropdown-item i {
+        width: 20px;
     }
 }
 

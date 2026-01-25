@@ -258,16 +258,9 @@
 
                     <div class="row">
                         @foreach($latestBlogs as $index => $blog)
-                        <div class="col-6" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-                            <div class="blog-card">
-                                <img src="{{ $blog->image ?? 'https://via.placeholder.com/300' }}" class="blog-thumb" alt="{{ $blog->title }}">
-                                <div class="blog-content">
-                                    <div class="blog-date">
-                                        <i class="far fa-clock"></i> {{ $blog->formatted_date }} • {{ ucfirst($blog->category) }}
-                                    </div>
-                                    <a href="{{ route('blog.show', $blog->slug) }}" class="blog-title">{{ $blog->title }}</a>
-                                    <p class="blog-excerpt">{{ $blog->excerpt }}</p>
-                                </div>
+                        <div class="col-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                            <div class="blog-card w-100 text-center p-3" style="min-height:120px;display:flex;align-items:center;justify-content:center;">
+                                <a href="{{ route('blog.show', $blog->slug) }}" class="blog-title fw-bold" style="font-size:1.1rem;line-height:1.4;">{{ $blog->title }}</a>
                             </div>
                         </div>
                         @endforeach

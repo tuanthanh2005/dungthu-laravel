@@ -161,12 +161,16 @@
                             </div>
                         @endif
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                @if($product->is_on_sale)
-                                    <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                    <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
-                                @endif
+                            <div class="flex-grow-1 me-2" style="min-width: 0;">
+                                <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
+                                    <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                    @if($product->is_on_sale)
+                                        <div class="d-flex align-items-center gap-1 flex-wrap">
+                                            <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                            <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                             <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
                                 @csrf

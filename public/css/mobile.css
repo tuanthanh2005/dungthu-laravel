@@ -126,6 +126,14 @@ body {
         font-size: calc(1rem + 3px) !important;
     }
 
+    /* Sale badge + original price: keep compact on small screens */
+    .product-card .sale-badge {
+        font-size: 0.75rem;
+        padding: 0.25em 0.5em;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
     /* Reduce huge hero paddings on phones */
     .hero-section {
         padding: 60px 0 45px !important;

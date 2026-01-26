@@ -32,8 +32,10 @@ class OrderCompletedMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $publicOrderNumber = $this->getPublicOrderNumber();
+
         return new Envelope(
-            subject: '✅ Thanh Toán Thành Công - Tài Khoản Demo Đã Được Cấp #' . $this->order->id,
+            subject: '✅ Đơn #' . $publicOrderNumber . ' đã xác nhận – Tài khoản demo',
         );
     }
 
@@ -42,9 +44,25 @@ class OrderCompletedMail extends Mailable
      */
     public function content(): Content
     {
+        $publicOrderNumber = $this->getPublicOrderNumber();
+
         return new Content(
             view: 'emails.order-completed',
+            with: [
+                'publicOrderNumber' => $publicOrderNumber,
+            ],
         );
+    }
+
+    private function getPublicOrderNumber(): int
+    {
+        $start = (int) config('admin.public_order_start', 1);
+        $start = max(1, $start);
+
+        $id = (int) ($this->order->id ?? 0);
+        $id = max(0, $id);
+
+        return $id + ($start - 1);
     }
 
     /**

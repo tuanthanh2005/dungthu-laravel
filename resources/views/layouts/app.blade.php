@@ -54,6 +54,59 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Admin action PIN: require 3-digit code for /admin POST/PUT/DELETE -->
+    <script>
+        (function () {
+            function isAdminAction(form) {
+                try {
+                    const action = form.getAttribute('action') || window.location.href;
+                    const url = new URL(action, window.location.origin);
+                    return url.pathname.startsWith('/admin');
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            function getIntendedMethod(form) {
+                const method = (form.getAttribute('method') || 'get').toLowerCase();
+                const override = form.querySelector('input[name="_method"]');
+                return (override ? override.value : method).toUpperCase();
+            }
+
+            document.addEventListener('submit', function (e) {
+                const form = e.target;
+                if (!(form instanceof HTMLFormElement)) return;
+                if (!isAdminAction(form)) return;
+                if (form.dataset.adminPinSkip === '1') return;
+
+                const intended = getIntendedMethod(form);
+                if (['GET', 'HEAD', 'OPTIONS'].includes(intended)) return;
+                if (form.dataset.adminPinVerified === '1') return;
+
+                e.preventDefault();
+
+                const pin = window.prompt('Nhập mã xác nhận để thực hiện thao tác');
+                if (pin === null) return;
+                if (!/^\d{3}$/.test(pin)) {
+                    alert('Mã xác nhận phải đúng 3 số.');
+                    return;
+                }
+
+                let input = form.querySelector('input[name="admin_pin"]');
+                if (!input) {
+                    input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'admin_pin';
+                    form.appendChild(input);
+                }
+                input.value = pin;
+
+                form.dataset.adminPinVerified = '1';
+                form.submit();
+            }, true);
+        })();
+    </script>
     
     <!-- Flash Messages -->
     @if(session()->has('success'))

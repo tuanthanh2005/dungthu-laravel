@@ -86,7 +86,7 @@ Route::middleware('auth')->prefix('chat')->group(function () {
 });
 
 // Admin Chat routes
-Route::middleware(['auth', 'admin'])->prefix('admin/chat')->group(function () {
+Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin/chat')->group(function () {
     Route::get('/', [ChatController::class, 'adminIndex'])->name('admin.chat.index');
     Route::get('/messages/{userId}', [ChatController::class, 'adminMessages'])->name('admin.chat.messages');
     Route::post('/reply/{userId}', [ChatController::class, 'adminReply'])->name('admin.chat.reply');
@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin routes (requires auth and admin role)
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     
     // Order Management

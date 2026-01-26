@@ -312,7 +312,13 @@
                                 <div class="p-3">
                                     <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                            @if($product->is_on_sale)
+                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                                <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
+                                            @endif
+                                        </div>
                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
@@ -350,7 +356,13 @@
                                 <div class="p-3">
                                     <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
+                                            @if($product->is_on_sale)
+                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                                <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
+                                            @endif
+                                        </div>
                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
@@ -391,7 +403,13 @@
                                         <div class="p-3">
                                             <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
                                             <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                                    @if($product->is_on_sale)
+                                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                                        <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
+                                                    @endif
+                                                </div>
                                                 <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">

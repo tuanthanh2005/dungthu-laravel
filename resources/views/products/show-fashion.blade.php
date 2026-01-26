@@ -161,7 +161,15 @@
                     <p class="lead text-muted mb-4">{{ Str::limit($product->description, 150, '......') }}</p>
                     
                     <div class="mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%);">
-                        <h2 class="fw-bold mb-0" style="color: #ff6b6b;">{{ $product->formatted_price }}</h2>
+                        <div class="d-flex align-items-end gap-3 flex-wrap">
+                            <h2 class="fw-bold mb-0" style="color: #ff6b6b;">{{ $product->formatted_price }}</h2>
+                            @if($product->is_on_sale)
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="text-muted text-decoration-line-through">{{ $product->formatted_original_price }}</span>
+                                    <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
+                                </div>
+                            @endif
+                        </div>
                         <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Miễn phí vận chuyển</small>
                     </div>
 

@@ -316,6 +316,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0|lt:price',
             'category' => 'required|in:tech,ebooks,doc',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -324,13 +325,15 @@ class AdminController extends Controller
         ], [
             'name.required' => 'Tên sản phẩm không được để trống',
             'description.required' => 'Mô tả không được để trống',
-            'price.required' => 'Giá không được để trống',
-            'price.numeric' => 'Giá phải là số',
-            'category.required' => 'Danh mục không được để trống',
-            'category.in' => 'Danh mục không hợp lệ',
-            'stock.required' => 'Số lượng không được để trống',
-            'stock.integer' => 'Số lượng phải là số nguyên',
-            'image.image' => 'File phải là hình ảnh',
+              'price.required' => 'Giá không được để trống',
+              'price.numeric' => 'Giá phải là số',
+              'sale_price.numeric' => 'Giá giảm phải là số',
+              'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
+              'category.required' => 'Danh mục không được để trống',
+              'category.in' => 'Danh mục không hợp lệ',
+              'stock.required' => 'Số lượng không được để trống',
+              'stock.integer' => 'Số lượng phải là số nguyên',
+              'image.image' => 'File phải là hình ảnh',
             'image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
             'image.max' => 'Kích thước ảnh không được vượt quá 2MB',
             'file.mimes' => 'File phải có định dạng: pdf, doc, docx, txt, zip, rar',
@@ -401,16 +404,17 @@ class AdminController extends Controller
             ];
         }
 
-        $product = Product::create([
-            'name' => $request->name,
-            'slug' => $slug,
-            'description' => $request->description,
-            'price' => $request->price,
-            'category' => $request->category,
-            'stock' => $request->stock,
-            'image' => $imagePath ? asset($imagePath) : null,
-            'file_path' => $filePath,
-            'file_type' => $fileType,
+          $product = Product::create([
+              'name' => $request->name,
+              'slug' => $slug,
+              'description' => $request->description,
+              'price' => $request->price,
+              'sale_price' => $request->filled('sale_price') ? $request->sale_price : null,
+              'category' => $request->category,
+              'stock' => $request->stock,
+              'image' => $imagePath ? asset($imagePath) : null,
+              'file_path' => $filePath,
+              'file_type' => $fileType,
             'file_size' => $fileSize,
             'specs' => $specs,
             'delivery_type' => $request->delivery_type,
@@ -437,27 +441,30 @@ class AdminController extends Controller
         return view($viewName, compact('product', 'features'));
     }
 
-    public function updateProduct(Request $request, Product $product)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'category' => 'required|in:tech,ebooks,doc',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,txt,zip,rar|max:51200',
-            'delivery_type' => 'required|in:digital,physical',
+      public function updateProduct(Request $request, Product $product)
+      {
+          $request->validate([
+              'name' => 'required|string|max:255',
+              'description' => 'required|string',
+              'price' => 'required|numeric|min:0',
+              'sale_price' => 'nullable|numeric|min:0|lt:price',
+              'category' => 'required|in:tech,ebooks,doc',
+              'stock' => 'required|integer|min:0',
+              'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+              'file' => 'nullable|file|mimes:pdf,doc,docx,txt,zip,rar|max:51200',
+              'delivery_type' => 'required|in:digital,physical',
         ], [
             'name.required' => 'Tên sản phẩm không được để trống',
             'description.required' => 'Mô tả không được để trống',
-            'price.required' => 'Giá không được để trống',
-            'price.numeric' => 'Giá phải là số',
-            'category.required' => 'Danh mục không được để trống',
-            'category.in' => 'Danh mục không hợp lệ',
-            'stock.required' => 'Số lượng không được để trống',
-            'stock.integer' => 'Số lượng phải là số nguyên',
-            'image.image' => 'File phải là hình ảnh',
+              'price.required' => 'Giá không được để trống',
+              'price.numeric' => 'Giá phải là số',
+              'sale_price.numeric' => 'Giá giảm phải là số',
+              'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
+              'category.required' => 'Danh mục không được để trống',
+              'category.in' => 'Danh mục không hợp lệ',
+              'stock.required' => 'Số lượng không được để trống',
+              'stock.integer' => 'Số lượng phải là số nguyên',
+              'image.image' => 'File phải là hình ảnh',
             'image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
             'image.max' => 'Kích thước ảnh không được vượt quá 2MB',
             'file.mimes' => 'File phải có định dạng: pdf, doc, docx, txt, zip, rar',
@@ -545,15 +552,16 @@ class AdminController extends Controller
             ];
         }
 
-        $product->update([
-            'name' => $request->name,
-            'slug' => $slug,
-            'description' => $request->description,
-            'price' => $request->price,
-            'category' => $request->category,
-            'stock' => $request->stock,
-            'specs' => $specs,
-            'delivery_type' => $request->delivery_type,
+          $product->update([
+              'name' => $request->name,
+              'slug' => $slug,
+              'description' => $request->description,
+              'price' => $request->price,
+              'sale_price' => $request->filled('sale_price') ? $request->sale_price : null,
+              'category' => $request->category,
+              'stock' => $request->stock,
+              'specs' => $specs,
+              'delivery_type' => $request->delivery_type,
             'file_path' => $filePath,
             'file_type' => $fileType,
             'file_size' => $fileSize,

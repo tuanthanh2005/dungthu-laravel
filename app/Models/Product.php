@@ -14,6 +14,7 @@ class Product extends Model
         'slug',
         'description',
         'price',
+        'sale_price',
         'image',
         'file_path',
         'file_type',
@@ -29,6 +30,7 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'sale_price' => 'decimal:2',
         'stock' => 'integer',
         'specs' => 'array',
         'is_featured' => 'boolean',
@@ -72,10 +74,50 @@ class Product extends Model
         return $query->where('is_featured', true)->inStock()->latest()->limit($limit);
     }
 
-    // Format giá tiền
+    public function getEffectivePriceAttribute()
+    {
+        $price = (float) ($this->price ?? 0);
+        $salePrice = $this->sale_price === null ? null : (float) $this->sale_price;
+
+        if ($salePrice === null || $salePrice <= 0 || $salePrice >= $price) {
+            return $price;
+        }
+
+        return $salePrice;
+    }
+
+    public function getIsOnSaleAttribute()
+    {
+        $price = (float) ($this->price ?? 0);
+        return $price > 0 && (float) $this->effective_price < $price;
+    }
+
+    public function getDiscountPercentAttribute()
+    {
+        if (!$this->is_on_sale) {
+            return 0;
+        }
+
+        $price = (float) ($this->price ?? 0);
+        $effective = (float) ($this->effective_price ?? 0);
+
+        if ($price <= 0) {
+            return 0;
+        }
+
+        return (int) round((($price - $effective) / $price) * 100);
+    }
+
+    // Format giá tiền (giá bán thực tế)
     public function getFormattedPriceAttribute()
     {
-        return number_format($this->price, 0, ',', '.') . 'đ';
+        return number_format((float) $this->effective_price, 0, ',', '.') . 'đ';
+    }
+
+    // Format giá gốc (giá niêm yết)
+    public function getFormattedOriginalPriceAttribute()
+    {
+        return number_format((float) ($this->price ?? 0), 0, ',', '.') . 'đ';
     }
 
     // Check còn hàng

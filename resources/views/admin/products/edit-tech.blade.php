@@ -256,7 +256,7 @@
 
                 <!-- Price and Stock -->
                 <div class="row mb-4">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="price" class="form-label">
                             <i class="fas fa-dollar-sign me-2 text-primary"></i>Giá (VNĐ) <span class="text-danger">*</span>
                         </label>
@@ -273,7 +273,24 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label for="sale_price" class="form-label">
+                            <i class="fas fa-tags me-2 text-danger"></i>Giá giảm (VNĐ)
+                        </label>
+                        <input type="number" 
+                               class="form-control @error('sale_price') is-invalid @enderror" 
+                               id="sale_price" 
+                               name="sale_price" 
+                               value="{{ old('sale_price', $product->sale_price) }}"
+                               min="0"
+                               step="1000"
+                               placeholder="Để trống nếu không giảm">
+                        @error('sale_price')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Giá giảm phải nhỏ hơn giá gốc</small>
+                    </div>
+                    <div class="col-md-4">
                         <label for="stock" class="form-label">
                             <i class="fas fa-warehouse me-2 text-primary"></i>Tồn kho <span class="text-danger">*</span>
                         </label>

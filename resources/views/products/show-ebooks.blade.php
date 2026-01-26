@@ -180,7 +180,15 @@
                     @endif
                     
                     <div class="mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, #e0f7fa 0%, #b2dfdb 50%);">
-                        <h2 class="fw-bold mb-0" style="color: #00bcd4;">{{ $product->formatted_price }}</h2>
+                        <div class="d-flex align-items-end gap-3 flex-wrap">
+                            <h2 class="fw-bold mb-0" style="color: #00bcd4;">{{ $product->formatted_price }}</h2>
+                            @if($product->is_on_sale)
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="text-muted text-decoration-line-through">{{ $product->formatted_original_price }}</span>
+                                    <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
+                                </div>
+                            @endif
+                        </div>
                         <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Mua 1 lần - Sử dụng mãi mãi</small>
                     </div>
                     

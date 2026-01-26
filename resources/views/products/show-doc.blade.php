@@ -136,7 +136,15 @@
                     <p class="lead text-muted mb-4">{{ $product->description }}</p>
                     
                     <div class="mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);">
-                        <h2 class="fw-bold mb-0" style="color: #00acc1;">{{ $product->formatted_price }}</h2>
+                        <div class="d-flex align-items-end gap-3 flex-wrap">
+                            <h2 class="fw-bold mb-0" style="color: #00acc1;">{{ $product->formatted_price }}</h2>
+                            @if($product->is_on_sale)
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="text-muted text-decoration-line-through">{{ $product->formatted_original_price }}</span>
+                                    <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
+                                </div>
+                            @endif
+                        </div>
                         <small class="text-muted"><i class="fas fa-tag me-1"></i>Giá ưu đãi cho học sinh, sinh viên</small>
                     </div>
                     

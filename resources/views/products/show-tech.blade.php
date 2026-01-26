@@ -185,7 +185,15 @@
                     <p class="lead text-muted mb-4">{{ Str::limit($product->description, 150, '......') }}</p>
                     
                     <div class="mb-4 p-4 bg-light rounded-4">
-                        <h2 class="text-info fw-bold mb-0">{{ $product->formatted_price }}</h2>
+                        <div class="d-flex align-items-end gap-3 flex-wrap">
+                            <h2 class="text-info fw-bold mb-0">{{ $product->formatted_price }}</h2>
+                            @if($product->is_on_sale)
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="text-muted text-decoration-line-through">{{ $product->formatted_original_price }}</span>
+                                    <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
+                                </div>
+                            @endif
+                        </div>
                         <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Giá đã bao gồm VAT</small>
                     </div>
                     

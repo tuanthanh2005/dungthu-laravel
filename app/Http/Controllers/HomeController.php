@@ -18,12 +18,12 @@ class HomeController extends Controller
         // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
         $highlightProducts = Product::where('is_exclusive', true)->latest()->take(8)->get();
         
-        // Lấy sản phẩm Combo AI giá rẻ (4 items)
+        // Lấy sản phẩm Combo AI giá rẻ (12 items = 3 hàng x 4)
         $comboAiProducts = Product::query()
             ->where('is_combo_ai', true)
             ->inStock()
             ->latest()
-            ->take(4)
+            ->take(12)
             ->get();
         
         // Lấy 4 blog mới nhất (published)

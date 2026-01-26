@@ -39,7 +39,27 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
+            // Laravel 11 uses `scheme` for SMTP (ex: smtps for port 465).
+            // Many `.env` templates still use MAIL_ENCRYPTION=ssl/tls, so map it.
+            'scheme' => (function () {
+                $scheme = env('MAIL_SCHEME');
+                if (!empty($scheme)) {
+                    return $scheme;
+                }
+
+                $encryption = env('MAIL_ENCRYPTION');
+                if (empty($encryption)) {
+                    return null;
+                }
+
+                $encryption = strtolower((string) $encryption);
+                if ($encryption === 'ssl') {
+                    return 'smtps';
+                }
+
+                // If user set tls here, leave it as-is (Symfony may accept it depending on DSN/options).
+                return $encryption;
+            })(),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
             'port' => env('MAIL_PORT', 2525),

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\Product;
 use App\Models\Blog;
 use App\Models\Order;
-use App\Models\TiktokDeal;
 
 class HomeController extends Controller
 {
@@ -19,8 +18,13 @@ class HomeController extends Controller
         // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
         $highlightProducts = Product::where('is_exclusive', true)->latest()->take(8)->get();
         
-        // Lấy deals Tiktok nổi bật (4 items)
-        $tiktokDeals = TiktokDeal::featured()->active()->ordered()->take(4)->get();
+        // Lấy sản phẩm Combo AI giá rẻ (4 items)
+        $comboAiProducts = Product::query()
+            ->where('is_combo_ai', true)
+            ->inStock()
+            ->latest()
+            ->take(4)
+            ->get();
         
         // Lấy 4 blog mới nhất (published)
         $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(4)->get();
@@ -53,7 +57,7 @@ class HomeController extends Controller
                 ->all();
         });
 
-        return view('home', compact('featuredProducts', 'highlightProducts', 'tiktokDeals', 'latestBlogs', 'recentPurchases'));
+        return view('home', compact('featuredProducts', 'highlightProducts', 'comboAiProducts', 'latestBlogs', 'recentPurchases'));
     }
 
     private static function maskCustomerName(string $name): string

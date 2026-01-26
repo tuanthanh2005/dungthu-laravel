@@ -416,6 +416,7 @@ class AdminController extends Controller
             'delivery_type' => $request->delivery_type,
             'is_featured' => $request->has('is_featured') ? true : false,
             'is_exclusive' => $request->has('is_exclusive') ? true : false,
+            'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
         ]);
 
         // Sync features nếu có
@@ -558,6 +559,7 @@ class AdminController extends Controller
             'file_size' => $fileSize,
             'is_featured' => $request->has('is_featured') ? true : false,
             'is_exclusive' => $request->has('is_exclusive') ? true : false,
+            'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
         ]);
 
         // Sync features nếu có

@@ -366,55 +366,49 @@
                     </div>
                 </div>
              
-                <!-- Săn Sale Tiktok Shop -->
-                <div id="tiktok-deals" class="mb-5" data-tiktok-section>
+                <!-- Combo AI giá rẻ (hiển thị trên Home) -->
+                <div id="combo-ai" class="mb-5" data-combo-ai-section>
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
                         <div>
-                            <span class="text-danger fw-bold text-uppercase ls-1">
-                                <i class="fab fa-tiktok"></i> HOT DEAL
+                            <span class="text-primary fw-bold text-uppercase ls-1">
+                                <i class="fas fa-robot"></i> COMBO AI
                             </span>
-                            <h3 class="fw-bold section-title">Săn Sale Tiktok Shop</h3>
-                            <p class="text-muted mb-0">Giảm giá cực sốc, số lượng có hạn!</p>
+                            <h3 class="fw-bold section-title">Combo AI giá rẻ</h3>
+                            <p class="text-muted mb-0">Chọn nhanh combo AI giá tốt cho bạn.</p>
                         </div>
-                        <a href="{{ route('shop', ['category' => 'tiktok']) }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
 
-                    @if($tiktokDeals->count() > 0)
-                    <div class="row row-cols-2 row-cols-md-4 g-4" id="tiktok-grid">
-                        @foreach($tiktokDeals as $deal)
-                        <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                            <div class="tiktok-deal-card">
-                                @if($deal->discount_percent)
-                                    <span class="tiktok-badge">-{{ $deal->discount_percent }}%</span>
-                                @endif
-                                <div class="tiktok-img-wrap">
-                                    <img src="{{ $deal->image ? asset('images/products/' . $deal->image) : 'https://via.placeholder.com/300' }}" 
-                                         alt="{{ $deal->name }}">
-                                </div>
-                                <div class="p-2">
-                                    <h6 class="fw-bold text-truncate small mb-1">{{ $deal->name }}</h6>
-                                    @if($deal->original_price && $deal->sale_price)
-                                        <div class="mb-1">
-                                            <span class="text-muted text-decoration-line-through" style="font-size: 0.75rem;">
-                                                {{ $deal->formatted_original_price }}
-                                            </span>
+                    @if(isset($comboAiProducts) && $comboAiProducts->count() > 0)
+                        <div class="row row-cols-2 row-cols-md-4 g-4">
+                            @foreach($comboAiProducts as $product)
+                                <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
+                                    <div class="product-card">
+                                        <div class="card-img-wrap">
+                                            <span class="badge-custom bg-primary">COMBO AI</span>
+                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                         </div>
-                                        <div class="text-danger fw-bold">{{ $deal->formatted_sale_price }}</div>
-                                    @endif
-                                    <a href="{{ $deal->tiktok_link }}" 
-                                       target="_blank" 
-                                       class="btn btn-sm btn-danger w-100 mt-2">
-                                        <i class="fab fa-tiktok"></i> Mua Ngay
-                                    </a>
+                                        <div class="p-3">
+                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
+                                                        <i class="fas fa-cart-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                    </div>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
                     @else
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Chưa có deal nào. Vui lòng quay lại sau!
-                    </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Chưa có combo nào. Vui lòng quay lại sau!
+                        </div>
                     @endif
                 </div>
 

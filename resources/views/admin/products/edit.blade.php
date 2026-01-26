@@ -274,6 +274,24 @@
                     </div>
                 </div>
 
+                <!-- Combo AI Giá Rẻ -->
+                <div class="mb-4">
+                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               role="switch" 
+                               id="is_combo_ai" 
+                               name="is_combo_ai" 
+                               value="1"
+                               {{ old('is_combo_ai', $product->is_combo_ai ?? false) ? 'checked' : '' }}
+                               style="width: 50px; height: 25px; cursor: pointer;">
+                        <label class="form-check-label fw-bold" for="is_combo_ai" style="margin-left: 10px; cursor: pointer;">
+                            <i class="fas fa-robot text-primary me-2"></i>Combo AI giá rẻ
+                            <small class="text-muted d-block">Hiển thị ở trang chủ - mục Combo AI giá rẻ</small>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Delivery Type -->
                 <div class="mb-4">
                     <label class="form-label">

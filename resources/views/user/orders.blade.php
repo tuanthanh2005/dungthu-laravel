@@ -383,7 +383,7 @@
                 </a>
 
                 <!-- Telegram Contact -->
-                <a href="https://t.me/tuanthanh0952" target="_blank" class="contact-option telegram">
+                <a href="https://t.me/dungthucom" target="_blank" class="contact-option telegram">
                     <div class="text-center">
                         <i class="fab fa-telegram icon-telegram"></i>
                         <h6 class="fw-bold mt-2 mb-1">Liên hệ qua Telegram</h6>

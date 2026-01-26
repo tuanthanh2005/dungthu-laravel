@@ -203,7 +203,7 @@
                 <div class="contact-method">
                     <i class="fab fa-telegram"></i>
                     <h5>Telegram</h5>
-                    <a href="https://t.me/tuanthanh0952" target="_blank">@tuanthanh0952</a>
+                    <a href="https://t.me/dungthucom" target="_blank">@dungthucom</a>
                     <p style="font-size: 13px; margin-top: 10px; color: #718096;">Chat trực tiếp và nhanh</p>
                 </div>
                 <div class="contact-method">

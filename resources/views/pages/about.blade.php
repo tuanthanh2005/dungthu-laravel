@@ -119,7 +119,7 @@
                 </p>
                 <p class="mb-1">
                     <strong>Telegram:</strong> 
-                    <a href="https://t.me/tuanthanh0952" target="_blank">@tuanthanh0952</a>
+                    <a href="https://t.me/dungthucom" target="_blank">@dungthucom</a>
                 </p>
                 <p class="mb-0">
                     <strong>Zalo:</strong> 

@@ -19,7 +19,7 @@ Nếu nút trên không hoạt động, hãy copy và paste URL này vào trình
 
 ---
 
-**Cần trợ giúp?** Liên hệ chúng tôi tại [support@dungthu.com](mailto:support@dungthu.com)
+**Cần trợ giúp?** Liên hệ chúng tôi tại [tranthanhtuanfix@gmail.com](mailto:tranthanhtuanfix@gmail.com)
 
 Trân trọng,
 **Đội ngũ DungThu.com**

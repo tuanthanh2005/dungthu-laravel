@@ -307,7 +307,7 @@
                     <a href="mailto:tranthanhtuanfix@gmail.com?subject=Đơn hàng #{{ $order->id }} - Yêu cầu thông tin tài khoản" class="contact-btn">
                         📧 Email Admin
                     </a>
-                    <a href="https://t.me/tuanthanh0952" target="_blank" class="contact-btn">
+                    <a href="https://t.me/dungthucom" target="_blank" class="contact-btn">
                         💬 Telegram
                     </a>
                     <a href="https://zalo.me/0708910952" target="_blank" class="contact-btn">

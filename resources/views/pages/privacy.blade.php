@@ -118,7 +118,7 @@
                 <p>Nếu bạn có bất kỳ câu hỏi nào về chính sách này, vui lòng liên hệ:</p>
                 <ul>
                     <li>📧 Email: <a href="mailto:tranthanhtuanfix@gmail.com">tranthanhtuanfix@gmail.com</a></li>
-                    <li>💬 Telegram: <a href="https://t.me/tuanthanh0952" target="_blank">@tuanthanh0952</a></li>
+                    <li>💬 Telegram: <a href="https://t.me/dungthucom" target="_blank">@dungthucom</a></li>
                 </ul>
             </div>
 

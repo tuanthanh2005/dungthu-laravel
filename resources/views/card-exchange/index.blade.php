@@ -450,19 +450,19 @@
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <i class="fas fa-envelope text-primary me-2"></i>
-                        <strong>Email:</strong> support@dungthu.com
+                        <strong>Email:</strong> tranthanhtuanfix@gmail.com
                     </div>
                     <div class="mb-3">
                         <i class="fas fa-phone text-primary me-2"></i>
-                        <strong>Hotline:</strong> 0123.456.789
+                        <strong>Hotline:</strong> 0772698113
                     </div>
                     <div class="mb-3">
                         <i class="fab fa-facebook text-primary me-2"></i>
-                        <strong>Facebook:</strong> fb.com/dungthu
+                        <strong>Facebook:</strong> https://www.facebook.com/thanh.tuan.378686?locale=vi_VN
                     </div>
                     <div>
                         <i class="fab fa-telegram text-primary me-2"></i>
-                        <strong>Telegram:</strong> <a href="https://t.me/tuanthanh0952" target="_blank">Chat ngay</a>
+                        <strong>Telegram:</strong> <a href="https://t.me/dungthucom" target="_blank">Chat ngay</a>
                     </div>
                     <div>
                         <i class="fas fa-envelope text-primary me-2"></i>

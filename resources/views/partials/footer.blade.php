@@ -192,7 +192,7 @@
                     <i class="fas fa-envelope me-2"></i>
                     <strong>Liên hệ quảng cáo:</strong> tranthanhtuanfix@gmail.com<br>
                     <i class="fab fa-telegram me-2"></i>
-                    <strong>Telegram:</strong> @tuanthanh0952
+                    <strong>Telegram:</strong> @dungthucom
                 </div>
             </div>
         </div>
@@ -223,7 +223,7 @@
                 </a>
 
                 <!-- Telegram Contact -->
-                <a href="https://t.me/tuanthanh0952" target="_blank" class="d-block p-3 mb-3 rounded-3" style="background: linear-gradient(135deg, #4facfe15 0%, #00f2fe15 100%); border: 2px solid #0088cc; text-decoration: none; color: inherit; transition: all 0.3s ease;">
+                <a href="https://t.me/dungthucom" target="_blank" class="d-block p-3 mb-3 rounded-3" style="background: linear-gradient(135deg, #4facfe15 0%, #00f2fe15 100%); border: 2px solid #0088cc; text-decoration: none; color: inherit; transition: all 0.3s ease;">
                     <div style="text-align: center;">
                         <i class="fab fa-telegram" style="font-size: 2rem; color: #0088cc; margin-bottom: 10px; display: block;"></i>
                         <h6 class="fw-bold mt-2 mb-1">💬 Telegram</h6>

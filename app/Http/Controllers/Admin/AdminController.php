@@ -697,6 +697,11 @@ class AdminController extends Controller
         
         $imagePath = null;
         if ($request->hasFile('image')) {
+            $dir = public_path('images/blogs');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
@@ -745,6 +750,11 @@ class AdminController extends Controller
         
         $imagePath = $blog->image;
         if ($request->hasFile('image')) {
+            $dir = public_path('images/blogs');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
             // Delete old image
             if ($blog->image) {
                 $oldImagePath = parse_url($blog->image, PHP_URL_PATH);
@@ -762,7 +772,7 @@ class AdminController extends Controller
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
             
-            $blog->image = asset('/images/blogs/' . $fileName);
+            $imagePath = asset('/images/blogs/' . $fileName);
         }
 
         $blog->update([

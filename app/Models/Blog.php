@@ -73,4 +73,21 @@ class Blog extends Model
     {
         return $this->published_at ? $this->published_at->format('d/m/Y') : $this->created_at->format('d/m/Y');
     }
+
+    public function getImageAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        if (preg_match('/^(https?:)?\\/\\//i', $value)) {
+            return $value;
+        }
+
+        if ($value[0] !== '/') {
+            $value = '/' . $value;
+        }
+
+        return asset($value);
+    }
 }

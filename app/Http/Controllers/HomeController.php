@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Product;
 use App\Models\Blog;
+use App\Models\Order;
 use App\Models\TiktokDeal;
 
 class HomeController extends Controller
@@ -23,6 +25,55 @@ class HomeController extends Controller
         // Lấy 4 blog mới nhất (published)
         $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(4)->get();
         
-        return view('home', compact('featuredProducts', 'highlightProducts', 'tiktokDeals', 'latestBlogs'));
+        $recentPurchases = Cache::remember('home.recent_purchases.v1', now()->addMinutes(5), function () {
+            return Order::query()
+                ->with(['orderItems.product'])
+                ->whereNotIn('status', ['cancelled'])
+                ->latest()
+                ->take(10)
+                ->get()
+                ->map(function (Order $order) {
+                    $firstItem = $order->orderItems->first();
+                    $product = $firstItem?->product;
+                    $extraItems = max(0, $order->orderItems->count() - 1);
+
+                    $verb = in_array($order->status, ['completed', 'delivered', 'shipped'], true) ? 'mua' : 'đặt';
+
+                    return [
+                        'customer_name' => self::maskCustomerName((string) $order->customer_name),
+                        'verb' => $verb,
+                        'product_name' => $product?->name ?? 'Sản phẩm',
+                        'product_slug' => $product?->slug,
+                        'product_url' => $product?->slug ? route('product.show', $product->slug) : null,
+                        'extra_items' => $extraItems,
+                        'time_ago' => optional($order->created_at)->diffForHumans(),
+                    ];
+                })
+                ->values()
+                ->all();
+        });
+
+        return view('home', compact('featuredProducts', 'highlightProducts', 'tiktokDeals', 'latestBlogs', 'recentPurchases'));
+    }
+
+    private static function maskCustomerName(string $name): string
+    {
+        $name = trim($name);
+        if ($name === '') {
+            return 'Khách hàng';
+        }
+
+        $parts = preg_split('/\\s+/u', $name) ?: [];
+        $parts = array_values(array_filter($parts, fn ($p) => $p !== ''));
+
+        if (count($parts) === 1) {
+            $first = mb_substr($parts[0], 0, 1);
+            return $first . '***';
+        }
+
+        $givenName = $parts[count($parts) - 1];
+        $surnameInitial = mb_substr($parts[0], 0, 1);
+
+        return $givenName . ' ' . $surnameInitial . '.';
     }
 }

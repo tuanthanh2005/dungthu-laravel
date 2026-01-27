@@ -7,6 +7,7 @@ return [
     // Các route name được miễn nhập mã (ví dụ: cập nhật trạng thái đơn hàng)
     'pin_exempt_route_names' => [
         'admin.orders.update-status',
+        'admin.chat.reply',
     ],
 
     // Số đơn hàng hiển thị cho khách (tạo cảm giác shop đã bán nhiều)

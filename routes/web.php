@@ -83,6 +83,8 @@ Route::middleware('auth')->prefix('chat')->group(function () {
     Route::get('/messages', [ChatController::class, 'index'])->name('chat.messages');
     Route::post('/send', [ChatController::class, 'store'])->name('chat.send');
     Route::get('/new', [ChatController::class, 'getNewMessages'])->name('chat.new');
+    Route::get('/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
+    Route::post('/mark-read', [ChatController::class, 'markRead'])->name('chat.mark-read');
 });
 
 // Admin Chat routes

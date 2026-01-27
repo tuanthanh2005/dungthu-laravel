@@ -57,14 +57,37 @@ class ChatController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Đánh dấu tin nhắn từ admin là đã đọc
+        return response()->json($messages);
+    }
+
+    // User: Đếm tin nhắn chưa đọc từ admin
+    public function unreadCount()
+    {
+        if (!Auth::check()) {
+            return response()->json(['error' => 'Vui lòng đăng nhập'], 401);
+        }
+
+        $count = Message::where('user_id', Auth::id())
+            ->where('is_admin', true)
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json(['unread' => $count]);
+    }
+
+    // User: Đánh dấu đã đọc tất cả tin nhắn từ admin
+    public function markRead()
+    {
+        if (!Auth::check()) {
+            return response()->json(['error' => 'Vui lòng đăng nhập'], 401);
+        }
+
         Message::where('user_id', Auth::id())
-            ->where('id', '>', $lastId)
             ->where('is_admin', true)
             ->where('is_read', false)
             ->update(['is_read' => true]);
 
-        return response()->json($messages);
+        return response()->json(['ok' => true]);
     }
 
     // Admin: Xem danh sách users có tin nhắn

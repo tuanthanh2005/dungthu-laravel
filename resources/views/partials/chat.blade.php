@@ -1,5 +1,6 @@
 <!-- Chat Widget -->
 @auth
+@if(auth()->user()->role !== 'admin')
 <div id="chatWidget" class="chat-widget">
     <div class="chat-header">
         <h6 class="mb-0">
@@ -322,12 +323,15 @@ let chatWidget = null;
 let lastMessageId = 0;
 let pollingInterval = null;
 let tooltipInterval = null;
+let isChatOpen = false;
 
 document.addEventListener('DOMContentLoaded', function() {
     chatWidget = document.getElementById('chatWidget');
     loadMessages();
     startPolling();
     startTooltipCycle();
+    refreshUnreadCount();
+    setInterval(refreshUnreadCount, 30000);
 });
 
 function toggleChatWidget() {
@@ -340,13 +344,16 @@ function toggleChatWidget() {
 
 function openChatWidget() {
     chatWidget.classList.add('active');
+    isChatOpen = true;
     loadMessages();
     scrollToBottom();
     document.getElementById('chatInput').focus();
+    markAllAsRead();
 }
 
 function closeChatWidget() {
     chatWidget.classList.remove('active');
+    isChatOpen = false;
 }
 
 function loadMessages() {
@@ -440,7 +447,11 @@ function scrollToBottom() {
 
 function startPolling() {
     pollingInterval = setInterval(() => {
-        checkNewMessages();
+        if (isChatOpen) {
+            checkNewMessages();
+        } else {
+            refreshUnreadCount();
+        }
     }, 3000); // Check every 3 seconds
 }
 
@@ -449,20 +460,19 @@ function checkNewMessages() {
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
-                let unreadCount = 0;
+                let hasAdminMessage = false;
                 data.forEach(message => {
-                    if (message.is_admin && !message.is_read) {
-                        unreadCount++;
-                    }
                     appendMessage(message);
+                    if (message.is_admin) {
+                        hasAdminMessage = true;
+                    }
                     lastMessageId = Math.max(lastMessageId, message.id);
                 });
                 
                 scrollToBottom();
-                
-                // Update unread badge
-                if (unreadCount > 0 && !chatWidget.classList.contains('active')) {
-                    showUnreadBadge(unreadCount);
+
+                if (hasAdminMessage) {
+                    markAllAsRead();
                 }
             }
         })
@@ -473,11 +483,9 @@ function checkNewMessages() {
 
 function showUnreadBadge(count) {
     const badge = document.getElementById('unreadBadge');
-    const currentCount = parseInt(badge.textContent) || 0;
-    const newCount = currentCount + count;
-    
-    badge.textContent = newCount;
-    badge.style.display = 'flex';
+    const safeCount = Math.max(0, parseInt(count) || 0);
+    badge.textContent = safeCount;
+    badge.style.display = safeCount > 0 ? 'flex' : 'none';
 }
 
 function hideUnreadBadge() {
@@ -486,12 +494,31 @@ function hideUnreadBadge() {
     badge.style.display = 'none';
 }
 
-// Hide badge when chat is opened
-const originalOpenChat = openChatWidget;
-openChatWidget = function() {
-    originalOpenChat();
-    hideUnreadBadge();
-};
+function refreshUnreadCount() {
+    fetch(`{{ route('chat.unread-count') }}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || typeof data.unread === 'undefined') return;
+            if (isChatOpen) return;
+            showUnreadBadge(data.unread);
+        })
+        .catch(err => console.error('Error fetching unread count:', err));
+}
+
+function markAllAsRead() {
+    fetch(`{{ route('chat.mark-read') }}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({})
+    })
+    .then(() => {
+        hideUnreadBadge();
+    })
+    .catch(err => console.error('Error marking read:', err));
+}
 
 function escapeHtml(text) {
     const map = {
@@ -535,4 +562,5 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 </script>
+@endif
 @endauth

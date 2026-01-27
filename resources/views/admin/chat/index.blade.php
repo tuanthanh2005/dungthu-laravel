@@ -116,6 +116,7 @@
         overflow-y: auto;
         padding: 20px;
         background: #f8f9fa;
+        min-height: 0;
     }
 
     .chat-message {
@@ -160,6 +161,8 @@
         padding: 20px;
         border-top: 1px solid #e9ecef;
         background: white;
+        position: relative;
+        z-index: 2;
     }
 
     .empty-state {
@@ -336,26 +339,79 @@ function sendAdminMessage(event) {
     const message = input.value.trim();
     
     if (!message) return;
-    
-    fetch(`/admin/chat/reply/${selectedUserId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ message: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        appendAdminMessage(data);
-        lastMessageId = Math.max(lastMessageId, data.id);
-        input.value = '';
-        scrollToBottom();
-    })
-    .catch(error => {
-        console.error('Error sending message:', error);
-        alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
-    });
+
+    function send(payload) {
+        return fetch(`/admin/chat/reply/${selectedUserId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(async (response) => {
+            const contentType = response.headers.get('content-type') || '';
+
+            let data = null;
+            if (contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                const err = new Error(text || `HTTP ${response.status}`);
+                err.status = response.status;
+                throw err;
+            }
+
+            if (!response.ok) {
+                const err = new Error(data?.message || `HTTP ${response.status}`);
+                err.status = response.status;
+                throw err;
+            }
+
+            return data;
+        });
+    }
+
+    send({ message })
+        .then(data => {
+            appendAdminMessage(data);
+            lastMessageId = Math.max(lastMessageId, data.id);
+            input.value = '';
+            scrollToBottom();
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+
+            const msg = error?.message || 'Không thể gửi tin nhắn. Vui lòng thử lại!';
+            const status = error?.status;
+
+            // Nếu server yêu cầu mã xác nhận, mở ô nhập và gửi lại kèm admin_pin
+            if (status === 403 && /mã xác nhận/i.test(msg)) {
+                const pin = window.prompt('Nhập mã xác nhận 3 số (vd: 999):');
+                if (pin === null) return;
+                if (!/^\d{3}$/.test(pin)) {
+                    alert('Mã xác nhận phải đúng 3 số.');
+                    return;
+                }
+
+                send({ message, admin_pin: pin })
+                    .then(data => {
+                        appendAdminMessage(data);
+                        lastMessageId = Math.max(lastMessageId, data.id);
+                        input.value = '';
+                        scrollToBottom();
+                    })
+                    .catch(err2 => {
+                        console.error('Error sending message after pin:', err2);
+                        alert(err2?.message || 'Không thể gửi tin nhắn. Vui lòng thử lại!');
+                    });
+
+                return;
+            }
+
+            alert(msg);
+        });
 }
 
 function appendAdminMessage(message) {

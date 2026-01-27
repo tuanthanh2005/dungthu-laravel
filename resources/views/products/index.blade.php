@@ -4,6 +4,44 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <style>
+        .shop-category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 4px; /* room for iOS scroll bar */
+        }
+
+        .shop-category-tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .shop-category-btn {
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.2rem 0.4rem;
+            white-space: nowrap;
+            flex: 0 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .shop-category-tabs {
+                flex-wrap: wrap;
+                overflow-x: visible;
+                gap: 0.75rem;
+            }
+
+            .shop-category-btn {
+                border-radius: 18px;
+                font-size: 1rem;
+                padding: 0.65rem 1.1rem;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -25,30 +63,31 @@
                         <label class="form-label fw-bold mb-3 text-center d-block" style="font-size: 1.1rem;">
                             <i class="fas fa-filter me-2 text-primary"></i>Danh mục
                         </label>
-                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <div class="shop-category-tabs">
+                            {{-- Tạm thời ẩn danh mục "Tất cả" --}}
+                            {{--
                             <a href="{{ route('shop') }}" 
-                               class="btn btn-{{ $currentCategory == 'all' ? 'primary' : 'outline-primary' }} px-3 py-2" 
-                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
+                               class="btn btn-{{ $currentCategory == 'all' ? 'primary' : 'outline-primary' }} shop-category-btn">
                                 Tất cả
                             </a>
+                            --}}
+                            <a href="{{ route('shop', ['category' => 'tech']) }}" 
+                               class="btn btn-{{ $currentCategory == 'tech' ? 'info' : 'outline-info' }} shop-category-btn">
+                                <i class="fas fa-microchip me-2"></i>AI
+                            </a>
                             <a href="{{ route('shop', ['category' => 'tiktok']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tiktok' ? 'warning' : 'outline-warning' }} px-3 py-2" 
-                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
+                               class="btn btn-{{ $currentCategory == 'tiktok' ? 'warning' : 'outline-warning' }} shop-category-btn">
                                 <i class="fab fa-tiktok me-2"></i>Săn Sale
                             </a>
-                            <a href="{{ route('shop', ['category' => 'tech']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tech' ? 'info' : 'outline-info' }} px-3 py-2" 
-                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
-                                <i class="fas fa-microchip me-2"></i>Công nghệ
-                            </a>
+                            {{-- Tạm thời ẩn danh mục "Tài liệu" --}}
+                            {{--
                             <a href="{{ route('shop', ['category' => 'ebooks']) }}" 
-                               class="btn btn-{{ $currentCategory == 'ebooks' ? 'success' : 'outline-success' }} px-3 py-2" 
-                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
+                               class="btn btn-{{ $currentCategory == 'ebooks' ? 'success' : 'outline-success' }} shop-category-btn">
                                 <i class="fas fa-file-pdf me-2"></i>Tài liệu
                             </a>
+                            --}}
                             <a href="{{ route('card-exchange.index') }}" 
-                               class="btn btn-outline-danger px-3 py-2" 
-                               style="border-radius: 15px; font-size: 0.85rem; font-weight: 600;">
+                               class="btn btn-outline-danger shop-category-btn">
                                 <i class="fas fa-credit-card me-2"></i>Đổi Thẻ
                             </a>
                         </div>

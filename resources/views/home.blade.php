@@ -216,22 +216,22 @@
         <i class="fas fa-th"></i>
     </div>
     <div class="category-fab-menu" id="categoryFabMenu">
-        <div class="cat-box text-center" onclick="filterData('all'); toggleCategoryMenu(event);">
+       {{-- <div class="cat-box text-center" onclick="filterData('all'); toggleCategoryMenu(event);">
             <i class="fas fa-th-large cat-icon"></i>
             <div class="fw-bold">Tất Cả</div>
-        </div>
+        </div>  --}}
         <div class="cat-box text-center" onclick="filterData('tech'); toggleCategoryMenu(event);">
             <i class="fas fa-laptop-code cat-icon"></i>
-            <div class="fw-bold">Công Nghệ</div>
+            <div class="fw-bold">AI</div>
         </div>
         <div class="cat-box text-center" onclick="filterData('tiktok'); toggleCategoryMenu(event);">
             <i class="fab fa-tiktok cat-icon"></i>
             <div class="fw-bold">Săn Sale TikTok</div>
-        </div>
-        <div class="cat-box text-center" onclick="filterData('ebooks'); toggleCategoryMenu(event);">
+        </div> 
+     {{--   <div class="cat-box text-center" onclick="filterData('ebooks'); toggleCategoryMenu(event);">
             <i class="fas fa-file-invoice-dollar cat-icon"></i>
             <div class="fw-bold">Tài Liệu Kiếm Tiền</div>
-        </div>
+        </div> --}}
         <div class="cat-box text-center" onclick="handleCardExchangeClick(); toggleCategoryMenu(event);">
             <i class="fas fa-credit-card cat-icon"></i>
             <div class="fw-bold">Đổi Thẻ Cào</div>

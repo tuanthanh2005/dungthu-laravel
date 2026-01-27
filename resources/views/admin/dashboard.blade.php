@@ -149,8 +149,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.chat.index') }}">
+                    <a class="nav-link position-relative" href="{{ route('admin.chat.index') }}">
                         <i class="fas fa-comments me-2"></i>Chat
+                        @if(($unreadChatCount ?? 0) > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                                {{ $unreadChatCount }}
+                                <span class="visually-hidden">tin nhắn chưa đọc</span>
+                            </span>
+                        @endif
                     </a>
                 </li>
             </ul>
@@ -291,4 +298,3 @@
     AOS.init({ duration: 800, once: true });
 </script>
 @endpush
-

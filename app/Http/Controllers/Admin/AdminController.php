@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Blog;
+use App\Models\Message;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
@@ -84,10 +85,14 @@ class AdminController extends Controller
             'users' => User::where('role', 'user')->count(),
             'blogs' => Blog::count(),
         ];
+
+        $unreadChatCount = Message::where('is_admin', false)
+            ->where('is_read', false)
+            ->count();
         
         $latestOrders = Order::with(['user', 'orderItems.product'])->latest()->take(5)->get();
         
-        return view('admin.dashboard', compact('stats', 'latestOrders'));
+        return view('admin.dashboard', compact('stats', 'latestOrders', 'unreadChatCount'));
     }
 
     // User Management

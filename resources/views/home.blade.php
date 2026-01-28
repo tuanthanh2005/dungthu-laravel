@@ -503,7 +503,7 @@
                                 <div class="card-img-wrap">
                                     <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
                                     @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Het hang</span>
+                                        <span class="out-of-stock-badge">Hết Hàng</span>
                                     @endif
                                     <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                 </div>

@@ -219,7 +219,7 @@
                         </div>
                     @else
                         <!-- Purchase Button -->
-                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
+                        <form action="{{ route('cart.buy-now', $product->id) }}" method="POST" class="mt-4">
                             @csrf
                             <button type="submit" class="btn download-btn btn-lg w-100 shadow"
                                     {{ $product->stock > 0 ? '' : 'disabled' }}>
@@ -232,7 +232,7 @@
                         </p>
                     @endif
                     
-                    <div class="d-flex gap-2 mt-3">
+                    <div class="d-flex gap-2 mt-3 flex-wrap">
                         <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
                             <i class="fas fa-arrow-left me-2"></i> Tiếp tục mua
                         </a>

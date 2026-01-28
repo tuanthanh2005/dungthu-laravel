@@ -80,8 +80,8 @@
                                     @foreach($cart as $id => $details)
                                     @php $total += $details['price'] * $details['quantity'] @endphp
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span>{{ $details['name'] }} x{{ $details['quantity'] }}</span>
-                                        <strong>{{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}đ</strong>
+                                        <span class="text-break" style="max-width: 75%;">{{ $details['name'] }} x{{ $details['quantity'] }}</span>
+                                        <strong class="text-nowrap">{{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}đ</strong>
                                     </div>
                                     @endforeach
                                     <hr>

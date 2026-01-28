@@ -59,10 +59,10 @@ Route::get('/test-callback', function () {
 // Cart routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/buy-now/{id}', [CartController::class, 'buyNow'])->name('cart.buy-now');
 Route::post('/cart/increment/{id}', [CartController::class, 'increment'])->name('cart.increment');
 Route::post('/cart/decrement/{id}', [CartController::class, 'decrement'])->name('cart.decrement');
 Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-
 // Checkout routes (requires auth)
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');

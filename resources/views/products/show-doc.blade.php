@@ -163,12 +163,18 @@
                     
                     <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
                         @csrf
-                        <div class="d-flex gap-3 mb-4">
-                            <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
+                        <div class="d-flex gap-3 mb-3 flex-wrap">
+                    <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
                                     style="background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%); color: white; border: none;"
                                     {{ $product->stock > 0 ? '' : 'disabled' }}>
                                 <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ
                             </button>
+                            @if($product->delivery_type === 'digital')
+                            <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow"
+                                    {{ $product->stock > 0 ? '' : 'disabled' }}>
+                                <i class="fas fa-bolt me-2"></i> Mua ngay
+                            </button>
+                            @endif
                             <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
                                 <i class="fas fa-arrow-left me-2"></i> Tiếp tục mua
                             </a>

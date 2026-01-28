@@ -145,8 +145,8 @@
                                 </h6>
                                 @foreach($digitalProducts as $item)
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>{{ $item['name'] }} x{{ $item['quantity'] }}</span>
-                                    <strong>{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}đ</strong>
+                                    <span class="text-break" style="max-width: 75%;">{{ $item['name'] }} x{{ $item['quantity'] }}</span>
+                                    <strong class="text-nowrap">{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}đ</strong>
                                 </div>
                                 @endforeach
                             </div>
@@ -159,8 +159,8 @@
                                 </h6>
                                 @foreach($physicalProducts as $item)
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>{{ $item['name'] }} x{{ $item['quantity'] }}</span>
-                                    <strong>{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}đ</strong>
+                                    <span class="text-break" style="max-width: 75%;">{{ $item['name'] }} x{{ $item['quantity'] }}</span>
+                                    <strong class="text-nowrap">{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}đ</strong>
                                 </div>
                                 @endforeach
                             </div>

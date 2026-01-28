@@ -39,6 +39,28 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Đã thêm sản phẩm vào giỏ hàng!');
     }
 
+    public function buyNow($id)
+    {
+        $product = Product::findOrFail($id);
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+        } else {
+            $cart[$id] = [
+                "name" => $product->name,
+                "quantity" => 1,
+                "price" => $product->effective_price,
+                "image" => $product->image
+            ];
+        }
+
+        session()->put('cart', $cart);
+        $this->syncAbandonedCart($cart);
+
+        return redirect()->route('checkout');
+    }
+
     public function remove($id)
     {
         $cart = session()->get('cart');

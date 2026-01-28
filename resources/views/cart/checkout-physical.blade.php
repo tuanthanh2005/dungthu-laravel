@@ -121,8 +121,8 @@
                                              alt="{{ $details['name'] }}" 
                                              class="rounded me-3"
                                              style="width: 50px; height: 50px; object-fit: cover;">
-                                        <div>
-                                            <h6 class="mb-0">{{ $details['name'] }}</h6>
+                                        <div style="max-width: 220px;">
+                                            <h6 class="mb-0 text-break">{{ $details['name'] }}</h6>
                                             <small class="text-muted">SL: {{ $details['quantity'] }}</small>
                                         </div>
                                     </div>

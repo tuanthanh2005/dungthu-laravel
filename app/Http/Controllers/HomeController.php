@@ -31,17 +31,21 @@ class HomeController extends Controller
         
 
         // S?n ph?m ?ang gi?m gi? (hi?n th? 2-3 sp tr?n home)
-        $saleProducts = Product::query()
-            ->whereNotNull('sale_price')
-            ->whereColumn('sale_price', '<', 'price')
-            ->inStock()
-            ->orderByDesc('is_flash_sale')
-            ->latest()
-            ->take(4)
-            ->get();
-
-        // ??m ng??c ??n cu?i ng?y
+        // ??m ng??c ??n cu?i ng?y (het gio thi an block, khong reset gia)
         $saleEndsAt = now()->endOfDay();
+        if (now()->lt($saleEndsAt)) {
+            $saleProducts = Product::query()
+                ->whereNotNull('sale_price')
+                ->whereColumn('sale_price', '<', 'price')
+                ->inStock()
+                ->orderByDesc('is_flash_sale')
+                ->latest()
+                ->take(4)
+                ->get();
+        } else {
+            $saleProducts = collect();
+        }
+
         $recentPurchases = Cache::remember('home.recent_purchases.v1', now()->addMinutes(5), function () {
             return Order::query()
                 ->with(['orderItems.product'])

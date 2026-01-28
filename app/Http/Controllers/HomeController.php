@@ -35,6 +35,7 @@ class HomeController extends Controller
             ->whereNotNull('sale_price')
             ->whereColumn('sale_price', '<', 'price')
             ->inStock()
+            ->orderByDesc('is_flash_sale')
             ->latest()
             ->take(4)
             ->get();

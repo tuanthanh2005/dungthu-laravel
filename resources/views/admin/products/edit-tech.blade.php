@@ -321,6 +321,22 @@
                     </div>
                 </div>
 
+                <div class="mb-4">
+                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               role="switch"
+                               id="is_flash_sale"
+                               name="is_flash_sale"
+                               value="1"
+                               {{ old('is_flash_sale', $product->is_flash_sale ?? false) ? 'checked' : '' }}
+                               style="width: 50px; height: 25px; cursor: pointer;">
+                        <label class="form-check-label fw-bold" for="is_flash_sale" style="margin-left: 10px; cursor: pointer;">
+                            <i class="fas fa-bolt text-danger me-2"></i>Uu tien Flash Sale
+                            <small class="text-muted d-block">Dua len 4 o giam gia tren trang chu</small>
+                        </label>
+                    </div>
+                </div>
                 <!-- Featured Product -->
                 <div class="mb-4">
                     <div class="form-check form-switch" style="padding-left: 2.5rem;">

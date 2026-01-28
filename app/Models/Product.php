@@ -26,6 +26,7 @@ class Product extends Model
         'is_featured',
         'is_exclusive',
         'is_combo_ai',
+        'is_flash_sale',
     ];
 
     protected $casts = [
@@ -36,6 +37,7 @@ class Product extends Model
         'is_featured' => 'boolean',
         'is_exclusive' => 'boolean',
         'is_combo_ai' => 'boolean',
+        'is_flash_sale' => 'boolean',
     ];
 
     // Relationship với OrderItems

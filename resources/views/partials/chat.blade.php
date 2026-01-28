@@ -186,39 +186,33 @@
 .chat-message {
     margin-bottom: 15px;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
     width: 100%;
 }
 
 .chat-message.user {
-    justify-content: flex-end;
+    align-items: flex-end;
 }
 
 .chat-message.admin {
-    justify-content: flex-start;
+    align-items: flex-start;
 }
 
-.chat-message > div {
-    max-width: 75%;
-    width: fit-content;
-    flex: 0 0 auto;
-}
-
-.chat-message.user > div {
-    margin-left: auto;
-}
-
-.chat-message.admin > div {
-    margin-right: auto;
+.message-bubble {
+    max-width: 78%;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .message-content {
-    max-width: 75%;
+    min-width: 44px;
     padding: 10px 15px;
     border-radius: 18px;
     overflow-wrap: anywhere;
     word-break: break-word;
     white-space: pre-wrap;
+    text-align: left;
 }
 
 .chat-message.user .message-content {
@@ -242,6 +236,11 @@
 
 .chat-message.user .message-time {
     text-align: right;
+    align-self: flex-end;
+}
+
+.chat-message.admin .message-time {
+    align-self: flex-start;
 }
 
 .chat-footer {
@@ -446,7 +445,7 @@ function appendMessage(message) {
     const timeStr = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     
     messageDiv.innerHTML = `
-        <div>
+        <div class="message-bubble">
             <div class="message-content">
                 ${escapeHtml(message.message)}
             </div>

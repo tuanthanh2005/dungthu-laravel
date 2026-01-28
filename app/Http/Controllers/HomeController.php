@@ -29,6 +29,18 @@ class HomeController extends Controller
         // Lấy 4 blog mới nhất (published)
         $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(4)->get();
         
+
+        // S?n ph?m ?ang gi?m gi? (hi?n th? 2-3 sp tr?n home)
+        $saleProducts = Product::query()
+            ->whereNotNull('sale_price')
+            ->whereColumn('sale_price', '<', 'price')
+            ->inStock()
+            ->latest()
+            ->take(4)
+            ->get();
+
+        // ??m ng??c ??n cu?i ng?y
+        $saleEndsAt = now()->endOfDay();
         $recentPurchases = Cache::remember('home.recent_purchases.v1', now()->addMinutes(5), function () {
             return Order::query()
                 ->with(['orderItems.product'])
@@ -57,7 +69,15 @@ class HomeController extends Controller
                 ->all();
         });
 
-        return view('home', compact('featuredProducts', 'highlightProducts', 'comboAiProducts', 'latestBlogs', 'recentPurchases'));
+        return view('home', compact(
+            'featuredProducts',
+            'highlightProducts',
+            'comboAiProducts',
+            'latestBlogs',
+            'recentPurchases',
+            'saleProducts',
+            'saleEndsAt'
+        ));
     }
 
     private static function maskCustomerName(string $name): string

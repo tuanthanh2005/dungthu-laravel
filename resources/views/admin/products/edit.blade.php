@@ -204,7 +204,7 @@
                 <!-- Price and Stock -->
                 <div class="row mb-4">
                     <div class="col-md-4">
-                        <label for="price" class="form-label">
+<label for="price" class="form-label">
                             <i class="fas fa-dollar-sign me-2 text-primary"></i>Giá (VNĐ) <span class="text-danger">*</span>
                         </label>
                         <input type="number" 
@@ -221,6 +221,19 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
+                        <div class="form-check form-switch mb-2" style="padding-left: 2.5rem;">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   role="switch"
+                                   id="is_on_sale"
+                                   name="is_on_sale"
+                                   value="1"
+                                   {{ old('is_on_sale', (bool) $product->sale_price) ? 'checked' : '' }}
+                                   style="width: 46px; height: 22px; cursor: pointer;">
+                            <label class="form-check-label fw-bold" for="is_on_sale" style="margin-left: 8px; cursor: pointer;">
+                                <i class="fas fa-tags text-danger me-1"></i>Bat giam gia
+                            </label>
+                        </div>
                         <label for="sale_price" class="form-label">
                             <i class="fas fa-tags me-2 text-danger"></i>Giá giảm (VNĐ)
                         </label>

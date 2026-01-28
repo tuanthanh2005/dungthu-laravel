@@ -302,7 +302,63 @@
             height: 36px;
             box-shadow: 0 6px 16px rgba(0,0,0,0.12);
         }
-    </style>
+    
+
+        /* Flash sale */
+        .flash-sale {
+            background: linear-gradient(135deg, rgba(255,77,79,0.08), rgba(255,122,89,0.08));
+            border: 1px solid rgba(255,77,79,0.16);
+            border-radius: 14px;
+            padding: 12px 14px;
+        }
+        .flash-sale .section-title { margin-bottom: 2px; font-size: 1.05rem; }
+        .flash-sale .product-card { border-radius: 14px; box-shadow: 0 10px 22px rgba(0,0,0,0.08); }
+        .flash-sale .product-card .card-img-wrap img { height: 140px; }
+        .flash-sale .product-card .p-3 { padding: 10px 10px 12px !important; }
+        .flash-sale .product-title-2lines { font-size: 0.9rem; line-height: 1.25; min-height: calc(1.25em * 2); }
+        .flash-sale .badge-custom { font-size: 10px; padding: 4px 7px; }
+        .flash-sale-timer {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            border-radius: 999px;
+            padding: 6px 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .flash-sale-timer .timer-label {
+            font-size: 0.78rem;
+            color: #6b7280;
+        }
+        .flash-sale-timer .timer-pills {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+        .flash-sale-timer .timer-pill {
+            min-width: 28px;
+            text-align: center;
+            background: #111827;
+            color: #fff;
+            padding: 4px 6px;
+            border-radius: 10px;
+            font-variant-numeric: tabular-nums;
+            font-size: 0.8rem;
+        }
+        .flash-sale-timer .timer-sep {
+            color: #9ca3af;
+            font-weight: 800;
+        }
+        @media (max-width: 576px) {
+            .flash-sale { padding: 10px 12px; }
+            .flash-sale-timer { padding: 5px 8px; gap: 6px; }
+            .flash-sale-timer .timer-pill { min-width: 24px; font-size: 0.75rem; }
+            .flash-sale .product-card .card-img-wrap img { height: 110px; }
+            .flash-sale .product-title-2lines { font-size: 0.82rem; }
+        }
+</style>
 @endpush
 
 @section('content')
@@ -331,6 +387,56 @@
     </div>
 
     <div class="container" style="margin-top: 80px; padding-top: 20px;">
+
+    @if(isset($saleProducts) && $saleProducts->count() > 0)
+        <div id="flash-sale" class="flash-sale mb-5" data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}">
+            <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
+                <div>
+                    <span class="text-danger fw-bold text-uppercase ls-1">Flash sale</span>
+                    <h3 class="fw-bold section-title">Giảm giá hôm nay</h3>
+                    <p class="text-muted mb-0">Giá ưu đãi sẽ kết thúc khi hết thời gian.</p>
+                </div>
+                <div class="flash-sale-timer">
+                    <span class="timer-label">Kết thúc sau</span>
+                    <div class="timer-pills" aria-live="polite">
+                        <span class="timer-pill" data-unit="hours">00</span>
+                        <span class="timer-sep">:</span>
+                        <span class="timer-pill" data-unit="minutes">00</span>
+                        <span class="timer-sep">:</span>
+                        <span class="timer-pill" data-unit="seconds">00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-cols-2 row-cols-md-4 g-3 g-md-4">
+                @foreach($saleProducts as $product)
+                <div class="col" data-aos="fade-up">
+                    <div class="product-card">
+                        <div class="card-img-wrap">
+                            <span class="badge-custom bg-danger">Giảm {{ $product->discount_percent }}%</span>
+                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
+                        </div>
+                        <div class="p-3">
+                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <div class="flex-grow-1 me-2" style="min-width: 0;">
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <span class="text-danger fw-bold">{{ $product->formatted_price }}</span>
+                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                    </div>
+                                </div>
+                                <a href="{{ route('product.show', $product->slug) }}" class="btn btn-sm btn-light rounded-circle text-danger">
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
         <div class="row">
             
             <div class="col-12">
@@ -723,6 +829,41 @@
 
 @push('scripts')
     <script src="{{ asset('js/home.js') }}?v={{ filemtime(public_path('js/home.js')) }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const wrap = document.getElementById('flash-sale');
+            if (!wrap) return;
+            const endMs = parseInt(wrap.dataset.countdownEnd || '0', 10);
+            const hoursEl = wrap.querySelector('[data-unit="hours"]');
+            const minutesEl = wrap.querySelector('[data-unit="minutes"]');
+            const secondsEl = wrap.querySelector('[data-unit="seconds"]');
+
+            function pad(num) {
+                return String(num).padStart(2, '0');
+            }
+
+            function tick() {
+                const now = Date.now();
+                let diff = Math.max(0, endMs - now);
+                if (endMs > 0 && diff <= 0) {
+                    wrap.style.display = 'none';
+                    return;
+                }
+                const hours = Math.floor(diff / 3600000);
+                diff = diff % 3600000;
+                const minutes = Math.floor(diff / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+
+                if (hoursEl) hoursEl.textContent = pad(hours);
+                if (minutesEl) minutesEl.textContent = pad(minutes);
+                if (secondsEl) secondsEl.textContent = pad(seconds);
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
          document.addEventListener('DOMContentLoaded', function () {

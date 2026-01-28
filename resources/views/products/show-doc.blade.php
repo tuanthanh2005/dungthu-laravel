@@ -149,10 +149,13 @@
                     </div>
                     
                     @if($product->stock > 0)
-                        <div class="alert alert-success d-inline-block">
-                            <i class="fas fa-check-circle"></i> Còn hàng ({{ $product->stock }} sản phẩm)
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <div class="alert alert-success d-inline-flex align-items-center mb-0">
+                                <i class="fas fa-check-circle"></i> Còn hàng ({{ $product->stock }} sản phẩm)
+                            </div>
+                            <small class="text-muted">Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat</small>
                         </div>
-                    @else
+                        @else
                         <div class="alert alert-danger d-inline-block">
                             <i class="fas fa-times-circle"></i> Hết hàng
                         </div>

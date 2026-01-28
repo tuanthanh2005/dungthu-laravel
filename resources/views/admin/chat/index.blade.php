@@ -419,7 +419,7 @@ function sendAdminMessage(event) {
 
             // Nếu server yêu cầu mã xác nhận, mở ô nhập và gửi lại kèm admin_pin
             if (status === 403 && /mã xác nhận/i.test(msg)) {
-                const pin = window.prompt('Nhập mã xác nhận 3 số (vd: 999):');
+                const pin = window.prompt('Nhập mã xác nhận 3 số (vd: 123):');
                 if (pin === null) return;
                 if (!/^\d{3}$/.test(pin)) {
                     alert('Mã xác nhận phải đúng 3 số.');

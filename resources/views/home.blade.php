@@ -496,8 +496,7 @@
                 <div id="shop" class="mb-5">
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
                         <div>
-                            <span class="text-primary fw-bold text-uppercase ls-1">Dành cho bạn</span>
-                            <h3 class="fw-bold section-title">Sản Phẩm Nổi Bật</h3>
+                            <h3 class="fw-bold section-title">⭐ Sản Phẩm Nổi Bật</h3>
                         </div>
                         <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
@@ -509,7 +508,7 @@
                                 <div class="card-img-wrap">
                                     <span class="badge-custom">{{ strtoupper($product->category) }}</span>
                                     @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Het hang</span>
+                                        <span class="out-of-stock-badge">Hết hàng</span>
                                     @endif
                                     <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                 </div>
@@ -557,7 +556,7 @@
                                         <div class="card-img-wrap">
                                             <span class="badge-custom">{{ strtoupper($product->category) }}</span>
                                     @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Het hang</span>
+                                        <span class="out-of-stock-badge">Hết hàng</span>
                                     @endif
                                             <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                         </div>
@@ -598,9 +597,7 @@
                 <div class="mb-5">
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
                         <div>
-                            <span class="text-success fw-bold text-uppercase ls-1">⭐ Đặc biệt</span>
-                            <h3 class="fw-bold section-title">Sản Phẩm Độc Quyền</h3>
-                            <p class="text-muted mb-0">Những sản phẩm chất lượng cao được chọn lọc kỹ càng</p>
+                            <h3 class="fw-bold section-title"> <i class="fas fa-star" style="color: #00ff00;"></i> Sản Phẩm Độc Quyền</h3>
                         </div>
                         <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
@@ -660,7 +657,7 @@
                                         <div class="card-img-wrap">
                                             <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
                                     @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Het hang</span>
+                                        <span class="out-of-stock-badge">Hết hàng</span>
                                     @endif
                                             <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                         </div>
@@ -701,11 +698,7 @@
                 <div id="combo-ai" class="mb-5" data-combo-ai-section>
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
                         <div>
-                            <span class="text-primary fw-bold text-uppercase ls-1">
-                                <i class="fas fa-robot"></i> COMBO AI
-                            </span>
-                            <h3 class="fw-bold section-title">Combo AI giá rẻ</h3>
-                            <p class="text-muted mb-0">Chọn nhanh combo AI giá tốt cho bạn.</p>
+                            <h3 class="fw-bold section-title"> <i class="fas fa-robot" style="color: #007bff;"></i> Combo AI giá rẻ</h3>
                         </div>
                         <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
@@ -718,7 +711,7 @@
                                         <div class="card-img-wrap">
                                             <span class="badge-custom bg-primary">COMBO AI</span>
                                     @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Het hang</span>
+                                        <span class="out-of-stock-badge">Hết hàng</span>
                                     @endif
                                             <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                         </div>

@@ -353,6 +353,7 @@
             font-weight: 800;
         }
         @media (max-width: 576px) {
+            .flash-sale { margin-top: 8px; }
             .flash-sale { padding: 10px 12px; }
             .flash-sale-timer { padding: 5px 8px; gap: 6px; }
             .flash-sale-timer .timer-pill { min-width: 24px; font-size: 0.75rem; }

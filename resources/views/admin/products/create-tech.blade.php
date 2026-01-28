@@ -252,7 +252,7 @@
                                    id="is_on_sale"
                                    name="is_on_sale"
                                    value="1"
-                                   {{ old('is_on_sale', old('sale_price') ? 1 : 0) ? 'checked' : '' }}
+                                   {{ old('is_on_sale') ? 'checked' : '' }}
                                    style="width: 46px; height: 22px; cursor: pointer;">
                             <label class="form-check-label fw-bold" for="is_on_sale" style="margin-left: 8px; cursor: pointer;">
                                 <i class="fas fa-tags text-danger me-1"></i>Bat giam gia

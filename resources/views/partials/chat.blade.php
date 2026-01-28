@@ -187,6 +187,7 @@
     margin-bottom: 15px;
     display: flex;
     align-items: flex-end;
+    width: 100%;
 }
 
 .chat-message.user {
@@ -197,11 +198,27 @@
     justify-content: flex-start;
 }
 
+.chat-message > div {
+    max-width: 75%;
+    width: fit-content;
+    flex: 0 0 auto;
+}
+
+.chat-message.user > div {
+    margin-left: auto;
+}
+
+.chat-message.admin > div {
+    margin-right: auto;
+}
+
 .message-content {
     max-width: 75%;
     padding: 10px 15px;
     border-radius: 18px;
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 
 .chat-message.user .message-content {

@@ -225,6 +225,24 @@
             transition: transform .2s ease, box-shadow .2s ease;
             overflow: hidden;
         }
+        .product-card.out-of-stock {
+            opacity: 0.6;
+        }
+        .product-card.out-of-stock .btn {
+            pointer-events: none;
+        }
+        .out-of-stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
 
         /* Swiper (mobile product slides) */
         .product-swiper {
@@ -378,9 +396,12 @@
                     <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex" id="product-grid">
                         @foreach($featuredProducts as $product)
                         <div class="col" data-aos="fade-up">
-                            <div class="product-card">
+                            <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
                                 <div class="card-img-wrap">
                                     <span class="badge-custom">{{ strtoupper($product->category) }}</span>
+                                    @if(!$product->isInStock())
+                                        <span class="out-of-stock-badge">Het hang</span>
+                                    @endif
                                     <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                 </div>
                                 <div class="p-3">
@@ -397,15 +418,23 @@
                                                 @endif
                                             </div>
                                         </div>
+                                        @if($product->isInStock())
                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
                                                 <i class="fas fa-cart-plus"></i>
                                             </button>
                                         </form>
+                                        @else
+                                        <button type="button" class="btn btn-sm btn-light rounded-circle text-muted" disabled>
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                        @endif
                                     </div>
                                 </div>
+                                @if($product->isInStock())
                                 <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                @endif
                             </div>
                         </div>
                         @endforeach
@@ -415,9 +444,12 @@
                         <div class="swiper-wrapper">
                             @foreach($featuredProducts as $product)
                                 <div class="swiper-slide">
-                                    <div class="product-card">
+                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
                                         <div class="card-img-wrap">
                                             <span class="badge-custom">{{ strtoupper($product->category) }}</span>
+                                    @if(!$product->isInStock())
+                                        <span class="out-of-stock-badge">Het hang</span>
+                                    @endif
                                             <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                         </div>
                                         <div class="p-3">
@@ -442,7 +474,9 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                        @if($product->isInStock())
+                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                @endif
                                     </div>
                                 </div>
                             @endforeach
@@ -465,9 +499,12 @@
                     <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex">
                         @foreach($highlightProducts as $product)
                         <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                            <div class="product-card">
+                            <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
                                 <div class="card-img-wrap">
                                     <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
+                                    @if(!$product->isInStock())
+                                        <span class="out-of-stock-badge">Het hang</span>
+                                    @endif
                                     <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                 </div>
                                 <div class="p-3">
@@ -484,15 +521,23 @@
                                                 @endif
                                             </div>
                                         </div>
+                                        @if($product->isInStock())
                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
                                                 <i class="fas fa-cart-plus"></i>
                                             </button>
                                         </form>
+                                        @else
+                                        <button type="button" class="btn btn-sm btn-light rounded-circle text-muted" disabled>
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                        @endif
                                     </div>
                                 </div>
+                                @if($product->isInStock())
                                 <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                @endif
                             </div>
                         </div>
                         @endforeach
@@ -502,9 +547,12 @@
                         <div class="swiper-wrapper">
                             @foreach($highlightProducts as $product)
                                 <div class="swiper-slide">
-                                    <div class="product-card">
+                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
                                         <div class="card-img-wrap">
                                             <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
+                                    @if(!$product->isInStock())
+                                        <span class="out-of-stock-badge">Het hang</span>
+                                    @endif
                                             <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                         </div>
                                         <div class="p-3">
@@ -529,7 +577,9 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                        @if($product->isInStock())
+                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                @endif
                                     </div>
                                 </div>
                             @endforeach
@@ -555,9 +605,12 @@
                         <div class="row row-cols-2 row-cols-md-4 g-4">
                             @foreach($comboAiProducts as $product)
                                 <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                                    <div class="product-card">
+                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
                                         <div class="card-img-wrap">
                                             <span class="badge-custom bg-primary">COMBO AI</span>
+                                    @if(!$product->isInStock())
+                                        <span class="out-of-stock-badge">Het hang</span>
+                                    @endif
                                             <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
                                         </div>
                                         <div class="p-3">
@@ -582,7 +635,9 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                        @if($product->isInStock())
+                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                @endif
                                     </div>
                                 </div>
                             @endforeach

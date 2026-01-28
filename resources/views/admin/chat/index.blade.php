@@ -44,6 +44,18 @@
         font-weight: 600;
     }
 
+    .users-subheader {
+        padding: 12px 20px;
+        border-top: 1px solid #e9ecef;
+        border-bottom: 1px solid #e9ecef;
+        background: #fbfcfe;
+        font-size: 13px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
     .users-list {
         flex: 1;
         overflow-y: auto;
@@ -213,6 +225,7 @@
                     <h5><i class="fas fa-users"></i> Danh sách Users</h5>
                 </div>
                 <div class="users-list" id="usersList">
+                    <div class="users-subheader">Users da chat</div>
                     @forelse($users as $user)
                         <div class="user-item" data-user-id="{{ $user->id }}" onclick="selectUser(event, {{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->email }}')">
                             <div class="user-avatar">
@@ -231,6 +244,24 @@
                             <p>Chưa có tin nhắn nào</p>
                         </div>
                     @endforelse
+                    <div class="users-subheader">Users chua chat</div>
+                    @forelse($allUsers as $user)
+                        <div class="user-item" data-user-id="{{ $user->id }}" onclick="selectUser(event, {{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->email }}')">
+                            <div class="user-avatar">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">{{ $user->name }}</div>
+                                <div class="user-email">{{ $user->email }}</div>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">Moi</span>
+                        </div>
+                    @empty
+                        <div class="text-center py-3 text-muted">
+                            <p>Khong co user moi</p>
+                        </div>
+                    @endforelse
+
                 </div>
             </div>
 

@@ -4,6 +4,37 @@ document.addEventListener('DOMContentLoaded', function () {
         duration: 800, // Tốc độ animation
         once: true // Chỉ chạy 1 lần khi cuộn xuống
     });
+
+    // Swiper for mobile product sections
+    if (window.Swiper) {
+        const featuredEl = document.getElementById('featuredProductSwiper');
+        if (featuredEl) {
+            new Swiper(featuredEl, {
+                slidesPerView: 2,
+                spaceBetween: 10,
+                pagination: { el: featuredEl.querySelector('.swiper-pagination'), clickable: true },
+                breakpoints: {
+                    360: { slidesPerView: 2, spaceBetween: 10 },
+                    480: { slidesPerView: 2.1, spaceBetween: 12 },
+                    640: { slidesPerView: 2.4, spaceBetween: 14 }
+                }
+            });
+        }
+
+        const highlightEl = document.getElementById('highlightProductSwiper');
+        if (highlightEl) {
+            new Swiper(highlightEl, {
+                slidesPerView: 2,
+                spaceBetween: 10,
+                pagination: { el: highlightEl.querySelector('.swiper-pagination'), clickable: true },
+                breakpoints: {
+                    360: { slidesPerView: 2, spaceBetween: 10 },
+                    480: { slidesPerView: 2.1, spaceBetween: 12 },
+                    640: { slidesPerView: 2.4, spaceBetween: 14 }
+                }
+            });
+        }
+    }
 });
 
 // 2. HIỆU ỨNG GÕ CHỮ (TYPING EFFECT)

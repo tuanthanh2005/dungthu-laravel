@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -110,7 +111,15 @@ class ChatController extends Controller
                 return $user;
             });
 
-        return view('admin.chat.index', compact('users'));
+        $existingUserIds = $users->pluck('id')->filter()->all();
+        $allUsers = User::where('role', '!=', 'admin')
+            ->when(!empty($existingUserIds), function ($query) use ($existingUserIds) {
+                $query->whereNotIn('id', $existingUserIds);
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.chat.index', compact('users', 'allUsers'));
     }
 
     // Admin: Xem tin nhắn của một user

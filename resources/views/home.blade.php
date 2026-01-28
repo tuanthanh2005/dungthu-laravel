@@ -15,42 +15,7 @@
         .category-row .cat-box {
             padding: 12px;
         }
-        .category-fab {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6c5ce7, #00cec9);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            cursor: pointer;
-            z-index: 1050;
-        }
-        .category-fab i { font-size: 22px; }
-        .category-fab-menu {
-            position: fixed;
-            right: 20px;
-            bottom: 90px;
-            width: 240px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-            padding: 12px;
-            display: none;
-            z-index: 1050;
-        }
-        .category-fab-menu.show { display: block; }
-        .category-fab-menu .cat-box {
-            padding: 12px;
-            border: 1px solid #f0f0f0;
-            margin-bottom: 8px;
-        }
-        .category-fab-menu .cat-box:last-child { margin-bottom: 0; }
+        
         
         /* Mobile: Giảm font size section titles */
         @media (max-width: 768px) {
@@ -62,13 +27,13 @@
         /* Mobile: Giảm font size hero section */
         @media (max-width: 768px) {
             .hero-section h1 {
-                font-size: calc(1.5rem + 1vw) !important;
+                font-size: calc(1.45rem + 0.4vw) !important;
             }
             .hero-section .typing-text {
-                font-size: calc(1.5rem + 1vw) !important;
+                font-size: calc(1.45rem + 0.4vw) !important;
             }
             .hero-section .lead {
-                font-size: calc(1rem - 5px) !important;
+                font-size: calc(0.92rem + 0.05vw) !important;
             }
         }
 
@@ -181,17 +146,110 @@
             align-items: center;
         }
         @media (max-width: 576px) {
-            .recent-purchase-toast { left: 10px; bottom: 10px; width: min(340px, calc(100vw - 20px)); }
-            .recent-purchase-toast { padding: 8px 8px 7px; border-radius: 14px; }
-            .rpt-pill { padding: 4px 7px; font-size: 11px; }
-            .rpt-close { font-size: 18px; padding: 0 4px; }
-            .rpt-body { gap: 8px; margin-top: 8px; }
-            .rpt-avatar { width: 34px; height: 34px; font-size: 14px; }
-            .rpt-name { font-size: 13px; }
-            .rpt-sub { font-size: 11px; }
-            .rpt-product { margin-top: 7px; padding: 7px 9px; border-radius: 11px; }
-            .rpt-product-title { font-size: 12px; }
-            .rpt-product-meta { font-size: 11px; gap: 6px; }
+            /* Mobile-only balance + clarity */
+            .hero-section { padding: 28px 0 40px; }
+            .hero-section h1 { letter-spacing: -0.3px; }
+            .hero-section .lead { line-height: 1.45 !important; }
+            .container { padding-left: 14px; padding-right: 14px; }
+            #shop, #combo-ai, #blog { margin-bottom: 36px !important; }
+            .section-title { font-size: 1.15rem !important; line-height: 1.25; }
+            .section-title + p, .section-title + .text-muted { font-size: 0.95rem; }
+            .text-uppercase.ls-1 { font-size: 0.8rem; }
+            .ls-1 { letter-spacing: 0.04em; }
+            .product-card { border-radius: 14px; box-shadow: 0 8px 18px rgba(0,0,0,0.08); }
+            .product-card .p-3 { padding: 8px 8px 10px !important; }
+            .product-card img { border-radius: 12px 12px 0 0; height: 96px; width: 100%; object-fit: cover; }
+            .badge-custom { font-size: 9px; padding: 3px 7px; }
+            .product-title-2lines { font-size: 0.86rem; line-height: 1.25; }
+            .product-card .text-primary.fw-bold,
+            .product-card .text-success.fw-bold { font-size: 0.92rem; }
+            .sale-badge { font-size: 9px; padding: 2px 5px; }
+            .btn.btn-sm.rounded-circle { width: 30px; height: 30px; padding: 0; }
+            .blog-card { border-radius: 14px; box-shadow: 0 10px 22px rgba(0,0,0,0.08); }
+            .blog-card img { border-radius: 10px; }
+            .blog-title { font-size: 1rem !important; line-height: 1.35; }
+            .btn.btn-outline-primary { padding: 8px 18px; font-size: 0.92rem; }
+            .recent-purchase-toast { left: 8px; bottom: 8px; width: min(240px, calc(100vw - 16px)); }
+            .recent-purchase-toast { padding: 5px 5px 5px; border-radius: 10px; }
+            .rpt-pill { padding: 3px 6px; font-size: 10px; }
+            .rpt-close { font-size: 16px; padding: 0 3px; }
+            .rpt-body { gap: 6px; margin-top: 6px; }
+            .rpt-avatar { width: 26px; height: 26px; font-size: 11px; }
+            .rpt-avatar .rpt-badge { width: 12px; height: 12px; right: -1px; bottom: -1px; }
+            .rpt-name { font-size: 11px; }
+            .rpt-sub { font-size: 9px; }
+            .rpt-product { margin-top: 5px; padding: 5px 7px; border-radius: 9px; }
+            .rpt-product-title { font-size: 10px; }
+            .rpt-product-meta { font-size: 9px; gap: 4px; }
+        }
+
+        /* Product cards: balanced, modern */
+        .product-card {
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 18px;
+            box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+            transition: transform .2s ease, box-shadow .2s ease;
+            overflow: hidden;
+        }
+
+        /* Swiper (mobile product slides) */
+        .product-swiper {
+            padding: 6px 2px 14px;
+        }
+        .product-swiper .swiper-slide {
+            width: auto;
+            height: auto;
+        }
+        .product-swiper .swiper-pagination-bullets {
+            bottom: 0;
+        }
+        .product-swiper .swiper-pagination-bullet {
+            width: 6px;
+            height: 6px;
+            opacity: 0.35;
+        }
+        .product-swiper .swiper-pagination-bullet-active {
+            opacity: 1;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        .product-card .card-img-wrap {
+            position: relative;
+            background: linear-gradient(180deg, rgba(102,126,234,0.08), rgba(118,75,162,0.06));
+        }
+        .product-card .card-img-wrap img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .product-card .badge-custom {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: .02em;
+        }
+        .product-card .p-3 {
+            padding: 14px 14px 16px !important;
+        }
+        .product-title-2lines {
+            font-size: 1rem;
+            line-height: 1.35;
+            min-height: calc(1.35em * 2);
+        }
+        .sale-badge {
+            border-radius: 999px;
+            font-weight: 700;
+        }
+        .product-card .btn.btn-sm.rounded-circle {
+            width: 36px;
+            height: 36px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
         }
     </style>
 @endpush
@@ -210,32 +268,6 @@
 
     <div class="container" style="margin-top: -80px; position: relative; z-index: 10;">
         <div class="category-row"></div>
-    </div>
-
-    <div class="category-fab" onclick="toggleCategoryMenu(event)">
-        <i class="fas fa-th"></i>
-    </div>
-    <div class="category-fab-menu" id="categoryFabMenu">
-       {{-- <div class="cat-box text-center" onclick="filterData('all'); toggleCategoryMenu(event);">
-            <i class="fas fa-th-large cat-icon"></i>
-            <div class="fw-bold">Tất Cả</div>
-        </div>  --}}
-        <div class="cat-box text-center" onclick="filterData('tech'); toggleCategoryMenu(event);">
-            <i class="fas fa-laptop-code cat-icon"></i>
-            <div class="fw-bold">AI</div>
-        </div>
-        <div class="cat-box text-center" onclick="filterData('tiktok'); toggleCategoryMenu(event);">
-            <i class="fab fa-tiktok cat-icon"></i>
-            <div class="fw-bold">Săn Sale TikTok</div>
-        </div> 
-     {{--   <div class="cat-box text-center" onclick="filterData('ebooks'); toggleCategoryMenu(event);">
-            <i class="fas fa-file-invoice-dollar cat-icon"></i>
-            <div class="fw-bold">Tài Liệu Kiếm Tiền</div>
-        </div> --}}
-        <div class="cat-box text-center" onclick="handleCardExchangeClick(); toggleCategoryMenu(event);">
-            <i class="fas fa-credit-card cat-icon"></i>
-            <div class="fw-bold">Đổi Thẻ Cào</div>
-        </div>
     </div>
 
     <div class="container" style="margin-top: 80px; padding-top: 20px;">
@@ -301,7 +333,7 @@
                         <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
 
-                    <div class="row row-cols-2 row-cols-md-4 g-4" id="product-grid">
+                    <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex" id="product-grid">
                         @foreach($featuredProducts as $product)
                         <div class="col" data-aos="fade-up">
                             <div class="product-card">
@@ -336,6 +368,45 @@
                         </div>
                         @endforeach
                     </div>
+
+                    <div class="swiper product-swiper d-md-none" id="featuredProductSwiper">
+                        <div class="swiper-wrapper">
+                            @foreach($featuredProducts as $product)
+                                <div class="swiper-slide">
+                                    <div class="product-card">
+                                        <div class="card-img-wrap">
+                                            <span class="badge-custom">{{ strtoupper($product->category) }}</span>
+                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
+                                        </div>
+                                        <div class="p-3">
+                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                                        @if($product->is_on_sale)
+                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
+                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
+                                                        <i class="fas fa-cart-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
                 </div>
 
                 <!-- Sản Phẩm Đặc Biệt -->
@@ -349,7 +420,7 @@
                         <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
                     </div>
 
-                    <div class="row row-cols-2 row-cols-md-4 g-4">
+                    <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex">
                         @foreach($highlightProducts as $product)
                         <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
                             <div class="product-card">
@@ -383,6 +454,45 @@
                             </div>
                         </div>
                         @endforeach
+                    </div>
+
+                    <div class="swiper product-swiper d-md-none" id="highlightProductSwiper">
+                        <div class="swiper-wrapper">
+                            @foreach($highlightProducts as $product)
+                                <div class="swiper-slide">
+                                    <div class="product-card">
+                                        <div class="card-img-wrap">
+                                            <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
+                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
+                                        </div>
+                                        <div class="p-3">
+                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
+                                                        @if($product->is_on_sale)
+                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
+                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
+                                                        <i class="fas fa-cart-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="swiper-pagination"></div>
                     </div>
                 </div>
              
@@ -516,28 +626,8 @@
 
 @push('scripts')
     <script src="{{ asset('js/home.js') }}"></script>
-     <script>
-         const categoryMenu = document.getElementById('categoryFabMenu');
-         function toggleCategoryMenu(event) {
-             event.stopPropagation();
-             categoryMenu.classList.toggle('show');
-         }
-         document.addEventListener('click', function() {
-             categoryMenu.classList.remove('show');
-         });
-
-        function handleCardExchangeClick() {
-            @auth
-                // Nếu đã đăng nhập, chuyển thẳng qua trang đổi thẻ cào
-                window.location.href = "{{ route('card-exchange.index') }}";
-            @else
-                // Nếu chưa đăng nhập, yêu cầu đăng nhập
-                alert('Vui lòng đăng nhập để sử dụng tính năng đổi thẻ cào!');
-                window.location.href = "{{ route('login') }}";
-            @endauth
-         }
-     </script>
-     <script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
          document.addEventListener('DOMContentLoaded', function () {
              const dataEl = document.getElementById('recentPurchaseData');
              const toastEl = document.getElementById('recentPurchaseToast');

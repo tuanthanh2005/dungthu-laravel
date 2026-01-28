@@ -306,14 +306,14 @@
 @media (max-width: 576px) {
     .chat-button {
         bottom: 10px;
-        left: 10px;
-        right: auto;
+        right: 10px;
+        left: auto;
     }
     
     .chat-widget {
         bottom: 70px;
-        left: 10px;
-        right: auto;
+        right: 10px;
+        left: auto;
     }
 }
 </style>

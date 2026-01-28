@@ -3,7 +3,7 @@
 @section('title', 'DungThu.com - Trải Nghiệm & Mua Sắm')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ filemtime(public_path('css/home.css')) }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         .category-row {
@@ -722,7 +722,7 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/home.js') }}"></script>
+    <script src="{{ asset('js/home.js') }}?v={{ filemtime(public_path('js/home.js')) }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
          document.addEventListener('DOMContentLoaded', function () {

@@ -312,11 +312,12 @@
             padding: 12px 14px;
         }
         .flash-sale .section-title { margin-bottom: 2px; font-size: 1.05rem; }
-        .flash-sale .product-card { border-radius: 14px; box-shadow: 0 10px 22px rgba(0,0,0,0.08); }
-        .flash-sale .product-card .card-img-wrap img { height: 140px; }
-        .flash-sale .product-card .p-3 { padding: 10px 10px 12px !important; }
-        .flash-sale .product-title-2lines { font-size: 0.9rem; line-height: 1.25; min-height: calc(1.25em * 2); }
-        .flash-sale .badge-custom { font-size: 10px; padding: 4px 7px; }
+        .flash-sale .product-card { border-radius: 18px; box-shadow: 0 14px 30px rgba(0,0,0,0.08); }
+        .flash-sale .product-card .card-img-wrap { height: 180px; }
+        .flash-sale .product-card .card-img-wrap img { height: 100%; width: 100%; object-fit: cover; display: block; }
+        .flash-sale .product-card .p-3 { padding: 14px 14px 16px !important; }
+        .flash-sale .product-title-2lines { font-size: 1rem; line-height: 1.35; min-height: calc(1.35em * 2); }
+        .flash-sale .badge-custom { font-size: 11px; padding: 4px 8px; }
         .flash-sale-timer {
             display: inline-flex;
             align-items: center;
@@ -355,8 +356,9 @@
             .flash-sale { padding: 10px 12px; }
             .flash-sale-timer { padding: 5px 8px; gap: 6px; }
             .flash-sale-timer .timer-pill { min-width: 24px; font-size: 0.75rem; }
-            .flash-sale .product-card .card-img-wrap img { height: 110px; }
-            .flash-sale .product-title-2lines { font-size: 0.82rem; }
+            .flash-sale .product-card .card-img-wrap { height: 96px; }
+            .flash-sale .product-card .card-img-wrap img { height: 100%; width: 100%; object-fit: cover; display: block; }
+            .flash-sale .product-title-2lines { font-size: 0.86rem; }
         }
 </style>
 @endpush

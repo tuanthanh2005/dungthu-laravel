@@ -27,14 +27,47 @@
         /* Mobile: Giảm font size hero section */
         @media (max-width: 768px) {
             .hero-section h1 {
-                font-size: calc(1.45rem + 0.4vw) !important;
+                font-size: calc(1.18rem + 0.3vw) !important;
+                line-height: 1.25;
             }
             .hero-section .typing-text {
-                font-size: calc(1.45rem + 0.4vw) !important;
+                font-size: calc(1.18rem + 0.3vw) !important;
+                white-space: nowrap;
+                display: inline-block;
             }
             .hero-section .lead {
                 font-size: calc(0.92rem + 0.05vw) !important;
             }
+        }
+
+        .hero-socials {
+            display: inline-flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .hero-socials a {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(2px);
+            transition: transform .15s ease, background .15s ease;
+        }
+        .hero-socials a:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.28);
+        }
+        .hero-socials .zalo-pill {
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 0.02em;
         }
 
         /* Recent purchase toast (social proof) */
@@ -263,6 +296,15 @@
         <div class="container mt-5" data-aos="zoom-in">
             <h1 class="display-4 fw-bold mb-3">Nơi Bạn Có Thể <span class="typing-text text-warning" id="typewriter"></span></h1>
             <p class="lead opacity-75 mb-4">Kho tài nguyên số, thời trang và công cụ tiện ích miễn phí hàng đầu.</p>
+            <div class="hero-socials">
+                <a href="https://www.tiktok.com/@dungthu.comm?_r=1&_t=ZS-93QKKGR4VXA" target="_blank" rel="noopener" aria-label="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+                <a href="https://www.facebook.com/thanh.tuan.378686?locale=vi_VN" target="_blank" rel="noopener" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="tel:0708910952" aria-label="Zalo 0708910952" class="zalo-pill">Z</a>
+            </div>
         </div>
     </header>
 

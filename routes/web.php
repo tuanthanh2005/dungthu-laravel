@@ -146,6 +146,8 @@ Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin')->group(functi
     Route::put('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'update'])->name('admin.tiktok-deals.update');
     Route::delete('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'destroy'])->name('admin.tiktok-deals.destroy');
     Route::post('/tiktok-deals/{tiktokDeal}/toggle', [TiktokDealController::class, 'toggleActive'])->name('admin.tiktok-deals.toggle');
+
+    Route::get('/abandoned-carts', [AdminController::class, 'abandonedCarts'])->name('admin.abandoned-carts');
     
     // Card Exchange Management
     Route::get('/card-exchanges', [AdminController::class, 'cardExchanges'])->name('admin.card-exchanges');

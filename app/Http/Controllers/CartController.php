@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\TelegramHelper;
+use App\Models\AbandonedCart;
 
 class CartController extends Controller
 {
@@ -34,6 +35,7 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
+        $this->syncAbandonedCart($cart);
         return redirect()->back()->with('success', 'Đã thêm sản phẩm vào giỏ hàng!');
     }
 
@@ -44,6 +46,7 @@ class CartController extends Controller
             unset($cart[$id]);
             session()->put('cart', $cart);
         }
+        $this->syncAbandonedCart(session()->get('cart', []));
         return redirect()->back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng!');
     }
 
@@ -56,6 +59,7 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
+        $this->syncAbandonedCart($cart);
         return redirect()->back();
     }
 
@@ -76,6 +80,7 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
+        $this->syncAbandonedCart($cart);
         return redirect()->back();
     }
 
@@ -177,6 +182,7 @@ class CartController extends Controller
             // Gửi thông báo Telegram cho admin
             TelegramHelper::sendNewOrderNotification($order);
             
+            $this->clearAbandonedCart();
             session()->forget('cart');
             return redirect()->route('home')->with('success', 'Đặt hàng thành công! Vui lòng chờ admin xác nhận.');
 
@@ -233,5 +239,54 @@ class CartController extends Controller
         shuffle($passwordArray);
         
         return implode('', $passwordArray);
+    }
+
+    private function syncAbandonedCart(array $cart): void
+    {
+        if (!auth()->check()) {
+            return;
+        }
+
+        $user = auth()->user();
+        $email = $user?->email;
+        if (!$email) {
+            return;
+        }
+
+        if (empty($cart)) {
+            AbandonedCart::where('user_id', $user->id)->delete();
+            return;
+        }
+
+        $itemsCount = 0;
+        $totalAmount = 0;
+        foreach ($cart as $item) {
+            $qty = (int) ($item['quantity'] ?? 0);
+            $price = (float) ($item['price'] ?? 0);
+            $itemsCount += $qty;
+            $totalAmount += ($price * $qty);
+        }
+
+        AbandonedCart::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'email' => $email,
+                'cart_data' => $cart,
+                'items_count' => $itemsCount,
+                'total_amount' => $totalAmount,
+                'last_activity_at' => now(),
+                'reminder_stage' => 0,
+                'last_reminder_at' => null,
+            ]
+        );
+    }
+
+    private function clearAbandonedCart(): void
+    {
+        if (!auth()->check()) {
+            return;
+        }
+
+        AbandonedCart::where('user_id', auth()->id())->delete();
     }
 }

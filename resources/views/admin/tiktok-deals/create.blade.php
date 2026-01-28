@@ -83,6 +83,11 @@
                         <i class="fas fa-blog me-2"></i>Bài viết
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.abandoned-carts') }}">
+                        <i class="fas fa-shopping-basket me-2"></i>Gio bo quen
+                    </a>
+                </li>
             </ul>
         </nav>
     <div class="mb-4">

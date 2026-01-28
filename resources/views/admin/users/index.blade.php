@@ -129,6 +129,9 @@
             <a href="{{ route('admin.users') }}" class="active">
                 <i class="fas fa-users me-2"></i>Người dùng
             </a>
+            <a href="{{ route('admin.abandoned-carts') }}">
+                <i class="fas fa-shopping-basket me-2"></i>Gio bo quen
+            </a>
         </div>
 
         <!-- User Management Card -->

@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\Blog;
 use App\Models\Message;
+use App\Models\AbandonedCart;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
@@ -105,6 +106,16 @@ class AdminController extends Controller
             ->paginate(10);
         
         return view('admin.users.index', compact('users'));
+    }
+
+    public function abandonedCarts()
+    {
+        $carts = AbandonedCart::query()
+            ->with('user')
+            ->orderByDesc('last_activity_at')
+            ->paginate(20);
+
+        return view('admin.abandoned-carts.index', compact('carts'));
     }
 
     public function userHistory($id)

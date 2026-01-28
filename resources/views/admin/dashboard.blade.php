@@ -160,6 +160,11 @@
                         @endif
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.abandoned-carts') }}">
+                        <i class="fas fa-shopping-basket me-2"></i>Gio bo quen
+                    </a>
+                </li>
             </ul>
         </nav>
 

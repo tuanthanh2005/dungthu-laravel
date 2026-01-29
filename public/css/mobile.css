@@ -422,6 +422,64 @@ body {
         width: 44px !important;
         height: 44px !important;
     }
+
+    /* Admin chat: fix input/scroll on mobile */
+    .chat-admin-container {
+        padding: 0 10px !important;
+    }
+
+    .chat-admin-card {
+        height: calc(100vh - 140px) !important;
+        flex-direction: column !important;
+    }
+
+    .users-sidebar {
+        width: 100% !important;
+        height: 180px !important;
+        border-right: none !important;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .chat-main {
+        min-height: 0 !important;
+        flex: 1 1 auto;
+    }
+
+    .chat-messages {
+        flex: 1 1 auto;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        max-height: calc(100vh - 320px);
+    }
+
+    .chat-input-area {
+        position: sticky;
+        bottom: 0;
+        padding: 10px 10px 12px !important;
+        background: #fff;
+        border-top: 1px solid #e9ecef;
+        box-shadow: 0 -6px 16px rgba(0,0,0,0.06);
+        z-index: 2;
+    }
+
+    .chat-input-area .input-group {
+        flex-wrap: nowrap !important;
+        gap: 8px;
+    }
+
+    .chat-input-area .form-control {
+        height: 42px;
+        font-size: 0.95rem;
+        border-radius: 12px !important;
+    }
+
+    .chat-input-area .btn {
+        height: 42px;
+        padding: 0 14px;
+        border-radius: 12px !important;
+        white-space: nowrap;
+    }
 }
 
 @media (max-width: 575.98px) {

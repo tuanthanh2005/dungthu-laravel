@@ -177,6 +177,34 @@
         z-index: 2;
     }
 
+    .chat-input-area .input-group {
+        gap: 10px;
+        align-items: center;
+    }
+
+    .chat-input-area .form-control {
+        border-radius: 999px;
+        padding: 12px 18px;
+        background: #f5f6f8;
+        border: 1px solid #e5e7eb;
+    }
+
+    .chat-input-area .form-control:focus {
+        background: #fff;
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
+    }
+
+    .chat-input-area .btn {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .empty-state {
         display: flex;
         flex-direction: column;

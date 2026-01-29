@@ -18,6 +18,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ChatController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

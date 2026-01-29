@@ -11,6 +11,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog Chia Sẻ</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('card-exchange.index') }}">Đổi Thẻ Cào</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('web-design') }}">Thiết kế website giá rẻ</a></li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">
                         <i class="fas fa-phone me-1"></i>Liên Hệ

@@ -374,13 +374,13 @@
             <h1 class="display-4 fw-bold mb-3">Nơi Bạn Có Thể <span class="typing-text text-warning" id="typewriter"></span></h1>
             <p class="lead opacity-75 mb-4">Kho tài nguyên số, thời trang và công cụ tiện ích miễn phí hàng đầu.</p>
             <div class="hero-socials">
-                <a href="https://www.tiktok.com/@dungthu.comm?_r=1&_t=ZS-93QKKGR4VXA" target="_blank" rel="noopener" aria-label="TikTok">
+                <a href="https://www.tiktok.com/@spdungthu.com?_r=1&_t=ZS-93Tu65pWubk" target="_blank" rel="noopener" aria-label="TikTok">
                     <i class="fab fa-tiktok"></i>
                 </a>
                 <a href="https://www.facebook.com/thanh.tuan.378686?locale=vi_VN" target="_blank" rel="noopener" aria-label="Facebook">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="tel:0708910952" aria-label="Zalo 0708910952" class="zalo-pill">Z</a>
+                <a href="https://id.zalo.me/account/login?continue=http%3A%2F%2Fzalo.me%2F0708910952" target="_blank" rel="noopener" aria-label="Zalo 0708910952" class="zalo-pill">Z</a>
             </div>
         </div>
     </header>

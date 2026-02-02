@@ -129,8 +129,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.orders') }}">
+                    <a class="nav-link position-relative" href="{{ route('admin.orders') }}">
                         <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
+                        @if(($pendingOrdersCount ?? 0) > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                                {{ $pendingOrdersCount }}
+                                <span class="visually-hidden">đơn hàng chờ xử lý</span>
+                            </span>
+                        @endif
                     </a>
                 </li>
                 <li class="nav-item">
@@ -144,8 +151,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.card-exchanges') }}">
+                    <a class="nav-link position-relative" href="{{ route('admin.card-exchanges') }}">
                         <i class="fas fa-credit-card me-2"></i>Đổi thẻ cào
+                        @if(($pendingCardExchangeCount ?? 0) > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                                {{ $pendingCardExchangeCount }}
+                                <span class="visually-hidden">yêu cầu đổi thẻ chờ xử lý</span>
+                            </span>
+                        @endif
                     </a>
                 </li>
                 <li class="nav-item">
@@ -161,8 +175,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.abandoned-carts') }}">
-                        <i class="fas fa-shopping-basket me-2"></i>Gio bo quen
+                    <a class="nav-link position-relative" href="{{ route('admin.abandoned-carts') }}">
+                        <i class="fas fa-shopping-basket me-2"></i>Giỏ bỏ quên
+                        @if(($abandonedCartsCount ?? 0) > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info"
+                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                                {{ $abandonedCartsCount }}
+                                <span class="visually-hidden">giỏ hàng bị bỏ quên</span>
+                            </span>
+                        @endif
                     </a>
                 </li>
             </ul>

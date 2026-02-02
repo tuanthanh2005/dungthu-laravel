@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Blog;
 use App\Models\Message;
 use App\Models\AbandonedCart;
+use App\Models\CardExchange;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
@@ -90,10 +91,26 @@ class AdminController extends Controller
         $unreadChatCount = Message::where('is_admin', false)
             ->where('is_read', false)
             ->count();
+
+        // Đếm số đơn hàng đang chờ xử lý (pending)
+        $pendingOrdersCount = Order::where('status', 'pending')->count();
+
+        // Đếm số yêu cầu đổi thẻ cào đang chờ xử lý
+        $pendingCardExchangeCount = CardExchange::where('status', 'pending')->count();
+
+        // Đếm số giỏ hàng bị bỏ quên (chưa gửi reminder lần 3)
+        $abandonedCartsCount = AbandonedCart::where('reminder_stage', '<', 3)->count();
         
         $latestOrders = Order::with(['user', 'orderItems.product'])->latest()->take(5)->get();
         
-        return view('admin.dashboard', compact('stats', 'latestOrders', 'unreadChatCount'));
+        return view('admin.dashboard', compact(
+            'stats', 
+            'latestOrders', 
+            'unreadChatCount',
+            'pendingOrdersCount',
+            'pendingCardExchangeCount',
+            'abandonedCartsCount'
+        ));
     }
 
     // User Management

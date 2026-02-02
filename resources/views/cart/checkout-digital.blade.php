@@ -37,6 +37,7 @@
                     <i class="fas fa-qrcode text-primary me-2"></i>Thanh Toán QR
                 </h1>
                 <p class="text-muted">Sản phẩm số - Thanh toán nhanh chóng qua QR Code</p>
+                            <p class="lead opacity-75 mb-4">Khi bạn thanh toán xong NHÂN VIÊN sẽ liên lạc với bạn hoặc bạn chủ động nhắn tin với thông tin liên hệ bên shop.</p>
             </div>
 
             <div class="row g-4">

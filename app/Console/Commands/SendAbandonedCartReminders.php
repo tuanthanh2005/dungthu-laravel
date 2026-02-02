@@ -37,7 +37,10 @@ class SendAbandonedCartReminders extends Command
                 continue;
             }
 
-            if ($now->diffInHours($cart->last_activity_at) < $hours) {
+            // Tính số giờ kể từ lần hoạt động cuối (dùng absolute để tránh số âm)
+            $hoursSinceActivity = $cart->last_activity_at->diffInHours($now, true);
+            
+            if ($hoursSinceActivity < $hours) {
                 continue;
             }
 

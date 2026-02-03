@@ -40,6 +40,10 @@
             selector: '#community-editor',
             height: 500,
             menubar: true,
+            convert_urls: false,
+            relative_urls: false,
+            remove_script_host: false,
+            document_base_url: '{{ rtrim(config('app.url'), '/') }}/',
             plugins: [
                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
                 'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',

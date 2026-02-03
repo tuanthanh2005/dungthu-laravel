@@ -33,7 +33,7 @@
     
     <!-- Custom CSS -->
     @stack('styles')
-    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}?v={{ filemtime(public_path('css/mobile.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/mobile.css')) }}">
 </head>
 <body>
     <!-- Navbar -->
@@ -208,3 +208,5 @@
     @stack('scripts')
 </body>
 </html>
+
+

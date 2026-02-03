@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TiktokDeal;
 use Illuminate\Http\Request;
-use App\Helpers\PathHelper;
 use Illuminate\Support\Facades\Storage;
 
 class TiktokDealController extends Controller
@@ -50,7 +49,7 @@ class TiktokDealController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(PathHelper::publicRootPath('images/products'), $imageName);
+            $image->move(public_path('images/products'), $imageName);
             $validated['image'] = $imageName;
         }
 
@@ -90,12 +89,12 @@ class TiktokDealController extends Controller
 
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có
-            if ($tiktokDeal->image && file_exists(PathHelper::publicRootPath('images/products/' . $tiktokDeal->image))) {
-                unlink(PathHelper::publicRootPath('images/products/' . $tiktokDeal->image));
+            if ($tiktokDeal->image && file_exists(public_path('images/products/' . $tiktokDeal->image))) {
+                unlink(public_path('images/products/' . $tiktokDeal->image));
             }
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(PathHelper::publicRootPath('images/products'), $imageName);
+            $image->move(public_path('images/products'), $imageName);
             $validated['image'] = $imageName;
         }
 
@@ -111,8 +110,8 @@ class TiktokDealController extends Controller
     public function destroy(TiktokDeal $tiktokDeal)
     {
         // Xóa ảnh nếu có
-        if ($tiktokDeal->image && file_exists(PathHelper::publicRootPath('images/products/' . $tiktokDeal->image))) {
-            unlink(PathHelper::publicRootPath('images/products/' . $tiktokDeal->image));
+        if ($tiktokDeal->image && file_exists(public_path('images/products/' . $tiktokDeal->image))) {
+            unlink(public_path('images/products/' . $tiktokDeal->image));
         }
 
         $tiktokDeal->delete();
@@ -131,4 +130,3 @@ class TiktokDealController extends Controller
         return back()->with('success', 'Trạng thái đã được cập nhật!');
     }
 }
-

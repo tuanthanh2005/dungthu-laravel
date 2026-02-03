@@ -14,7 +14,6 @@ use App\Models\CardExchange;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
-use App\Helpers\PathHelper;
 
 class AdminController extends Controller
 {
@@ -381,7 +380,7 @@ class AdminController extends Controller
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
-            $fullPath = PathHelper::publicRootPath('images/products/' . $fileName);
+            $fullPath = public_path('images/products/' . $fileName);
             
             // Crop ảnh về kích thước 500x334
             $croppedImage = $this->cropImage($file);
@@ -405,7 +404,7 @@ class AdminController extends Controller
             $fileSize = round($file->getSize() / 1024); // Convert to KB
             
             // Lưu file vào public/files
-            $file->move(PathHelper::publicRootPath('files'), $fileName);
+            $file->move(public_path('files'), $fileName);
             
             $filePath = $fileName;
             $fileType = $extension;
@@ -513,7 +512,7 @@ class AdminController extends Controller
             // Xóa ảnh cũ nếu có
             if ($product->image) {
                 $oldImagePath = parse_url($product->image, PHP_URL_PATH);
-                $fullPath = PathHelper::publicRootPath($oldImagePath);
+                $fullPath = public_path($oldImagePath);
                 if (file_exists($fullPath)) {
                     unlink($fullPath);
                 }
@@ -522,7 +521,7 @@ class AdminController extends Controller
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
-            $fullPath = PathHelper::publicRootPath('images/products/' . $fileName);
+            $fullPath = public_path('images/products/' . $fileName);
             
             // Crop ảnh về kích thước 500x334
             $croppedImage = $this->cropImage($file);
@@ -535,7 +534,7 @@ class AdminController extends Controller
         if ($request->hasFile('file') && $request->category === 'ebooks') {
             // Xóa file cũ nếu có
             if ($product->file_path) {
-                $oldFilePath = PathHelper::publicRootPath('files/' . $product->file_path);
+                $oldFilePath = public_path('files/' . $product->file_path);
                 if (file_exists($oldFilePath)) {
                     unlink($oldFilePath);
                 }
@@ -549,7 +548,7 @@ class AdminController extends Controller
             $fileSize = round($file->getSize() / 1024); // Convert to KB
             
             // Lưu file vào public/files
-            $file->move(PathHelper::publicRootPath('files'), $fileName);
+            $file->move(public_path('files'), $fileName);
             
             $filePath = $fileName;
             $fileType = $extension;
@@ -621,7 +620,7 @@ class AdminController extends Controller
         // Xóa ảnh nếu có
         if ($product->image) {
             $imagePath = parse_url($product->image, PHP_URL_PATH);
-            $fullPath = PathHelper::publicRootPath($imagePath);
+            $fullPath = public_path($imagePath);
             if (file_exists($fullPath)) {
                 unlink($fullPath);
             }
@@ -629,7 +628,7 @@ class AdminController extends Controller
         
         // Xóa file nếu có
         if ($product->file_path) {
-            $filePath = PathHelper::publicRootPath('files/' . $product->file_path);
+            $filePath = public_path('files/' . $product->file_path);
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
@@ -743,7 +742,7 @@ class AdminController extends Controller
         
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $dir = PathHelper::publicRootPath('images/blogs');
+            $dir = public_path('images/blogs');
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);
             }
@@ -751,7 +750,7 @@ class AdminController extends Controller
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
-            $fullPath = PathHelper::publicRootPath('images/blogs/' . $fileName);
+            $fullPath = public_path('images/blogs/' . $fileName);
             
             // Crop ảnh về kích thước 500x334
             $croppedImage = $this->cropImage($file);
@@ -796,7 +795,7 @@ class AdminController extends Controller
         
         $imagePath = $blog->image;
         if ($request->hasFile('image')) {
-            $dir = PathHelper::publicRootPath('images/blogs');
+            $dir = public_path('images/blogs');
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);
             }
@@ -804,7 +803,7 @@ class AdminController extends Controller
             // Delete old image
             if ($blog->image) {
                 $oldImagePath = parse_url($blog->image, PHP_URL_PATH);
-                $fullPath = PathHelper::publicRootPath($oldImagePath);
+                $fullPath = public_path($oldImagePath);
                 if (file_exists($fullPath)) {
                     unlink($fullPath);
                 }
@@ -813,7 +812,7 @@ class AdminController extends Controller
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
-            $fullPath = PathHelper::publicRootPath('images/blogs/' . $fileName);
+            $fullPath = public_path('images/blogs/' . $fileName);
             
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
@@ -839,7 +838,7 @@ class AdminController extends Controller
         // Delete image
         if ($blog->image) {
             $imagePath = parse_url($blog->image, PHP_URL_PATH);
-            $fullPath = PathHelper::publicRootPath($imagePath);
+            $fullPath = public_path($imagePath);
             if (file_exists($fullPath)) {
                 unlink($fullPath);
             }
@@ -902,4 +901,3 @@ class AdminController extends Controller
         \App\Helpers\TelegramHelper::sendMessage($message);
     }
 }
-

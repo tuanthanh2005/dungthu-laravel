@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\TiktokDeal;
-use App\Helpers\PathHelper;
 
 class ProductController extends Controller
 {
@@ -127,7 +126,7 @@ class ProductController extends Controller
         }
 
         // Get file path
-        $filePath = PathHelper::publicRootPath('files/' . $product->file_path);
+        $filePath = public_path('files/' . $product->file_path);
 
         // Check if file exists
         if (!file_exists($filePath)) {
@@ -138,4 +137,3 @@ class ProductController extends Controller
         return response()->download($filePath, $product->name . '.' . $product->file_type);
     }
 }
-

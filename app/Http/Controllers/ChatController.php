@@ -6,7 +6,6 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Helpers\TelegramHelper;
 
 class ChatController extends Controller
 {
@@ -41,16 +40,6 @@ class ChatController extends Controller
             'is_admin' => false,
             'is_read' => false
         ]);
-
-        // Gửi thông báo Telegram cho admin
-        $user = Auth::user();
-        $telegramMessage = "💬 *Tin nhắn mới từ khách hàng*\n\n"
-            . "👤 Khách: {$user->name}\n"
-            . "📧 Email: {$user->email}\n"
-            . "💬 Nội dung: {$request->message}\n\n"
-            . "🔗 Xem tại: " . route('admin.chat.index');
-        
-        TelegramHelper::sendMessage($telegramMessage);
 
         return response()->json($message);
     }

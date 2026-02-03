@@ -13,7 +13,7 @@ class HomeController extends Controller
     public function index()
     {
         // Lấy 4 sản phẩm featured cho trang home - Hàng 1
-        $featuredProducts = Product::featured(4)->get();
+        $featuredProducts = Product::featured(8)->get();
         
         // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
         $highlightProducts = Product::where('is_exclusive', true)->latest()->take(8)->get();
@@ -106,3 +106,4 @@ class HomeController extends Controller
         return $givenName . ' ' . $surnameInitial . '.';
     }
 }
+

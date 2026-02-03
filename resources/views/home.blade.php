@@ -367,6 +367,15 @@
 @section('content')
 
     <header class="hero-section text-center">
+        <div class="tet-decor" aria-hidden="true">
+            <span class="tet-lantern l1"></span>
+            <span class="tet-lantern l2"></span>
+            <span class="tet-coin c1"></span>
+            <span class="tet-coin c2"></span>
+            <span class="tet-blossom b1"></span>
+            <span class="tet-blossom b2"></span>
+            <span class="tet-ribbon"></span>
+        </div>
         <div class="shape" style="top: 20%; left: 10%; width: 50px; height: 50px;"></div>
         <div class="shape" style="top: 60%; right: 15%; width: 80px; height: 80px; animation-delay: 2s;"></div>
         

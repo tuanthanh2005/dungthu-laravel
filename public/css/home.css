@@ -49,6 +49,146 @@ body {
     width: 100%;
 }
 
+/* Navbar: allow more items without overflow */
+.navbar-glass .nav-wrap {
+    flex-wrap: wrap;
+    column-gap: 12px;
+    row-gap: 4px;
+}
+
+.navbar-glass .nav-wrap .nav-item {
+    white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+    .navbar-glass .nav-wrap {
+        row-gap: 8px;
+    }
+}
+
+/* Tet banner decoration */
+.hero-section {
+    --tet-red: #d5302a;
+    --tet-gold: #f7c948;
+}
+
+.hero-section .tet-decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.tet-lantern {
+    position: absolute;
+    width: 46px;
+    height: 58px;
+    background: radial-gradient(circle at 30% 30%, #ffb199 0%, #ff6b6b 45%, #d63031 100%);
+    border-radius: 18px 18px 22px 22px;
+    box-shadow: 0 10px 25px rgba(214, 48, 49, 0.35);
+    animation: tet-sway 3.2s ease-in-out infinite;
+    transform-origin: top center;
+}
+
+.tet-lantern::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 16px;
+    height: 10px;
+    transform: translateX(-50%);
+    background: var(--tet-gold);
+    border-radius: 8px 8px 4px 4px;
+}
+
+.tet-lantern::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 18px;
+    height: 10px;
+    transform: translateX(-50%);
+    background: var(--tet-gold);
+    border-radius: 4px 4px 8px 8px;
+    box-shadow: 0 6px 12px rgba(247, 201, 72, 0.35);
+}
+
+.tet-lantern.l1 { left: 22px; top: 18px; transform: rotate(-6deg); }
+.tet-lantern.l2 { right: 26px; top: 32px; transform: rotate(8deg); animation-delay: 0.6s; }
+
+.tet-coin {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.35);
+    background: radial-gradient(circle at 35% 35%, #fff3c4 0%, #f7c948 55%, #f59f00 100%);
+    box-shadow: 0 12px 24px rgba(245, 159, 0, 0.35);
+    animation: tet-float 4s ease-in-out infinite;
+}
+
+.tet-coin.c1 { left: 120px; top: 10px; opacity: 0.5; }
+.tet-coin.c2 { right: 140px; bottom: 18px; opacity: 0.35; animation-delay: 1s; }
+
+.tet-blossom {
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 60%);
+    filter: blur(1px);
+    animation: tet-pulse 3.6s ease-in-out infinite;
+}
+
+.tet-blossom.b1 { left: 8%; bottom: 10%; }
+.tet-blossom.b2 { right: 6%; top: 20%; animation-delay: 0.8s; }
+
+.hero-section .tet-ribbon {
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    width: min(780px, 90vw);
+    height: 18px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,215,0,0.5) 50%, rgba(255,255,255,0) 100%);
+    border-radius: 999px;
+    opacity: 0.6;
+    animation: tet-glow 2.8s ease-in-out infinite;
+}
+
+@keyframes tet-sway {
+    0% { transform: rotate(-6deg) translateY(0); }
+    50% { transform: rotate(4deg) translateY(4px); }
+    100% { transform: rotate(-6deg) translateY(0); }
+}
+
+@keyframes tet-float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes tet-pulse {
+    0% { opacity: 0.35; transform: scale(0.95); }
+    50% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 0.35; transform: scale(0.95); }
+}
+
+@keyframes tet-glow {
+    0% { opacity: 0.35; }
+    50% { opacity: 0.75; }
+    100% { opacity: 0.35; }
+}
+
+@media (max-width: 768px) {
+    .tet-lantern { width: 34px; height: 44px; }
+    .tet-coin { width: 40px; height: 40px; }
+    .tet-coin.c1 { left: 76px; }
+    .tet-coin.c2 { right: 70px; bottom: 12px; }
+    .hero-section .tet-ribbon { height: 12px; }
+}
+
 /* --- 3. HERO SECTION & TYPING EFFECT --- */
 .hero-section {
     background:

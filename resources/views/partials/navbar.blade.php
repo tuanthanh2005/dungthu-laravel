@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light navbar-glass fixed-top">
-    <div class="container">
+    <div class="container-fluid px-4">
         <a class="navbar-brand fw-bold fs-3" href="{{ route('home') }}" style="color: var(--primary);">
             <i class="fas fa-layer-group"></i> DungThu<span class="text-dark">.com</span>
         </a>
@@ -7,7 +7,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center">
+            <ul class="navbar-nav ms-auto align-items-center nav-wrap">
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('card-exchange.index') }}">Đổi Thẻ Cào</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('web-design') }}">Thiết kế website giá rẻ</a></li>

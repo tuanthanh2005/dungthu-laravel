@@ -16,10 +16,12 @@ class ProductCategory extends Model
         'image',
         'description',
         'is_active',
+        'show_on_home',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'show_on_home' => 'boolean',
     ];
 
     public function products()

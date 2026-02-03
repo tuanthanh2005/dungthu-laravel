@@ -14,8 +14,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Lấy danh sách categories active
+        // Lấy danh sách categories active và show_on_home
         $categories = ProductCategory::where('is_active', true)
+            ->where('show_on_home', true)
             ->withCount('products')
             ->orderBy('name')
             ->get();

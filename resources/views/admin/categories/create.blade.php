@@ -152,6 +152,20 @@
                     </label>
                 </div>
 
+                <div class="form-check form-switch mb-4" style="padding-left: 2.5rem;">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           role="switch"
+                           id="show_on_home"
+                           name="show_on_home"
+                           value="1"
+                           {{ old('show_on_home', false) ? 'checked' : '' }}
+                           style="width: 46px; height: 22px; cursor: pointer;">
+                    <label class="form-check-label fw-bold" for="show_on_home" style="margin-left: 8px; cursor: pointer;">
+                        <i class="fas fa-home text-primary me-1"></i>Hiển thị trên trang chủ
+                    </label>
+                </div>
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-submit">
                         <i class="fas fa-save me-2"></i>Lưu danh mục

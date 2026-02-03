@@ -253,7 +253,7 @@ class AdminController extends Controller
         // Thông tin đơn hàng
         $message .= "📦 <b>THÔNG TIN ĐƠN HÀNG</b>\n";
         $message .= "• Mã đơn: <b>#" . $order->id . "</b>\n";
-        $message .= "• Tổng tiền: <b>" . number_format($order->total_amount, 0, ',', '.') . "đ</b>\n";
+        $message .= "• Tổng tiền: <b>" . number_format((float)$order->total_amount, 0, ',', '.') . "đ</b>\n";
         $message .= "• Thời gian: <b>" . $order->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') . "</b>\n\n";
 
         // Thông tin khách hàng
@@ -779,6 +779,7 @@ class AdminController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
+            'show_on_home' => 'nullable|boolean',
         ]);
 
         $slug = \Str::slug($request->name) . '-' . time();
@@ -808,6 +809,7 @@ class AdminController extends Controller
             'image' => $imagePath ? asset($imagePath) : null,
             'description' => $request->description,
             'is_active' => $request->has('is_active'),
+            'show_on_home' => $request->has('show_on_home'),
         ]);
 
         return redirect()->route('admin.categories')->with('success', 'Thêm danh mục thành công!');
@@ -826,6 +828,7 @@ class AdminController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
+            'show_on_home' => 'nullable|boolean',
         ]);
 
         $slug = $category->slug;
@@ -866,6 +869,7 @@ class AdminController extends Controller
             'image' => $imagePath,
             'description' => $request->description,
             'is_active' => $request->has('is_active'),
+            'show_on_home' => $request->has('show_on_home'),
         ]);
 
         return redirect()->route('admin.categories')->with('success', 'Cập nhật danh mục thành công!');

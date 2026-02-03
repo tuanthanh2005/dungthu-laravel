@@ -359,6 +359,19 @@
                     <i class="fas fa-quote-right text-primary ms-2"></i>
                 </div>
 
+                <!-- AdSense: In-article -->
+                <div class="my-4 d-flex justify-content-center" data-aos="fade-up">
+                    <ins class="adsbygoogle"
+                         style="display:block; text-align:center;"
+                         data-ad-layout="in-article"
+                         data-ad-format="fluid"
+                         data-ad-client="ca-pub-3065867660863139"
+                         data-ad-slot="4989157975"></ins>
+                </div>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+
                 <!-- Blog Content -->
                 <div class="blog-content-area" data-aos="fade-up">
                     {!! $blog->content !!}

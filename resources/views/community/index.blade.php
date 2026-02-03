@@ -10,7 +10,7 @@
 <div class="container py-5" style="margin-top: 80px;">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="fw-bold">Cộng Đồng</h1>
+            <h1 class="fw-bold">Cộng Đồng Chia Sẽ Miễn Phí</h1>
             <p class="text-muted mb-0">Cộng Đồng Free Các Bạn Cứ Đăng Chia Sẽ Ở Đây Nhé !!!!</p>
         </div>
         @auth
@@ -39,7 +39,7 @@
                                 {{ $post->title }}
                             </a>
                         </h5>
-                        <p class="text-muted small mb-3">{{ \Str::limit(strip_tags($post->content), 120) }}</p>
+                        <p class="text-muted small mb-3">{{ \Str::limit(strip_tags(html_entity_decode($post->content, ENT_QUOTES, 'UTF-8')), 120) }}</p>
                         <a href="{{ route('community.show', $post) }}" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
                     </div>
                 </div>

@@ -39,7 +39,7 @@
             <i class="far fa-clock"></i> {{ $post->created_at->format('d/m/Y H:i') }}
         </div>
         <h2 class="fw-bold mb-3">{{ $post->title }}</h2>
-        <div class="text-muted">{!! $post->content !!}</div>
+        <div class="text-muted">{!! html_entity_decode($post->content, ENT_QUOTES, 'UTF-8') !!}</div>
 
         @auth
             @if(Gate::allows('community-post.update', $post) || Gate::allows('community-post.delete', $post))

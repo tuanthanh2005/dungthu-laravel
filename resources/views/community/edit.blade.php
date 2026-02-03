@@ -21,7 +21,7 @@
 
         <div class="mb-3">
             <label class="form-label fw-bold">Nội dung</label>
-            <textarea id="community-editor" name="content" rows="10" class="form-control">{{ old('content', $post->content) }}</textarea>
+            <textarea id="community-editor" name="content" rows="10" class="form-control">{{ old('content', html_entity_decode($post->content, ENT_QUOTES, 'UTF-8')) }}</textarea>
             @error('content')<small class="text-danger">{{ $message }}</small>@enderror
         </div>
 

@@ -4,6 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/home.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         .category-row {
@@ -504,6 +505,49 @@
                 --}}
                 <!-- Sản Phẩm Nổi Bật -->
                 <div id="shop" class="mb-5">
+                    <!-- Category Filter Icons -->
+                    @if(isset($categories) && $categories->count() > 0)
+                    <div class="category-filter-section mb-4" data-aos="fade-up">
+                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                            <!-- All Categories -->
+                            <button class="category-filter-btn active" data-category-id="all">
+                                <div class="category-icon-wrap">
+                                    <i class="fas fa-th-large"></i>
+                                </div>
+                                <span class="category-name">Tất cả</span>
+                            </button>
+                            
+                            @foreach($categories as $category)
+                            <button class="category-filter-btn" data-category-id="{{ $category->id }}">
+                                <div class="category-icon-wrap">
+                                    @if($category->image)
+                                        <img src="{{ $category->image }}" alt="{{ $category->name }}">
+                                    @else
+                                        @switch($category->type)
+                                            @case('tech')
+                                                <i class="fas fa-laptop"></i>
+                                                @break
+                                            @case('ebooks')
+                                                <i class="fas fa-book"></i>
+                                                @break
+                                            @case('doc')
+                                                <i class="fas fa-file-alt"></i>
+                                                @break
+                                            @default
+                                                <i class="fas fa-box"></i>
+                                        @endswitch
+                                    @endif
+                                </div>
+                                <span class="category-name">{{ $category->name }}</span>
+                                @if($category->products_count > 0)
+                                    <span class="category-count">{{ $category->products_count }}</span>
+                                @endif
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                    
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
                         <div>
                             <h3 class="fw-bold section-title">⭐ Sản Phẩm Nổi Bật</h3>
@@ -513,7 +557,7 @@
 
                     <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex" id="product-grid">
                         @foreach($featuredProducts as $product)
-                        <div class="col" data-aos="fade-up">
+                        <div class="col product-item" data-aos="fade-up" data-category-id="{{ $product->category_id ?? '' }}">
                             <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
                                 <div class="card-img-wrap">
                                     <span class="badge-custom">{{ strtoupper($product->category) }}</span>
@@ -561,7 +605,7 @@
                     <div class="swiper product-swiper d-md-none" id="featuredProductSwiper">
                         <div class="swiper-wrapper">
                             @foreach($featuredProducts as $product)
-                                <div class="swiper-slide">
+                                <div class="swiper-slide product-item-mobile" data-category-id="{{ $product->category_id ?? '' }}">
                                     <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
                                         <div class="card-img-wrap">
                                             <span class="badge-custom">{{ strtoupper($product->category) }}</span>
@@ -868,6 +912,79 @@
 
             tick();
             setInterval(tick, 1000);
+        });
+    </script>
+    
+    <script>
+        // Category Filter Functionality (Desktop + Mobile)
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterButtons = document.querySelectorAll('.category-filter-btn');
+            const productItems = document.querySelectorAll('.product-item'); // Desktop grid
+            const productItemsMobile = document.querySelectorAll('.product-item-mobile'); // Mobile swiper
+            
+            if (filterButtons.length === 0) return;
+            
+            // Store Swiper instance
+            let featuredSwiper = null;
+            
+            // Wait for Swiper to initialize
+            setTimeout(() => {
+                const swiperEl = document.querySelector('#featuredProductSwiper');
+                if (swiperEl && swiperEl.swiper) {
+                    featuredSwiper = swiperEl.swiper;
+                }
+            }, 500);
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Get selected category ID
+                    const categoryId = this.dataset.categoryId;
+                    
+                    // Filter DESKTOP products
+                    productItems.forEach(item => {
+                        const itemCategoryId = item.dataset.categoryId;
+                        
+                        if (categoryId === 'all' || itemCategoryId === categoryId) {
+                            item.classList.remove('hidden');
+                            item.style.display = '';
+                        } else {
+                            item.classList.add('hidden');
+                            setTimeout(() => {
+                                if (item.classList.contains('hidden')) {
+                                    item.style.display = 'none';
+                                }
+                            }, 300);
+                        }
+                    });
+                    
+                    // Filter MOBILE products (Swiper slides)
+                    productItemsMobile.forEach(slide => {
+                        const itemCategoryId = slide.dataset.categoryId;
+                        
+                        if (categoryId === 'all' || itemCategoryId === categoryId) {
+                            slide.style.display = '';
+                            slide.classList.remove('swiper-slide-hidden');
+                        } else {
+                            slide.style.display = 'none';
+                            slide.classList.add('swiper-slide-hidden');
+                        }
+                    });
+                    
+                    // Update Swiper after filtering
+                    if (featuredSwiper) {
+                        setTimeout(() => {
+                            featuredSwiper.update();
+                            featuredSwiper.slideTo(0, 0); // Go to first slide
+                        }, 50);
+                    }
+                });
+            });
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

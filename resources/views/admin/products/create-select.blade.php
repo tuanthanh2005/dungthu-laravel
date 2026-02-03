@@ -55,11 +55,11 @@
         border-color: #00d4ff;
     }
 
-    .category-card.fashion {
+    .category-card.ebooks {
         border-color: #ff6b6b;
     }
 
-    .category-card.fashion:hover {
+    .category-card.ebooks:hover {
         background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
         border-color: #ff6b6b;
     }
@@ -83,7 +83,7 @@
         color: #00d4ff;
     }
 
-    .category-card.fashion i {
+    .category-card.ebooks i {
         color: #ff6b6b;
     }
 
@@ -134,20 +134,20 @@
                     </small>
                 </a>
 
-                <a href="{{ route('admin.products.create', 'fashion') }}" class="category-card fashion">
-                    <i class="fas fa-tshirt"></i>
-                    <h4>Thời trang</h4>
-                    <p>Quần áo, giày dép, phụ kiện</p>
+                <a href="{{ route('admin.products.create', 'ebooks') }}" class="category-card ebooks">
+                    <i class="fas fa-file-pdf"></i>
+                    <h4>Ebooks</h4>
+                    <p>Tài liệu số, sách điện tử</p>
                     <small class="d-block mt-3 text-muted">
                         <i class="fas fa-info-circle me-1"></i>
-                        Có size, màu sắc
+                        Có file tải về
                     </small>
                 </a>
 
                 <a href="{{ route('admin.products.create', 'doc') }}" class="category-card doc">
                     <i class="fas fa-book"></i>
                     <h4>Tài liệu</h4>
-                    <p>Sách, văn phòng phẩm</p>
+                    <p>Văn phòng phẩm, tài liệu in</p>
                     <small class="d-block mt-3 text-muted">
                         <i class="fas fa-info-circle me-1"></i>
                         Có thông tin bao bì

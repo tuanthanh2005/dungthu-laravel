@@ -124,6 +124,16 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.categories') }}">
+                        <i class="fas fa-list me-2"></i>Danh mục
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.products', ['flash_sale' => 1]) }}">
+                        <i class="fas fa-bolt me-2"></i>Flash Sale
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.tiktok-deals.index') }}">
                         <i class="fab fa-tiktok me-2"></i>Săn Sale TikTok
                     </a>

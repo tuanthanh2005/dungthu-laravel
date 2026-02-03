@@ -5,13 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Blog;
 use App\Models\Order;
+use App\Models\SiteSetting;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        // Lấy danh sách categories active
+        $categories = ProductCategory::where('is_active', true)
+            ->withCount('products')
+            ->orderBy('name')
+            ->get();
+        
         // Lấy 4 sản phẩm featured cho trang home - Hàng 1
         $featuredProducts = Product::featured(8)->get();
         
@@ -32,13 +40,12 @@ class HomeController extends Controller
 
         // S?n ph?m ?ang gi?m gi? (hi?n th? 2-3 sp tr?n home)
         // ??m ng??c ??n cu?i ng?y (het gio thi an block, khong reset gia)
+        $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';
         $saleEndsAt = now()->endOfDay();
-        if (now()->lt($saleEndsAt)) {
+        if ($flashSaleEnabled && now()->lt($saleEndsAt)) {
             $saleProducts = Product::query()
-                ->whereNotNull('sale_price')
-                ->whereColumn('sale_price', '<', 'price')
+                ->where('is_flash_sale', true)
                 ->inStock()
-                ->orderByDesc('is_flash_sale')
                 ->latest()
                 ->take(4)
                 ->get();
@@ -75,6 +82,7 @@ class HomeController extends Controller
         });
 
         return view('home', compact(
+            'categories',
             'featuredProducts',
             'highlightProducts',
             'comboAiProducts',

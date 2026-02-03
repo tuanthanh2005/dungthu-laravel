@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\TiktokDeal;
 use App\Helpers\PathHelper;
 
@@ -11,45 +12,34 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $currentCategory = $request->category ?? 'all';
+        $currentCategoryId = $request->category_id ?? 'all';
         $searchTerm = $request->search ?? '';
         
-        // Xử lý category Tiktok
-        if ($currentCategory === 'tiktok') {
-            $query = TiktokDeal::active()->ordered();
-            
-            // Search trong tiktok deals
-            if ($searchTerm) {
-                $query->where(function($q) use ($searchTerm) {
-                    $q->where('name', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('description', 'LIKE', "%{$searchTerm}%");
-                });
-            }
-            
-            $items = $query->paginate(12)->withQueryString();
-            $isTiktok = true;
-        } else {
-            // Xử lý products bình thường
-            $query = Product::inStock();
-            
-            // Filter theo category nếu có
-            if ($currentCategory != 'all') {
-                $query->byCategory($currentCategory);
-            }
-            
-            // Search theo tên hoặc mô tả
-            if ($searchTerm) {
-                $query->where(function($q) use ($searchTerm) {
-                    $q->where('name', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('description', 'LIKE', "%{$searchTerm}%");
-                });
-            }
-            
-            $items = $query->latest()->paginate(12)->withQueryString();
-            $isTiktok = false;
+        // Lấy danh sách categories active
+        $categories = ProductCategory::where('is_active', true)
+            ->withCount('products')
+            ->orderBy('name')
+            ->get();
+        
+        // Xử lý products
+        $query = Product::inStock();
+        
+        // Filter theo category_id nếu có
+        if ($currentCategoryId != 'all') {
+            $query->where('category_id', $currentCategoryId);
         }
         
-        return view('products.index', compact('items', 'currentCategory', 'searchTerm', 'isTiktok'));
+        // Search theo tên hoặc mô tả
+        if ($searchTerm) {
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+        
+        $items = $query->latest()->paginate(12)->withQueryString();
+        
+        return view('products.index', compact('items', 'categories', 'currentCategoryId', 'searchTerm'));
     }
 
     public function show($slug)

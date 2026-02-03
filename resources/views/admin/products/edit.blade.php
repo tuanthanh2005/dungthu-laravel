@@ -38,44 +38,10 @@
         box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
     }
 
-    .category-options {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-    }
-
-    .category-option {
-        position: relative;
-    }
-
-    .category-option input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-    }
-
-    .category-option label {
-        display: block;
-        padding: 20px;
-        border: 2px solid #e2e8f0;
-        border-radius: 15px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 600;
-    }
-
-    .category-option label i {
-        font-size: 2rem;
-        display: block;
-        margin-bottom: 10px;
-    }
-
-    .category-option input[type="radio"]:checked + label {
-        border-color: #667eea;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+    .category-hint {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-top: 6px;
     }
 
     .btn-submit {
@@ -175,30 +141,27 @@
 
                 <!-- Category -->
                 <div class="mb-4">
-                    <label class="form-label">
+                    <label for="category_id" class="form-label">
                         <i class="fas fa-list me-2 text-primary"></i>Danh mục <span class="text-danger">*</span>
                     </label>
-                    <div class="category-options">
-                        <div class="category-option">
-                            <input type="radio" name="category" value="tech" id="cat-tech" 
-                                   {{ old('category', $product->category) === 'tech' ? 'checked' : '' }} required>
-                            <label for="cat-tech">
-                                <i class="fas fa-laptop" style="color: #00d4ff;"></i>
-                                Công nghệ
-                            </label>
-                        </div>
-                        <div class="category-option">
-                            <input type="radio" name="category" value="ebooks" id="cat-ebooks" 
-                                   {{ old('category', $product->category) === 'ebooks' ? 'checked' : '' }}>
-                            <label for="cat-ebooks">
-                                <i class="fas fa-file-pdf" style="color: #00bcd4;"></i>
-                                Tài liệu kiếm tiền
-                            </label>
-                        </div>
-                    </div>
-                    @error('category')
-                        <div class="text-danger mt-2">{{ $message }}</div>
+                    <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" id="category_id" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}"
+                                    data-type="{{ $cat->type }}"
+                                    {{ (string) old('category_id', $product->category_id) === (string) $cat->id ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                    @if($categories->isEmpty())
+                        <div class="text-danger mt-2">Chưa có danh mục phù hợp. Vui lòng thêm danh mục trước.</div>
+                    @else
+                        <div class="category-hint">Danh mục quyết định loại sản phẩm (ebooks / tài liệu).</div>
+                    @endif
                 </div>
 
                 <!-- Price and Stock -->
@@ -458,26 +421,22 @@
 <script>
     AOS.init({ duration: 800, once: true });
 
-    // Show/hide file upload section based on category
     document.addEventListener('DOMContentLoaded', function() {
-        const categoryInputs = document.querySelectorAll('input[name="category"]');
+        const categorySelect = document.getElementById('category_id');
         const fileUploadSection = document.getElementById('fileUploadSection');
-        
-        // Check initial state
-        const selectedCategory = document.querySelector('input[name="category"]:checked');
-        if (selectedCategory && selectedCategory.value === 'ebooks') {
-            fileUploadSection.style.display = 'block';
+
+        function syncFileSection() {
+            const selected = categorySelect.options[categorySelect.selectedIndex];
+            const type = selected ? selected.dataset.type : null;
+            if (type === 'ebooks') {
+                fileUploadSection.style.display = 'block';
+            } else {
+                fileUploadSection.style.display = 'none';
+            }
         }
-        
-        categoryInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                if (this.value === 'ebooks') {
-                    fileUploadSection.style.display = 'block';
-                } else {
-                    fileUploadSection.style.display = 'none';
-                }
-            });
-        });
+
+        categorySelect.addEventListener('change', syncFileSection);
+        syncFileSection();
     });
 
     function previewImage(event) {

@@ -127,7 +127,6 @@
             <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <input type="hidden" name="category" value="tech">
 
                 <!-- Product Name -->
                 <div class="mb-4">
@@ -160,6 +159,26 @@
                     @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="category_id" class="form-label">
+                        <i class="fas fa-list me-2 text-primary"></i>Danh mục <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" id="category_id" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ (string) old('category_id', $product->category_id) === (string) $cat->id ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    @if($categories->isEmpty())
+                        <small class="text-danger d-block mt-2">Chưa có danh mục công nghệ. Vui lòng thêm danh mục trước.</small>
+                    @endif
                 </div>
 
                 <!-- Thông số kỹ thuật -->

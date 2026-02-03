@@ -20,6 +20,7 @@ class Product extends Model
         'file_type',
         'file_size',
         'category',
+        'category_id',
         'delivery_type',
         'stock',
         'specs',
@@ -39,6 +40,11 @@ class Product extends Model
         'is_combo_ai' => 'boolean',
         'is_flash_sale' => 'boolean',
     ];
+
+    public function categoryRelation()
+    {
+        return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
 
     // Relationship với OrderItems
     public function orderItems()

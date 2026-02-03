@@ -11,6 +11,8 @@ use App\Models\Blog;
 use App\Models\Message;
 use App\Models\AbandonedCart;
 use App\Models\CardExchange;
+use App\Models\SiteSetting;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
@@ -317,19 +319,54 @@ class AdminController extends Controller
     // Product Management
     public function products(Request $request)
     {
-        $query = Product::query();
+        $query = Product::query()->with('categoryRelation');
         
         // Filter by category if provided
         if ($request->has('category') && $request->category !== 'all') {
             $query->where('category', $request->category);
         }
+
+        // Filter flash sale products
+        if ($request->filled('flash_sale')) {
+            $query->where('is_flash_sale', true);
+        }
         
         $products = $query->latest()->paginate(10);
-        return view('admin.products.index', compact('products'));
+        $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';
+        return view('admin.products.index', compact('products', 'flashSaleEnabled'));
+    }
+
+    public function toggleFlashSaleGlobal()
+    {
+        $current = SiteSetting::getValue('flash_sale_enabled', '1');
+        $next = $current === '1' ? '0' : '1';
+        SiteSetting::setValue('flash_sale_enabled', $next);
+
+        $message = $next === '1'
+            ? 'ÄÃ£ báº­t Flash Sale toÃ n bá»™.'
+            : 'ÄÃ£ táº¯t Flash Sale toÃ n bá»™.';
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function toggleProductFlashSale(Product $product)
+    {
+        $product->is_flash_sale = !$product->is_flash_sale;
+        $product->save();
+
+        $message = $product->is_flash_sale
+            ? 'ÄÃ£ báº­t Flash Sale cho sáº£n pháº©m.'
+            : 'ÄÃ£ táº¯t Flash Sale cho sáº£n pháº©m.';
+
+        return redirect()->back()->with('success', $message);
     }
 
     public function createProduct($category = null)
     {
+        if ($category === null) {
+            return view('admin.products.create-select');
+        }
+
         if ($category && !in_array($category, ['tech', 'ebooks', 'doc'])) {
             abort(404);
         }
@@ -338,10 +375,15 @@ class AdminController extends Controller
         $features = \App\Models\Feature::when($category, function($query) use ($category) {
             return $query->where('category', $category);
         })->get();
+
+        $categories = ProductCategory::query()
+            ->where('type', $category)
+            ->orderBy('name')
+            ->get();
         
         // Use specific view for tech, generic for others
         $viewName = $category === 'tech' ? 'admin.products.create-tech' : 'admin.products.create';
-        return view($viewName, compact('category', 'features'));
+        return view($viewName, compact('category', 'features', 'categories'));
     }
 
     public function storeProduct(Request $request)
@@ -351,7 +393,7 @@ class AdminController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0|lt:price',
-            'category' => 'required|in:tech,ebooks,doc',
+            'category_id' => 'required|exists:product_categories,id',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'delivery_type' => 'required|in:digital,physical',
@@ -363,8 +405,8 @@ class AdminController extends Controller
               'price.numeric' => 'Giá phải là số',
               'sale_price.numeric' => 'Giá giảm phải là số',
               'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
-              'category.required' => 'Danh mục không được để trống',
-              'category.in' => 'Danh mục không hợp lệ',
+              'category_id.required' => 'Danh mục không được để trống',
+              'category_id.exists' => 'Danh mục không hợp lệ',
               'stock.required' => 'Số lượng không được để trống',
               'stock.integer' => 'Số lượng phải là số nguyên',
               'image.image' => 'File phải là hình ảnh',
@@ -373,6 +415,9 @@ class AdminController extends Controller
             'file.mimes' => 'File phải có định dạng: pdf, doc, docx, txt, zip, rar',
             'file.max' => 'Kích thước file không được vượt quá 50MB',
         ]);
+
+        $categoryRecord = ProductCategory::findOrFail($request->category_id);
+        $categoryType = $categoryRecord->type;
 
         $slug = \Str::slug($request->name) . '-' . time();
         
@@ -395,7 +440,7 @@ class AdminController extends Controller
         $fileType = null;
         $fileSize = null;
         
-        if ($request->hasFile('file') && $request->category === 'ebooks') {
+        if ($request->hasFile('file') && $categoryType === 'ebooks') {
             $file = $request->file('file');
             $originalName = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
@@ -413,7 +458,7 @@ class AdminController extends Controller
         
         // Xử lý specs theo category
         $specs = [];
-        if ($request->category === 'tech') {
+        if ($categoryType === 'tech') {
             // Xử lý specs động từ spec_keys và spec_values
             $keys = $request->input('spec_keys', []);
             $values = $request->input('spec_values', []);
@@ -423,13 +468,13 @@ class AdminController extends Controller
                     $specs[$key] = $values[$index];
                 }
             }
-        } elseif ($request->category === 'ebooks') {
+        } elseif ($categoryType === 'ebooks') {
             $specs = [
                 'pages' => $request->input('pages'),
                 'language' => $request->input('language', 'Tiếng Việt'),
                 'format' => $fileType ?? 'PDF',
             ];
-        } elseif ($request->category === 'doc') {
+        } elseif ($categoryType === 'doc') {
             $specs = [
                 'paper_type' => $request->input('paper_type'),
                 'size' => $request->input('size'),
@@ -444,7 +489,8 @@ class AdminController extends Controller
               'description' => $request->description,
               'price' => $request->price,
               'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
-              'category' => $request->category,
+              'category' => $categoryType,
+              'category_id' => $categoryRecord->id,
               'stock' => $request->stock,
               'image' => $imagePath ? asset($imagePath) : null,
               'file_path' => $filePath,
@@ -470,10 +516,15 @@ class AdminController extends Controller
     {
         // Lấy danh sách features theo category của product
         $features = \App\Models\Feature::where('category', $product->category)->get();
+
+        $categories = ProductCategory::query()
+            ->where('type', $product->category)
+            ->orderBy('name')
+            ->get();
         
         // Use specific view for tech, generic for others
         $viewName = $product->category === 'tech' ? 'admin.products.edit-tech' : 'admin.products.edit';
-        return view($viewName, compact('product', 'features'));
+        return view($viewName, compact('product', 'features', 'categories'));
     }
 
       public function updateProduct(Request $request, Product $product)
@@ -483,7 +534,7 @@ class AdminController extends Controller
               'description' => 'required|string',
               'price' => 'required|numeric|min:0',
               'sale_price' => 'nullable|numeric|min:0|lt:price',
-              'category' => 'required|in:tech,ebooks,doc',
+              'category_id' => 'required|exists:product_categories,id',
               'stock' => 'required|integer|min:0',
               'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
               'file' => 'nullable|file|mimes:pdf,doc,docx,txt,zip,rar|max:51200',
@@ -495,8 +546,8 @@ class AdminController extends Controller
               'price.numeric' => 'Giá phải là số',
               'sale_price.numeric' => 'Giá giảm phải là số',
               'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
-              'category.required' => 'Danh mục không được để trống',
-              'category.in' => 'Danh mục không hợp lệ',
+              'category_id.required' => 'Danh mục không được để trống',
+              'category_id.exists' => 'Danh mục không hợp lệ',
               'stock.required' => 'Số lượng không được để trống',
               'stock.integer' => 'Số lượng phải là số nguyên',
               'image.image' => 'File phải là hình ảnh',
@@ -505,6 +556,9 @@ class AdminController extends Controller
             'file.mimes' => 'File phải có định dạng: pdf, doc, docx, txt, zip, rar',
             'file.max' => 'Kích thước file không được vượt quá 50MB',
         ]);
+
+        $categoryRecord = ProductCategory::findOrFail($request->category_id);
+        $categoryType = $categoryRecord->type;
 
         $slug = \Str::slug($request->name) . '-' . $product->id;
         
@@ -532,7 +586,7 @@ class AdminController extends Controller
         }
         
         // Xử lý upload file mới cho ebooks
-        if ($request->hasFile('file') && $request->category === 'ebooks') {
+        if ($request->hasFile('file') && $categoryType === 'ebooks') {
             // Xóa file cũ nếu có
             if ($product->file_path) {
                 $oldFilePath = PathHelper::publicRootPath('files/' . $product->file_path);
@@ -562,7 +616,7 @@ class AdminController extends Controller
         
         // Xử lý specs theo category
         $specs = [];
-        if ($request->category === 'tech') {
+        if ($categoryType === 'tech') {
             // Xử lý specs động từ spec_keys và spec_values
             $keys = $request->input('spec_keys', []);
             $values = $request->input('spec_values', []);
@@ -572,13 +626,13 @@ class AdminController extends Controller
                     $specs[$key] = $values[$index];
                 }
             }
-        } elseif ($request->category === 'ebooks') {
+        } elseif ($categoryType === 'ebooks') {
             $specs = [
                 'pages' => $request->input('pages'),
                 'language' => $request->input('language', 'Tiếng Việt'),
                 'format' => $request->input('format'),
             ];
-        } elseif ($request->category === 'doc') {
+        } elseif ($categoryType === 'doc') {
             $specs = [
                 'paper_type' => $request->input('paper_type'),
                 'size' => $request->input('size'),
@@ -593,7 +647,8 @@ class AdminController extends Controller
               'description' => $request->description,
               'price' => $request->price,
               'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
-              'category' => $request->category,
+              'category' => $categoryType,
+              'category_id' => $categoryRecord->id,
               'stock' => $request->stock,
               'specs' => $specs,
               'delivery_type' => $request->delivery_type,
@@ -702,6 +757,136 @@ class AdminController extends Controller
     {
         $feature->delete();
         return redirect()->route('admin.features')->with('success', 'Xóa tính năng thành công!');
+    }
+
+    // Product Categories Management
+    public function categories()
+    {
+        $categories = ProductCategory::withCount('products')->latest()->paginate(20);
+        return view('admin.categories.index', compact('categories'));
+    }
+
+    public function createCategory()
+    {
+        return view('admin.categories.create');
+    }
+
+    public function storeCategory(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:tech,ebooks,doc',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $slug = \Str::slug($request->name) . '-' . time();
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $dir = PathHelper::publicRootPath('images/categories');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $extension;
+            $fullPath = PathHelper::publicRootPath('images/categories/' . $fileName);
+
+            $croppedImage = $this->cropImage($file);
+            $this->saveImage($croppedImage, $fullPath, $extension);
+
+            $imagePath = '/images/categories/' . $fileName;
+        }
+
+        ProductCategory::create([
+            'name' => $request->name,
+            'slug' => $slug,
+            'type' => $request->type,
+            'image' => $imagePath ? asset($imagePath) : null,
+            'description' => $request->description,
+            'is_active' => $request->has('is_active'),
+        ]);
+
+        return redirect()->route('admin.categories')->with('success', 'Thêm danh mục thành công!');
+    }
+
+    public function editCategory(ProductCategory $category)
+    {
+        return view('admin.categories.edit', compact('category'));
+    }
+
+    public function updateCategory(Request $request, ProductCategory $category)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:tech,ebooks,doc',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $slug = $category->slug;
+        if ($request->name !== $category->name) {
+            $slug = \Str::slug($request->name) . '-' . time();
+        }
+
+        $imagePath = $category->image;
+        if ($request->hasFile('image')) {
+            if ($category->image) {
+                $oldImagePath = parse_url($category->image, PHP_URL_PATH);
+                $fullPath = PathHelper::publicRootPath($oldImagePath);
+                if (file_exists($fullPath)) {
+                    unlink($fullPath);
+                }
+            }
+
+            $dir = PathHelper::publicRootPath('images/categories');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $extension;
+            $fullPath = PathHelper::publicRootPath('images/categories/' . $fileName);
+
+            $croppedImage = $this->cropImage($file);
+            $this->saveImage($croppedImage, $fullPath, $extension);
+
+            $imagePath = asset('/images/categories/' . $fileName);
+        }
+
+        $category->update([
+            'name' => $request->name,
+            'slug' => $slug,
+            'type' => $request->type,
+            'image' => $imagePath,
+            'description' => $request->description,
+            'is_active' => $request->has('is_active'),
+        ]);
+
+        return redirect()->route('admin.categories')->with('success', 'Cập nhật danh mục thành công!');
+    }
+
+    public function deleteCategory(ProductCategory $category)
+    {
+        if ($category->products()->count() > 0) {
+            return redirect()->back()->with('error', 'Danh mục đang có sản phẩm, không thể xóa!');
+        }
+
+        if ($category->image) {
+            $oldImagePath = parse_url($category->image, PHP_URL_PATH);
+            $fullPath = PathHelper::publicRootPath($oldImagePath);
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+        }
+
+        $category->delete();
+        return redirect()->route('admin.categories')->with('success', 'Xóa danh mục thành công!');
     }
 
     // Blog Management

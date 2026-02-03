@@ -4,42 +4,14 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ time() }}">
     <style>
-        .shop-category-tabs {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 4px; /* room for iOS scroll bar */
+        .category-filter-link {
+            text-decoration: none;
         }
-
-        .shop-category-tabs::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .shop-category-btn {
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 0.2rem 0.4rem;
-            white-space: nowrap;
-            flex: 0 0 auto;
-        }
-
-        @media (min-width: 768px) {
-            .shop-category-tabs {
-                flex-wrap: wrap;
-                overflow-x: visible;
-                gap: 0.75rem;
-            }
-
-            .shop-category-btn {
-                border-radius: 18px;
-                font-size: 1rem;
-                padding: 0.65rem 1.1rem;
-            }
+        
+        .category-filter-link:hover {
+            text-decoration: none;
         }
     </style>
 @endpush
@@ -58,40 +30,55 @@
         <div class="col-12">
             <div class="card shadow-sm border-0" style="border-radius: 15px;">
                 <div class="card-body p-4">
-                    <!-- Quick Filter Badges - Moved to Top -->
-                    <div class="mb-4">
+                    <!-- Category Filter Icons -->
+                    @if(isset($categories) && $categories->count() > 0)
+                    <div class="category-filter-section mb-4">
                         <label class="form-label fw-bold mb-3 text-center d-block" style="font-size: 1.1rem;">
                             <i class="fas fa-filter me-2 text-primary"></i>Danh mục
                         </label>
-                        <div class="shop-category-tabs">
-                            {{-- Tạm thời ẩn danh mục "Tất cả" --}}
-                            {{--
-                            <a href="{{ route('shop') }}" 
-                               class="btn btn-{{ $currentCategory == 'all' ? 'primary' : 'outline-primary' }} shop-category-btn">
-                                Tất cả
+                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                            <!-- All Categories -->
+                            <a href="{{ route('shop') }}" class="category-filter-link {{ $currentCategoryId == 'all' ? 'active' : '' }}">
+                                <button class="category-filter-btn {{ $currentCategoryId == 'all' ? 'active' : '' }}" type="button">
+                                    <div class="category-icon-wrap">
+                                        <i class="fas fa-th-large"></i>
+                                    </div>
+                                    <span class="category-name">Tất cả</span>
+                                </button>
                             </a>
-                            --}}
-                            <a href="{{ route('shop', ['category' => 'tech']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tech' ? 'info' : 'outline-info' }} shop-category-btn">
-                                <i class="fas fa-microchip me-2"></i>AI
+                            
+                            @foreach($categories as $category)
+                            <a href="{{ route('shop', ['category_id' => $category->id]) }}" class="category-filter-link">
+                                <button class="category-filter-btn {{ $currentCategoryId == $category->id ? 'active' : '' }}" type="button">
+                                    <div class="category-icon-wrap">
+                                        @if($category->image)
+                                            <img src="{{ $category->image }}" alt="{{ $category->name }}">
+                                        @else
+                                            @switch($category->type)
+                                                @case('tech')
+                                                    <i class="fas fa-laptop"></i>
+                                                    @break
+                                                @case('ebooks')
+                                                    <i class="fas fa-book"></i>
+                                                    @break
+                                                @case('doc')
+                                                    <i class="fas fa-file-alt"></i>
+                                                    @break
+                                                @default
+                                                    <i class="fas fa-box"></i>
+                                            @endswitch
+                                        @endif
+                                    </div>
+                                    <span class="category-name">{{ $category->name }}</span>
+                                    @if($category->products_count > 0)
+                                        <span class="category-count">{{ $category->products_count }}</span>
+                                    @endif
+                                </button>
                             </a>
-                            <a href="{{ route('shop', ['category' => 'tiktok']) }}" 
-                               class="btn btn-{{ $currentCategory == 'tiktok' ? 'warning' : 'outline-warning' }} shop-category-btn">
-                                <i class="fab fa-tiktok me-2"></i>Săn Sale
-                            </a>
-                            {{-- Tạm thời ẩn danh mục "Tài liệu" --}}
-                            {{--
-                            <a href="{{ route('shop', ['category' => 'ebooks']) }}" 
-                               class="btn btn-{{ $currentCategory == 'ebooks' ? 'success' : 'outline-success' }} shop-category-btn">
-                                <i class="fas fa-file-pdf me-2"></i>Tài liệu
-                            </a>
-                            --}}
-                            <a href="{{ route('card-exchange.index') }}" 
-                               class="btn btn-outline-danger shop-category-btn">
-                                <i class="fas fa-credit-card me-2"></i>Đổi Thẻ
-                            </a>
+                            @endforeach
                         </div>
                     </div>
+                    @endif
 
                     <form action="{{ route('shop') }}" method="GET" class="row g-3">
                         <!-- Search Box -->
@@ -105,7 +92,7 @@
                                    placeholder="Nhập tên sản phẩm..." 
                                    value="{{ $searchTerm }}"
                                    style="border-radius: 10px; border: 2px solid #e0e0e0;">
-                            <input type="hidden" name="category" value="{{ $currentCategory }}">
+                            <input type="hidden" name="category_id" value="{{ $currentCategoryId }}">
                         </div>
 
                         <!-- Submit Button -->
@@ -121,14 +108,21 @@
     </div>
 
     <!-- Results Count -->
-    @if($searchTerm || $currentCategory != 'all')
+    @if($searchTerm || $currentCategoryId != 'all')
     <div class="row mb-3">
         <div class="col-12">
             <div class="alert alert-info">
                 <i class="fas fa-info-circle me-2"></i>
-                Tìm thấy <strong>{{ $items->total() }}</strong> {{ $isTiktok ? 'deal' : 'sản phẩm' }}
+                Tìm thấy <strong>{{ $items->total() }}</strong> sản phẩm
                 @if($searchTerm) cho "<strong>{{ $searchTerm }}</strong>" @endif
-                @if($currentCategory != 'all') trong danh mục <strong>{{ $currentCategory == 'tiktok' ? 'Săn Sale Tiktok Shop' : $currentCategory }}</strong> @endif
+                @if($currentCategoryId != 'all') 
+                    @php
+                        $selectedCategory = $categories->firstWhere('id', $currentCategoryId);
+                    @endphp
+                    @if($selectedCategory)
+                        trong danh mục <strong>{{ $selectedCategory->name }}</strong>
+                    @endif
+                @endif
             </div>
         </div>
     </div>
@@ -136,94 +130,57 @@
 
     @if($items->count() > 0)
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
-        @if($isTiktok)
-            {{-- Hiển thị Tiktok Deals --}}
-            @foreach($items as $deal)
-            <div class="col" data-aos="fade-up">
-                <div class="tiktok-deal-card">
-                    @if($deal->discount_percent)
-                        <span class="deal-badge">-{{ $deal->discount_percent }}%</span>
+        @foreach($items as $product)
+        <div class="col" data-aos="fade-up">
+            <div class="product-card">
+                <div class="card-img-wrap">
+                    <span class="badge-custom">{{ strtoupper($product->category) }}</span>
+                    @if($product->category === 'ebooks' && $product->hasFile())
+                        <div class="position-absolute top-50 start-50 translate-middle">
+                            <i class="fas fa-file-{{ $product->file_type === 'pdf' ? 'pdf' : ($product->file_type === 'docx' ? 'word' : 'alt') }} fa-4x text-white opacity-75"></i>
+                        </div>
                     @endif
-                    <div class="tiktok-img-wrap">
-                        <img src="{{ $deal->image ? asset('images/products/' . $deal->image) : 'https://via.placeholder.com/300' }}" 
-                             alt="{{ $deal->name }}">
-                    </div>
-                    <div class="p-3">
-                        <h6 class="fw-bold">{{ $deal->name }}</h6>
-                        @if($deal->description)
-                            <p class="text-muted small mb-2" style="font-size: 0.85rem; height: 2.5rem; overflow: hidden;">
-                                {{ Str::limit($deal->description, 50) }}
-                            </p>
-                        @endif
-                        @if($deal->original_price)
-                            <div class="text-decoration-line-through text-muted small">
-                                {{ $deal->formatted_original_price }}
-                            </div>
-                        @endif
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <span class="text-danger fw-bold fs-5">{{ $deal->formatted_sale_price }}</span>
+                    <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
+                </div>
+                <div class="p-3">
+                    <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
+                    <p class="text-muted small mb-2" style="font-size: 0.85rem; height: 2.5rem; overflow: hidden;">
+                        {{ Str::limit($product->description, 50) }}
+                    </p>
+                    @if($product->category === 'ebooks' && $product->hasFile())
+                        <div class="mb-2">
+                            <span class="badge bg-info">
+                                <i class="fas fa-file"></i> {{ strtoupper($product->file_type) }}
+                            </span>
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-download"></i> {{ $product->formatted_file_size }}
+                            </span>
                         </div>
-                        <a href="{{ $deal->tiktok_link }}" target="_blank" class="btn btn-danger w-100 mt-2">
-                            <i class="fab fa-tiktok"></i> Mua ngay
-                        </a>
+                    @endif
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div class="flex-grow-1 me-2" style="min-width: 0;">
+                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
+                                <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
+                                @if($product->is_on_sale)
+                                    <div class="d-flex align-items-center gap-1 flex-wrap">
+                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
+                                        <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
+                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
             </div>
-            @endforeach
-        @else
-            {{-- Hiển thị Products --}}
-            @foreach($items as $product)
-            <div class="col" data-aos="fade-up">
-                <div class="product-card">
-                    <div class="card-img-wrap">
-                        <span class="badge-custom">{{ strtoupper($product->category) }}</span>
-                        @if($product->category === 'ebooks' && $product->hasFile())
-                            <div class="position-absolute top-50 start-50 translate-middle">
-                                <i class="fas fa-file-{{ $product->file_type === 'pdf' ? 'pdf' : ($product->file_type === 'docx' ? 'word' : 'alt') }} fa-4x text-white opacity-75"></i>
-                            </div>
-                        @endif
-                        <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                    </div>
-                    <div class="p-3">
-                        <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                        <p class="text-muted small mb-2" style="font-size: 0.85rem; height: 2.5rem; overflow: hidden;">
-                            {{ Str::limit($product->description, 50) }}
-                        </p>
-                        @if($product->category === 'ebooks' && $product->hasFile())
-                            <div class="mb-2">
-                                <span class="badge bg-info">
-                                    <i class="fas fa-file"></i> {{ strtoupper($product->file_type) }}
-                                </span>
-                                <span class="badge bg-secondary">
-                                    <i class="fas fa-download"></i> {{ $product->formatted_file_size }}
-                                </span>
-                            </div>
-                        @endif
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                                    <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                    @if($product->is_on_sale)
-                                        <div class="d-flex align-items-center gap-1 flex-wrap">
-                                            <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                            <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                </div>
-            </div>
-            @endforeach
-        @endif
+        </div>
+        @endforeach
     </div>
 
     <div class="mt-5 d-flex justify-content-center">
@@ -231,8 +188,8 @@
     </div>
     @else
     <div class="text-center py-5">
-        <i class="{{ $isTiktok ? 'fab fa-tiktok' : 'fas fa-box-open' }} fa-4x text-muted mb-3"></i>
-        <h4 class="text-muted">Không tìm thấy {{ $isTiktok ? 'deal' : 'sản phẩm' }} nào</h4>
+        <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Không tìm thấy sản phẩm nào</h4>
         <p class="text-muted">Thử tìm kiếm với từ khóa khác hoặc chọn danh mục khác</p>
         <a href="{{ route('shop') }}" class="btn btn-primary mt-3">
             <i class="fas fa-arrow-left"></i> Quay lại cửa hàng

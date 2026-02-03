@@ -123,6 +123,11 @@
         background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%);
         color: white;
     }
+
+    .badge-ebooks {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+    }
 </style>
 @endpush
 
@@ -140,6 +145,11 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="{{ route('admin.products') }}">
                         <i class="fas fa-box me-2"></i>Sản phẩm
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.categories') }}">
+                        <i class="fas fa-list me-2"></i>Danh mục
                     </a>
                 </li>
                 <li class="nav-item">
@@ -172,13 +182,21 @@
 
         <!-- Products Management -->
         <div class="admin-card" data-aos="fade-up">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                 <h3 class="fw-bold mb-0">
                     <i class="fas fa-box text-primary me-3"></i>Quản lý Sản phẩm
                 </h3>
-                <a href="{{ route('admin.products.create') }}" class="btn btn-primary rounded-pill px-4">
-                    <i class="fas fa-plus me-2"></i>Thêm sản phẩm
-                </a>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <form action="{{ route('admin.flash-sale.toggle') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn {{ $flashSaleEnabled ? 'btn-outline-danger' : 'btn-outline-success' }} rounded-pill px-4">
+                            <i class="fas fa-bolt me-2"></i>{{ $flashSaleEnabled ? 'Tắt Flash Sale' : 'Bật Flash Sale' }}
+                        </button>
+                    </form>
+                    <a href="{{ route('admin.products.create') }}" class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-plus me-2"></i>Thêm sản phẩm
+                    </a>
+                </div>
             </div>
 
             <!-- Category Filter -->
@@ -187,6 +205,10 @@
                     <a href="{{ route('admin.products') }}" 
                        class="btn {{ !request('category') || request('category') == 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-4 me-2">
                         <i class="fas fa-list me-2"></i>Tất cả
+                    </a>
+                    <a href="{{ route('admin.products', array_merge(request()->except('page'), ['flash_sale' => 1])) }}" 
+                       class="btn {{ request('flash_sale') ? 'btn-danger' : 'btn-outline-danger' }} rounded-pill px-4 me-2">
+                        <i class="fas fa-bolt me-2"></i>Flash Sale
                     </a>
                     <a href="{{ route('admin.products', ['category' => 'tech']) }}" 
                        class="btn {{ request('category') == 'tech' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-4 me-2">
@@ -214,6 +236,7 @@
                             <th>Danh mục</th>
                             <th>Loại</th>
                             <th>Giá</th>
+                            <th>Flash Sale</th>
                             <th>Tồn kho</th>
                             <th>Hành động</th>
                         </tr>
@@ -232,12 +255,18 @@
                                 <small class="text-muted">{{ Str::limit($product->description, 50) }}</small>
                             </td>
                             <td>
-                                @if($product->category === 'tech')
-                                    <span class="badge-category badge-tech">Công nghệ</span>
-                                @elseif($product->category === 'fashion')
-                                    <span class="badge-category badge-fashion">Thời trang</span>
+                                @if($product->categoryRelation)
+                                    <span class="badge-category badge-{{ $product->categoryRelation->type }}">
+                                        {{ $product->categoryRelation->name }}
+                                    </span>
                                 @else
-                                    <span class="badge-category badge-doc">Tài liệu</span>
+                                    @if($product->category === 'tech')
+                                        <span class="badge-category badge-tech">Công nghệ</span>
+                                    @elseif($product->category === 'ebooks')
+                                        <span class="badge-category badge-ebooks">Ebooks</span>
+                                    @else
+                                        <span class="badge-category badge-doc">Tài liệu</span>
+                                    @endif
                                 @endif
                             </td>
                             <td>
@@ -253,6 +282,14 @@
                             </td>
                             <td>
                                 <strong class="text-primary">{{ number_format($product->price, 0, ',', '.') }}đ</strong>
+                            </td>
+                            <td>
+                                <form action="{{ route('admin.products.toggle-flash-sale', $product) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm {{ $product->is_flash_sale ? 'btn-danger' : 'btn-outline-danger' }}">
+                                        <i class="fas fa-bolt me-1"></i>{{ $product->is_flash_sale ? 'Đang bật' : 'Bật' }}
+                                    </button>
+                                </form>
                             </td>
                             <td>
                                 @if($product->stock > 0)

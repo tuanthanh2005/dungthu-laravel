@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/community/{post:slug}/edit', [CommunityPostController::class, 'edit'])->name('community.edit');
     Route::put('/community/{post:slug}', [CommunityPostController::class, 'update'])->name('community.update');
     Route::delete('/community/{post:slug}', [CommunityPostController::class, 'destroy'])->name('community.delete');
+    Route::post('/community/upload-image', [CommunityPostController::class, 'uploadImage'])->name('community.images.upload');
 
     Route::post('/community/{post:slug}/comments', [CommunityCommentController::class, 'store'])->name('community.comments.store');
     Route::put('/community/comments/{comment}', [CommunityCommentController::class, 'update'])->name('community.comments.update');

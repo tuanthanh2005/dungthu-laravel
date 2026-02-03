@@ -6,6 +6,7 @@ use App\Models\CommunityPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use App\Helpers\PathHelper;
 
 class CommunityPostController extends Controller
 {
@@ -92,5 +93,27 @@ class CommunityPostController extends Controller
         $post->delete();
 
         return redirect()->route('community.index')->with('success', 'Xóa bài viết thành công!');
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+        ]);
+
+        $file = $request->file('file');
+        $extension = $file->getClientOriginalExtension();
+        $fileName = time() . '_' . uniqid() . '.' . $extension;
+
+        $dir = PathHelper::publicRootPath('images/community');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $file->move($dir, $fileName);
+
+        return response()->json([
+            'location' => asset('images/community/' . $fileName),
+        ]);
     }
 }

@@ -10,8 +10,8 @@
 <div class="container py-5" style="margin-top: 80px;">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="fw-bold">Cộng Đồng Chia Sẽ Miễn Phí</h1>
-            <p class="text-muted mb-0">Cộng Đồng Free Các Bạn Cứ Đăng Chia Sẽ Ở Đây Nhé !!!!</p>
+            <h1 class="fw-bold">Cộng Đồng Chia Sẻ Miễn Phí</h1>
+            <p class="text-muted mb-0">Cộng Đồng Free Các Bạn Cứ Đăng Chia Sẻ Ở Đây Nhé !!!!</p>
         </div>
         @auth
             <a href="{{ route('community.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm mt-3 mt-md-0">

@@ -16,6 +16,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CardExchangeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CommunityPostController;
+use App\Http\Controllers\CommunityCommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
@@ -33,6 +35,21 @@ Route::get('/product/{id}/download', [ProductController::class, 'download'])->na
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/category/{category}', [BlogController::class, 'category'])->name('blog.category');
+
+// Community routes
+Route::get('/community', [CommunityPostController::class, 'index'])->name('community.index');
+Route::middleware('auth')->group(function () {
+    Route::get('/community/create', [CommunityPostController::class, 'create'])->name('community.create');
+    Route::post('/community', [CommunityPostController::class, 'store'])->name('community.store');
+    Route::get('/community/{post:slug}/edit', [CommunityPostController::class, 'edit'])->name('community.edit');
+    Route::put('/community/{post:slug}', [CommunityPostController::class, 'update'])->name('community.update');
+    Route::delete('/community/{post:slug}', [CommunityPostController::class, 'destroy'])->name('community.delete');
+
+    Route::post('/community/{post:slug}/comments', [CommunityCommentController::class, 'store'])->name('community.comments.store');
+    Route::put('/community/comments/{comment}', [CommunityCommentController::class, 'update'])->name('community.comments.update');
+    Route::delete('/community/comments/{comment}', [CommunityCommentController::class, 'destroy'])->name('community.comments.delete');
+});
+Route::get('/community/{post:slug}', [CommunityPostController::class, 'show'])->name('community.show');
 
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

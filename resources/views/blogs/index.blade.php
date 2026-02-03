@@ -20,7 +20,9 @@
         <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
             <div class="product-card">
                 <div class="card-img-wrap" style="height: 200px;">
-                    <img src="{{ $blog->image ?? 'https://via.placeholder.com/400' }}" alt="{{ $blog->title }}">
+                    <a href="{{ route('blog.show', $blog->slug) }}" class="d-block">
+                        <img src="{{ $blog->image ?? 'https://via.placeholder.com/400' }}" alt="{{ $blog->title }}">
+                    </a>
                     <span class="badge-custom">{{ strtoupper($blog->category) }}</span>
                 </div>
                 <div class="p-3">
@@ -28,7 +30,11 @@
                         <i class="far fa-clock"></i> {{ $blog->formatted_date }} • 
                         <i class="far fa-eye"></i> {{ $blog->views }} lượt xem
                     </div>
-                    <h5 class="fw-bold mb-2">{{ $blog->title }}</h5>
+                    <h5 class="fw-bold mb-2">
+                        <a href="{{ route('blog.show', $blog->slug) }}" class="text-decoration-none text-dark">
+                            {{ $blog->title }}
+                        </a>
+                    </h5>
                     <p class="text-muted small mb-3">{{ Str::limit($blog->excerpt, 100) }}</p>
                     <a href="{{ route('blog.show', $blog->slug) }}" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
                 </div>

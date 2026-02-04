@@ -21,7 +21,6 @@
     <div class="row mb-4" data-aos="fade-down">
         <div class="col-12 text-center">
             <h1 class="fw-bold mb-3">Cửa Hàng</h1>
-            <p class="text-muted">Khám phá các sản phẩm chất lượng cao với giá tốt nhất</p>
         </div>
     </div>
 

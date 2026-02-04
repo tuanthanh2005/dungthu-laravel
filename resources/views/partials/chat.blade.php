@@ -1,42 +1,3 @@
-<!-- Chat Widget -->
-@auth
-@if(auth()->user()->role !== 'admin')
-<div id="chatWidget" class="chat-widget">
-    <div class="chat-header">
-        <h6 class="mb-0">
-            <i class="fas fa-comments"></i> Chat với Admin
-        </h6>
-        <button class="btn-close-chat" onclick="closeChatWidget()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    
-    <div class="chat-body" id="chatBody">
-        <div class="text-center py-3 text-muted">
-            <i class="fas fa-comments fa-2x mb-2"></i>
-            <p>Bắt đầu cuộc trò chuyện với admin</p>
-        </div>
-    </div>
-    
-    <div class="chat-footer">
-        <form id="chatForm" onsubmit="sendMessage(event)">
-            <div class="input-group">
-                <input type="text" class="form-control" id="chatInput" placeholder="Nhập tin nhắn..." required>
-                <button class="btn btn-primary" type="submit">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Chat Button -->
-<button class="chat-button" onclick="toggleChatWidget()" id="chatButton">
-    <i class="fas fa-comments"></i>
-    <span class="unread-badge" id="unreadBadge" style="display: none;">0</span>
-    <span class="chat-tooltip" id="chatTooltip">Chat với Admin</span>
-</button>
-
 <style>
 .chat-button {
     position: fixed;
@@ -125,6 +86,19 @@
     flex-direction: column;
     z-index: 10000;
     overflow: hidden;
+}
+
+/* Stacking positions: AI above Admin */
+.chat-widget.ai {
+    bottom: 160px;
+}
+
+.chat-button.ai {
+    bottom: 90px;
+}
+
+.chat-widget.admin {
+    bottom: 90px;
 }
 
 .chat-widget.active {
@@ -331,8 +305,212 @@
         right: 10px;
         left: auto;
     }
+
+    .chat-widget.ai {
+        bottom: 140px;
+    }
+
+    .chat-button.ai {
+        bottom: 70px;
+    }
 }
 </style>
+
+<!-- AI Chat Widget -->
+<div id="guestChatWidget" class="chat-widget ai">
+    <div class="chat-header">
+        <h6 class="mb-0">
+            <i class="fas fa-robot"></i> Trợ lý tư vấn
+        </h6>
+        <button class="btn-close-chat" onclick="closeGuestChat()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="chat-body" id="guestChatBody">
+        <div class="text-center py-3 text-muted">
+            <i class="fas fa-robot fa-2x mb-2"></i>
+            <p>Xin chào! Bạn cần tư vấn gì về sản phẩm?</p>
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <form id="guestChatForm" onsubmit="sendGuestMessage(event)">
+            <div class="input-group">
+                <input type="text" class="form-control" id="guestChatInput" placeholder="Nhập câu hỏi..." required>
+                <button class="btn btn-primary" type="submit" id="guestChatSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+        <div class="text-muted" style="font-size: 12px; margin-top: 6px;">
+            AI có thể tư vấn sai vui lòng đăng nhập chat với admin để được hỗ trợ chính xác hơn.
+        </div>
+    </div>
+</div>
+
+<!-- Chat Button -->
+<button class="chat-button ai" onclick="toggleGuestChat()" id="guestChatButton">
+    <i class="fas fa-robot"></i>
+    <span class="chat-tooltip" id="guestChatTooltip">Hỏi nhanh trợ lý</span>
+</button>
+
+<script>
+let guestChatWidget = null;
+let guestChatOpen = false;
+let guestTooltipTimer = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    guestChatWidget = document.getElementById('guestChatWidget');
+    startGuestTooltipCycle();
+});
+
+function toggleGuestChat() {
+    if (!guestChatWidget) return;
+    if (guestChatWidget.classList.contains('active')) {
+        closeGuestChat();
+    } else {
+        openGuestChat();
+    }
+}
+
+function openGuestChat() {
+    if (!guestChatWidget) return;
+    guestChatWidget.classList.add('active');
+    guestChatOpen = true;
+    const input = document.getElementById('guestChatInput');
+    if (input) input.focus();
+}
+
+function closeGuestChat() {
+    if (!guestChatWidget) return;
+    guestChatWidget.classList.remove('active');
+    guestChatOpen = false;
+}
+
+function sendGuestMessage(event) {
+    event.preventDefault();
+    const input = document.getElementById('guestChatInput');
+    const message = (input?.value || '').trim();
+    if (!message) return;
+
+    appendGuestMessage({ role: 'user', content: message });
+    input.value = '';
+
+    const sendBtn = document.getElementById('guestChatSendBtn');
+    if (sendBtn) sendBtn.disabled = true;
+
+    fetch('{{ route('guest-chat.send') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ message })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.reply) {
+            appendGuestMessage({ role: 'assistant', content: data.reply });
+        } else {
+            appendGuestMessage({ role: 'assistant', content: 'Xin lỗi, hiện chưa thể trả lời. Vui lòng thử lại sau.' });
+        }
+    })
+    .catch(() => {
+        appendGuestMessage({ role: 'assistant', content: 'Xin lỗi, hiện chưa thể trả lời. Vui lòng thử lại sau.' });
+    })
+    .finally(() => {
+        if (sendBtn) sendBtn.disabled = false;
+    });
+}
+
+function appendGuestMessage({ role, content }) {
+    const chatBody = document.getElementById('guestChatBody');
+    if (!chatBody) return;
+
+    const welcomeMsg = chatBody.querySelector('.text-center');
+    if (welcomeMsg) welcomeMsg.remove();
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${role === 'user' ? 'user' : 'admin'}`;
+
+    const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+    messageDiv.innerHTML = `
+        <div class="message-bubble">
+            <div class="message-content">${escapeHtml(content)}</div>
+            <div class="message-time">${timeStr}</div>
+        </div>
+    `;
+
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return String(text || '').replace(/[&<>"']/g, m => map[m]);
+}
+
+function startGuestTooltipCycle() {
+    const tooltip = document.getElementById('guestChatTooltip');
+    if (!tooltip) return;
+
+    function showTooltip() {
+        if (guestChatOpen) return;
+        tooltip.classList.add('show');
+        setTimeout(() => tooltip.classList.remove('show'), 2500);
+    }
+
+    setTimeout(showTooltip, 1000);
+    guestTooltipTimer = setInterval(showTooltip, 22000);
+}
+</script>
+
+<!-- User Chat Widget (Auth, non-admin) -->
+@auth
+@if(auth()->user()->role !== 'admin')
+<div id="chatWidget" class="chat-widget admin">
+    <div class="chat-header">
+        <h6 class="mb-0">
+            <i class="fas fa-comments"></i> Chat với Admin
+        </h6>
+        <button class="btn-close-chat" onclick="closeChatWidget()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="chat-body" id="chatBody">
+        <div class="text-center py-3 text-muted">
+            <i class="fas fa-comments fa-2x mb-2"></i>
+            <p>Bắt đầu cuộc trò chuyện với admin</p>
+        </div>
+    </div>
+    
+    <div class="chat-footer">
+        <form id="chatForm" onsubmit="sendMessage(event)">
+            <div class="input-group">
+                <input type="text" class="form-control" id="chatInput" placeholder="Nhập tin nhắn..." required>
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Chat Button -->
+<button class="chat-button admin" onclick="toggleChatWidget()" id="chatButton">
+    <i class="fas fa-comments"></i>
+    <span class="unread-badge" id="unreadBadge" style="display: none;">0</span>
+    <span class="chat-tooltip" id="chatTooltip">Chat với Admin</span>
+</button>
 
 <script>
 let chatWidget = null;

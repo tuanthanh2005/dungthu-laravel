@@ -16,11 +16,15 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CardExchangeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\GuestChatController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\CommunityCommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
+
+// Guest AI chat (home only UI)
+Route::post('/guest-chat', [GuestChatController::class, 'send'])->name('guest-chat.send');
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

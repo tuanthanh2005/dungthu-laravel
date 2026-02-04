@@ -45,4 +45,9 @@ return [
         'auth_provider_cert_url' => env('GOOGLE_AUTH_PROVIDER_CERT_URL'),
     ],
 
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
+        'model' => env('GROQ_MODEL', 'llama-3.1-8b-instant'),
+    ],
+
 ];

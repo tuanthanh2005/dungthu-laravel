@@ -383,7 +383,6 @@
         <div class="container mt-5" data-aos="zoom-in">
             <h1 class="display-4 fw-bold mb-3">Nơi Bạn Có Thể <span class="typing-text text-warning" id="typewriter"></span></h1>
             <p class="lead opacity-75 mb-4">Kho tài nguyên số, thời trang và công cụ tiện ích miễn phí hàng đầu.</p>
-            <p class="lead opacity-75 mb-4">Khi bạn thanh toán xong NHÂN VIÊN sẽ liên lạc với bạn hoặc bạn chủ động nhắn tin với thông tin liên hệ bên shop.</p>
             <div class="hero-socials">
                 <a href="https://www.tiktok.com/@spdungthu.com?_r=1&_t=ZS-93Tu65pWubk" target="_blank" rel="noopener" aria-label="TikTok">
                     <i class="fab fa-tiktok"></i>

@@ -114,35 +114,63 @@ body {
     box-shadow: 0 6px 12px rgba(247, 201, 72, 0.35);
 }
 
-.tet-lantern.l1 { left: 22px; top: 18px; transform: rotate(-6deg); }
-.tet-lantern.l2 { right: 26px; top: 32px; transform: rotate(8deg); animation-delay: 0.6s; }
+.tet-lantern.l1 {
+    left: 22px;
+    top: 18px;
+    transform: rotate(-6deg);
+}
+
+.tet-lantern.l2 {
+    right: 26px;
+    top: 32px;
+    transform: rotate(8deg);
+    animation-delay: 0.6s;
+}
 
 .tet-coin {
     position: absolute;
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    border: 3px solid rgba(255,255,255,0.35);
+    border: 3px solid rgba(255, 255, 255, 0.35);
     background: radial-gradient(circle at 35% 35%, #fff3c4 0%, #f7c948 55%, #f59f00 100%);
     box-shadow: 0 12px 24px rgba(245, 159, 0, 0.35);
     animation: tet-float 4s ease-in-out infinite;
 }
 
-.tet-coin.c1 { left: 120px; top: 10px; opacity: 0.5; }
-.tet-coin.c2 { right: 140px; bottom: 18px; opacity: 0.35; animation-delay: 1s; }
+.tet-coin.c1 {
+    left: 120px;
+    top: 10px;
+    opacity: 0.5;
+}
+
+.tet-coin.c2 {
+    right: 140px;
+    bottom: 18px;
+    opacity: 0.35;
+    animation-delay: 1s;
+}
 
 .tet-blossom {
     position: absolute;
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 60%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 60%);
     filter: blur(1px);
     animation: tet-pulse 3.6s ease-in-out infinite;
 }
 
-.tet-blossom.b1 { left: 8%; bottom: 10%; }
-.tet-blossom.b2 { right: 6%; top: 20%; animation-delay: 0.8s; }
+.tet-blossom.b1 {
+    left: 8%;
+    bottom: 10%;
+}
+
+.tet-blossom.b2 {
+    right: 6%;
+    top: 20%;
+    animation-delay: 0.8s;
+}
 
 .hero-section .tet-ribbon {
     position: absolute;
@@ -151,42 +179,94 @@ body {
     width: min(780px, 90vw);
     height: 18px;
     transform: translateX(-50%);
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,215,0,0.5) 50%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 215, 0, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
     border-radius: 999px;
     opacity: 0.6;
     animation: tet-glow 2.8s ease-in-out infinite;
 }
 
 @keyframes tet-sway {
-    0% { transform: rotate(-6deg) translateY(0); }
-    50% { transform: rotate(4deg) translateY(4px); }
-    100% { transform: rotate(-6deg) translateY(0); }
+    0% {
+        transform: rotate(-6deg) translateY(0);
+    }
+
+    50% {
+        transform: rotate(4deg) translateY(4px);
+    }
+
+    100% {
+        transform: rotate(-6deg) translateY(0);
+    }
 }
 
 @keyframes tet-float {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(6px); }
-    100% { transform: translateY(0); }
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(6px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
 }
 
 @keyframes tet-pulse {
-    0% { opacity: 0.35; transform: scale(0.95); }
-    50% { opacity: 0.7; transform: scale(1); }
-    100% { opacity: 0.35; transform: scale(0.95); }
+    0% {
+        opacity: 0.35;
+        transform: scale(0.95);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0.35;
+        transform: scale(0.95);
+    }
 }
 
 @keyframes tet-glow {
-    0% { opacity: 0.35; }
-    50% { opacity: 0.75; }
-    100% { opacity: 0.35; }
+    0% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 0.75;
+    }
+
+    100% {
+        opacity: 0.35;
+    }
 }
 
 @media (max-width: 768px) {
-    .tet-lantern { width: 34px; height: 44px; }
-    .tet-coin { width: 40px; height: 40px; }
-    .tet-coin.c1 { left: 76px; }
-    .tet-coin.c2 { right: 70px; bottom: 12px; }
-    .hero-section .tet-ribbon { height: 12px; }
+    .tet-lantern {
+        width: 34px;
+        height: 44px;
+    }
+
+    .tet-coin {
+        width: 40px;
+        height: 40px;
+    }
+
+    .tet-coin.c1 {
+        left: 76px;
+    }
+
+    .tet-coin.c2 {
+        right: 70px;
+        bottom: 12px;
+    }
+
+    .hero-section .tet-ribbon {
+        height: 12px;
+    }
 }
 
 /* --- 3. HERO SECTION & TYPING EFFECT --- */
@@ -196,7 +276,7 @@ body {
         radial-gradient(900px 500px at 95% 20%, rgba(0, 206, 201, 0.25), transparent 55%),
         linear-gradient(135deg, #5b4ae6 0%, #9b90ff 55%, #7f8cff 100%);
     color: white;
-    padding: 88px 0 64px;
+    padding: 88px 0 15px;
     position: relative;
     overflow: hidden;
     border-bottom: 1px solid rgba(255, 255, 255, 0.25);
@@ -207,8 +287,8 @@ body {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 60%),
-        repeating-linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.07) 6px, rgba(255,255,255,0) 6px, rgba(255,255,255,0) 18px);
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.07) 6px, rgba(255, 255, 255, 0) 6px, rgba(255, 255, 255, 0) 18px);
     opacity: 0.25;
     pointer-events: none;
 }
@@ -220,7 +300,7 @@ body {
     height: 420px;
     right: -120px;
     bottom: -160px;
-    background: radial-gradient(circle, rgba(255,255,255,0.25), rgba(255,255,255,0) 65%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 65%);
     filter: blur(2px);
     pointer-events: none;
 }

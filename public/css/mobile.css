@@ -136,7 +136,7 @@ body {
 
     /* Reduce huge hero paddings on phones */
     .hero-section {
-        padding: 23px 0 13px !important;
+        padding: 45px 0 13px !important;
     }
 
     /* Card-exchange hero is inline-styled in the view; keep it compact on mobile */

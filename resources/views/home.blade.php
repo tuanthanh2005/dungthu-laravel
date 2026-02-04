@@ -969,7 +969,8 @@
 
              function render(p) {
                  const customerName = p?.customer_name ? String(p.customer_name) : 'Khách hàng';
-                 const verb = p?.verb === 'mua' ? 'mua' : 'đặt';
+                 const verbValue = String(p?.verb || '').toLowerCase();
+                 const verb = verbValue === 'mua' ? 'mua' : (verbValue === 'đổi' ? 'đổi' : 'đặt');
                  const timeAgo = p?.time_ago ? String(p.time_ago) : '';
                  const productText = getProductText(p);
                  const productUrl = p?.product_url ? String(p.product_url) : '#shop';
@@ -1052,5 +1053,4 @@
     </style>
     @endif
 @endpush
-
 

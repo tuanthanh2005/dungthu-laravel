@@ -9,6 +9,8 @@ use App\Models\ProductCategory;
 use App\Models\Blog;
 use App\Models\Order;
 use App\Models\SiteSetting;
+use App\Models\CardExchange;
+use Illuminate\Support\Collection;
 
 class HomeController extends Controller
 {
@@ -54,8 +56,8 @@ class HomeController extends Controller
             $saleProducts = collect();
         }
 
-        $recentPurchases = Cache::remember('home.recent_purchases.v1', now()->addMinutes(5), function () {
-            return Order::query()
+        $recentPurchases = Cache::remember('home.recent_purchases.v2', now()->addMinutes(5), function () {
+            $orders = Order::query()
                 ->with(['orderItems.product'])
                 ->whereNotIn('status', ['cancelled'])
                 ->latest()
@@ -76,9 +78,43 @@ class HomeController extends Controller
                         'product_url' => $product?->slug ? route('product.show', $product->slug) : null,
                         'extra_items' => $extraItems,
                         'time_ago' => optional($order->created_at)->diffForHumans(),
+                        'sort_at' => $order->created_at,
                     ];
-                })
+                });
+
+            $cardExchanges = CardExchange::query()
+                ->with('user')
+                ->where('status', 'success')
+                ->latest('processed_at')
+                ->take(10)
+                ->get()
+                ->map(function (CardExchange $exchange) {
+                    $time = $exchange->processed_at ?? $exchange->updated_at ?? $exchange->created_at;
+                    $cardValue = number_format((float) $exchange->card_value, 0, ',', '.') . 'đ';
+                    $cardType = $exchange->card_type ? (' ' . $exchange->card_type) : '';
+
+                    return [
+                        'customer_name' => self::maskCustomerName((string) optional($exchange->user)->name),
+                        'verb' => 'đổi',
+                        'product_name' => 'Đổi thẻ cào' . $cardType . ' ' . $cardValue,
+                        'product_slug' => null,
+                        'product_url' => route('card-exchange.index'),
+                        'extra_items' => 0,
+                        'time_ago' => optional($time)->diffForHumans(),
+                        'sort_at' => $time,
+                    ];
+                });
+
+            return Collection::make()
+                ->concat($orders)
+                ->concat($cardExchanges)
+                ->sortByDesc('sort_at')
+                ->take(10)
                 ->values()
+                ->map(function (array $item) {
+                    unset($item['sort_at']);
+                    return $item;
+                })
                 ->all();
         });
 

@@ -3,6 +3,11 @@
     padding: 5px 0;
 }
 
+.category-filter-link {
+    text-decoration: none;
+    display: inline-block;
+}
+
 .category-filter-btn {
     display: inline-flex;
     flex-direction: column;

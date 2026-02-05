@@ -19,6 +19,42 @@
             border: 1px solid #eef2f7;
             padding: 14px 16px;
         }
+
+        .pricing-tabs {
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .pricing-tabs .nav-link {
+            border: 1px solid transparent;
+            border-bottom: 0;
+            color: #495057;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 10px 10px 0 0;
+            margin-right: 8px;
+        }
+
+        .pricing-tabs .nav-link.active {
+            background: #ffffff;
+            border-color: #eef2f7;
+            color: #0f172a;
+            box-shadow: 0 -1px 0 #eef2f7;
+        }
+
+        .exchange-price-table thead th {
+            background: #f8fafc;
+            font-weight: 700;
+        }
+
+        .exchange-price-table td,
+        .exchange-price-table th {
+            border-color: #eef2f7;
+            padding: 10px 12px;
+        }
+
+        .exchange-price-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
     </style>
 @endpush
 
@@ -27,7 +63,7 @@
         <div class="row mb-4" data-aos="fade-down">
             <div class="col-12 text-center">
                 <h1 class="fw-bold mb-2">
-                    <i class="fas fa-credit-card text-primary me-2"></i>Đổi Thẻ Cào
+                    <i class="fas fa-credit-card text-primary me-2"></i>Đổi Thẻ Cào - Được Xử Lý Auto
                 </h1>
                 <p class="text-muted mb-0">Gửi yêu cầu đổi thẻ và nhận tiền về tài khoản ngân hàng</p>
             </div>
@@ -78,6 +114,9 @@
                                     <option value="Viettel" {{ old('card_type') == 'Viettel' ? 'selected' : '' }}>Viettel</option>
                                     <option value="Mobifone" {{ old('card_type') == 'Mobifone' ? 'selected' : '' }}>Mobifone</option>
                                     <option value="Vinaphone" {{ old('card_type') == 'Vinaphone' ? 'selected' : '' }}>Vinaphone</option>
+                                    <option value="Garena" {{ old('card_type') == 'Garena' ? 'selected' : '' }}>Garena</option>
+                                    <option value="Vcoin" {{ old('card_type') == 'Vcoin' ? 'selected' : '' }}>Vcoin</option>
+                                    <option value="Zing" {{ old('card_type') == 'Zing' ? 'selected' : '' }}>Zing</option>
                                 </select>
                             </div>
 
@@ -134,24 +173,11 @@
                                     </div>
                                     <div class="fw-bold fs-5 text-nowrap" id="js-receive-amount">--</div>
                                 </div>
-                                <small class="text-muted d-block mt-2">
-                                    Số tiền thực nhận được tính theo bảng giá (khớp theo loại thẻ & mệnh giá).
-                                </small>
                             </div>
 
                             <div class="col-12">
                                 <hr class="my-2">
                             </div>
-
-                            <div class="col-12">
-                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                    <h6 class="fw-bold mb-0">
-                                        <i class="fas fa-building-columns text-primary me-2"></i>Thông tin ngân hàng
-                                    </h6>
-                                    <small class="text-muted">Vui lòng nhập đúng để nhận tiền</small>
-                                </div>
-                            </div>
-
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">
                                     <i class="fas fa-university text-primary me-2"></i>Ngân hàng <span class="text-danger">*</span>
@@ -219,16 +245,32 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="card border-0 shadow-sm mt-4" style="border-radius: 15px;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-clipboard-check text-primary me-2"></i>Chính sách đổi thẻ
+                        </h5>
+                        <ul class="text-muted mb-2 ps-3">
+                            <li>DungThu.com là website đổi thẻ cào uy tín. Bạn có thể đổi thẻ điện thoại, thẻ game (Garena, Zing, Vcoin...) thành tiền về ngân hàng.</li>
+                            <li>Không nhận các thẻ mua từ nguồn không hợp lệ (thẻ Visa/Thẻ tín dụng, thẻ lừa đảo, thẻ trộm cắp...). Vi phạm sẽ bị khóa tài khoản.</li>
+                            <li>Vui lòng đọc kỹ điều khoản và chính sách trước khi đổi thẻ.</li>
+                        </ul>
+                        <div class="small">
+                            <a href="javascript:void(0)" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#policyModal">Điều khoản & chính sách</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-5" data-aos="fade-up" data-aos-delay="50">
                 <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
                     <div class="card-body p-4">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-tags text-primary me-2"></i>Bảng giá (Khách thực nhận)
+                            <i class="fas fa-tags text-primary me-2"></i>Bảng giá (5-10p nhận tiền)
                         </h5>
 
-                        <ul class="nav nav-tabs mb-3" role="tablist">
+                        <ul class="nav nav-tabs mb-3 pricing-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="tab-viettel" data-bs-toggle="tab" data-bs-target="#pane-viettel" type="button" role="tab">
                                     VIETTEL
@@ -249,7 +291,7 @@
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="pane-viettel" role="tabpanel" aria-labelledby="tab-viettel" tabindex="0">
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle mb-0">
+                                    <table class="table table-sm align-middle mb-0 exchange-price-table">
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Mệnh giá</th>
@@ -257,13 +299,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">8.300</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">16.500</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">41.800</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">83.500</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">165.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">402.000</td></tr>
-                                            <tr><td>1.000.000</td><td class="text-end fw-bold">805.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">8.000</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">15.900</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">40.300</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">80.500</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">159.000</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">387.000</td></tr>
+                                            <tr><td>1.000.000</td><td class="text-end fw-bold">775.000</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -272,7 +314,7 @@
 
                             <div class="tab-pane fade" id="pane-mobifone" role="tabpanel" aria-labelledby="tab-mobifone" tabindex="0">
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle mb-0">
+                                    <table class="table table-sm align-middle mb-0 exchange-price-table">
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Mệnh giá</th>
@@ -280,12 +322,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">7.800</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">15.600</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">39.500</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">80.000</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">160.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">400.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.500</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">15.000</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">38.000</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">77.000</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">154.000</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">385.000</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -294,7 +336,7 @@
 
                             <div class="tab-pane fade" id="pane-vinaphone" role="tabpanel" aria-labelledby="tab-vinaphone" tabindex="0">
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle mb-0">
+                                    <table class="table table-sm align-middle mb-0 exchange-price-table">
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Mệnh giá</th>
@@ -302,12 +344,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">8.100</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">17.000</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">43.000</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">88.000</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">175.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">438.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.800</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">16.400</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">41.500</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">85.000</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">169.000</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">423.000</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -320,122 +362,161 @@
                 <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
                     <div class="card-body p-4">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-list-check text-primary me-2"></i>Hướng dẫn nhanh
+                            <i class="fas fa-tag text-primary me-2"></i>Bảng giá game (5-10p nhận tiền)
                         </h5>
 
-                        <div class="exchange-step mb-3">
-                            <div class="d-flex gap-3 align-items-start">
-                                <span class="badge rounded-pill bg-primary">1</span>
-                                <div>
-                                    <div class="fw-bold">Chọn loại thẻ & mệnh giá</div>
-                                    <div class="text-muted small">Ví dụ: Viettel 100,000đ</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="exchange-step mb-3">
-                            <div class="d-flex gap-3 align-items-start">
-                                <span class="badge rounded-pill bg-primary">2</span>
-                                <div>
-                                    <div class="fw-bold">Nhập seri & mã thẻ</div>
-                                    <div class="text-muted small">Nhập đúng ký tự, không khoảng trắng</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="exchange-step">
-                            <div class="d-flex gap-3 align-items-start">
-                                <span class="badge rounded-pill bg-primary">3</span>
-                                <div>
-                                    <div class="fw-bold">Nhập thông tin ngân hàng</div>
-                                    <div class="text-muted small">Để nhận tiền đúng người, đúng số tài khoản</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3">
-                            <i class="fas fa-shield-heart text-primary me-2"></i>Lưu ý
-                        </h5>
-                        <ul class="text-muted mb-3 ps-3">
-                            <li>Yêu cầu sẽ được xử lý theo thứ tự.</li>
-                            <li>Nếu có lỗi, hệ thống sẽ cập nhật trạng thái trong lịch sử.</li>
-                            <li>Cần hỗ trợ? Nhấn “Hỗ trợ” để xem thông tin liên hệ.</li>
+                        <ul class="nav nav-tabs mb-3 pricing-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-garena" data-bs-toggle="tab" data-bs-target="#pane-garena" type="button" role="tab">
+                                    GARENA
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-vcoin" data-bs-toggle="tab" data-bs-target="#pane-vcoin" type="button" role="tab">
+                                    VCOIN
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-zing" data-bs-toggle="tab" data-bs-target="#pane-zing" type="button" role="tab">
+                                    ZING
+                                </button>
+                            </li>
                         </ul>
-                        <button
-                            type="button"
-                            class="btn btn-outline-primary w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#contactModal"
-                        >
-                            <i class="fas fa-headset me-2"></i>Liên hệ hỗ trợ
-                        </button>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="pane-garena" role="tabpanel" aria-labelledby="tab-garena" tabindex="0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-0 exchange-price-table">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Mệnh giá</th>
+                                                <th class="text-end">Khách thực nhận</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">8.000</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">16.400</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">41.500</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">85.000</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">170.000</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">432.000</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small class="text-muted d-block mt-2">GARENA</small>
+                            </div>
+
+                            <div class="tab-pane fade" id="pane-vcoin" role="tabpanel" aria-labelledby="tab-vcoin" tabindex="0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-0 exchange-price-table">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Mệnh giá</th>
+                                                <th class="text-end">Khách thực nhận</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.800</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">16.000</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">40.500</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">84.000</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">168.000</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">430.000</td></tr>
+                                            <tr><td>1.000.000</td><td class="text-end fw-bold">865.000</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small class="text-muted d-block mt-2">VCOIN</small>
+                            </div>
+
+                            <div class="tab-pane fade" id="pane-zing" role="tabpanel" aria-labelledby="tab-zing" tabindex="0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-0 exchange-price-table">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Mệnh giá</th>
+                                                <th class="text-end">Khách thực nhận</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.800</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">15.800</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">40.000</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">83.000</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">166.000</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">425.000</td></tr>
+                                            <tr><td>1.000.000</td><td class="text-end fw-bold">855.000</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small class="text-muted d-block mt-2">ZING (chậm 10–30 phút)</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        @if($exchanges->count() > 0)
-            <div class="row mt-4">
-                <div class="col-12" data-aos="fade-up" data-aos-delay="100">
-                    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-                        <div class="card-header bg-white py-3" style="border-radius: 15px 15px 0 0;">
-                            <h5 class="mb-0 fw-bold">
-                                <i class="fas fa-history text-primary me-2"></i>Lịch sử đổi thẻ
-                            </h5>
-                        </div>
+        <div class="row mt-4" id="card-exchange-history">
+            <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+                <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                    <div class="card-header bg-white py-3" style="border-radius: 15px 15px 0 0;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-history text-primary me-2"></i>Lịch sử đổi thẻ
+                        </h5>
+                    </div>
 
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Mã GD</th>
+                                        <th>Loại thẻ</th>
+                                        <th>Mệnh giá</th>
+                                        <th class="text-end pe-4">Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($exchanges as $exchange)
+                                        @php
+                                            $badgeColor = $exchange->status_badge;
+                                            $badgeTextClass = in_array($badgeColor, ['warning', 'light']) ? 'text-dark' : 'text-white';
+                                        @endphp
                                         <tr>
-                                            <th class="ps-4">Mã GD</th>
-                                            <th>Loại thẻ</th>
-                                            <th>Mệnh giá</th>
-                                            <th class="text-nowrap">Ngày gửi</th>
-                                            <th class="text-end pe-4">Trạng thái</th>
+                                            <td class="ps-4">
+                                                <strong class="text-primary">#{{ $exchange->id }}</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ $exchange->card_type }}</span>
+                                            </td>
+                                            <td class="fw-bold">{{ number_format($exchange->card_value, 0, ',', '.') }}đ</td>
+                                            <td class="text-end pe-4">
+                                                <span class="badge rounded-pill bg-{{ $badgeColor }} {{ $badgeTextClass }}">
+                                                    {{ $exchange->status_text }}
+                                                </span>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($exchanges as $exchange)
-                                            @php
-                                                $badgeColor = $exchange->status_badge;
-                                                $badgeTextClass = in_array($badgeColor, ['warning', 'light']) ? 'text-dark' : 'text-white';
-                                            @endphp
-                                            <tr>
-                                                <td class="ps-4">
-                                                    <strong class="text-primary">#{{ $exchange->id }}</strong>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-info">{{ $exchange->card_type }}</span>
-                                                </td>
-                                                <td class="fw-bold">{{ number_format($exchange->card_value, 0, ',', '.') }}đ</td>
-                                                <td class="text-muted text-nowrap">{{ $exchange->created_at->format('d/m/Y H:i') }}</td>
-                                                <td class="text-end pe-4">
-                                                    <span class="badge rounded-pill bg-{{ $badgeColor }} {{ $badgeTextClass }}">
-                                                        {{ $exchange->status_text }}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted py-4">
+                                                Chưa có lịch sử đổi thẻ.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
+                    </div>
 
-                        <div class="card-footer bg-white" style="border-radius: 0 0 15px 15px;">
-                            <div class="d-flex justify-content-center">
-                                {{ $exchanges->links() }}
-                            </div>
+                    <div class="card-footer bg-white" style="border-radius: 0 0 15px 15px;">
+                        <div class="d-flex justify-content-center">
+                            {{ $exchanges->links() }}
                         </div>
                     </div>
                 </div>
             </div>
-        @endif
+        </div>
     </div>
 
     <div class="modal fade" id="contactModal" tabindex="-1">
@@ -479,6 +560,91 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="policyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header text-white border-0 exchange-gradient" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-clipboard-check me-2"></i>Điều khoản & chính sách
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <ul class="text-muted mb-0 ps-3">
+                        <li>Bảng giá hiển thị là số tiền thực nhận, tính theo đúng loại thẻ và mệnh giá.</li>
+                        <li>Không nhận các thẻ mua từ nguồn không hợp lệ (thẻ Visa/Thẻ tín dụng, thẻ lừa đảo, thẻ trộm cắp...). Vi phạm sẽ bị khóa tài khoản.</li>
+                        <li>Yêu cầu được ghi nhận ngay sau khi gửi, trạng thái cập nhật trong “Lịch sử đổi thẻ”.</li>
+                        <li>Thông tin thẻ và ngân hàng chỉ phục vụ xử lý giao dịch đổi thẻ.</li>
+                        <li>Cần xác minh hoặc hỗ trợ thêm, vui lòng liên hệ qua mục “Hỗ trợ”.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header text-white border-0 exchange-gradient" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-history me-2"></i>Lịch sử đổi thẻ
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    @if($exchanges->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Mã GD</th>
+                                        <th>Loại thẻ</th>
+                                        <th>Mệnh giá</th>
+                                        <th class="text-nowrap">Ngày gửi</th>
+                                        <th class="text-end pe-4">Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($exchanges as $exchange)
+                                        @php
+                                            $badgeColor = $exchange->status_badge;
+                                            $badgeTextClass = in_array($badgeColor, ['warning', 'light']) ? 'text-dark' : 'text-white';
+                                        @endphp
+                                        <tr>
+                                            <td class="ps-4">
+                                                <strong class="text-primary">#{{ $exchange->id }}</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ $exchange->card_type }}</span>
+                                            </td>
+                                            <td class="fw-bold">{{ number_format($exchange->card_value, 0, ',', '.') }}đ</td>
+                                            <td class="text-muted text-nowrap">{{ $exchange->created_at->format('d/m/Y H:i') }}</td>
+                                            <td class="text-end pe-4">
+                                                <span class="badge rounded-pill bg-{{ $badgeColor }} {{ $badgeTextClass }}">
+                                                    {{ $exchange->status_text }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="p-4 text-center text-muted">
+                            Chưa có lịch sử đổi thẻ.
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -488,29 +654,55 @@
         (function () {
             const pricing = {
                 Viettel: {
-                    10000: 8300,
-                    20000: 16500,
-                    50000: 41800,
-                    100000: 83500,
-                    200000: 165000,
-                    500000: 402000,
-                    1000000: 805000,
+                    10000: 8000,
+                    20000: 15900,
+                    50000: 40300,
+                    100000: 80500,
+                    200000: 159000,
+                    500000: 387000,
+                    1000000: 775000,
                 },
                 Mobifone: {
-                    10000: 7800,
-                    20000: 15600,
-                    50000: 39500,
-                    100000: 80000,
-                    200000: 160000,
-                    500000: 400000,
+                    10000: 7500,
+                    20000: 15000,
+                    50000: 38000,
+                    100000: 77000,
+                    200000: 154000,
+                    500000: 385000,
                 },
                 Vinaphone: {
-                    10000: 8100,
-                    20000: 17000,
-                    50000: 43000,
-                    100000: 88000,
-                    200000: 175000,
-                    500000: 438000,
+                    10000: 7800,
+                    20000: 16400,
+                    50000: 41500,
+                    100000: 85000,
+                    200000: 169000,
+                    500000: 423000,
+                },
+                Garena: {
+                    10000: 8000,
+                    20000: 16400,
+                    50000: 41500,
+                    100000: 85000,
+                    200000: 170000,
+                    500000: 432000,
+                },
+                Vcoin: {
+                    10000: 7800,
+                    20000: 16000,
+                    50000: 40500,
+                    100000: 84000,
+                    200000: 168000,
+                    500000: 430000,
+                    1000000: 865000,
+                },
+                Zing: {
+                    10000: 7800,
+                    20000: 15800,
+                    50000: 40000,
+                    100000: 83000,
+                    200000: 166000,
+                    500000: 425000,
+                    1000000: 855000,
                 },
             };
 

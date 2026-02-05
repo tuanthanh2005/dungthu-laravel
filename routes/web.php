@@ -22,6 +22,7 @@ use App\Http\Controllers\CommunityCommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
+Route::view('/chinh-sach', 'pages.privacy')->name('policy');
 
 // Guest AI chat (home only UI)
 Route::post('/guest-chat', [GuestChatController::class, 'send'])->name('guest-chat.send');

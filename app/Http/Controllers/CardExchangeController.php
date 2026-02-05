@@ -30,7 +30,7 @@ class CardExchangeController extends Controller
         }
 
         $request->validate([
-            'card_type' => 'required|in:Viettel,Mobifone,Vinaphone',
+            'card_type' => 'required|in:Viettel,Mobifone,Vinaphone,Garena,Vcoin,Zing',
             'card_serial' => 'required|string|min:10|max:20',
             'card_code' => 'required|string|min:10|max:20',
             'card_value' => 'required|numeric|min:10000',

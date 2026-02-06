@@ -11,6 +11,7 @@ class CommunityComment extends Model
         'post_id',
         'user_id',
         'content',
+        'parent_id',
     ];
 
     public function post(): BelongsTo
@@ -21,5 +22,15 @@ class CommunityComment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(self::class, 'parent_id')->oldest();
     }
 }

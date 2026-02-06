@@ -43,6 +43,7 @@ Route::get('/blog/category/{category}', [BlogController::class, 'category'])->na
 
 // Community routes
 Route::get('/community', [CommunityPostController::class, 'index'])->name('community.index');
+Route::post('/community/{post:slug}/comments', [CommunityCommentController::class, 'store'])->name('community.comments.store');
 Route::middleware('auth')->group(function () {
     Route::get('/community/create', [CommunityPostController::class, 'create'])->name('community.create');
     Route::post('/community', [CommunityPostController::class, 'store'])->name('community.store');
@@ -51,7 +52,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/community/{post:slug}', [CommunityPostController::class, 'destroy'])->name('community.delete');
     Route::post('/community/upload-image', [CommunityPostController::class, 'uploadImage'])->name('community.images.upload');
 
-    Route::post('/community/{post:slug}/comments', [CommunityCommentController::class, 'store'])->name('community.comments.store');
     Route::put('/community/comments/{comment}', [CommunityCommentController::class, 'update'])->name('community.comments.update');
     Route::delete('/community/comments/{comment}', [CommunityCommentController::class, 'destroy'])->name('community.comments.delete');
 });

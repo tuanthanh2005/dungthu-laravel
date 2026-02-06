@@ -5,18 +5,76 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <style>
+        .community-page {
+            background: linear-gradient(180deg, #e7f2ef 0%, #f7fbfa 40%, #ffffff 100%);
+            border-radius: 24px;
+            padding: 10px 12px 30px;
+            color: #1f2a2e;
+        }
         .community-post-card {
-            background: #fff;
+            background: linear-gradient(180deg, #ffffff 0%, #f7fbfa 100%);
             border-radius: 18px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.08);
             padding: 32px;
             border: 1px solid rgba(0,0,0,0.04);
+            color: #1f2a2e;
+        }
+        .community-post-card .text-muted,
+        .comment-card .text-muted {
+            color: #4f5f67 !important;
+        }
+        .community-post-card h2,
+        .community-post-card .fw-bold {
+            color: #192126;
+        }
+        .community-post-card h2 {
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
         }
         .comment-card {
-            background: #fff;
+            background: #f2f8f7;
             border-radius: 14px;
             border: 1px solid rgba(0,0,0,0.06);
             padding: 16px;
+            color: #1f2a2e;
+        }
+        .reply-list {
+            margin-top: 10px;
+            border-left: none;
+            padding-left: 0;
+        }
+        .reply-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 12px 14px;
+        }
+        .reply-to {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e6f4f1;
+            color: #1f2a2e;
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .reply-btn {
+            background: #1f6f64;
+            color: #ffffff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            box-shadow: 0 6px 14px rgba(31, 111, 100, 0.22);
+        }
+        .reply-btn:hover {
+            background: #18594f;
+            color: #ffffff;
+            transform: translateY(-1px);
         }
         @media (max-width: 768px) {
             .community-post-card { padding: 20px; }
@@ -25,7 +83,7 @@
 @endpush
 
 @section('content')
-<div class="container py-5" style="margin-top: 80px; max-width: 980px;">
+<div class="container py-5 community-page" style="margin-top: 80px; max-width: 980px;">
     <div class="d-flex align-items-center gap-2 mb-3">
         <a href="{{ route('community.index') }}" class="text-decoration-none">
             <i class="fas fa-arrow-left"></i> Quay lại
@@ -66,58 +124,16 @@
     <div class="mb-4">
         <h5 class="fw-bold mb-3">Bình luận ({{ $post->comments->count() }})</h5>
 
-        @auth
-            <form method="POST" action="{{ route('community.comments.store', $post) }}" class="mb-3">
-                @csrf
-                <textarea name="content" rows="3" class="form-control" placeholder="Viết bình luận..." required></textarea>
-                @error('content')<small class="text-danger">{{ $message }}</small>@enderror
-                <button type="submit" class="btn btn-primary mt-2">Gửi</button>
-            </form>
-        @else
-            <div class="alert alert-light border">
-                Bạn cần <a href="{{ route('login') }}">đăng nhập</a> để bình luận.
-            </div>
-        @endauth
+        <form method="POST" action="{{ route('community.comments.store', $post) }}" class="mb-3">
+            @csrf
+            <textarea name="content" rows="3" class="form-control" placeholder="Viết bình luận..." required></textarea>
+            @error('content')<small class="text-danger">{{ $message }}</small>@enderror
+            <button type="submit" class="btn btn-primary mt-2">Gửi</button>
+        </form>
 
         <div class="d-flex flex-column gap-3">
-            @forelse($post->comments as $comment)
-                <div class="comment-card">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="fw-bold">{{ $comment->user->name ?? 'Thành viên' }}</div>
-                            <div class="small text-muted">{{ $comment->created_at->format('d/m/Y H:i') }}</div>
-                        </div>
-                        @auth
-                            <div class="d-flex gap-2">
-                                @can('community-comment.update', $comment)
-                                    <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#edit-comment-{{ $comment->id }}">
-                                        Sửa
-                                    </button>
-                                @endcan
-                                @can('community-comment.delete', $comment)
-                                    <form method="POST" action="{{ route('community.comments.delete', $comment) }}" onsubmit="return confirm('Xóa bình luận này?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger" type="submit">Xóa</button>
-                                    </form>
-                                @endcan
-                            </div>
-                        @endauth
-                    </div>
-
-                    <div class="mt-2" style="white-space: pre-line;">{{ $comment->content }}</div>
-
-                    @can('community-comment.update', $comment)
-                        <div class="collapse mt-3" id="edit-comment-{{ $comment->id }}">
-                            <form method="POST" action="{{ route('community.comments.update', $comment) }}">
-                                @csrf
-                                @method('PUT')
-                                <textarea name="content" rows="3" class="form-control" required>{{ $comment->content }}</textarea>
-                                <button type="submit" class="btn btn-sm btn-primary mt-2">Lưu</button>
-                            </form>
-                        </div>
-                    @endcan
-                </div>
+            @forelse($post->comments->whereNull('parent_id')->values() as $comment)
+                @include('community.partials.comment', ['comment' => $comment, 'post' => $post, 'level' => 0])
             @empty
                 <div class="alert alert-light border">Chưa có bình luận nào.</div>
             @endforelse

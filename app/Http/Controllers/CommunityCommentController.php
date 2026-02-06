@@ -13,15 +13,24 @@ class CommunityCommentController extends Controller
     {
         $data = $request->validate([
             'content' => 'required|string|max:2000',
+            'parent_id' => 'nullable|integer|exists:community_comments,id',
         ], [
             'content.required' => 'Nội dung bình luận không được để trống',
             'content.max' => 'Nội dung bình luận không được vượt quá 2000 ký tự',
         ]);
 
+        if (!empty($data['parent_id'])) {
+            $parent = CommunityComment::query()->where('id', $data['parent_id'])->where('post_id', $post->id)->first();
+            if (!$parent) {
+                return back()->withErrors(['content' => 'Bình luận trả lời không hợp lệ.']);
+            }
+        }
+
         CommunityComment::create([
             'post_id' => $post->id,
-            'user_id' => auth()->id(),
+            'user_id' => auth()->check() ? auth()->id() : null,
             'content' => $data['content'],
+            'parent_id' => $data['parent_id'] ?? null,
         ]);
 
         return back()->with('success', 'Đã đăng bình luận!');

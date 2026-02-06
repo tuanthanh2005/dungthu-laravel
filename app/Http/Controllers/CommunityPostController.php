@@ -12,7 +12,11 @@ class CommunityPostController extends Controller
 {
     public function index()
     {
-        $posts = CommunityPost::with('user')
+        $posts = CommunityPost::with([
+                'user',
+                'comments.user',
+            ])
+            ->withCount('comments')
             ->where('is_published', true)
             ->latest()
             ->paginate(12);
@@ -26,7 +30,17 @@ class CommunityPostController extends Controller
             abort(404);
         }
 
-        $post->load(['user', 'comments.user']);
+        $post->load([
+            'user',
+            'comments.user',
+            'comments.parent.user',
+            'comments.replies.user',
+            'comments.replies.parent.user',
+            'comments.replies.replies.user',
+            'comments.replies.replies.parent.user',
+            'comments.replies.replies.replies.user',
+            'comments.replies.replies.replies.parent.user',
+        ]);
 
         return view('community.show', compact('post'));
     }

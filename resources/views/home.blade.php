@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'DungThu.com - Trải Nghiệm & Mua Sắm')
 
@@ -401,6 +401,53 @@
 
     <div class="container" style="margin-top: 80px; padding-top: 20px;">
 
+        <!-- Category Filter Icons (moved above flash sale) -->
+        @if(isset($categories) && $categories->count() > 0)
+        <div class="category-filter-section mb-4" data-aos="fade-up">
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <!-- All Categories -->
+                <a href="{{ route('shop') }}" class="category-filter-link">
+                    <button class="category-filter-btn active" type="button">
+                        <div class="category-icon-wrap">
+                            <i class="fas fa-th-large"></i>
+                        </div>
+                        <span class="category-name">Tất Cả</span>
+                    </button>
+                </a>
+                
+                @foreach($categories as $category)
+                <a href="{{ route('shop', ['category_id' => $category->id]) }}" class="category-filter-link">
+                    <button class="category-filter-btn" type="button">
+                        <div class="category-icon-wrap">
+                            @if($category->image)
+                                <img src="{{ $category->image }}" alt="{{ $category->name }}">
+                            @else
+                                @switch($category->type)
+                                    @case('tech')
+                                        <i class="fas fa-laptop"></i>
+                                        @break
+                                    @case('ebooks')
+                                        <i class="fas fa-book"></i>
+                                        @break
+                                    @case('doc')
+                                        <i class="fas fa-file-alt"></i>
+                                        @break
+                                    @default
+                                        <i class="fas fa-box"></i>
+                                @endswitch
+                            @endif
+                        </div>
+                        <span class="category-name">{{ $category->name }}</span>
+                        @if($category->products_count > 0)
+                            <span class="category-count">{{ $category->products_count }}</span>
+                        @endif
+                    </button>
+                </a>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
     @if(isset($saleProducts) && $saleProducts->count() > 0)
         <div id="flash-sale" class="flash-sale mb-5" data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}">
             <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
@@ -478,14 +525,14 @@
 
                                             <div class="flex-grow-1">
                                                 <div class="d-flex justify-content-between align-items-start gap-2">
-                                                    <div class="fw-bold">{{ $purchase['customer_name'] ?? 'KhÃ¡ch hÃ ng' }}</div>
+                                                    <div class="fw-bold">{{ $purchase['customer_name'] ?? 'Khách hàng' }}</div>
                                                     <small class="text-muted">{{ $purchase['time_ago'] ?? '' }}</small>
                                                 </div>
 
                                                 <div class="text-muted" style="font-size: 0.95rem;">
-                                                    Vá»«a {{ ($purchase['verb'] ?? '') === 'mua' ? 'mua' : 'Ä‘áº·t' }}
+                                                    Vừa {{ ($purchase['verb'] ?? '') === 'mua' ? 'mua' : 'đặt' }}
                                                     @php
-                                                        $productText = ($purchase['product_name'] ?? 'Sáº£n pháº©m') . ((int)($purchase['extra_items'] ?? 0) > 0 ? (' +' . (int)$purchase['extra_items'] . ' SP') : '');
+                                                        $productText = ($purchase['product_name'] ?? 'Sản phẩm') . ((int)($purchase['extra_items'] ?? 0) > 0 ? (' +' . (int)$purchase['extra_items'] . ' SP') : '');
                                                     @endphp
                                                     @if(!empty($purchase['product_slug']))
                                                         <a href="{{ route('product.show', $purchase['product_slug']) }}" class="text-decoration-none fw-bold">{{ $productText }}</a>
@@ -504,53 +551,6 @@
                 --}}
                 <!-- Sản Phẩm Nổi Bật -->
                 <div id="shop" class="mb-5">
-                    <!-- Category Filter Icons -->
-                    @if(isset($categories) && $categories->count() > 0)
-                    <div class="category-filter-section mb-4" data-aos="fade-up">
-                        <div class="d-flex flex-wrap gap-3 justify-content-center">
-                            <!-- All Categories -->
-                            <a href="{{ route('shop') }}" class="category-filter-link">
-                                <button class="category-filter-btn active" type="button">
-                                    <div class="category-icon-wrap">
-                                        <i class="fas fa-th-large"></i>
-                                    </div>
-                                    <span class="category-name">Tất cả</span>
-                                </button>
-                            </a>
-                            
-                            @foreach($categories as $category)
-                            <a href="{{ route('shop', ['category_id' => $category->id]) }}" class="category-filter-link">
-                                <button class="category-filter-btn" type="button">
-                                    <div class="category-icon-wrap">
-                                        @if($category->image)
-                                            <img src="{{ $category->image }}" alt="{{ $category->name }}">
-                                        @else
-                                            @switch($category->type)
-                                                @case('tech')
-                                                    <i class="fas fa-laptop"></i>
-                                                    @break
-                                                @case('ebooks')
-                                                    <i class="fas fa-book"></i>
-                                                    @break
-                                                @case('doc')
-                                                    <i class="fas fa-file-alt"></i>
-                                                    @break
-                                                @default
-                                                    <i class="fas fa-box"></i>
-                                            @endswitch
-                                        @endif
-                                    </div>
-                                    <span class="category-name">{{ $category->name }}</span>
-                                    @if($category->products_count > 0)
-                                        <span class="category-count">{{ $category->products_count }}</span>
-                                    @endif
-                                </button>
-                            </a>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif
-                    
                     <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
                         <div>
                             <h3 class="fw-bold section-title">⭐ Sản Phẩm Nổi Bật</h3>

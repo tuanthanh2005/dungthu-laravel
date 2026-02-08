@@ -1,115 +1,391 @@
 <style>
-.chat-button {
+/* ============================================
+   MODERN CHAT SYSTEM - PREMIUM DESIGN
+   ============================================ */
+
+:root {
+    --chat-primary: #6366f1;
+    --chat-primary-dark: #4f46e5;
+    --chat-secondary: #8b5cf6;
+    --chat-ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --chat-admin-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --chat-user-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --chat-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    --chat-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   FLOATING CHAT BUTTONS
+   ============================================ */
+
+.chat-fab-container {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.chat-fab {
+    position: relative;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    color: white;
-    font-size: 22px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    z-index: 9999;
-}
-
-.chat-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-}
-
-.chat-button .unread-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff4444;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-    font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid white;
-}
-
-.chat-tooltip {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    background: rgba(0, 0, 0, 0.85);
+    font-size: 28px;
     color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: all 0.3s ease;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.chat-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.85);
-}
-
-.chat-tooltip.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
-
-.chat-widget {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 380px;
-    max-width: calc(100vw - 40px);
-    height: 500px;
-    max-height: calc(100vh - 150px);
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    display: none;
-    flex-direction: column;
-    z-index: 10000;
+    box-shadow: var(--chat-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
-/* Stacking positions: AI above Admin */
-.chat-widget.ai {
-    bottom: 160px;
+.chat-fab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    filter: blur(20px);
+    opacity: 0.6;
+    z-index: -1;
+    transition: opacity 0.3s ease;
 }
 
-.chat-button.ai {
-    bottom: 90px;
+.chat-fab:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
 }
 
-.chat-widget.admin {
-    bottom: 90px;
+.chat-fab:hover::before {
+    opacity: 0.8;
+}
+
+.chat-fab:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.chat-fab.ai-bot {
+    background: var(--chat-ai-gradient);
+}
+
+.chat-fab.admin-chat {
+    background: var(--chat-admin-gradient);
+}
+
+.chat-fab .fab-icon {
+    position: relative;
+    z-index: 1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.chat-fab .unread-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    color: white;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(255, 65, 108, 0.5);
+    animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+.chat-fab .fab-tooltip {
+    position: absolute;
+    right: 76px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+.chat-fab .fab-tooltip::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: rgba(0, 0, 0, 0.9);
+}
+
+.chat-fab:hover .fab-tooltip {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ============================================
+   CHAT WIDGET CONTAINER
+   ============================================ */
+
+.chat-widget {
+    position: fixed;
+    bottom: 110px;
+    right: 24px;
+    width: 420px;
+    height: 640px;
+    max-width: calc(100vw - 48px);
+    max-height: calc(100vh - 150px);
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--chat-shadow);
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chat-widget.active {
     display: flex;
-    animation: slideUp 0.3s ease;
+    transform: scale(1) translateY(0);
+    opacity: 1;
 }
 
-@keyframes slideUp {
+.chat-widget.ai-bot {
+    --widget-gradient: var(--chat-ai-gradient);
+    --widget-color: #667eea;
+}
+
+.chat-widget.admin-chat {
+    --widget-gradient: var(--chat-admin-gradient);
+    --widget-color: #f5576c;
+}
+
+/* ============================================
+   CHAT HEADER
+   ============================================ */
+
+.chat-header {
+    background: var(--widget-gradient);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.chat-header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.chat-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.chat-header-text h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chat-header-text p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.chat-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chat-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.3);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.chat-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.chat-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* ============================================
+   CHAT BODY
+   ============================================ */
+
+.chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+}
+
+.chat-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.chat-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.chat-welcome {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+}
+
+.chat-welcome i {
+    font-size: 64px;
+    background: var(--widget-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.chat-welcome h4 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 12px;
+}
+
+.chat-welcome p {
+    font-size: 15px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* ============================================
+   CHAT MESSAGES
+   ============================================ */
+
+.chat-message {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    animation: messageSlideIn 0.3s ease;
+}
+
+@keyframes messageSlideIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -117,289 +393,425 @@
     }
 }
 
-.chat-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 16px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.chat-header h6 {
-    font-weight: 600;
-}
-
-.btn-close-chat {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background 0.3s;
-}
-
-.btn-close-chat:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.chat-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    background: #f8f9fa;
-}
-
-.chat-message {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
 .chat-message.user {
     align-items: flex-end;
 }
 
+.chat-message.bot,
 .chat-message.admin {
     align-items: flex-start;
 }
 
 .message-bubble {
-    max-width: 78%;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
+    max-width: 75%;
+    position: relative;
 }
 
 .message-content {
-    min-width: 44px;
-    padding: 10px 15px;
-    border-radius: 18px;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    white-space: pre-wrap;
-    text-align: left;
+    padding: 14px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: var(--chat-shadow-sm);
 }
 
 .chat-message.user .message-content {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--chat-user-gradient);
     color: white;
-    border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 6px;
 }
 
+.chat-message.bot .message-content,
 .chat-message.admin .message-content {
     background: white;
-    color: #333;
-    border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #1f2937;
+    border-bottom-left-radius: 6px;
+    border: 1px solid #e5e7eb;
 }
 
 .message-time {
-    font-size: 11px;
-    opacity: 0.7;
-    margin-top: 4px;
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 6px;
+    font-weight: 500;
 }
 
 .chat-message.user .message-time {
     text-align: right;
-    align-self: flex-end;
 }
 
-.chat-message.admin .message-time {
-    align-self: flex-start;
+.typing-indicator {
+    display: flex;
+    gap: 6px;
+    padding: 14px 18px;
+    background: white;
+    border-radius: 20px;
+    border-bottom-left-radius: 6px;
+    width: fit-content;
+    box-shadow: var(--chat-shadow-sm);
 }
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--widget-color);
+    animation: typingBounce 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-10px); }
+}
+
+/* ============================================
+   CHAT FOOTER
+   ============================================ */
 
 .chat-footer {
-    padding: 15px;
+    padding: 20px 24px;
     background: white;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid #e5e7eb;
 }
 
-.chat-footer .input-group {
-    gap: 10px;
+.chat-input-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }
 
-.chat-footer .form-control {
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    padding: 10px 20px;
+.chat-input {
+    flex: 1;
+    border: 2px solid #e5e7eb;
+    border-radius: 24px;
+    padding: 14px 20px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #f9fafb;
 }
 
-.chat-footer .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+.chat-input:focus {
+    border-color: var(--widget-color);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
-.chat-footer .btn {
+.chat-send-btn {
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    padding: 0;
+    border: none;
+    background: var(--widget-gradient);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
+    transition: all 0.3s ease;
+    box-shadow: var(--chat-shadow-sm);
 }
 
-.chat-footer .btn:hover {
-    opacity: 0.9;
-    transform: scale(1.05);
+.chat-send-btn:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* Mobile responsive */
+.chat-send-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.chat-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chat-disclaimer {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #9ca3af;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE
+   ============================================ */
+
 @media (max-width: 768px) {
+    .chat-fab-container {
+        bottom: 16px;
+        right: 16px;
+        gap: 12px;
+    }
+
+    .chat-fab {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+    }
+
+    .chat-fab .fab-tooltip {
+        display: none;
+    }
+
     .chat-widget {
-        width: calc(100vw - 20px);
-        height: calc(100vh - 100px);
-        left: 10px;
-        right: auto;
-        bottom: 70px;
+        bottom: 90px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+        height: calc(100vh - 120px);
+        border-radius: 20px;
     }
-    
-    .chat-button {
-        bottom: 10px;
-        left: 10px;
-        right: auto;
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-        z-index: 9999;
+
+    .chat-header {
+        padding: 20px;
     }
-    
-    .chat-button .unread-badge {
-        width: 20px;
-        height: 20px;
-        font-size: 11px;
-        top: -3px;
-        right: -3px;
+
+    .chat-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
     }
-    
-    .chat-tooltip {
+
+    .chat-header-text h3 {
+        font-size: 18px;
+    }
+
+    .chat-header-text p {
         font-size: 12px;
-        padding: 6px 12px;
-        white-space: normal;
-        max-width: 120px;
-        text-align: center;
+    }
+
+    .chat-body {
+        padding: 16px;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .chat-footer {
+        padding: 16px;
+    }
+
+    .chat-input {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .chat-send-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
     }
 }
 
-/* Ensure chat doesn't interfere with other fixed elements */
-@media (max-width: 576px) {
-    .chat-button {
-        bottom: 10px;
-        right: 10px;
-        left: auto;
-    }
-    
+@media (max-width: 480px) {
     .chat-widget {
-        bottom: 70px;
-        right: 10px;
-        left: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
     }
 
-    .chat-widget.ai {
-        bottom: 140px;
-    }
-
-    .chat-button.ai {
-        bottom: 70px;
+    .chat-fab-container {
+        bottom: 20px;
+        right: 20px;
     }
 }
 </style>
 
-<!-- AI Chat Widget -->
-<div id="guestChatWidget" class="chat-widget ai">
+<!-- AI Chatbot Widget -->
+<div id="aiChatWidget" class="chat-widget ai-bot">
     <div class="chat-header">
-        <h6 class="mb-0">
-            <i class="fas fa-robot"></i> Trợ lý tư vấn
-        </h6>
-        <button class="btn-close-chat" onclick="closeGuestChat()">
+        <div class="chat-header-content">
+            <div class="chat-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="chat-header-text">
+                <h3>Trợ lý AI</h3>
+                <p class="chat-status-indicator">
+                    <span class="chat-status-dot"></span>
+                    Đang hoạt động
+                </p>
+            </div>
+        </div>
+        <button class="chat-close-btn" onclick="closeAiChat()">
             <i class="fas fa-times"></i>
         </button>
     </div>
 
-    <div class="chat-body" id="guestChatBody">
-        <div class="text-center py-3 text-muted">
-            <i class="fas fa-robot fa-2x mb-2"></i>
-            <p>Xin chào! Bạn cần tư vấn gì về sản phẩm?</p>
+    <div class="chat-body" id="aiChatBody">
+        <div class="chat-welcome">
+            <i class="fas fa-robot"></i>
+            <h4>Xin chào! 👋</h4>
+            <p>Tôi là trợ lý AI của DungThu.com<br>Bạn cần tư vấn gì về sản phẩm?</p>
         </div>
     </div>
 
     <div class="chat-footer">
-        <form id="guestChatForm" onsubmit="sendGuestMessage(event)">
-            <div class="input-group">
-                <input type="text" class="form-control" id="guestChatInput" placeholder="Nhập câu hỏi..." required>
-                <button class="btn btn-primary" type="submit" id="guestChatSendBtn">
+        <form id="aiChatForm" onsubmit="sendAiMessage(event)">
+            <div class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="aiChatInput" 
+                    placeholder="Nhập câu hỏi của bạn..."
+                    autocomplete="off"
+                    required
+                >
+                <button class="chat-send-btn" type="submit" id="aiChatSendBtn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </form>
-        <div class="text-muted" style="font-size: 12px; margin-top: 6px;">
-            AI có thể tư vấn sai vui lòng đăng nhập chat với admin để được hỗ trợ chính xác hơn.
+        <div class="chat-disclaimer">
+            💡 AI có thể tư vấn sai. Đăng nhập để chat với admin để được hỗ trợ chính xác hơn.
         </div>
     </div>
 </div>
 
-<!-- Chat Button -->
-<button class="chat-button ai" onclick="toggleGuestChat()" id="guestChatButton">
-    <i class="fas fa-robot"></i>
-    <span class="chat-tooltip" id="guestChatTooltip">Hỏi nhanh trợ lý</span>
-</button>
+<!-- Admin Chat Widget (for authenticated users) -->
+@auth
+@if(auth()->user()->role !== 'admin')
+<div id="adminChatWidget" class="chat-widget admin-chat">
+    <div class="chat-header">
+        <div class="chat-header-content">
+            <div class="chat-avatar">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div class="chat-header-text">
+                <h3>Chat với Admin</h3>
+                <p class="chat-status-indicator">
+                    <span class="chat-status-dot"></span>
+                    Hỗ trợ 24/7
+                </p>
+            </div>
+        </div>
+        <button class="chat-close-btn" onclick="closeAdminChat()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="chat-body" id="adminChatBody">
+        <div class="chat-welcome">
+            <i class="fas fa-headset"></i>
+            <h4>Chào {{ auth()->user()->name }}! 👋</h4>
+            <p>Bắt đầu cuộc trò chuyện với admin<br>Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <form id="adminChatForm" onsubmit="sendAdminMessage(event)">
+            <div class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="adminChatInput" 
+                    placeholder="Nhập tin nhắn..."
+                    autocomplete="off"
+                    required
+                >
+                <button class="chat-send-btn" type="submit" id="adminChatSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+@endauth
+
+<!-- Floating Action Buttons -->
+<div class="chat-fab-container">
+    <!-- AI Chatbot Button -->
+    <button class="chat-fab ai-bot" onclick="toggleAiChat()" id="aiChatFab">
+        <i class="fas fa-robot fab-icon"></i>
+        <span class="fab-tooltip">Trợ lý AI tư vấn</span>
+    </button>
+
+    <!-- Admin Chat Button (for authenticated users) -->
+    @auth
+    @if(auth()->user()->role !== 'admin')
+    <button class="chat-fab admin-chat" onclick="toggleAdminChat()" id="adminChatFab">
+        <i class="fas fa-headset fab-icon"></i>
+        <span class="unread-badge" id="adminUnreadBadge" style="display: none;">0</span>
+        <span class="fab-tooltip">Chat với Admin</span>
+    </button>
+    @endif
+    @endauth
+</div>
 
 <script>
-let guestChatWidget = null;
-let guestChatOpen = false;
-let guestTooltipTimer = null;
+// ============================================
+// AI CHATBOT FUNCTIONALITY
+// ============================================
 
-document.addEventListener('DOMContentLoaded', function() {
-    guestChatWidget = document.getElementById('guestChatWidget');
-    startGuestTooltipCycle();
-});
+let aiChatOpen = false;
 
-function toggleGuestChat() {
-    if (!guestChatWidget) return;
-    if (guestChatWidget.classList.contains('active')) {
-        closeGuestChat();
+function toggleAiChat() {
+    const widget = document.getElementById('aiChatWidget');
+    if (aiChatOpen) {
+        closeAiChat();
     } else {
-        openGuestChat();
+        openAiChat();
     }
 }
 
-function openGuestChat() {
-    if (!guestChatWidget) return;
-    guestChatWidget.classList.add('active');
-    guestChatOpen = true;
-    const input = document.getElementById('guestChatInput');
-    if (input) input.focus();
+function openAiChat() {
+    const widget = document.getElementById('aiChatWidget');
+    const adminWidget = document.getElementById('adminChatWidget');
+    
+    // Close admin chat if open
+    if (adminWidget && adminWidget.classList.contains('active')) {
+        closeAdminChat();
+    }
+    
+    widget.classList.add('active');
+    aiChatOpen = true;
+    document.getElementById('aiChatInput').focus();
 }
 
-function closeGuestChat() {
-    if (!guestChatWidget) return;
-    guestChatWidget.classList.remove('active');
-    guestChatOpen = false;
+function closeAiChat() {
+    const widget = document.getElementById('aiChatWidget');
+    widget.classList.remove('active');
+    aiChatOpen = false;
 }
 
-function sendGuestMessage(event) {
+function sendAiMessage(event) {
     event.preventDefault();
-    const input = document.getElementById('guestChatInput');
-    const message = (input?.value || '').trim();
+    
+    const input = document.getElementById('aiChatInput');
+    const message = input.value.trim();
+    
     if (!message) return;
-
-    appendGuestMessage({ role: 'user', content: message });
+    
+    // Add user message
+    appendAiMessage('user', message);
     input.value = '';
-
-    const sendBtn = document.getElementById('guestChatSendBtn');
-    if (sendBtn) sendBtn.disabled = true;
-
+    
+    // Show typing indicator
+    showTypingIndicator('aiChatBody');
+    
+    // Disable send button
+    const sendBtn = document.getElementById('aiChatSendBtn');
+    sendBtn.disabled = true;
+    
+    // Send to server
     fetch('{{ route('guest-chat.send') }}', {
         method: 'POST',
         headers: {
@@ -410,41 +822,254 @@ function sendGuestMessage(event) {
     })
     .then(res => res.json())
     .then(data => {
+        removeTypingIndicator('aiChatBody');
         if (data && data.reply) {
-            appendGuestMessage({ role: 'assistant', content: data.reply });
+            appendAiMessage('bot', data.reply);
         } else {
-            appendGuestMessage({ role: 'assistant', content: 'Xin lỗi, hiện chưa thể trả lời. Vui lòng thử lại sau.' });
+            appendAiMessage('bot', 'Xin lỗi, hiện tại tôi không thể trả lời. Vui lòng thử lại sau hoặc chat với admin để được hỗ trợ tốt hơn.');
         }
     })
     .catch(() => {
-        appendGuestMessage({ role: 'assistant', content: 'Xin lỗi, hiện chưa thể trả lời. Vui lòng thử lại sau.' });
+        removeTypingIndicator('aiChatBody');
+        appendAiMessage('bot', 'Đã có lỗi xảy ra. Vui lòng thử lại sau.');
     })
     .finally(() => {
-        if (sendBtn) sendBtn.disabled = false;
+        sendBtn.disabled = false;
     });
 }
 
-function appendGuestMessage({ role, content }) {
-    const chatBody = document.getElementById('guestChatBody');
-    if (!chatBody) return;
-
-    const welcomeMsg = chatBody.querySelector('.text-center');
-    if (welcomeMsg) welcomeMsg.remove();
-
+function appendAiMessage(type, content) {
+    const chatBody = document.getElementById('aiChatBody');
+    
+    // Remove welcome message
+    const welcome = chatBody.querySelector('.chat-welcome');
+    if (welcome) welcome.remove();
+    
     const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${role === 'user' ? 'user' : 'admin'}`;
-
-    const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-
+    messageDiv.className = `chat-message ${type}`;
+    
+    const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    
     messageDiv.innerHTML = `
         <div class="message-bubble">
             <div class="message-content">${escapeHtml(content)}</div>
-            <div class="message-time">${timeStr}</div>
+            <div class="message-time">${time}</div>
         </div>
     `;
-
+    
     chatBody.appendChild(messageDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// ============================================
+// ADMIN CHAT FUNCTIONALITY
+// ============================================
+
+@auth
+@if(auth()->user()->role !== 'admin')
+let adminChatOpen = false;
+let lastMessageId = 0;
+let pollingInterval = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadAdminMessages();
+    startAdminPolling();
+    refreshUnreadCount();
+});
+
+function toggleAdminChat() {
+    if (adminChatOpen) {
+        closeAdminChat();
+    } else {
+        openAdminChat();
+    }
+}
+
+function openAdminChat() {
+    const widget = document.getElementById('adminChatWidget');
+    const aiWidget = document.getElementById('aiChatWidget');
+    
+    // Close AI chat if open
+    if (aiWidget && aiWidget.classList.contains('active')) {
+        closeAiChat();
+    }
+    
+    widget.classList.add('active');
+    adminChatOpen = true;
+    document.getElementById('adminChatInput').focus();
+    loadAdminMessages();
+    markAllAsRead();
+}
+
+function closeAdminChat() {
+    const widget = document.getElementById('adminChatWidget');
+    widget.classList.remove('active');
+    adminChatOpen = false;
+}
+
+function sendAdminMessage(event) {
+    event.preventDefault();
+    
+    const input = document.getElementById('adminChatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    const sendBtn = document.getElementById('adminChatSendBtn');
+    sendBtn.disabled = true;
+    
+    fetch('{{ route('chat.send') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ message })
+    })
+    .then(res => res.json())
+    .then(data => {
+        appendAdminMessage(data);
+        lastMessageId = Math.max(lastMessageId, data.id);
+        input.value = '';
+    })
+    .catch(() => {
+        alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
+    })
+    .finally(() => {
+        sendBtn.disabled = false;
+    });
+}
+
+function loadAdminMessages() {
+    fetch('{{ route('chat.messages') }}')
+        .then(res => res.json())
+        .then(data => {
+            const chatBody = document.getElementById('adminChatBody');
+            
+            if (data.length === 0) {
+                return;
+            }
+            
+            // Remove welcome message
+            const welcome = chatBody.querySelector('.chat-welcome');
+            if (welcome) welcome.remove();
+            
+            chatBody.innerHTML = '';
+            data.forEach(message => {
+                appendAdminMessage(message);
+                lastMessageId = Math.max(lastMessageId, message.id);
+            });
+            chatBody.scrollTop = chatBody.scrollHeight;
+        })
+        .catch(err => console.error('Error loading messages:', err));
+}
+
+function appendAdminMessage(message) {
+    const chatBody = document.getElementById('adminChatBody');
+    
+    // Remove welcome message
+    const welcome = chatBody.querySelector('.chat-welcome');
+    if (welcome) welcome.remove();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
+    
+    const date = new Date(message.created_at);
+    const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    
+    messageDiv.innerHTML = `
+        <div class="message-bubble">
+            <div class="message-content">${escapeHtml(message.message)}</div>
+            <div class="message-time">${time}</div>
+        </div>
+    `;
+    
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function startAdminPolling() {
+    pollingInterval = setInterval(() => {
+        if (adminChatOpen) {
+            checkNewAdminMessages();
+        } else {
+            refreshUnreadCount();
+        }
+    }, 3000);
+}
+
+function checkNewAdminMessages() {
+    fetch(`{{ route('chat.new') }}?last_id=${lastMessageId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.length > 0) {
+                data.forEach(message => {
+                    appendAdminMessage(message);
+                    lastMessageId = Math.max(lastMessageId, message.id);
+                });
+                markAllAsRead();
+            }
+        })
+        .catch(err => console.error('Error checking messages:', err));
+}
+
+function refreshUnreadCount() {
+    fetch('{{ route('chat.unread-count') }}')
+        .then(res => res.json())
+        .then(data => {
+            if (data && typeof data.unread !== 'undefined' && !adminChatOpen) {
+                const badge = document.getElementById('adminUnreadBadge');
+                if (data.unread > 0) {
+                    badge.textContent = data.unread;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        })
+        .catch(err => console.error('Error fetching unread count:', err));
+}
+
+function markAllAsRead() {
+    fetch('{{ route('chat.mark-read') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({})
+    })
+    .then(() => {
+        const badge = document.getElementById('adminUnreadBadge');
+        badge.style.display = 'none';
+    })
+    .catch(err => console.error('Error marking read:', err));
+}
+@endif
+@endauth
+
+// ============================================
+// SHARED UTILITIES
+// ============================================
+
+function showTypingIndicator(bodyId) {
+    const chatBody = document.getElementById(bodyId);
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+    `;
+    chatBody.appendChild(indicator);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function removeTypingIndicator(bodyId) {
+    const chatBody = document.getElementById(bodyId);
+    const indicator = chatBody.querySelector('#typingIndicator');
+    if (indicator) indicator.remove();
 }
 
 function escapeHtml(text) {
@@ -458,303 +1083,29 @@ function escapeHtml(text) {
     return String(text || '').replace(/[&<>"']/g, m => map[m]);
 }
 
-function startGuestTooltipCycle() {
-    const tooltip = document.getElementById('guestChatTooltip');
-    if (!tooltip) return;
-
-    function showTooltip() {
-        if (guestChatOpen) return;
-        tooltip.classList.add('show');
-        setTimeout(() => tooltip.classList.remove('show'), 2500);
+// Close chat when clicking outside
+document.addEventListener('click', function(event) {
+    const aiWidget = document.getElementById('aiChatWidget');
+    const aiBtn = document.getElementById('aiChatFab');
+    const adminWidget = document.getElementById('adminChatWidget');
+    const adminBtn = document.getElementById('adminChatFab');
+    
+    if (aiChatOpen && !aiWidget.contains(event.target) && !aiBtn.contains(event.target)) {
+        closeAiChat();
     }
-
-    setTimeout(showTooltip, 1000);
-    guestTooltipTimer = setInterval(showTooltip, 22000);
-}
-</script>
-
-<!-- User Chat Widget (Auth, non-admin) -->
-@auth
-@if(auth()->user()->role !== 'admin')
-<div id="chatWidget" class="chat-widget admin">
-    <div class="chat-header">
-        <h6 class="mb-0">
-            <i class="fas fa-comments"></i> Chat với Admin
-        </h6>
-        <button class="btn-close-chat" onclick="closeChatWidget()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
     
-    <div class="chat-body" id="chatBody">
-        <div class="text-center py-3 text-muted">
-            <i class="fas fa-comments fa-2x mb-2"></i>
-            <p>Bắt đầu cuộc trò chuyện với admin</p>
-        </div>
-    </div>
-    
-    <div class="chat-footer">
-        <form id="chatForm" onsubmit="sendMessage(event)">
-            <div class="input-group">
-                <input type="text" class="form-control" id="chatInput" placeholder="Nhập tin nhắn..." required>
-                <button class="btn btn-primary" type="submit">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+    if (adminChatOpen && adminWidget && !adminWidget.contains(event.target) && adminBtn && !adminBtn.contains(event.target)) {
+        closeAdminChat();
+    }
+});
 
-<!-- Chat Button -->
-<button class="chat-button admin" onclick="toggleChatWidget()" id="chatButton">
-    <i class="fas fa-comments"></i>
-    <span class="unread-badge" id="unreadBadge" style="display: none;">0</span>
-    <span class="chat-tooltip" id="chatTooltip">Chat với Admin</span>
-</button>
-
-<script>
-let chatWidget = null;
-let lastMessageId = 0;
-let pollingInterval = null;
-let tooltipInterval = null;
-let isChatOpen = false;
-
+// Prevent chat from closing when clicking inside
 document.addEventListener('DOMContentLoaded', function() {
-    chatWidget = document.getElementById('chatWidget');
-    loadMessages();
-    startPolling();
-    startTooltipCycle();
-    refreshUnreadCount();
-    setInterval(refreshUnreadCount, 30000);
-});
-
-function toggleChatWidget() {
-    if (chatWidget.classList.contains('active')) {
-        closeChatWidget();
-    } else {
-        openChatWidget();
-    }
-}
-
-function openChatWidget() {
-    chatWidget.classList.add('active');
-    isChatOpen = true;
-    loadMessages();
-    scrollToBottom();
-    document.getElementById('chatInput').focus();
-    markAllAsRead();
-}
-
-function closeChatWidget() {
-    chatWidget.classList.remove('active');
-    isChatOpen = false;
-}
-
-function loadMessages() {
-    fetch('{{ route('chat.messages') }}')
-        .then(response => response.json())
-        .then(data => {
-            const chatBody = document.getElementById('chatBody');
-            
-            if (data.length === 0) {
-                chatBody.innerHTML = `
-                    <div class="text-center py-3 text-muted">
-                        <i class="fas fa-comments fa-2x mb-2"></i>
-                        <p>Bắt đầu cuộc trò chuyện với admin</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            chatBody.innerHTML = '';
-            data.forEach(message => {
-                appendMessage(message);
-                lastMessageId = Math.max(lastMessageId, message.id);
-            });
-            scrollToBottom();
-        })
-        .catch(error => {
-            console.error('Error loading messages:', error);
+    const widgets = document.querySelectorAll('.chat-widget');
+    widgets.forEach(widget => {
+        widget.addEventListener('click', function(e) {
+            e.stopPropagation();
         });
-}
-
-function sendMessage(event) {
-    event.preventDefault();
-    
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    
-    if (!message) return;
-    
-    fetch('{{ route('chat.send') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ message: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        appendMessage(data);
-        lastMessageId = Math.max(lastMessageId, data.id);
-        input.value = '';
-        scrollToBottom();
-    })
-    .catch(error => {
-        console.error('Error sending message:', error);
-        alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
     });
-}
-
-function appendMessage(message) {
-    const chatBody = document.getElementById('chatBody');
-    
-    // Remove welcome message if exists
-    const welcomeMsg = chatBody.querySelector('.text-center');
-    if (welcomeMsg) {
-        welcomeMsg.remove();
-    }
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
-    
-    const date = new Date(message.created_at);
-    const timeStr = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    
-    messageDiv.innerHTML = `
-        <div class="message-bubble">
-            <div class="message-content">
-                ${escapeHtml(message.message)}
-            </div>
-            <div class="message-time">${timeStr}</div>
-        </div>
-    `;
-    
-    chatBody.appendChild(messageDiv);
-}
-
-function scrollToBottom() {
-    const chatBody = document.getElementById('chatBody');
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-function startPolling() {
-    pollingInterval = setInterval(() => {
-        if (isChatOpen) {
-            checkNewMessages();
-        } else {
-            refreshUnreadCount();
-        }
-    }, 3000); // Check every 3 seconds
-}
-
-function checkNewMessages() {
-    fetch(`{{ route('chat.new') }}?last_id=${lastMessageId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.length > 0) {
-                let hasAdminMessage = false;
-                data.forEach(message => {
-                    appendMessage(message);
-                    if (message.is_admin) {
-                        hasAdminMessage = true;
-                    }
-                    lastMessageId = Math.max(lastMessageId, message.id);
-                });
-                
-                scrollToBottom();
-
-                if (hasAdminMessage) {
-                    markAllAsRead();
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error checking new messages:', error);
-        });
-}
-
-function showUnreadBadge(count) {
-    const badge = document.getElementById('unreadBadge');
-    const safeCount = Math.max(0, parseInt(count) || 0);
-    badge.textContent = safeCount;
-    badge.style.display = safeCount > 0 ? 'flex' : 'none';
-}
-
-function hideUnreadBadge() {
-    const badge = document.getElementById('unreadBadge');
-    badge.textContent = '0';
-    badge.style.display = 'none';
-}
-
-function refreshUnreadCount() {
-    fetch(`{{ route('chat.unread-count') }}`)
-        .then(res => res.json())
-        .then(data => {
-            if (!data || typeof data.unread === 'undefined') return;
-            if (isChatOpen) return;
-            showUnreadBadge(data.unread);
-        })
-        .catch(err => console.error('Error fetching unread count:', err));
-}
-
-function markAllAsRead() {
-    fetch(`{{ route('chat.mark-read') }}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({})
-    })
-    .then(() => {
-        hideUnreadBadge();
-    })
-    .catch(err => console.error('Error marking read:', err));
-}
-
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-// Tooltip auto show/hide cycle
-function startTooltipCycle() {
-    const tooltip = document.getElementById('chatTooltip');
-    
-    function showTooltip() {
-        tooltip.classList.add('show');
-        
-        // Hide after 3 seconds
-        setTimeout(() => {
-            tooltip.classList.remove('show');
-        }, 3000);
-    }
-    
-    // Show immediately on load
-    setTimeout(showTooltip, 1000);
-    
-    // Then repeat every 23 seconds (3s show + 20s hide)
-    setInterval(showTooltip, 23000);
-}
-
-// Stop polling when page is hidden
-document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-        if (pollingInterval) {
-            clearInterval(pollingInterval);
-        }
-    } else {
-        startPolling();
-    }
 });
 </script>
-@endif
-@endauth

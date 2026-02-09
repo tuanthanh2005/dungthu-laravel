@@ -81,6 +81,7 @@ class Order extends Model
     public function getStatusLabelAttribute()
     {
         $statuses = [
+            'pending_approval' => 'Chờ duyệt',
             'pending' => 'Chờ xử lý',
             'processing' => 'Đang xử lý',
             'shipped' => 'Đã giao hàng',
@@ -96,6 +97,7 @@ class Order extends Model
     public function getStatusColorAttribute()
     {
         $colors = [
+            'pending_approval' => 'warning',
             'pending' => 'warning',
             'processing' => 'info',
             'shipped' => 'primary',

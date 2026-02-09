@@ -185,6 +185,7 @@ class CartController extends Controller
                 'customer_phone' => $request->customer_phone,
                 'customer_address' => $request->customer_address ?? 'Sản phẩm số - không cần giao hàng',
                 'total_amount' => $totalAmount,
+                'status' => 'pending_approval',
             ]);
 
             foreach($cart as $id => $details) {

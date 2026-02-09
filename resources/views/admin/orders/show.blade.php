@@ -293,6 +293,7 @@
                         <div class="col-md-8">
                             <label class="form-label fw-bold">Trạng thái mới:</label>
                             <select name="status" class="form-select" required>
+                                <option value="pending_approval" {{ $order->status == 'pending_approval' ? 'selected' : '' }}>Chờ duyệt</option>
                                 <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
                                 <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang xử lý</option>
                                 @if($order->order_type == 'shipping')

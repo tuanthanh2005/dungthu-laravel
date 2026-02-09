@@ -134,6 +134,9 @@
                 <a href="{{ route('admin.orders', array_merge(request()->all(), ['status' => 'all'])) }}" class="filter-tab {{ !request('status') || request('status') == 'all' ? 'active' : '' }}">
                     Tất cả trạng thái
                 </a>
+                <a href="{{ route('admin.orders', array_merge(request()->all(), ['status' => 'pending_approval'])) }}" class="filter-tab {{ request('status') == 'pending_approval' ? 'active' : '' }}">
+                    Chờ duyệt
+                </a>
                 <a href="{{ route('admin.orders', array_merge(request()->all(), ['status' => 'pending'])) }}" class="filter-tab {{ request('status') == 'pending' ? 'active' : '' }}">
                     Chờ xử lý
                 </a>

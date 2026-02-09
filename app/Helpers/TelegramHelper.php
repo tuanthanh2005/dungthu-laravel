@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Helpers;
 
@@ -7,28 +7,54 @@ use Illuminate\Support\Facades\Log;
 
 class TelegramHelper
 {
+    private static function botToken(): ?string
+    {
+        return config('services.telegram.bot_token', env('TELEGRAM_BOT_TOKEN'));
+    }
+
+    private static function chatId(): ?string
+    {
+        return config('services.telegram.chat_id', env('TELEGRAM_CHAT_ID'));
+    }
+
+    private static function webhookSecret(): string
+    {
+        return (string) config('services.telegram.webhook_secret', env('TELEGRAM_WEBHOOK_SECRET', ''));
+    }
+
     /**
      * Gửi tin nhắn tùy chỉnh qua Telegram
      */
-    public static function sendMessage($text)
+    public static function sendMessage($text, $replyMarkup = null)
     {
-        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
-        $chatId = '8199725778';
+        $botToken = self::botToken();
+        $chatId = self::chatId();
+
+        if (!$botToken || !$chatId) {
+            Log::error('Telegram config missing (bot_token/chat_id).');
+            return false;
+        }
 
         try {
-            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+            $payload = [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
-            ]);
+            ];
+
+            if ($replyMarkup) {
+                $payload['reply_markup'] = $replyMarkup;
+            }
+
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", $payload);
 
             if ($response->successful()) {
                 Log::info('Telegram message sent successfully');
                 return true;
-            } else {
-                Log::error('Telegram send failed: ' . $response->body());
-                return false;
             }
+
+            Log::error('Telegram send failed: ' . $response->body());
+            return false;
         } catch (\Exception $e) {
             Log::error('Telegram error: ' . $e->getMessage());
             return false;
@@ -40,26 +66,45 @@ class TelegramHelper
      */
     public static function sendNewOrderNotification($order)
     {
-        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
-        $chatId = '8199725778';
+        $botToken = self::botToken();
+        $chatId = self::chatId();
 
-        // Tạo nội dung thông báo
+        if (!$botToken || !$chatId) {
+            Log::error('Telegram config missing (bot_token/chat_id).');
+            return false;
+        }
+
         $message = self::formatOrderMessage($order);
+        $replyMarkup = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => '✅ Duyệt đơn',
+                        'callback_data' => self::buildCallbackData('approve', $order->id),
+                    ],
+                    [
+                        'text' => '❌ Từ chối',
+                        'callback_data' => self::buildCallbackData('reject', $order->id),
+                    ],
+                ],
+            ],
+        ];
 
         try {
             $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                 'chat_id' => $chatId,
                 'text' => $message,
                 'parse_mode' => 'HTML',
+                'reply_markup' => $replyMarkup,
             ]);
 
             if ($response->successful()) {
                 Log::info('Telegram notification sent successfully for order #' . $order->id);
                 return true;
-            } else {
-                Log::error('Telegram notification failed: ' . $response->body());
-                return false;
             }
+
+            Log::error('Telegram notification failed: ' . $response->body());
+            return false;
         } catch (\Exception $e) {
             Log::error('Telegram notification error: ' . $e->getMessage());
             return false;
@@ -71,31 +116,27 @@ class TelegramHelper
      */
     private static function formatOrderMessage($order)
     {
-        // Load order items với product
         $order->load('orderItems.product');
 
-        $message = "🔔 <b>ĐỚN HÀNG MỚI - XÁC NHẬN ĐÃ THANH TOÁN</b>\n";
+        $message = "🔔 <b>ĐƠN HÀNG MỚI - CHỜ ADMIN DUYỆT</b>\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
-        // Thông tin đơn hàng
         $message .= "📦 <b>THÔNG TIN ĐƠN HÀNG</b>\n";
         $message .= "• Mã đơn: <b>#" . $order->id . "</b>\n";
         $message .= "• Loại đơn: <b>" . self::getOrderTypeLabel($order->order_type) . "</b>\n";
         $message .= "• Thời gian: <b>" . $order->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') . "</b>\n";
         $message .= "• Trạng thái: <b>" . $order->status_label . "</b>\n\n";
 
-        // Thông tin khách hàng
         $message .= "👤 <b>THÔNG TIN KHÁCH HÀNG</b>\n";
         $message .= "• Họ tên: <b>" . $order->customer_name . "</b>\n";
         $message .= "• Email: <b>" . $order->customer_email . "</b>\n";
         $message .= "• SĐT: <b>" . $order->customer_phone . "</b>\n";
-        
+
         if ($order->customer_address && $order->customer_address !== 'Sản phẩm số - không cần giao hàng') {
             $message .= "• Địa chỉ: <b>" . $order->customer_address . "</b>\n";
         }
         $message .= "\n";
 
-        // Chi tiết sản phẩm
         $message .= "🛒 <b>CHI TIẾT SẢN PHẨM</b>\n";
         foreach ($order->orderItems as $item) {
             $productName = $item->product ? $item->product->name : 'Sản phẩm không tồn tại';
@@ -105,12 +146,11 @@ class TelegramHelper
             $message .= "  └ Thành tiền: <b>" . number_format($item->price * $item->quantity, 0, ',', '.') . "đ</b>\n\n";
         }
 
-        // Tổng tiền
         $message .= "━━━━━━━━━━━━━━━━━━━━━━\n";
         $message .= "💰 <b>TỔNG TIỀN: " . number_format($order->total_amount, 0, ',', '.') . "đ</b>\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
-        $message .= "⚠️ <i>Khách hàng đã xác nhận thanh toán. Vui lòng kiểm tra và xử lý đơn hàng!</i>";
+        $message .= "⚠️ <i>Khách hàng đã đặt hàng. Vui lòng duyệt để gửi email tải file.</i>";
 
         return $message;
     }
@@ -128,5 +168,40 @@ class TelegramHelper
         ];
 
         return $labels[$type] ?? 'Không xác định';
+    }
+
+    public static function buildCallbackData(string $action, int $orderId): string
+    {
+        $secret = self::webhookSecret();
+        $base = $action . '|' . $orderId;
+        $hash = $secret ? substr(hash_hmac('sha256', $base, $secret), 0, 12) : 'nosecret';
+        return $base . '|' . $hash;
+    }
+
+    public static function verifyCallbackData(string $data): ?array
+    {
+        $parts = explode('|', $data);
+        if (count($parts) !== 3) {
+            return null;
+        }
+
+        [$action, $orderId, $hash] = $parts;
+        if (!in_array($action, ['approve', 'reject'], true)) {
+            return null;
+        }
+
+        $secret = self::webhookSecret();
+        if ($secret) {
+            $expected = substr(hash_hmac('sha256', $action . '|' . $orderId, $secret), 0, 12);
+            if (!hash_equals($expected, $hash)) {
+                return null;
+            }
+        }
+
+        if (!ctype_digit($orderId)) {
+            return null;
+        }
+
+        return ['action' => $action, 'order_id' => (int) $orderId];
     }
 }

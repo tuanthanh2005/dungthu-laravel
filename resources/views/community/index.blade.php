@@ -75,9 +75,11 @@
 @section('content')
 <div class="container py-5" style="margin-top: 80px;">
     @php
-        $cryptoProduct = $botProducts['bot-crypto-alert'] ?? null;
-        $goldProduct = $botProducts['bot-gia-vang'] ?? null;
-        $stockProduct = $botProducts['bot-chung-khoan'] ?? null;
+        $prices = [
+            'crypto' => 499000,
+            'gold' => 399000,
+            'stock' => 449000,
+        ];
     @endphp
     <div class="tele-hero mb-5 text-center">
         <div class="tele-badge mb-3">BÁN TOOL TELEGRAM</div>
@@ -103,22 +105,14 @@
                 <div class="tele-card-body">
                     <p class="text-muted mb-3">Theo dõi giá coin real-time, gửi cảnh báo và gợi ý affiliate tự động.</p>
                     <div class="fw-bold mb-3" style="font-size: 20px; color: #6a11cb;">
-                        {{ $cryptoProduct ? $cryptoProduct->formatted_price : '499.000đ' }}
+                        {{ number_format($prices['crypto'], 0, ',', '.') }}đ
                     </div>
                     <div class="d-grid gap-2 mb-3">
                         <div class="tele-feature"><span>✓</span> Full source code Python</div>
                         <div class="tele-feature"><span>✓</span> Setup dễ, có README & video</div>
                         <div class="tele-feature"><span>✓</span> Support qua Telegram</div>
                     </div>
-                    <div class="d-flex gap-2 flex-wrap">
-                        @if($cryptoProduct)
-                            <form method="POST" action="{{ route('cart.buy-now', $cryptoProduct->id) }}">
-                                @csrf
-                                <button type="submit" class="tele-cta">Mua ngay</button>
-                            </form>
-                        @endif
-                        <a href="https://t.me/specademy" class="tele-cta-outline text-decoration-none d-inline-block">Nhận tư vấn</a>
-                    </div>
+                    <a href="https://t.me/specademy" class="tele-cta text-decoration-none d-inline-block">Nhận tư vấn</a>
                 </div>
             </div>
         </div>
@@ -134,22 +128,14 @@
                 <div class="tele-card-body">
                     <p class="text-muted mb-3">Cập nhật giá vàng SJC/PNJ/DOJI, push thông báo tức thì.</p>
                     <div class="fw-bold mb-3" style="font-size: 20px; color: #6a11cb;">
-                        {{ $goldProduct ? $goldProduct->formatted_price : '399.000đ' }}
+                        {{ number_format($prices['gold'], 0, ',', '.') }}đ
                     </div>
                     <div class="d-grid gap-2 mb-3">
                         <div class="tele-feature"><span>✓</span> Bot chạy ổn định 24/7</div>
                         <div class="tele-feature"><span>✓</span> Dễ dàng tùy biến nội dung</div>
                         <div class="tele-feature"><span>✓</span> Hướng dẫn kiếm tiền</div>
                     </div>
-                    <div class="d-flex gap-2 flex-wrap">
-                        @if($goldProduct)
-                            <form method="POST" action="{{ route('cart.buy-now', $goldProduct->id) }}">
-                                @csrf
-                                <button type="submit" class="tele-cta">Mua ngay</button>
-                            </form>
-                        @endif
-                        <a href="https://t.me/specademy" class="tele-cta-outline text-decoration-none d-inline-block">Nhận tư vấn</a>
-                    </div>
+                    <a href="https://t.me/specademy" class="tele-cta text-decoration-none d-inline-block">Nhận tư vấn</a>
                 </div>
             </div>
         </div>
@@ -165,22 +151,14 @@
                 <div class="tele-card-body">
                     <p class="text-muted mb-3">Theo dõi giá cổ phiếu VN, tạo kênh cảnh báo cho cộng đồng.</p>
                     <div class="fw-bold mb-3" style="font-size: 20px; color: #6a11cb;">
-                        {{ $stockProduct ? $stockProduct->formatted_price : '449.000đ' }}
+                        {{ number_format($prices['stock'], 0, ',', '.') }}đ
                     </div>
                     <div class="d-grid gap-2 mb-3">
                         <div class="tele-feature"><span>✓</span> Full Python source</div>
                         <div class="tele-feature"><span>✓</span> Tối ưu cho group Telegram</div>
                         <div class="tele-feature"><span>✓</span> Support nhanh</div>
                     </div>
-                    <div class="d-flex gap-2 flex-wrap">
-                        @if($stockProduct)
-                            <form method="POST" action="{{ route('cart.buy-now', $stockProduct->id) }}">
-                                @csrf
-                                <button type="submit" class="tele-cta">Mua ngay</button>
-                            </form>
-                        @endif
-                        <a href="https://t.me/specademy" class="tele-cta-outline text-decoration-none d-inline-block">Nhận tư vấn</a>
-                    </div>
+                    <a href="https://t.me/specademy" class="tele-cta text-decoration-none d-inline-block">Nhận tư vấn</a>
                 </div>
             </div>
         </div>

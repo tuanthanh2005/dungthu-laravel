@@ -11,8 +11,12 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">Cộng đồng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('card-exchange.index') }}">Đổi Thẻ Cào</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('web-design') }}">Website</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog Chia Sẻ</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://telebot.dungthu.com/" target="_blank">
+                        Tool BlockChain
+                    </a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">
                         <i class="fas fa-phone me-1"></i>Liên Hệ

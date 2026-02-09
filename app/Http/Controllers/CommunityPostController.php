@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CommunityPost;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -12,6 +13,8 @@ class CommunityPostController extends Controller
 {
     public function index()
     {
+        $botProducts = $this->ensureTelegramBotProducts();
+
         $posts = CommunityPost::with([
                 'user',
                 'comments.user',
@@ -21,7 +24,7 @@ class CommunityPostController extends Controller
             ->latest()
             ->paginate(12);
 
-        return view('community.index', compact('posts'));
+        return view('community.index', compact('posts', 'botProducts'));
     }
 
     public function show(CommunityPost $post)
@@ -129,5 +132,69 @@ class CommunityPostController extends Controller
         return response()->json([
             'location' => asset('images/community/' . $fileName),
         ]);
+    }
+
+    private function ensureTelegramBotProducts(): array
+    {
+        $items = [
+            [
+                'slug' => 'bot-crypto-alert',
+                'name' => 'Bot Crypto Alert',
+                'price' => 499000,
+                'description' => 'Theo dõi giá coin real-time, gửi cảnh báo và gợi ý affiliate tự động.',
+                'file' => 'bot-crypto-alert.zip',
+            ],
+            [
+                'slug' => 'bot-gia-vang',
+                'name' => 'Bot Giá Vàng',
+                'price' => 399000,
+                'description' => 'Cập nhật giá vàng SJC/PNJ/DOJI, push thông báo tức thì.',
+                'file' => 'bot-gia-vang.zip',
+            ],
+            [
+                'slug' => 'bot-chung-khoan',
+                'name' => 'Bot Chứng Khoán',
+                'price' => 449000,
+                'description' => 'Theo dõi giá cổ phiếu VN, tạo kênh cảnh báo cho cộng đồng.',
+                'file' => 'bot-chung-khoan.zip',
+            ],
+        ];
+
+        $results = [];
+        foreach ($items as $item) {
+            $product = Product::firstOrCreate(
+                ['slug' => $item['slug']],
+                [
+                    'name' => $item['name'],
+                    'price' => $item['price'],
+                    'description' => $item['description'],
+                    'category' => 'ebooks',
+                    'delivery_type' => 'digital',
+                    'stock' => 999,
+                ]
+            );
+
+            $filePath = PathHelper::publicRootPath('files/' . $item['file']);
+            if (file_exists($filePath)) {
+                $updates = [];
+                if (!$product->file_path) {
+                    $updates['file_path'] = $item['file'];
+                }
+                if (!$product->file_type) {
+                    $updates['file_type'] = 'zip';
+                }
+                if (!$product->file_size) {
+                    $updates['file_size'] = (int) round(filesize($filePath) / 1024);
+                }
+
+                if (!empty($updates)) {
+                    $product->update($updates);
+                }
+            }
+
+            $results[$item['slug']] = $product->fresh();
+        }
+
+        return $results;
     }
 }

@@ -45,13 +45,11 @@ class OrderCompletedMail extends Mailable
     public function content(): Content
     {
         $publicOrderNumber = $this->getPublicOrderNumber();
-        $downloadItems = $this->getDownloadItems();
 
         return new Content(
             view: 'emails.order-completed',
             with: [
                 'publicOrderNumber' => $publicOrderNumber,
-                'downloadItems' => $downloadItems,
             ],
         );
     }
@@ -65,26 +63,6 @@ class OrderCompletedMail extends Mailable
         $id = max(0, $id);
 
         return $id + ($start - 1);
-    }
-
-    private function getDownloadItems(): array
-    {
-        $items = [];
-        $this->order->load('orderItems.product');
-
-        foreach ($this->order->orderItems as $item) {
-            $product = $item->product;
-            if (!$product || !$product->file_path) {
-                continue;
-            }
-
-            $items[] = [
-                'name' => $product->name,
-                'url' => route('product.download', $product->id),
-            ];
-        }
-
-        return $items;
     }
 
     /**

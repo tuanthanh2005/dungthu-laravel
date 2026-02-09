@@ -13,6 +13,5 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'auth/google/callback',
-        'telegram/webhook/*',
     ];
 }

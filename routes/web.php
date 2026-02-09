@@ -19,7 +19,6 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GuestChatController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\CommunityCommentController;
-use App\Http\Controllers\TelegramWebhookController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
@@ -80,9 +79,6 @@ Route::get('/test-callback', function () {
     \Illuminate\Support\Facades\Log::info('Test callback route accessed');
     return response()->json(['message' => 'callback route works']);
 });
-
-// Telegram webhook (set secret in TELEGRAM_WEBHOOK_SECRET)
-Route::post('/telegram/webhook/{secret}', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
 
 // Cart routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

@@ -82,7 +82,9 @@ Route::get('/test-callback', function () {
 });
 
 // Telegram webhook (set secret in TELEGRAM_WEBHOOK_SECRET)
-Route::post('/telegram/webhook/{secret}', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+Route::post('/telegram/webhook/{secret}', [TelegramWebhookController::class, 'handle'])
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+    ->name('telegram.webhook');
 
 // Cart routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

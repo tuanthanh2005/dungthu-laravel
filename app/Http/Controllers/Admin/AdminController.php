@@ -16,7 +16,6 @@ use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
-use App\Helpers\OrderHelper;
 use App\Helpers\PathHelper;
 
 class AdminController extends Controller
@@ -97,7 +96,7 @@ class AdminController extends Controller
             ->count();
 
         // Đếm số đơn hàng đang chờ xử lý (pending)
-        $pendingOrdersCount = Order::whereIn('status', ['pending', 'pending_approval'])->count();
+        $pendingOrdersCount = Order::where('status', 'pending')->count();
 
         // Đếm số yêu cầu đổi thẻ cào đang chờ xử lý
         $pendingCardExchangeCount = CardExchange::where('status', 'pending')->count();
@@ -183,7 +182,7 @@ class AdminController extends Controller
     public function updateOrderStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending_approval,pending,processing,shipped,delivered,completed,cancelled',
+            'status' => 'required|in:pending,processing,shipped,delivered,completed,cancelled',
         ]);
 
         $oldStatus = $order->status;
@@ -191,7 +190,7 @@ class AdminController extends Controller
 
         // Nếu đơn hàng được chuyển sang trạng thái completed, gửi email và telegram
         if ($request->status === 'completed' && $oldStatus !== 'completed') {
-            OrderHelper::sendOrderCompletedNotifications($order);
+            $this->sendOrderCompletedNotifications($order);
         }
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
@@ -1092,3 +1091,4 @@ class AdminController extends Controller
         \App\Helpers\TelegramHelper::sendMessage($message);
     }
 }
+

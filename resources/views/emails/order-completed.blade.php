@@ -204,23 +204,6 @@
                 </div>
             </div>
 
-            @if(!empty($downloadItems))
-                <div class="order-info">
-                    <h3>⬇️ Link Tải File</h3>
-                    @foreach($downloadItems as $item)
-                        <div class="info-row">
-                            <span class="info-label">{{ $item['name'] }}</span>
-                            <span class="info-value">
-                                <a href="{{ $item['url'] }}" style="color: #667eea; font-weight: 700;">Tải file</a>
-                            </span>
-                        </div>
-                    @endforeach
-                    <p style="margin-top: 10px; font-size: 13px; color: #4a5568;">
-                        Lưu ý: Bạn cần đăng nhập tài khoản đã mua để tải file.
-                    </p>
-                </div>
-            @endif
-
             <div class="contact">
                 Cần hỗ trợ? Liên hệ: <a href="mailto:tranthanhtuanfix@gmail.com">tranthanhtuanfix@gmail.com</a>
             </div>

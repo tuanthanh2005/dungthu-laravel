@@ -10,7 +10,7 @@
             <ul class="navbar-nav ms-auto align-items-center nav-wrap">
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">Cộng đồng</a></li>
-                <li class="nav-item"><a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">T?m ??ng</a></li>
+                <li class="nav-item"><a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Đổi thẻ cào</a></li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://tradevip.online/" target="_blank">
                         Tool BlockChain

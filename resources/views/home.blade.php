@@ -878,6 +878,7 @@
         </div>
     @endif
 
+    @include('partials.tet-decorations')
 @endsection
 
 @push('scripts')

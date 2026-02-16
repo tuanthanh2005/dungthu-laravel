@@ -11,11 +11,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">Cộng đồng</a></li>
                 <li class="nav-item"><a class="nav-link disabled text-muted opacity-75" href="#" tabindex="-1" aria-disabled="true">Đổi thẻ cào</a></li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://demo.dungthu.com/" target="_blank">
-                        Website Giá Rẻ
-                    </a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('web-design') }}">Thiết kế Website</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">

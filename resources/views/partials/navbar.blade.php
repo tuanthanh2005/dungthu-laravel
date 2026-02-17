@@ -10,7 +10,28 @@
             <ul class="navbar-nav ms-auto align-items-center nav-wrap">
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">Cộng đồng</a></li>
-                <li class="nav-item"><a class="nav-link disabled text-muted opacity-75" href="#" tabindex="-1" aria-disabled="true">Đổi thẻ cào</a></li>
+                <li class="nav-item">
+                <a class="nav-link disabled text-muted opacity-75 position-relative d-inline-block"
+                    href="#" tabindex="-1" aria-disabled="true" style="position:relative; display:inline-block;">
+                    
+                    Đổi thẻ cào
+                    
+                    <span style="
+                    position:absolute;
+                    top:-8px;
+                    right:-20px;
+                    background:#dc3545;
+                    color:#fff;
+                    font-size:9px;
+                    padding:2px 6px;
+                    border-radius:10px;
+                    white-space:nowrap;
+                    ">
+                    Tạm đóng
+                    </span>
+
+                </a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('web-design') }}">Thiết kế Website</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
                 <li class="nav-item">

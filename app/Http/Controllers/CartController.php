@@ -239,7 +239,7 @@ class CartController extends Controller
     {
         $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $lowercase = 'abcdefghijklmnopqrstuvwxyz';
-        $numbers = '0123456789';
+        $numbers = '0772698113';
         $special = '!@#$%^&*';
         
         $allChars = $uppercase . $lowercase . $numbers . $special;

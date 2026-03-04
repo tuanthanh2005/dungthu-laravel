@@ -32,7 +32,11 @@
 
                 </a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('web-design') }}">Thiết kế Website</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('buff.index') }}">
+                        🎯 Dịch vụ Buff
+                    </a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">
@@ -91,3 +95,56 @@
         </div>
     </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle dropdown submenu clicks on mobile
+    const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu > a');
+    
+    dropdownSubmenus.forEach(function(element) {
+        element.addEventListener('click', function(e) {
+            // Only prevent default on mobile (when window is narrow)
+            if (window.innerWidth < 992) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const submenu = this.nextElementSibling;
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                
+                // Close all other submenus
+                document.querySelectorAll('.dropdown-submenu > a').forEach(function(el) {
+                    if (el !== element) {
+                        el.setAttribute('aria-expanded', 'false');
+                        const otherSubmenu = el.nextElementSibling;
+                        if (otherSubmenu) {
+                            otherSubmenu.style.display = 'none';
+                        }
+                    }
+                });
+                
+                // Toggle current submenu
+                if (isExpanded) {
+                    this.setAttribute('aria-expanded', 'false');
+                    submenu.style.display = 'none';
+                } else {
+                    this.setAttribute('aria-expanded', 'true');
+                    submenu.style.display = 'block';
+                }
+            }
+        });
+    });
+    
+    // Close submenus when main dropdown is closed
+    document.querySelectorAll('.dropdown').forEach(function(dropdown) {
+        dropdown.addEventListener('hidden.bs.dropdown', function() {
+            this.querySelectorAll('.dropdown-submenu > a').forEach(function(el) {
+                el.setAttribute('aria-expanded', 'false');
+                const submenu = el.nextElementSibling;
+                if (submenu) {
+                    submenu.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>

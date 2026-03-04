@@ -34,6 +34,133 @@
     <!-- Custom CSS -->
     @stack('styles')
     <link rel="stylesheet" href="{{ asset('css/mobile.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/mobile.css')) }}">
+
+    <style>
+        /* Navbar Styling */
+        .navbar-glass {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .navbar-glass .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary) !important;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-glass .navbar-brand:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-glass .navbar-brand span {
+            color: #2d3436;
+        }
+
+        .navbar-glass .nav-link {
+            color: #555 !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin: 0 0.25rem;
+            padding: 0.5rem 0.75rem !important;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-glass .nav-link:hover {
+            color: var(--primary) !important;
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .navbar-glass .nav-link.active {
+            color: var(--primary) !important;
+            background: rgba(108, 92, 231, 0.15);
+        }
+
+        .navbar-glass .dropdown-toggle::after {
+            border: 0.25em solid transparent;
+            border-top-color: #555;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-glass .dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
+        }
+
+        .navbar-glass .dropdown-menu {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .navbar-glass .dropdown-item {
+            color: #555;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-glass .dropdown-item:hover {
+            color: var(--primary);
+            background: #f8f9fa;
+        }
+
+        .navbar-glass .dropdown-item.active {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+        }
+
+        .navbar-glass .dropdown-item.text-danger:hover {
+            background: #fff5f5;
+            color: #dc3545;
+        }
+
+        /* Navbar brand icon */
+        .navbar-glass .navbar-brand i {
+            color: var(--primary);
+            margin-right: 0.35rem;
+        }
+
+        /* Nav icons */
+        .navbar-glass .nav-link i {
+            color: inherit;
+        }
+
+        /* Button styling in navbar */
+        .navbar-glass .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #a29bfe 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-glass .btn-primary:hover {
+            background: linear-gradient(135deg, #5f4ec7 0%, #9080d8 100%);
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .navbar-glass .disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-glass .navbar-collapse {
+                background: white;
+                margin-top: 0.5rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                padding: 0.75rem 0;
+            }
+
+            .navbar-glass .nav-link {
+                padding: 0.7rem 1rem !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->

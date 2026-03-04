@@ -116,6 +116,62 @@ class TelegramHelper
     }
 
     /**
+     * Gửi thông báo thanh toán Buff qua Telegram
+     */
+    public static function sendBuffPaymentNotification($buffOrder)
+    {
+        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
+        $chatId = '8199725778';
+
+        try {
+            $service = $buffOrder->buffService;
+            $server = $buffOrder->buffServer;
+            $user = $buffOrder->user;
+
+            $message = "🎯 <b>BUFF PAYMENT COMPLETED</b>\n";
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+
+            $message .= "📦 <b>Order Info:</b>\n";
+            $message .= "• Code: <b>" . $buffOrder->order_code . "</b>\n";
+            $message .= "• Platform: <b>" . ucfirst($service->platform) . "</b>\n";
+            $message .= "• Service: <b>" . $service->name . "</b>\n";
+            $message .= "• Server: <b>" . $server->name . "</b>\n\n";
+
+            $message .= "👤 <b>User:</b>\n";
+            $message .= "• Name: <b>" . $user->name . "</b>\n";
+            $message .= "• Email: <b>" . $user->email . "</b>\n\n";
+
+            $message .= "📊 <b>Details:</b>\n";
+            $message .= "• Quantity: <b>" . number_format($buffOrder->quantity) . "</b>\n";
+            $message .= "• Unit Price: <b>" . number_format($buffOrder->unit_price, 0, ',', '.') . "đ</b>\n";
+            $message .= "• Base Price: <b>" . number_format($buffOrder->base_price, 0, ',', '.') . "đ</b>\n";
+            $message .= "• Total: <b>" . number_format($buffOrder->total_price, 0, ',', '.') . "đ</b>\n\n";
+
+            $message .= "🔗 Link: <b>" . substr($buffOrder->social_link, 0, 50) . "...</b>\n";
+            $message .= "⏰ Time: <b>" . $buffOrder->updated_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') . "</b>\n\n";
+
+            $message .= "✅ <i>Payment confirmed! Processing order...</i>";
+
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $message,
+                'parse_mode' => 'HTML',
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Telegram buff payment notification sent for order: ' . $buffOrder->order_code);
+                return true;
+            } else {
+                Log::error('Telegram buff notification failed: ' . $response->body());
+                return false;
+            }
+        } catch (\Exception $e) {
+            Log::error('Telegram buff notification error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Get order type label
      */
     private static function getOrderTypeLabel($type)

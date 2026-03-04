@@ -19,6 +19,9 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GuestChatController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\CommunityCommentController;
+use App\Http\Controllers\BuffServiceController;
+use App\Http\Controllers\BuffOrderController;
+use App\Http\Controllers\Admin\AdminBuffController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
@@ -35,6 +38,20 @@ Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::post('/product/{product}/comment', [ProductController::class, 'storeComment'])->name('product.comment')->middleware('auth');
 Route::get('/product/{id}/download', [ProductController::class, 'download'])->name('product.download')->middleware('auth');
+
+// Buff Service routes
+Route::get('/dich-vu-buff', [BuffServiceController::class, 'index'])->name('buff.index');
+Route::get('/dich-vu-buff/{buffService}', [BuffServiceController::class, 'show'])->name('buff.show');
+Route::get('/api/buff/calculate-price', [BuffServiceController::class, 'calculatePrice'])->name('buff.calculate-price');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/buff/create/{buffService}', [BuffOrderController::class, 'create'])->name('buff.create');
+    Route::post('/buff/store', [BuffOrderController::class, 'store'])->name('buff.store');
+    Route::get('/buff/payment/{buffOrder}', [BuffOrderController::class, 'payment'])->name('buff.payment');
+    Route::post('/buff/{buffOrder}/confirm-payment', [BuffOrderController::class, 'confirmPayment'])->name('buff.confirm-payment');
+    Route::get('/buff/history', [BuffOrderController::class, 'history'])->name('buff.history');
+    Route::get('/buff/{buffOrder}', [BuffOrderController::class, 'detail'])->name('buff.detail');
+});
 
 // Blog routes
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
@@ -180,6 +197,39 @@ Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin')->group(functi
     Route::put('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'update'])->name('admin.tiktok-deals.update');
     Route::delete('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'destroy'])->name('admin.tiktok-deals.destroy');
     Route::post('/tiktok-deals/{tiktokDeal}/toggle', [TiktokDealController::class, 'toggleActive'])->name('admin.tiktok-deals.toggle');
+
+    // Buff Management
+    Route::get('/buff-dashboard', [AdminBuffController::class, 'dashboard'])->name('admin.buff.dashboard');
+    
+    // Buff Servers Management
+    Route::get('/buff-servers', [AdminBuffController::class, 'serversIndex'])->name('admin.buff.servers.index');
+    Route::get('/buff-servers/create', [AdminBuffController::class, 'serversCreate'])->name('admin.buff.servers.create');
+    Route::post('/buff-servers', [AdminBuffController::class, 'serversStore'])->name('admin.buff.servers.store');
+    Route::get('/buff-servers/{buffServer}/edit', [AdminBuffController::class, 'serversEdit'])->name('admin.buff.servers.edit');
+    Route::put('/buff-servers/{buffServer}', [AdminBuffController::class, 'serversUpdate'])->name('admin.buff.servers.update');
+    Route::delete('/buff-servers/{buffServer}', [AdminBuffController::class, 'serversDestroy'])->name('admin.buff.servers.destroy');
+    
+    // Buff Services Management
+    Route::get('/buff-services', [AdminBuffController::class, 'servicesIndex'])->name('admin.buff.services.index');
+    Route::get('/buff-services/create', [AdminBuffController::class, 'servicesCreate'])->name('admin.buff.services.create');
+    Route::post('/buff-services', [AdminBuffController::class, 'servicesStore'])->name('admin.buff.services.store');
+    Route::get('/buff-services/{buffService}/edit', [AdminBuffController::class, 'servicesEdit'])->name('admin.buff.services.edit');
+    Route::put('/buff-services/{buffService}', [AdminBuffController::class, 'servicesUpdate'])->name('admin.buff.services.update');
+    Route::delete('/buff-services/{buffService}', [AdminBuffController::class, 'servicesDestroy'])->name('admin.buff.services.destroy');
+    
+    // Buff Server Prices Management
+    Route::get('/buff-prices', [AdminBuffController::class, 'pricesIndex'])->name('admin.buff.prices.index');
+    Route::get('/buff-prices/create', [AdminBuffController::class, 'pricesCreate'])->name('admin.buff.prices.create');
+    Route::post('/buff-prices', [AdminBuffController::class, 'pricesStore'])->name('admin.buff.prices.store');
+    Route::get('/buff-prices/{buffServerPrice}/edit', [AdminBuffController::class, 'pricesEdit'])->name('admin.buff.prices.edit');
+    Route::put('/buff-prices/{buffServerPrice}', [AdminBuffController::class, 'pricesUpdate'])->name('admin.buff.prices.update');
+    Route::delete('/buff-prices/{buffServerPrice}', [AdminBuffController::class, 'pricesDestroy'])->name('admin.buff.prices.destroy');
+    
+    // Buff Orders Management
+    Route::get('/buff-orders', [AdminBuffController::class, 'ordersIndex'])->name('admin.buff.orders.index');
+    Route::get('/buff-orders/{buffOrder}', [AdminBuffController::class, 'ordersShow'])->name('admin.buff.orders.show');
+    Route::get('/buff-orders/{buffOrder}/edit', [AdminBuffController::class, 'ordersEdit'])->name('admin.buff.orders.edit');
+    Route::put('/buff-orders/{buffOrder}', [AdminBuffController::class, 'ordersUpdate'])->name('admin.buff.orders.update');
 
     Route::get('/abandoned-carts', [AdminController::class, 'abandonedCarts'])->name('admin.abandoned-carts');
     

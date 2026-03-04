@@ -55,6 +55,10 @@ body {
         margin-top: 0.5rem;
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        position: relative;
+        z-index: 1050;
+        max-height: 85vh;
+        overflow-y: auto;
     }
 
     .navbar-glass .navbar-nav {

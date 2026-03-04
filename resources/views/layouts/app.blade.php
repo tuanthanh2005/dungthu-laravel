@@ -59,14 +59,15 @@
         }
 
         .navbar-glass .nav-link {
-            color: #555 !important;
-            font-weight: 500;
+            color: #2d3436 !important;
+            font-weight: 600;
             font-size: 0.95rem;
             margin: 0 0.25rem;
             padding: 0.5rem 0.75rem !important;
             border-radius: 6px;
             transition: all 0.3s ease;
             position: relative;
+            white-space: nowrap;
         }
 
         .navbar-glass .nav-link:hover {
@@ -81,7 +82,7 @@
 
         .navbar-glass .dropdown-toggle::after {
             border: 0.25em solid transparent;
-            border-top-color: #555;
+            border-top-color: #2d3436;
             transition: all 0.3s ease;
         }
 
@@ -97,7 +98,7 @@
         }
 
         .navbar-glass .dropdown-item {
-            color: #555;
+            color: #2d3436;
             font-weight: 500;
             transition: all 0.2s ease;
         }
@@ -128,23 +129,51 @@
             color: inherit;
         }
 
+        /* Navbar items container - ensure they don't wrap */
+        .navbar-glass .navbar-nav {
+            gap: 0.25rem;
+        }
+
         /* Button styling in navbar */
         .navbar-glass .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #a29bfe 100%);
+
             border: none;
             box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
             transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            display: inline-block !important;
+            visibility: visible !important;
+            color: white !important;
         }
 
         .navbar-glass .btn-primary:hover {
             background: linear-gradient(135deg, #5f4ec7 0%, #9080d8 100%);
             box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
             transform: translateY(-1px);
+            color: white !important;
+        }
+
+        .navbar-glass .btn-primary:focus {
+            color: white !important;
+            box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25) !important;
         }
 
         .navbar-glass .disabled {
             opacity: 0.6;
             cursor: not-allowed;
+        }
+
+        /* Ensure nav item with button is visible */
+        .navbar-glass .navbar-nav .nav-item:has(.btn-primary) {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Badge styling */
+        .navbar-glass .badge {
+            font-weight: 600;
         }
 
         @media (max-width: 991.98px) {
@@ -158,6 +187,16 @@
 
             .navbar-glass .nav-link {
                 padding: 0.7rem 1rem !important;
+            }
+
+            .navbar-glass .navbar-nav {
+                gap: 0;
+            }
+
+            .navbar-glass .nav-item .btn-primary {
+                display: block !important;
+                width: auto !important;
+                margin-top: 0.5rem;
             }
         }
     </style>

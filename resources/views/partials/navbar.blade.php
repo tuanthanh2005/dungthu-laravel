@@ -87,8 +87,8 @@
                         </ul>
                     </li>
                 @else
-                    <li class="nav-item ms-3">
-                        <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">Đăng Nhập</a>
+                    <li class="nav-item">
+                        <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-3 py-2 ms-2">Đăng Nhập</a>
                     </li>
                 @endauth
             </ul>

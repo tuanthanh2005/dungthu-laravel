@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'DungThu.com - Trải Nghiệm & Mua Sắm')
 
@@ -7,878 +7,408 @@
     <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
-        .category-row {
-            display: none;
-        }
-        .category-item {
-            min-width: 0;
-        }
-        .category-row .cat-box {
-            padding: 12px;
-        }
+        body { background-color: #f5f5f5; }
         
+        .shopee-banner-wrapper { margin-top: 1.5rem; margin-bottom: 20px; }
+        #shopeeCarousel .carousel-item { border-radius: 4px; height: 260px; overflow: hidden; }
         
-        /* Mobile: Giảm font size section titles */
-        @media (max-width: 768px) {
-            .section-title {
-                font-size: calc(1.5rem - 3px) !important;
-            }
-        }
+        .shopee-container { background: #fff; margin-bottom: 20px; box-shadow: 0 1px 1px 0 rgba(0,0,0,.05); border-radius: 3px; }
+        .shopee-header { padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,.05); display: flex; justify-content: space-between; align-items: center; }
+        .shopee-title { font-size: 1.1rem; color: var(--primary); font-weight: 500; text-transform: uppercase; margin: 0; }
+        .shopee-link { color: var(--primary); font-size: 0.9rem; text-decoration: none; }
+        .shopee-link:hover { opacity: 0.8; }
+            
+        /* Shopee Quick Links */
+        .quick-links { display: flex; justify-content: space-between; text-center; background: #fff; padding: 15px; border-radius: 4px; box-shadow: 0 1px 1px 0 rgba(0,0,0,.05); margin-bottom: 20px; flex-wrap: wrap; }
+        .ql-item { flex: 1; text-align: center; color: #333; text-decoration: none; min-width: 80px; margin-bottom: 10px; }
+        .ql-item:hover { color: var(--primary); transform: translateY(-2px); transition: 0.2s; }
+        .ql-icon { width: 45px; height: 45px; margin: auto; background: rgba(108, 92, 231, 0.1); border-radius: 30%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; }
+        .ql-text { font-size: 13px; margin-top: 8px; font-weight: 500;}
+
+        /* Shopee Categories */
+        .shopee-cats { display: flex; flex-wrap: wrap; border-top: 1px solid rgba(0,0,0,.05); border-left: 1px solid rgba(0,0,0,.05); }
+        .shopee-cat-item { width: calc(100% / 8); padding: 20px 10px; text-align: center; border-right: 1px solid rgba(0,0,0,.05); border-bottom: 1px solid rgba(0,0,0,.05); text-decoration: none; color: #333; transition: all 0.1s; background: #fff;}
+        .shopee-cat-item:hover { transform: translateY(-1px); box-shadow: 0 1px 10px 0 rgba(0,0,0,.08); z-index: 1; border-color: rgba(0,0,0,.05); color: var(--primary);}
+        .shopee-cat-icon { width: 60px; height: 60px; background: #f8f9fa; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: var(--primary); font-size: 1.8rem; overflow: hidden; }
+        .shopee-cat-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .shopee-cat-name { font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
+        @media (max-width: 992px) { .shopee-cat-item { width: calc(100% / 5); } }
+        @media (max-width: 768px) { .shopee-cat-item { width: calc(100% / 4); } }
+        @media (max-width: 576px) { .shopee-cat-item { width: calc(100% / 3); } }
         
-        /* Mobile: Giảm font size hero section */
-        @media (max-width: 768px) {
-            .hero-section h1 {
-                font-size: calc(1.18rem + 0.3vw) !important;
-                line-height: 1.25;
-            }
-            .hero-section .typing-text {
-                font-size: calc(1.18rem + 0.3vw) !important;
-                white-space: nowrap;
-                display: inline-block;
-            }
-            .hero-section .lead {
-                font-size: calc(0.92rem + 0.05vw) !important;
-            }
-        }
-
-        .hero-socials {
-            display: inline-flex;
-            gap: 10px;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .hero-socials a {
-            width: 34px;
-            height: 34px;
-            border-radius: 999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-decoration: none;
-            background: rgba(255,255,255,0.18);
-            border: 1px solid rgba(255,255,255,0.35);
-            backdrop-filter: blur(2px);
-            transition: transform .15s ease, background .15s ease;
-        }
-        .hero-socials a:hover {
-            transform: translateY(-2px);
-            background: rgba(255,255,255,0.28);
-        }
-        .hero-socials .zalo-pill {
-            font-weight: 800;
-            font-size: 14px;
-            letter-spacing: 0.02em;
-        }
-
-        /* Recent purchase toast (social proof) */
-        .recent-purchase-toast {
-            position: fixed;
-            left: 18px;
-            bottom: 18px;
-            width: min(420px, calc(100vw - 36px));
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 18px 50px rgba(0,0,0,0.18);
-            border: 1px solid rgba(0,0,0,0.06);
-            padding: 14px 14px 12px;
-            z-index: 2000;
-            opacity: 0;
-            transform: translateY(16px);
-            pointer-events: none;
-            transition: opacity .25s ease, transform .25s ease;
-        }
-        .recent-purchase-toast.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .rpt-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .rpt-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 13px;
-            line-height: 1;
-        }
-        .rpt-pill.buy { background: #12b76a; color: #fff; }
-        .rpt-pill.verify { background: rgba(16,185,129,0.12); color: #0f766e; border: 1px solid rgba(16,185,129,0.25); }
-        .rpt-close {
-            margin-left: auto;
-            border: none;
-            background: transparent;
-            font-size: 20px;
-            line-height: 1;
-            color: #6b7280;
-            padding: 0 6px;
-            cursor: pointer;
-        }
-        .rpt-body {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .rpt-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #12b76a, #00cec9);
-            color: #fff;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-            position: relative;
-        }
-        .rpt-avatar .rpt-badge {
-            position: absolute;
-            right: -2px;
-            bottom: -2px;
-            width: 18px;
-            height: 18px;
-            background: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #fff;
-        }
-        .rpt-name { font-weight: 800; font-size: 16px; }
-        .rpt-sub { color: #6b7280; font-size: 13px; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-        .rpt-product {
-            display: block;
-            margin-top: 10px;
-            background: rgba(16,185,129,0.12);
-            border: 1px solid rgba(16,185,129,0.20);
-            border-radius: 12px;
-            padding: 10px 12px;
-            text-decoration: none;
-            color: inherit;
-        }
-        .rpt-product-title {
-            font-weight: 800;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .rpt-product-meta {
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 4px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        @media (max-width: 576px) {
-            /* Mobile-only balance + clarity */
-            .hero-section { padding: 28px 0 40px; }
-            .hero-section h1 { letter-spacing: -0.3px; }
-            .hero-section .lead { line-height: 1.45 !important; }
-            .container { padding-left: 14px; padding-right: 14px; }
-            #shop, #combo-ai, #blog { margin-bottom: 36px !important; }
-            .section-title { font-size: 1.15rem !important; line-height: 1.25; }
-            .section-title + p, .section-title + .text-muted { font-size: 0.95rem; }
-            .text-uppercase.ls-1 { font-size: 0.8rem; }
-            .ls-1 { letter-spacing: 0.04em; }
-            .product-card { border-radius: 14px; box-shadow: 0 8px 18px rgba(0,0,0,0.08); }
-            .product-card .p-3 { padding: 8px 8px 10px !important; }
-            .product-card img { border-radius: 12px 12px 0 0; height: 96px; width: 100%; object-fit: cover; }
-            .badge-custom { font-size: 9px; padding: 3px 7px; }
-            .product-title-2lines { font-size: 0.86rem; line-height: 1.25; }
-            .product-card .text-primary.fw-bold,
-            .product-card .text-success.fw-bold { font-size: 0.92rem; }
-            .sale-badge { font-size: 9px; padding: 2px 5px; }
-            .btn.btn-sm.rounded-circle { width: 30px; height: 30px; padding: 0; }
-            .blog-card { border-radius: 14px; box-shadow: 0 10px 22px rgba(0,0,0,0.08); }
-            .blog-card img { border-radius: 10px; }
-            .blog-title { font-size: 1rem !important; line-height: 1.35; }
-            .btn.btn-outline-primary { padding: 8px 18px; font-size: 0.92rem; }
-            .recent-purchase-toast { left: 8px; bottom: 8px; width: min(240px, calc(100vw - 16px)); }
-            .recent-purchase-toast { padding: 5px 5px 5px; border-radius: 10px; }
-            .rpt-pill { padding: 3px 6px; font-size: 10px; }
-            .rpt-close { font-size: 16px; padding: 0 3px; }
-            .rpt-body { gap: 6px; margin-top: 6px; }
-            .rpt-avatar { width: 26px; height: 26px; font-size: 11px; }
-            .rpt-avatar .rpt-badge { width: 12px; height: 12px; right: -1px; bottom: -1px; }
-            .rpt-name { font-size: 11px; }
-            .rpt-sub { font-size: 9px; }
-            .rpt-product { margin-top: 5px; padding: 5px 7px; border-radius: 9px; }
-            .rpt-product-title { font-size: 10px; }
-            .rpt-product-meta { font-size: 9px; gap: 4px; }
-        }
-
-        /* Product cards: balanced, modern */
-        .product-card {
-            background: #fff;
-            border: 1px solid rgba(0,0,0,0.04);
-            border-radius: 18px;
-            box-shadow: 0 14px 30px rgba(0,0,0,0.08);
-            transition: transform .2s ease, box-shadow .2s ease;
-            overflow: hidden;
-        }
-        .product-card.out-of-stock {
-            opacity: 0.6;
-        }
-        .product-card.out-of-stock .btn {
-            pointer-events: none;
-        }
-        .out-of-stock-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ef4444;
-            color: #fff;
-            font-size: 10px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        /* Swiper (mobile product slides) */
-        .product-swiper {
-            padding: 6px 2px 14px;
-        }
-        .product-swiper .swiper-slide {
-            width: auto;
-            height: auto;
-        }
-        .product-swiper .swiper-pagination-bullets {
-            bottom: 0;
-        }
-        .product-swiper .swiper-pagination-bullet {
-            width: 6px;
-            height: 6px;
-            opacity: 0.35;
-        }
-        .product-swiper .swiper-pagination-bullet-active {
-            opacity: 1;
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-        }
-        .product-card .card-img-wrap {
-            position: relative;
-            background: linear-gradient(180deg, rgba(102,126,234,0.08), rgba(118,75,162,0.06));
-        }
-        .product-card .card-img-wrap img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            display: block;
-        }
-        .product-card .badge-custom {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            border-radius: 999px;
-            font-weight: 700;
-            letter-spacing: .02em;
-        }
-        .product-card .p-3 {
-            padding: 14px 14px 16px !important;
-        }
-        .product-title-2lines {
-            font-size: 1rem;
-            line-height: 1.35;
-            min-height: calc(1.35em * 2);
-        }
-        .sale-badge {
-            border-radius: 999px;
-            font-weight: 700;
-        }
-        .product-card .btn.btn-sm.rounded-circle {
-            width: 36px;
-            height: 36px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-        }
-    
-
-        /* Flash sale */
-        .flash-sale {
-            background: linear-gradient(135deg, rgba(255,77,79,0.08), rgba(255,122,89,0.08));
-            border: 1px solid rgba(255,77,79,0.16);
-            border-radius: 14px;
-            padding: 12px 14px;
-        }
-        .flash-sale .section-title { margin-bottom: 2px; font-size: 1.05rem; }
-        .flash-sale .product-card { border-radius: 18px; box-shadow: 0 14px 30px rgba(0,0,0,0.08); }
-        .flash-sale .product-card .card-img-wrap { height: 180px; }
-        .flash-sale .product-card .card-img-wrap img { height: 100%; width: 100%; object-fit: cover; display: block; }
-        .flash-sale .product-card .p-3 { padding: 14px 14px 16px !important; }
-        .flash-sale .product-title-2lines { font-size: 1rem; line-height: 1.35; min-height: calc(1.35em * 2); }
-        .flash-sale .badge-custom { font-size: 11px; padding: 4px 8px; }
-        .flash-sale-timer {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: #fff;
-            border-radius: 999px;
-            padding: 6px 10px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        }
-        .flash-sale-timer .timer-label {
-            font-size: 0.78rem;
-            color: #6b7280;
-        }
-        .flash-sale-timer .timer-pills {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-        }
-        .flash-sale-timer .timer-pill {
-            min-width: 28px;
-            text-align: center;
-            background: #111827;
-            color: #fff;
-            padding: 4px 6px;
-            border-radius: 10px;
-            font-variant-numeric: tabular-nums;
-            font-size: 0.8rem;
-        }
-        .flash-sale-timer .timer-sep {
-            color: #9ca3af;
-            font-weight: 800;
-        }
-        @media (max-width: 576px) {
-            .flash-sale { margin-top: 8px; }
-            .flash-sale { padding: 10px 12px; }
-            .flash-sale-timer { padding: 5px 8px; gap: 6px; }
-            .flash-sale-timer .timer-pill { min-width: 24px; font-size: 0.75rem; }
-            .flash-sale .product-card .card-img-wrap { height: 96px; }
-            .flash-sale .product-card .card-img-wrap img { height: 100%; width: 100%; object-fit: cover; display: block; }
-            .flash-sale .product-title-2lines { font-size: 0.86rem; }
-        }
-</style>
+        /* Shopee Product Card */
+        .shopee-product { background: #fff; border-radius: 3px; transition: transform 0.1s, box-shadow 0.1s, border 0.1s; border: 1px solid rgba(0,0,0,.05); position: relative; display: flex; flex-direction: column; overflow: hidden; height: 100%; text-decoration: none;}
+        .shopee-product:hover { border: 1px solid var(--primary); transform: translateY(-2px); box-shadow: 0 2px 10px 0 rgba(0,0,0,.05); z-index: 1; }
+        .sp-img-wrap { width: 100%; padding-top: 100%; position: relative; background: #f8f9fa;}
+        .sp-img-wrap img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; }
+        .sp-info { padding: 8px; display: flex; flex-direction: column; flex-grow: 1; }
+        .sp-title { font-size: 0.85rem; color: rgba(0,0,0,.87); line-height: 1.1rem; height: 2.2rem; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; margin-bottom: 5px;}
+        .sp-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 5px; }
+        .sp-price { color: var(--primary); font-size: 1.05rem; font-weight: 500;}
+        .sp-original-price { color: rgba(0,0,0,.54); text-decoration: line-through; font-size: 0.75rem; margin-right: 5px;}
+        .sp-badge { position: absolute; top: 0; right: 0; background: rgba(255,212,36,.9); color: #ee4d2d; padding: 2px 4px; font-size: 0.75rem; font-weight: bold; }
+        .sp-badge-category { position: absolute; top: 5px; left: -5px; background: var(--primary); color: #fff; padding: 2px 8px; font-size: 0.7rem; border-radius: 0 3px 3px 0; box-shadow: 0 1px 2px 0 rgba(0,0,0,.2); }
+        .sp-badge-category::after { content: ''; position: absolute; left: 0; bottom: -5px; border-top: 5px solid #2d3436; border-left: 5px solid transparent; }
+        .out-of-stock-overlay { position: absolute; inset: 0; background: rgba(255,255,255,.6); display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .out-of-stock-text { background: rgba(0,0,0,.6); color: white; padding: 5px 10px; border-radius: 3px; font-size: 0.8rem; }
+        
+        .fs-timer { display: flex; gap: 5px; }
+        .fs-timer .t-box { background: #333; color: #fff; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 3px; font-weight: bold; font-size: 0.9rem; }
+        .fs-timer span { font-weight: bold; font-size: 1.1rem; color: #333; }
+        
+        /* Mall banner section */
+        .mall-left-banner { height: 100%; border-radius: 3px; background: linear-gradient(135deg, #d32f2f, #f44336); display:flex; align-items:center; justify-content:center; color:white; min-height: 250px;}
+        .mall-left-banner h2 { font-weight: bold; letter-spacing: 1px;}
+        
+        .daily-discover-header { background: #fff; border-bottom: 4px solid var(--primary); padding: 15px; text-align: center; color: var(--primary); font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; box-shadow: 0 1px 1px 0 rgba(0,0,0,.05); position: sticky; top: 60px; z-index: 100;}
+        
+        /* Sticky Cart CTA inside product */
+        .cart-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
+        .cart-btn:hover { background: var(--primary); color: #fff; }
+        .cart-btn:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; }
+        .cart-btn:disabled:hover { background: transparent; color: #ccc; }
+        
+        .blog-shopee-card { background: #fff; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 1px 0 rgba(0,0,0,.05); margin-bottom: 15px; transition: 0.2s;}
+        .blog-shopee-card:hover { transform: translateY(-2px); box-shadow: 0 2px 10px 0 rgba(0,0,0,.1); }
+    </style>
 @endpush
 
 @section('content')
+<div style="background-color: #f5f5f5; min-height: 100vh; padding-bottom: 40px; padding-top: 15px;">
 
-    <header class="hero-section text-center">
-        <div class="tet-decor" aria-hidden="true">
-            <span class="tet-lantern l1"></span>
-            <span class="tet-lantern l2"></span>
-            <span class="tet-coin c1"></span>
-            <span class="tet-coin c2"></span>
-            <span class="tet-blossom b1"></span>
-            <span class="tet-blossom b2"></span>
-            <span class="tet-ribbon"></span>
-        </div>
-        <div class="shape" style="top: 20%; left: 10%; width: 50px; height: 50px;"></div>
-        <div class="shape" style="top: 60%; right: 15%; width: 80px; height: 80px; animation-delay: 2s;"></div>
-        
-        <div class="container mt-5" data-aos="zoom-in">
-            <h1 class="display-4 fw-bold mb-3">Nơi Bạn Có Thể <span class="typing-text text-warning" id="typewriter"></span></h1>
-            <p class="lead opacity-75 mb-4">Kho tài nguyên số, thời trang và công cụ tiện ích miễn phí hàng đầu.</p>
-            <div class="hero-socials">
-                <a href="https://www.tiktok.com/@spdungthu.com?_r=1&_t=ZS-93Tu65pWubk" target="_blank" rel="noopener" aria-label="TikTok">
-                    <i class="fab fa-tiktok"></i>
-                </a>
-                <a href="https://www.facebook.com/thanh.tuan.378686?locale=vi_VN" target="_blank" rel="noopener" aria-label="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://id.zalo.me/account/login?continue=http%3A%2F%2Fzalo.me%2F0708910952" target="_blank" rel="noopener" aria-label="Zalo 0708910952" class="zalo-pill">Z</a>
+    <!-- Banners -->
+    <div class="container shopee-banner-wrapper" data-aos="fade-down">
+        <div class="row g-2">
+            <div class="col-md-8">
+                <div id="shopeeCarousel" class="carousel slide shadow-sm" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div style="background: linear-gradient(135deg, var(--primary), var(--accent)); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
+                                 <div class="text-center">
+                                     <h2 class="fw-bold mb-3 display-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Nơi Bạn Có Thể</h2>
+                                     <p class="lead mb-0 text-white">Kho tài nguyên số miễn phí hàng đầu.</p>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div style="background: linear-gradient(135deg, #2d3436, var(--primary)); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
+                                 <div class="text-center">
+                                     <h2 class="fw-bold mb-3 display-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Giảm Giá Khủng</h2>
+                                     <p class="lead mb-0 text-white">Các deal sốc dành riêng cho bạn mỗi ngày.</p>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#shopeeCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#shopeeCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4 d-none d-md-flex flex-column gap-2">
+                <div style="background: linear-gradient(135deg, var(--accent), var(--secondary)); flex: 1; border-radius: 4px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size: 1.2rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+                    <i class="fas fa-gift me-2"></i> QUÀ TẶNG THÀNH VIÊN
+                </div>
+                <div style="background: linear-gradient(135deg, #ff9ff3, #feca57); flex: 1; border-radius: 4px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size: 1.2rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
+                    <i class="fas fa-crown me-2"></i> DEAL ĐỘC QUYỀN
+                </div>
             </div>
         </div>
-    </header>
-
-    <div class="container" style="margin-top: -80px; position: relative; z-index: 10;">
-        <div class="category-row"></div>
     </div>
 
-    <div class="container" style="margin-top: 80px; padding-top: 20px;">
+    <!-- Quick Links -->
+    <div class="container quick-links" data-aos="fade-up">
+        <a href="#" class="ql-item">
+            <div class="ql-icon"><i class="fas fa-shipping-fast"></i></div>
+            <div class="ql-text">Miễn Phí Vận Chuyển</div>
+        </a>
+        <a href="#" class="ql-item">
+            <div class="ql-icon"><i class="fas fa-tags"></i></div>
+            <div class="ql-text">Voucher Giảm Giá</div>
+        </a>
+        <a href="#" class="ql-item" data-bs-toggle="modal" data-bs-target="#guideModal">
+            <div class="ql-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="ql-text">Hướng Dẫn Mua Hàng</div>
+        </a>
+        <a href="#" class="ql-item">
+            <div class="ql-icon"><i class="fas fa-gift"></i></div>
+            <div class="ql-text">Quà Tặng Hấp Dẫn</div>
+        </a>
+        <a href="#blog" class="ql-item">
+            <div class="ql-icon"><i class="fas fa-book-open"></i></div>
+            <div class="ql-text">Blog Kiến Thức</div>
+        </a>
+    </div>
 
-        <!-- Category Filter Icons (moved above flash sale) -->
-        @if(isset($categories) && $categories->count() > 0)
-        <div class="category-filter-section mb-4" data-aos="fade-up">
-            <div class="d-flex flex-wrap gap-3 justify-content-center">
-                <!-- All Categories -->
-                <a href="{{ route('shop') }}" class="category-filter-link">
-                    <button class="category-filter-btn active" type="button">
-                        <div class="category-icon-wrap">
-                            <i class="fas fa-th-large"></i>
-                        </div>
-                        <span class="category-name">Tất Cả</span>
-                    </button>
-                </a>
-                
-                @foreach($categories as $category)
-                <a href="{{ route('shop', ['category_id' => $category->id]) }}" class="category-filter-link">
-                    <button class="category-filter-btn" type="button">
-                        <div class="category-icon-wrap">
-                            @if($category->image)
-                                <img src="{{ $category->image }}" alt="{{ $category->name }}">
-                            @else
-                                @switch($category->type)
-                                    @case('tech')
-                                        <i class="fas fa-laptop"></i>
-                                        @break
-                                    @case('ebooks')
-                                        <i class="fas fa-book"></i>
-                                        @break
-                                    @case('doc')
-                                        <i class="fas fa-file-alt"></i>
-                                        @break
-                                    @default
-                                        <i class="fas fa-box"></i>
-                                @endswitch
-                            @endif
-                        </div>
-                        <span class="category-name">{{ $category->name }}</span>
-                        @if($category->products_count > 0)
-                            <span class="category-count">{{ $category->products_count }}</span>
-                        @endif
-                    </button>
-                </a>
-                @endforeach
+    <!-- Modal Hướng Dẫn Mua Hàng -->
+    <div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header" style="background: var(--primary); color: white;">
+            <h5 class="modal-title" id="guideModalLabel"><i class="fas fa-info-circle me-2"></i> Quy Trình Mua Hàng</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="mb-3">
+                <h5><i class="fas fa-check-circle text-success me-2"></i>Bước 1: Chọn sản phẩm</h5>
+                <p class="ms-4 mb-3 text-muted">Tìm kiếm và chọn sản phẩm/tài nguyên bạn muốn mua rồi nhấn Thêm vào giỏ hàng.</p>
             </div>
-        </div>
-        @endif
-
-    @if(isset($saleProducts) && $saleProducts->count() > 0)
-        <div id="flash-sale" class="flash-sale mb-5" data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}">
-            <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
-                <div>
-                    <span class="text-danger fw-bold text-uppercase ls-1">Flash sale</span>
-                    <h3 class="fw-bold section-title">Giảm giá hôm nay</h3>
-                    <p class="text-muted mb-0">Giá ưu đãi sẽ kết thúc khi hết thời gian.</p>
-                </div>
-                <div class="flash-sale-timer">
-                    <span class="timer-label">Kết thúc sau</span>
-                    <div class="timer-pills" aria-live="polite">
-                        <span class="timer-pill" data-unit="hours">00</span>
-                        <span class="timer-sep">:</span>
-                        <span class="timer-pill" data-unit="minutes">00</span>
-                        <span class="timer-sep">:</span>
-                        <span class="timer-pill" data-unit="seconds">00</span>
-                    </div>
-                </div>
+            <div class="mb-3">
+                <h5><i class="fas fa-check-circle text-success me-2"></i>Bước 2: Thanh toán & Chuyển khoản</h5>
+                <p class="ms-4 mb-3 text-muted">Thực hiện đặt hàng và <strong>chuyển khoản</strong> theo thông tin hiển thị ở trang thanh toán.</p>
             </div>
-
-            <div class="row row-cols-2 row-cols-md-4 g-3 g-md-4">
-                @foreach($saleProducts as $product)
-                <div class="col" data-aos="fade-up">
-                    <div class="product-card">
-                        <div class="card-img-wrap">
-                            <span class="badge-custom bg-danger">Giảm {{ $product->discount_percent }}%</span>
-                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                        </div>
-                        <div class="p-3">
-                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                                        <span class="text-danger fw-bold">{{ $product->formatted_price }}</span>
-                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                    </div>
-                                </div>
-                                <a href="{{ route('product.show', $product->slug) }}" class="btn btn-sm btn-light rounded-circle text-danger">
-                                    <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                    </div>
-                </div>
-                @endforeach
+            <div class="mb-3">
+                <h5><i class="fas fa-check-circle text-success me-2"></i>Bước 3: Nhận hàng (10-15p)</h5>
+                <p class="ms-4 mb-0 text-muted">Sau khi chuyển khoản thành công, vui lòng chờ khoảng 10-15 phút để Admin kích hoạt sản phẩm/hoặc gửi tài khoản cho bạn.</p>
             </div>
-        </div>
-    @endif
-        <div class="row">
             
-            <div class="col-12">
+            <div class="alert alert-info mt-4 mb-0">
+                <i class="fas fa-headset me-2"></i> <strong>Hỗ trợ nhanh:</strong><br>
+                Nếu cần gấp hoặc bị lỗi, bạn có thể nhắn tin cho Admin qua biểu tượng chat ở góc phải màn hình hoặc mục <a href="{{ route('contact.index') }}" class="fw-bold text-decoration-none">Liên hệ</a>.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đã hiểu</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                {{--
-                @if(!empty($recentPurchases) && count($recentPurchases) > 0)
-                    <!-- KhÃ¡ch hÃ ng vá»«a mua (Social proof) -->
-                    <div class="mb-5" data-aos="fade-up">
-                        <div class="d-flex justify-content-between align-items-end mb-4">
-                            <div>
-                                <span class="text-warning fw-bold text-uppercase ls-1">Uy tÃ­n</span>
-                                <h3 class="fw-bold section-title">KhÃ¡ch HÃ ng Vá»«a Mua</h3>
-                                <p class="text-muted mb-0">ThÃ´ng tin Ä‘Ã£ Ä‘Æ°á»£c áº©n Ä‘á»ƒ báº£o vá»‡ quyá»n riÃªng tÆ°</p>
-                            </div>
-                        </div>
-
-                        <div class="row row-cols-1 row-cols-lg-2 g-3">
-                            @foreach($recentPurchases as $purchase)
-                                <div class="col">
-                                    <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
-                                        <div class="card-body d-flex gap-3 align-items-start">
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                                 style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(108,92,231,0.12), rgba(0,206,201,0.12)); border: 1px solid rgba(0,0,0,0.06);">
-                                                <i class="fas fa-shopping-bag text-primary"></i>
-                                            </div>
-
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start gap-2">
-                                                    <div class="fw-bold">{{ $purchase['customer_name'] ?? 'Khách hàng' }}</div>
-                                                    <small class="text-muted">{{ $purchase['time_ago'] ?? '' }}</small>
-                                                </div>
-
-                                                <div class="text-muted" style="font-size: 0.95rem;">
-                                                    Vừa {{ ($purchase['verb'] ?? '') === 'mua' ? 'mua' : 'đặt' }}
-                                                    @php
-                                                        $productText = ($purchase['product_name'] ?? 'Sản phẩm') . ((int)($purchase['extra_items'] ?? 0) > 0 ? (' +' . (int)$purchase['extra_items'] . ' SP') : '');
-                                                    @endphp
-                                                    @if(!empty($purchase['product_slug']))
-                                                        <a href="{{ route('product.show', $purchase['product_slug']) }}" class="text-decoration-none fw-bold">{{ $productText }}</a>
-                                                    @else
-                                                        <span class="fw-bold">{{ $productText }}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-                --}}
-                <!-- Sản Phẩm Nổi Bật -->
-                <div id="shop" class="mb-5">
-                    <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
-                        <div>
-                            <h3 class="fw-bold section-title">⭐ Sản Phẩm Nổi Bật</h3>
-                        </div>
-                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
-                    </div>
-
-                    <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex" id="product-grid">
-                        @foreach($featuredProducts as $product)
-                        <div class="col product-item" data-aos="fade-up" data-category-id="{{ $product->category_id ?? '' }}">
-                            <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                <div class="card-img-wrap">
-                                    <span class="badge-custom">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                    <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                </div>
-                                <div class="p-3">
-                                    <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                                                <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                                @if($product->is_on_sale)
-                                                    <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                        <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
-                                                <i class="fas fa-cart-plus"></i>
-                                            </button>
-                                        </form>
-                                        @else
-                                        <button type="button" class="btn btn-sm btn-light rounded-circle text-muted" disabled>
-                                            <i class="fas fa-cart-plus"></i>
-                                        </button>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <div class="swiper product-swiper d-md-none" id="featuredProductSwiper">
-                        <div class="swiper-wrapper">
-                            @foreach($featuredProducts as $product)
-                                <div class="swiper-slide product-item-mobile" data-category-id="{{ $product->category_id ?? '' }}">
-                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                        <div class="card-img-wrap">
-                                            <span class="badge-custom">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                        </div>
-                                        <div class="p-3">
-                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                                        @if($product->is_on_sale)
-                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="swiper-pagination"></div>
-                    </div>
-                </div>
-
-                <!-- Sản Phẩm Đặc Biệt -->
-                <div class="mb-5">
-                    <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
-                        <div>
-                            <h3 class="fw-bold section-title"> <i class="fas fa-star" style="color: #00ff00;"></i> Sản Phẩm Độc Quyền</h3>
-                        </div>
-                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
-                    </div>
-
-                    <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex">
-                        @foreach($highlightProducts as $product)
-                        <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                            <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                <div class="card-img-wrap">
-                                    <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết Hàng</span>
-                                    @endif
-                                    <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                </div>
-                                <div class="p-3">
-                                    <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                                                <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
-                                                @if($product->is_on_sale)
-                                                    <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                        <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
-                                                <i class="fas fa-cart-plus"></i>
-                                            </button>
-                                        </form>
-                                        @else
-                                        <button type="button" class="btn btn-sm btn-light rounded-circle text-muted" disabled>
-                                            <i class="fas fa-cart-plus"></i>
-                                        </button>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <div class="swiper product-swiper d-md-none" id="highlightProductSwiper">
-                        <div class="swiper-wrapper">
-                            @foreach($highlightProducts as $product)
-                                <div class="swiper-slide">
-                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                        <div class="card-img-wrap">
-                                            <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                        </div>
-                                        <div class="p-3">
-                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
-                                                        @if($product->is_on_sale)
-                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="swiper-pagination"></div>
-                    </div>
-                </div>
-             
-                <!-- Combo AI giá rẻ (hiển thị trên Home) -->
-                <div id="combo-ai" class="mb-5" data-combo-ai-section>
-                    <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
-                        <div>
-                            <h3 class="fw-bold section-title"> <i class="fas fa-robot" style="color: #007bff;"></i> Combo AI giá rẻ</h3>
-                        </div>
-                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
-                    </div>
-
-                    @if(isset($comboAiProducts) && $comboAiProducts->count() > 0)
-                        <div class="row row-cols-2 row-cols-md-4 g-4">
-                            @foreach($comboAiProducts as $product)
-                                <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                        <div class="card-img-wrap">
-                                            <span class="badge-custom bg-primary">COMBO AI</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                        </div>
-                                        <div class="p-3">
-                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                                    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                                                        <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                                        @if($product->is_on_sale)
-                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+    <!-- Categories / Danh Mục -->
+    @if(isset($categories) && $categories->count() > 0)
+    <div class="container shopee-container" data-aos="fade-up">
+        <div class="shopee-header">
+            <h3 class="shopee-title">DANH MỤC</h3>
+        </div>
+        <div class="shopee-cats">
+            <a href="{{ route('shop') }}" class="shopee-cat-item">
+                <div class="shopee-cat-icon"><i class="fas fa-th-large"></i></div>
+                <div class="shopee-cat-name">Tất Cả</div>
+            </a>
+            @foreach($categories as $category)
+            <a href="{{ route('shop', ['category_id' => $category->id]) }}" class="shopee-cat-item">
+                <div class="shopee-cat-icon">
+                    @if($category->image)
+                        <img src="{{ $category->image }}" alt="{{ $category->name }}">
                     @else
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> Chưa có combo nào. Vui lòng quay lại sau!
-                        </div>
+                        @switch($category->type)
+                            @case('tech') <i class="fas fa-laptop"></i> @break
+                            @case('ebooks') <i class="fas fa-book"></i> @break
+                            @case('doc') <i class="fas fa-file-alt"></i> @break
+                            @default <i class="fas fa-box"></i>
+                        @endswitch
                     @endif
                 </div>
-
-
-
-                <div id="blog" class="pt-4 border-top">
-                    <div class="mb-4" data-aos="fade-right">
-                        <span class="text-warning fw-bold text-uppercase ls-1">Kiến thức & Thủ thuật</span>
-                        <h3 class="fw-bold section-title">Blog Chia Sẻ</h3>
-                        <p class="text-muted">Cập nhật xu hướng công nghệ, mẹo phối đồ và hướng dẫn dùng tool.</p>
-                    </div>
-
-                    <div class="row">
-                        @foreach($latestBlogs as $index => $blog)
-                        <div class="col-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-                            <div class="blog-card w-100 text-center p-3" style="min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                                <a href="{{ route('blog.show', $blog->slug) }}">
-                                    <img src="{{ $blog->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $blog->title }}" style="max-width:100%;max-height:80px;object-fit:cover;border-radius:10px;">
-                                </a>
-                                <a href="{{ route('blog.show', $blog->slug) }}" class="blog-title fw-bold mt-2 d-block" style="font-size:1.05rem;line-height:1.4;">{{ $blog->title }}</a>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="{{ route('blog.index') }}" class="btn btn-outline-primary rounded-pill px-4">Xem thêm bài viết</a>
-                    </div>
-                </div>
-
-            </div>
-
+                <div class="shopee-cat-name">{{ $category->name }}</div>
+            </a>
+            @endforeach
         </div>
     </div>
+    @endif
 
-    @if(!empty($recentPurchases) && count($recentPurchases) > 0)
-        <script type="application/json" id="recentPurchaseData">@json($recentPurchases)</script>
-        <div id="recentPurchaseToast" class="recent-purchase-toast" role="status" aria-live="polite" aria-atomic="true">
-            <div class="rpt-header">
-                <span class="rpt-pill buy">
-                    <i class="fas fa-star"></i> Vừa mua
-                </span>
-                <span class="rpt-pill verify">
-                    <i class="fas fa-check-circle"></i> Đã xác minh
-                </span>
-                <button type="button" class="rpt-close" id="recentPurchaseClose" aria-label="Đóng">&times;</button>
-            </div>
-
-            <div class="rpt-body">
-                <div class="rpt-avatar">
-                    <span id="rptAvatarLetter">N</span>
-                    <span class="rpt-badge">
-                        <i class="fas fa-check-circle" style="font-size: 12px; color: #12b76a;"></i>
-                    </span>
+    <!-- Flash Sale -->
+    @if(isset($saleProducts) && $saleProducts->count() > 0)
+    <div class="container shopee-container" id="flash-sale" data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}">
+        <div class="shopee-header" style="border-bottom: 1px solid rgba(0,0,0,.05);">
+            <div class="d-flex align-items-center">
+                <h3 class="shopee-title me-3 mb-0" style="color: #ee4d2d; font-size: 1.25rem;">
+                    <i class="fas fa-bolt"></i> FLASH SALE
+                </h3>
+                <div class="fs-timer" aria-live="polite">
+                    <div class="t-box" data-unit="hours">00</div>
+                    <span>:</span>
+                    <div class="t-box" data-unit="minutes">00</div>
+                    <span>:</span>
+                    <div class="t-box" data-unit="seconds">00</div>
                 </div>
-
-                <div style="min-width:0;flex:1;">
-                    <div class="rpt-name" id="rptName">Khách hàng</div>
-                    <div class="rpt-sub">
-                        <i class="fas fa-check-circle"></i>
-                        <span id="rptAction">vừa mua thành công</span>
-                    </div>
-
-                    <a href="#shop" class="rpt-product" id="rptProductLink">
-                        <div class="rpt-product-title" id="rptProductTitle">Sản phẩm</div>
-                        <div class="rpt-product-meta">
-                            <span id="rptTime">vừa xong</span>
+            </div>
+            <a href="{{ route('shop') }}" class="shopee-link d-none d-md-block">Xem tất cả ></a>
+        </div>
+        <div class="p-3">
+            <div class="row g-2">
+                @foreach($saleProducts as $product)
+                <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up">
+                    <a href="{{ route('product.show', $product->slug) }}" class="shopee-product">
+                        <div class="sp-img-wrap">
+                            <span class="sp-badge">-{{ $product->discount_percent }}%</span>
+                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}" loading="lazy">
+                        </div>
+                        <div class="sp-info">
+                            <div class="sp-title">{{ $product->name }}</div>
+                            <div class="sp-price-row flex-wrap">
+                                <div>
+                                    <div class="sp-original-price">{{ $product->formatted_original_price }}</div>
+                                    <div class="sp-price">{{ $product->formatted_price }}</div>
+                                </div>
+                            </div>
                         </div>
                     </a>
                 </div>
+                @endforeach
             </div>
         </div>
+    </div>
     @endif
 
-    @include('partials.tet-decorations')
+    <!-- DungThu Mall (Featured/Exclusive Products) -->
+    <div class="container shopee-container mb-4">
+        <div class="shopee-header">
+            <div class="d-flex align-items-center">
+                <h3 class="shopee-title me-3 mb-0" style="color: #d32f2f;">
+                    <i class="fas fa-shopping-bag"></i> DUNGTHU MALL
+                </h3>
+                <span class="text-muted d-none d-md-inline" style="font-size: 0.85rem;"><i class="fas fa-check-circle text-danger"></i> Cam kết chính hãng</span>
+            </div>
+            <a href="{{ route('shop') }}" class="shopee-link d-none d-md-block">Xem tất cả ></a>
+        </div>
+        <div class="p-3">
+            <div class="row g-2">
+                <div class="col-md-4 d-none d-lg-block">
+                    <div class="mall-left-banner">
+                        <div class="text-center p-3">
+                            <h2 class="display-6">MUA LÀ CÓ QUÀ</h2>
+                            <p class="mb-0 fs-5">Tiện Ích - Tài Nguyên Mới Nhất</p>
+                            <div class="mt-4"><button class="btn btn-outline-light rounded-pill px-4">Khám Phá</button></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-8">
+                    <div class="row g-2">
+                        @foreach($highlightProducts ?? [] as $product)
+                        <div class="col-6 col-md-3" data-aos="fade-up">
+                            <div class="shopee-product">
+                                @if(!$product->isInStock())
+                                    <div class="out-of-stock-overlay">
+                                        <div class="out-of-stock-text">Hết hàng</div>
+                                    </div>
+                                @endif
+                                <a href="{{ route('product.show', $product->slug) }}" style="display: block; position:relative; flex-grow: 1; text-decoration: none; color: inherit; display:flex; flex-direction:column;">
+                                    <div class="sp-img-wrap">
+                                        <span class="sp-badge-category" style="background: #d32f2f;">Mall</span>
+                                        <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}" loading="lazy">
+                                    </div>
+                                    <div class="sp-info">
+                                        <div class="sp-title">{{ $product->name }}</div>
+                                        <div class="sp-price-row">
+                                            <div class="sp-price">{{ $product->formatted_price }}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="px-2 pb-2 mt-auto d-flex justify-content-end w-100" style="position: relative; z-index: 5;">
+                                    <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="cart-btn" {{ $product->isInStock() ? '' : 'disabled' }} title="Thêm vào giỏ hàng">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Discover (Gợi ý hôm nay) - replaces Nổi Bật and Combo AI -->
+    <div class="container pt-2" id="shop">
+        <div class="daily-discover-header rounded-top">
+            GỢI Ý HÔM NAY
+        </div>
+        
+        <div class="row g-2">
+            @php 
+                // Merge array collections to show in grid
+                $allProducts = collect();
+                if(isset($featuredProducts)) $allProducts = $allProducts->concat($featuredProducts);
+                if(isset($comboAiProducts)) $allProducts = $allProducts->concat($comboAiProducts);
+                $allProducts = $allProducts->unique('id');
+            @endphp
+            
+            @foreach($allProducts as $product)
+            <div class="col-6 col-md-3 col-lg-2 mb-2" data-aos="fade-up">
+                <div class="shopee-product">
+                    @if(!$product->isInStock())
+                        <div class="out-of-stock-overlay">
+                            <div class="out-of-stock-text">Hết hàng</div>
+                        </div>
+                    @endif
+                    <a href="{{ route('product.show', $product->slug) }}" style="display: block; position:relative; flex-grow: 1; text-decoration: none; color: inherit; display:flex; flex-direction:column;">
+                        <div class="sp-img-wrap">
+                            <span class="sp-badge-category">{{ strtoupper($product->category ?? 'HOT') }}</span>
+                            @if($product->is_on_sale)
+                                <span class="sp-badge">-{{ $product->discount_percent }}%</span>
+                            @endif
+                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}" loading="lazy">
+                        </div>
+                        <div class="sp-info">
+                            <div class="sp-title">{{ $product->name }}</div>
+                            <div class="sp-price-row flex-wrap">
+                                <div>
+                                    @if($product->is_on_sale)
+                                        <div class="sp-original-price">{{ $product->formatted_original_price }}</div>
+                                    @endif
+                                    <div class="sp-price">{{ $product->formatted_price }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="px-2 pb-2 mt-auto d-flex justify-content-end w-100" style="position: relative; z-index: 5;">
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0">
+                            @csrf
+                            <button type="submit" class="cart-btn" {{ $product->isInStock() ? '' : 'disabled' }}>
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        
+        @if($allProducts->count() > 0)
+        <div class="text-center mt-4 mb-5">
+            <a href="{{ route('shop') }}" class="btn btn-light border bg-white px-5 py-2 fw-bold" style="color: #666; transition: 0.2s; box-shadow: 0 1px 1px 0 rgba(0,0,0,.05);">Xem Thêm</a>
+        </div>
+        @endif
+    </div>
+
+    <!-- Blog Chia Sẻ -->
+    @if(isset($latestBlogs) && $latestBlogs->count() > 0)
+    <div class="container shopee-container p-0" id="blog">
+        <div class="shopee-header">
+            <h3 class="shopee-title mb-0" style="color: #333;"><i class="fas fa-book-reader text-primary me-2"></i> BÀI VIẾT MỚI</h3>
+            <a href="{{ route('blog.index') }}" class="shopee-link d-none d-md-block">Xem tất cả ></a>
+        </div>
+        <div class="p-3">
+            <div class="row g-3">
+                @foreach($latestBlogs as $index => $blog)
+                <div class="col-12 col-md-6" data-aos="fade-up">
+                    <a href="{{ route('blog.show', $blog->slug) }}" class="text-decoration-none text-dark">
+                        <div class="blog-shopee-card d-flex h-100">
+                            <div style="width: 140px; flex-shrink: 0; background: #f8f9fa;">
+                                <img src="{{ $blog->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $blog->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <div class="p-3 d-flex flex-column justify-content-center">
+                                <div class="fw-bold mb-2" style="font-size: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $blog->title }}</div>
+                                <small class="text-muted"><i class="far fa-clock"></i> Cập nhật mới</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
+</div>
+
+@include('partials.tet-decorations')
+
 @endsection
 
 @push('scripts')
@@ -918,140 +448,5 @@
             setInterval(tick, 1000);
         });
     </script>
-    
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
-         document.addEventListener('DOMContentLoaded', function () {
-             const dataEl = document.getElementById('recentPurchaseData');
-             const toastEl = document.getElementById('recentPurchaseToast');
-             const closeEl = document.getElementById('recentPurchaseClose');
-
-             if (!dataEl || !toastEl) return;
-
-             const storageKey = 'recentPurchaseToastDismissedUntil';
-             const dismissedUntil = parseInt(localStorage.getItem(storageKey) || '0', 10);
-             if (dismissedUntil && Date.now() < dismissedUntil) return;
-
-             let purchases = [];
-             try {
-                 purchases = JSON.parse(dataEl.textContent || '[]');
-             } catch (e) {
-                 return;
-             }
-             if (!Array.isArray(purchases) || purchases.length === 0) return;
-
-             const els = {
-                 avatarLetter: document.getElementById('rptAvatarLetter'),
-                 name: document.getElementById('rptName'),
-                 action: document.getElementById('rptAction'),
-                 productLink: document.getElementById('rptProductLink'),
-                 productTitle: document.getElementById('rptProductTitle'),
-                 time: document.getElementById('rptTime'),
-             };
-
-             let index = 0;
-             let stop = false;
-             let hideTimer = null;
-             let nextTimer = null;
-             const SHOW_MS = 2500; // how long toast stays visible
-             const INTERVAL_MS = 10000; // show a new one every 10s
-
-             function getAvatarLetter(name) {
-                 const s = String(name || '').trim();
-                 const m = s.match(/[A-Za-zÀ-ỹĐđ]/u);
-                 return (m ? m[0] : 'K').toUpperCase();
-             }
-
-             function getProductText(p) {
-                 const base = p?.product_name ? String(p.product_name) : 'Sản phẩm';
-                 const extra = Number(p?.extra_items || 0);
-                 return extra > 0 ? `${base} +${extra} SP` : base;
-             }
-
-             function render(p) {
-                 const customerName = p?.customer_name ? String(p.customer_name) : 'Khách hàng';
-                 const verbValue = String(p?.verb || '').toLowerCase();
-                 const verb = verbValue === 'mua' ? 'mua' : (verbValue === 'đổi' ? 'đổi' : 'đặt');
-                 const timeAgo = p?.time_ago ? String(p.time_ago) : '';
-                 const productText = getProductText(p);
-                 const productUrl = p?.product_url ? String(p.product_url) : '#shop';
-
-                 if (els.avatarLetter) els.avatarLetter.textContent = getAvatarLetter(customerName);
-                 if (els.name) els.name.textContent = customerName;
-                 if (els.action) els.action.textContent = `vừa ${verb} thành công`;
-                 if (els.productTitle) els.productTitle.textContent = productText;
-                 if (els.time) els.time.textContent = timeAgo;
-                 if (els.productLink) els.productLink.setAttribute('href', productUrl);
-             }
-
-             function show() {
-                 toastEl.classList.add('show');
-             }
-
-             function hide() {
-                 toastEl.classList.remove('show');
-             }
-
-             function cycle() {
-                 if (stop) return;
-                 const p = purchases[index % purchases.length];
-                 index += 1;
-
-                 render(p);
-                 show();
-
-                 if (hideTimer) clearTimeout(hideTimer);
-                 if (nextTimer) clearTimeout(nextTimer);
-
-                 hideTimer = setTimeout(function () {
-                     hide();
-                 }, SHOW_MS);
-
-                 nextTimer = setTimeout(cycle, INTERVAL_MS);
-             }
-
-             if (closeEl) {
-                 closeEl.addEventListener('click', function () {
-                     stop = true;
-                     hide();
-                     localStorage.setItem(storageKey, String(Date.now() + 60 * 1000));
-                 });
-             }
-
-             toastEl.addEventListener('mouseenter', function () {
-                 if (hideTimer) clearTimeout(hideTimer);
-                 if (nextTimer) clearTimeout(nextTimer);
-             });
-             toastEl.addEventListener('mouseleave', function () {
-                 if (stop) return;
-                 if (hideTimer) clearTimeout(hideTimer);
-                 hideTimer = setTimeout(function () {
-                     hide();
-                 }, 900);
-             });
-
-             setTimeout(cycle, 800);
-         });
-     </script>
-     @if(session('scrollTo'))
-     <script>
-         document.addEventListener('DOMContentLoaded', function() {
-             const section = document.querySelector('[data-tiktok-section]');
-             if (section) {
-                setTimeout(() => {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Thêm animation highlight
-                    section.style.animation = 'pulse 1s ease-in-out 2';
-                }, 500);
-            }
-        });
-    </script>
-    <style>
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(255, 0, 80, 0.3); }
-        }
-    </style>
-    @endif
 @endpush
-

@@ -543,7 +543,7 @@
                     </div>
                     <div>
                         <i class="fab fa-telegram text-primary me-2"></i>
-                        <strong>Telegram:</strong> <a href="https://t.me/dungthucom" target="_blank">Chat ngay</a>
+                        <strong>Telegram:</strong> <a href="https://t.me/specademy" target="_blank">Chat ngay</a>
                     </div>
                     <div>
                         <i class="fas fa-envelope text-primary me-2"></i>

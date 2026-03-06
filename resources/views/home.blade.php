@@ -83,17 +83,17 @@
                 <div id="shopeeCarousel" class="carousel slide shadow-sm" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <div style="background: linear-gradient(135deg, var(--primary), var(--accent)); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
+                            <div style="background: linear-gradient(135deg, rgba(108,92,231,0.82), rgba(162,155,254,0.75)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&h=400&fit=crop') center/cover no-repeat; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
                                  <div class="text-center">
-                                     <h2 class="fw-bold mb-3 display-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Nơi Bạn Có Thể</h2>
+                                     <h2 class="fw-bold mb-3 display-5" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">Nơi Bạn Có Thể</h2>
                                      <p class="lead mb-0 text-white">Kho tài nguyên số miễn phí hàng đầu.</p>
                                  </div>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <div style="background: linear-gradient(135deg, #2d3436, var(--primary)); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
+                            <div style="background: linear-gradient(135deg, rgba(45,52,54,0.80), rgba(108,92,231,0.72)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=900&h=400&fit=crop') center/cover no-repeat; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
                                  <div class="text-center">
-                                     <h2 class="fw-bold mb-3 display-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Giảm Giá Khủng</h2>
+                                     <h2 class="fw-bold mb-3 display-5" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">Giảm Giá Khủng</h2>
                                      <p class="lead mb-0 text-white">Các deal sốc dành riêng cho bạn mỗi ngày.</p>
                                  </div>
                             </div>
@@ -108,10 +108,10 @@
                 </div>
             </div>
             <div class="col-md-4 d-none d-md-flex flex-column gap-2">
-                <div style="background: linear-gradient(135deg, var(--accent), var(--secondary)); flex: 1; border-radius: 4px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size: 1.2rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);">
+                <div style="background: linear-gradient(135deg, rgba(108,92,231,0.75), rgba(0,184,148,0.70)), url('https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=200&fit=crop') center/cover no-repeat; flex: 1; border-radius: 4px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size: 1.2rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); text-shadow: 1px 1px 3px rgba(0,0,0,0.4);">
                     <i class="fas fa-gift me-2"></i> QUÀ TẶNG THÀNH VIÊN
                 </div>
-                <div style="background: linear-gradient(135deg, #ff9ff3, #feca57); flex: 1; border-radius: 4px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size: 1.2rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
+                <div style="background: linear-gradient(135deg, rgba(255,159,243,0.72), rgba(254,202,87,0.70)), url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=500&h=200&fit=crop') center/cover no-repeat; flex: 1; border-radius: 4px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size: 1.2rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); text-shadow: 1px 1px 3px rgba(0,0,0,0.4);">
                     <i class="fas fa-crown me-2"></i> DEAL ĐỘC QUYỀN
                 </div>
             </div>

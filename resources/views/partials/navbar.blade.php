@@ -101,6 +101,24 @@
     </div>
 </nav>
 
+<style>
+    @media (max-width: 991.98px) {
+        .navbar-collapse {
+            max-height: calc(100vh - 70px); /* 100vh minus approximate header height */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Tùy chỉnh thanh cuộn cho đẹp gọn hơn trên mobile */
+        .navbar-collapse::-webkit-scrollbar {
+            width: 4px;
+        }
+        .navbar-collapse::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+    }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Handle dropdown submenu clicks on mobile

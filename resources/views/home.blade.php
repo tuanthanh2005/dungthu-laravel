@@ -408,7 +408,6 @@
 </div>
 
 @include('partials.recent-purchases')
-@include('partials.tet-decorations')
 
 @endsection
 

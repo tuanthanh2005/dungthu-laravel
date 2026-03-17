@@ -39,12 +39,7 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://t.me/specademy" target="_blank" style="color: #0088cc; font-weight: 500;">
-                        <i class="fab fa-telegram-plane me-1"></i>Telegram
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('contact.index') }}">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">
                         <i class="fas fa-phone me-1"></i>Liên Hệ
                     </a>
                 </li>

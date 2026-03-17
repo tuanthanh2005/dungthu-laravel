@@ -26,7 +26,6 @@ use App\Http\Controllers\Admin\AdminBuffController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
 Route::view('/chinh-sach', 'pages.privacy')->name('policy');
-Route::view('/contact', 'pages.contact')->name('contact.index');
 
 // Guest AI chat (home only UI)
 Route::post('/guest-chat', [GuestChatController::class, 'send'])->name('guest-chat.send');

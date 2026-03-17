@@ -118,7 +118,7 @@
                 <p>Nếu bạn có bất kỳ câu hỏi nào về chính sách này, vui lòng liên hệ:</p>
                 <ul>
                     <li>📧 Email: <a href="mailto:tranthanhtuanfix@gmail.com">tranthanhtuanfix@gmail.com</a></li>
-                    <li>💬 Telegram: <a href="https://t.me/specademy" target="_blank">@specademy</a></li>
+                    <li>💬 Telegram: <a href="https://t.me/dungthucom" target="_blank">@dungthucom</a></li>
                 </ul>
             </div>
 

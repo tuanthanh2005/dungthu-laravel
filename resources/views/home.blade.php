@@ -9,7 +9,7 @@
     <style>
         body { background-color: #f5f5f5; }
         
-        .shopee-banner-wrapper { margin-top: 4rem; margin-bottom: 20px; }
+        .shopee-banner-wrapper { margin-top: 1.5rem; margin-bottom: 20px; }
         #shopeeCarousel .carousel-item { border-radius: 4px; height: 260px; overflow: hidden; }
         
         .shopee-container { background: #fff; margin-bottom: 20px; box-shadow: 0 1px 1px 0 rgba(0,0,0,.05); border-radius: 3px; }

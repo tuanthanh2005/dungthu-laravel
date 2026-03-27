@@ -173,6 +173,7 @@
                                     </div>
                                     <div class="fw-bold fs-5 text-nowrap" id="js-receive-amount">--</div>
                                 </div>
+                                <input type="hidden" name="exchange_amount" value="">
                             </div>
 
                             <div class="col-12">
@@ -654,55 +655,55 @@
         (function () {
             const pricing = {
                 Viettel: {
-                    10000: 8000,
-                    20000: 15900,
-                    50000: 40300,
-                    100000: 80500,
-                    200000: 159000,
-                    500000: 387000,
-                    1000000: 775000,
+                    10000: 7200,
+                    20000: 14310,
+                    50000: 36270,
+                    100000: 72450,
+                    200000: 143100,
+                    500000: 348300,
+                    1000000: 697500,
                 },
                 Mobifone: {
-                    10000: 7500,
-                    20000: 15000,
-                    50000: 38000,
-                    100000: 77000,
-                    200000: 154000,
-                    500000: 385000,
+                    10000: 6750,
+                    20000: 13500,
+                    50000: 34200,
+                    100000: 69300,
+                    200000: 138600,
+                    500000: 346500,
                 },
                 Vinaphone: {
-                    10000: 7800,
-                    20000: 16400,
-                    50000: 41500,
-                    100000: 85000,
-                    200000: 169000,
-                    500000: 423000,
+                    10000: 7020,
+                    20000: 14760,
+                    50000: 37350,
+                    100000: 76500,
+                    200000: 152100,
+                    500000: 380700,
                 },
                 Garena: {
-                    10000: 8000,
-                    20000: 16400,
-                    50000: 41500,
-                    100000: 85000,
-                    200000: 170000,
-                    500000: 432000,
+                    10000: 7200,
+                    20000: 14760,
+                    50000: 37350,
+                    100000: 76500,
+                    200000: 153000,
+                    500000: 388800,
                 },
                 Vcoin: {
-                    10000: 7800,
-                    20000: 16000,
-                    50000: 40500,
-                    100000: 84000,
-                    200000: 168000,
-                    500000: 430000,
-                    1000000: 865000,
+                    10000: 7020,
+                    20000: 14400,
+                    50000: 36450,
+                    100000: 75600,
+                    200000: 151200,
+                    500000: 387000,
+                    1000000: 778500,
                 },
                 Zing: {
-                    10000: 7800,
-                    20000: 15800,
-                    50000: 40000,
-                    100000: 83000,
-                    200000: 166000,
-                    500000: 425000,
-                    1000000: 855000,
+                    10000: 7020,
+                    20000: 14220,
+                    50000: 36000,
+                    100000: 74700,
+                    200000: 149400,
+                    500000: 382500,
+                    1000000: 769500,
                 },
             };
 
@@ -711,6 +712,7 @@
             const cardTypeEl = document.querySelector('select[name="card_type"]');
             const cardValueEl = document.querySelector('select[name="card_value"]');
             const receiveAmountEl = document.getElementById('js-receive-amount');
+            const exchangeAmountInputEl = document.querySelector('input[name="exchange_amount"]');
 
             if (!cardTypeEl || !cardValueEl || !receiveAmountEl) return;
 
@@ -736,11 +738,13 @@
 
                 if (!cardType || !cardValue) {
                     receiveAmountEl.textContent = '--';
+                    if (exchangeAmountInputEl) exchangeAmountInputEl.value = '';
                     return;
                 }
 
                 const amount = pricing[cardType]?.[cardValue];
                 receiveAmountEl.textContent = amount ? formatVnd(amount) : '--';
+                if (exchangeAmountInputEl && amount) exchangeAmountInputEl.value = amount;
             };
 
             const onChange = () => {

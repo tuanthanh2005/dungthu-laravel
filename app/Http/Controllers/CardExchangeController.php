@@ -34,6 +34,7 @@ class CardExchangeController extends Controller
             'card_serial' => 'required|string|min:10|max:20',
             'card_code' => 'required|string|min:10|max:20',
             'card_value' => 'required|numeric|min:10000',
+            'exchange_amount' => 'required|numeric|min:0',
             'bank_name' => 'required|string|max:255',
             'bank_account_number' => 'required|string|max:50',
             'bank_account_name' => 'required|string|max:255',
@@ -42,6 +43,7 @@ class CardExchangeController extends Controller
             'card_serial.required' => 'Vui lòng nhập seri thẻ',
             'card_code.required' => 'Vui lòng nhập mã thẻ',
             'card_value.required' => 'Vui lòng nhập mệnh giá thẻ',
+            'exchange_amount.required' => 'Lỗi: không thể tính số tiền nhận',
             'bank_name.required' => 'Vui lòng nhập tên ngân hàng',
             'bank_account_number.required' => 'Vui lòng nhập số tài khoản',
             'bank_account_name.required' => 'Vui lòng nhập tên chủ tài khoản',
@@ -53,6 +55,7 @@ class CardExchangeController extends Controller
             'card_serial' => $request->card_serial,
             'card_code' => $request->card_code,
             'card_value' => $request->card_value,
+            'exchange_amount' => $request->exchange_amount,
             'bank_name' => $request->bank_name,
             'bank_account_number' => $request->bank_account_number,
             'bank_account_name' => $request->bank_account_name,
@@ -77,7 +80,8 @@ class CardExchangeController extends Controller
         $message .= "   • Loại thẻ: {$exchange->card_type}\n";
         $message .= "   • Seri: {$exchange->card_serial}\n";
         $message .= "   • Mã thẻ: {$exchange->card_code}\n";
-        $message .= "   • Mệnh giá: " . number_format($exchange->card_value, 0, ',', '.') . "đ\n\n";
+        $message .= "   • Mệnh giá: " . number_format($exchange->card_value, 0, ',', '.') . "đ\n";
+        $message .= "   • Khách nhận: " . number_format($exchange->exchange_amount, 0, ',', '.') . "đ\n\n";
         $message .= "🏦 <b>Thông tin ngân hàng:</b>\n";
         $message .= "   • Ngân hàng: {$exchange->bank_name}\n";
         $message .= "   • Số TK: {$exchange->bank_account_number}\n";

@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CardExchangeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\GuestChatController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\CommunityCommentController;
@@ -29,6 +30,15 @@ Route::view('/chinh-sach', 'pages.privacy')->name('policy');
 
 // Guest AI chat (home only UI)
 Route::post('/guest-chat', [GuestChatController::class, 'send'])->name('guest-chat.send');
+
+// Chatbot AI routes
+Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
+Route::post('/api/chatbot/send', [ChatbotController::class, 'sendMessage'])->name('chatbot.send');
+Route::post('/api/chatbot/session', [ChatbotController::class, 'createSession'])->name('chatbot.session.create');
+Route::get('/api/chatbot/history', [ChatbotController::class, 'history'])->name('chatbot.history');
+Route::post('/api/chatbot/feedback', [ChatbotController::class, 'feedback'])->name('chatbot.feedback');
+Route::get('/api/chatbot/products', [ChatbotController::class, 'getProducts'])->name('chatbot.products');
+Route::get('/api/chatbot/services', [ChatbotController::class, 'getBuffServices'])->name('chatbot.services');
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

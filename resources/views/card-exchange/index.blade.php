@@ -299,13 +299,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">8.000</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">15.900</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">40.300</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">80.500</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">159.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">387.000</td></tr>
-                                            <tr><td>1.000.000</td><td class="text-end fw-bold">775.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.200</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">14.310</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">36.270</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">72.450</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">143.100</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">348.300</td></tr>
+                                            <tr><td>1.000.000</td><td class="text-end fw-bold">697.500</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -322,12 +322,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">7.500</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">15.000</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">38.000</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">77.000</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">154.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">385.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">6.750</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">13.500</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">34.200</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">69.300</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">138.600</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">346.500</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -344,12 +344,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">7.800</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">16.400</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">41.500</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">85.000</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">169.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">423.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.020</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">14.760</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">37.350</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">76.500</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">152.100</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">380.700</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -394,12 +394,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">8.000</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">16.400</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">41.500</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">85.000</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">170.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">432.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.200</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">14.760</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">37.350</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">76.500</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">153.000</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">388.800</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -416,13 +416,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">7.800</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">16.000</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">40.500</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">84.000</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">168.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">430.000</td></tr>
-                                            <tr><td>1.000.000</td><td class="text-end fw-bold">865.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.020</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">14.400</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">36.450</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">75.600</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">151.200</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">387.000</td></tr>
+                                            <tr><td>1.000.000</td><td class="text-end fw-bold">778.500</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -439,13 +439,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td>10.000</td><td class="text-end fw-bold">7.800</td></tr>
-                                            <tr><td>20.000</td><td class="text-end fw-bold">15.800</td></tr>
-                                            <tr><td>50.000</td><td class="text-end fw-bold">40.000</td></tr>
-                                            <tr><td>100.000</td><td class="text-end fw-bold">83.000</td></tr>
-                                            <tr><td>200.000</td><td class="text-end fw-bold">166.000</td></tr>
-                                            <tr><td>500.000</td><td class="text-end fw-bold">425.000</td></tr>
-                                            <tr><td>1.000.000</td><td class="text-end fw-bold">855.000</td></tr>
+                                            <tr><td>10.000</td><td class="text-end fw-bold">7.020</td></tr>
+                                            <tr><td>20.000</td><td class="text-end fw-bold">14.220</td></tr>
+                                            <tr><td>50.000</td><td class="text-end fw-bold">36.000</td></tr>
+                                            <tr><td>100.000</td><td class="text-end fw-bold">74.700</td></tr>
+                                            <tr><td>200.000</td><td class="text-end fw-bold">149.400</td></tr>
+                                            <tr><td>500.000</td><td class="text-end fw-bold">382.500</td></tr>
+                                            <tr><td>1.000.000</td><td class="text-end fw-bold">769.500</td></tr>
                                         </tbody>
                                     </table>
                                 </div>

@@ -21,6 +21,11 @@
                         🎯 Dịch vụ Buff
                     </a>
                 </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('web-design') }}">
+                        Thiết kế website
+                    </a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">

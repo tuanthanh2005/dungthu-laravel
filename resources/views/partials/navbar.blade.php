@@ -11,16 +11,16 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">Cộng đồng</a></li>
                 <li class="nav-item">
-                <a class="nav-link position-relative d-inline-block"
-                    href="{{ route('card-exchange.index') }}" style="position:relative; display:inline-block;">
-                    Đổi thẻ cào
-                </a>
+                    <a class="nav-link position-relative d-inline-block" href="{{ route('card-exchange.index') }}"
+                        style="position:relative; display:inline-block;">
+                        Đổi thẻ cào
+                    </a>
                 </li>
-                <li class="nav-item">
+                {{-- -<li class="nav-item">
                     <a class="nav-link" href="{{ route('buff.index') }}">
                         🎯 Dịch vụ Buff
                     </a>
-                </li>
+                </li> --}}
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">
@@ -28,7 +28,8 @@
                     </a>
                 </li>
                 @auth
-                <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>
+                    <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('user.orders') }}"><i
+                                class="fas fa-box me-2"></i>Đơn hàng</a></li>
                 @endauth
                 <li class="nav-item">
                     <a class="nav-link position-relative" href="{{ route('cart.index') }}">
@@ -38,15 +39,15 @@
                             $cartCount = count($cart);
                         @endphp
                         @if($cartCount > 0)
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-                              style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                            {{ $cartCount }}
-                            <span class="visually-hidden">sản phẩm trong giỏ</span>
-                        </span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                                {{ $cartCount }}
+                                <span class="visually-hidden">sản phẩm trong giỏ</span>
+                            </span>
                         @endif
                     </a>
                 </li>
-                
+
                 @auth
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -54,12 +55,19 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             @if(Auth::user()->role === 'admin')
-                            <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2"></i> Dashboard Admin</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                                        Admin</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                             @endif
-                            <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i> Tài khoản</a></li>
-                            <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i> Đơn hàng</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>
+                                    Tài khoản</a></li>
+                            <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>
+                                    Đơn hàng</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
@@ -81,54 +89,54 @@
 </nav>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle dropdown submenu clicks on mobile
-    const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu > a');
-    
-    dropdownSubmenus.forEach(function(element) {
-        element.addEventListener('click', function(e) {
-            // Only prevent default on mobile (when window is narrow)
-            if (window.innerWidth < 992) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const submenu = this.nextElementSibling;
-                const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                
-                // Close all other submenus
-                document.querySelectorAll('.dropdown-submenu > a').forEach(function(el) {
-                    if (el !== element) {
-                        el.setAttribute('aria-expanded', 'false');
-                        const otherSubmenu = el.nextElementSibling;
-                        if (otherSubmenu) {
-                            otherSubmenu.style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle dropdown submenu clicks on mobile
+        const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu > a');
+
+        dropdownSubmenus.forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                // Only prevent default on mobile (when window is narrow)
+                if (window.innerWidth < 992) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const submenu = this.nextElementSibling;
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+                    // Close all other submenus
+                    document.querySelectorAll('.dropdown-submenu > a').forEach(function (el) {
+                        if (el !== element) {
+                            el.setAttribute('aria-expanded', 'false');
+                            const otherSubmenu = el.nextElementSibling;
+                            if (otherSubmenu) {
+                                otherSubmenu.style.display = 'none';
+                            }
                         }
+                    });
+
+                    // Toggle current submenu
+                    if (isExpanded) {
+                        this.setAttribute('aria-expanded', 'false');
+                        submenu.style.display = 'none';
+                    } else {
+                        this.setAttribute('aria-expanded', 'true');
+                        submenu.style.display = 'block';
                     }
-                });
-                
-                // Toggle current submenu
-                if (isExpanded) {
-                    this.setAttribute('aria-expanded', 'false');
-                    submenu.style.display = 'none';
-                } else {
-                    this.setAttribute('aria-expanded', 'true');
-                    submenu.style.display = 'block';
-                }
-            }
-        });
-    });
-    
-    // Close submenus when main dropdown is closed
-    document.querySelectorAll('.dropdown').forEach(function(dropdown) {
-        dropdown.addEventListener('hidden.bs.dropdown', function() {
-            this.querySelectorAll('.dropdown-submenu > a').forEach(function(el) {
-                el.setAttribute('aria-expanded', 'false');
-                const submenu = el.nextElementSibling;
-                if (submenu) {
-                    submenu.style.display = 'none';
                 }
             });
         });
+
+        // Close submenus when main dropdown is closed
+        document.querySelectorAll('.dropdown').forEach(function (dropdown) {
+            dropdown.addEventListener('hidden.bs.dropdown', function () {
+                this.querySelectorAll('.dropdown-submenu > a').forEach(function (el) {
+                    el.setAttribute('aria-expanded', 'false');
+                    const submenu = el.nextElementSibling;
+                    if (submenu) {
+                        submenu.style.display = 'none';
+                    }
+                });
+            });
+        });
     });
-});
 </script>

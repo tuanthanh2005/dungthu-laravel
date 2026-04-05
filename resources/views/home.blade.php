@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'DungThu.com - Tin Công Nghệ & Mua Sắm')
+@section('title', 'Dùng Thử | AI | Blog | Khám Phá')
+
+@section('seo_h1')
+    <h1 style="display:none;">Dùng Thử | AI | Blog | Khám Phá</h1>
+@endsection
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">

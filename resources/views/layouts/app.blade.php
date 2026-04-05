@@ -17,7 +17,7 @@
     </script>
     
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="google-site-verification" content="JXAkwIu8Sp6m3NoBdys1fP9YRH7eeUiiVQ49OEGUSqw" />
     <title>@yield('title', 'DungThu.com - Trải Nghiệm & Mua Sắm')</title>
@@ -45,9 +45,29 @@
         .small-toast-text { font-size: 13px !important; }
         .swal2-toast .swal2-icon { width: 2em !important; height: 2em !important; margin: 0.5em 0.8em 0.5em 0 !important; }
         .swal2-toast { flex-direction: row !important; align-items: center !important; }
+
+        /* Fix Mobile Zoom & Overflow */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+        input, select, textarea {
+            font-size: 16px !important; /* Prevents auto-zoom on iOS */
+        }
     </style>
 </head>
-<body>
+<body class="loading">
+    {{-- PAGE PRELOADER --}}
+    <div id="page-loader" class="tf-preloader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div class="loader-spinner"></div>
+        </div>
+    </div>
+
     <!-- Navbar -->
     @include('partials.navbar')
 
@@ -230,6 +250,32 @@
         }
     </style>
     
+    <script>
+        // Handle preloader
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('page-loader');
+            loader.classList.add('fade-out');
+            setTimeout(() => {
+                loader.style.display = 'none';
+                document.body.classList.remove('loading');
+            }, 400);
+        });
+
+        // Show loader on menu/link clicks
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+            
+            const href = link.getAttribute('href');
+            const target = link.getAttribute('target');
+            
+            // Only show for internal links that don't have '#' or javascript:
+            if (href && href.startsWith('http') && !href.includes('#') && target !== '_blank' && !e.ctrlKey && !e.metaKey) {
+                document.getElementById('page-loader').style.display = 'flex';
+                document.getElementById('page-loader').classList.remove('fade-out');
+            }
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>

@@ -14,6 +14,7 @@
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">Về chúng tôi</a></li>
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Chính sách bảo mật</a></li>
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#advertisingModal">Liên hệ quảng cáo</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Liên hệ ngay</a></li>
                     <li><a href="{{ route('shop') }}">Cửa hàng</a></li>
                     <li><a href="{{ route('blog.index') }}">Blog</a></li>
                 </ul>

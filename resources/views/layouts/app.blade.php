@@ -270,32 +270,67 @@
     </style>
     
     <script>
-        // Handle preloader
-        window.addEventListener('load', function() {
+        // High-reliability preloader handler
+        (function() {
             const loader = document.getElementById('page-loader');
-            loader.classList.add('fade-out');
-            setTimeout(() => {
-                loader.style.display = 'none';
-                document.body.classList.remove('loading');
-            }, 400);
-        });
+            const body = document.body;
+            let hidden = false;
 
-        // Show loader on menu/link clicks
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('a');
-            if (!link) return;
-            
-            const href = link.getAttribute('href');
-            const target = link.getAttribute('target');
-            
-            // Only show for internal links that don't have '#' or javascript:
-            if (href && href.startsWith('http') && !href.includes('#') && target !== '_blank' && !e.ctrlKey && !e.metaKey) {
-                document.getElementById('page-loader').style.display = 'flex';
-                document.getElementById('page-loader').classList.remove('fade-out');
+            function hidePreloader() {
+                if (hidden || !loader) return;
+                hidden = true;
+                loader.classList.add('fade-out');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    body.classList.remove('loading');
+                }, 500);
             }
-        });
+
+            // Fallback 1: Window Load (standard)
+            window.addEventListener('load', hidePreloader);
+
+            // Fallback 2: Page Show (Back/Forward button fix)
+            window.addEventListener('pageshow', function(e) {
+                hidePreloader();
+            });
+
+            // Fallback 3: Safety timeout (8 seconds)
+            setTimeout(hidePreloader, 8000);
+
+            // Click listener for showing loader
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (!link || e.defaultPrevented) return;
+                
+                const href = link.getAttribute('href');
+                const target = link.getAttribute('target');
+                
+                // Ignore special links
+                if (!href || href.startsWith('#') || href.startsWith('javascript:') || 
+                    href.startsWith('tel:') || href.startsWith('mailto:')) return;
+
+                // Ignore external or new tabs
+                if (target === '_blank') return;
+                
+                // Ignore modified clicks
+                if (e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1) return;
+
+                try {
+                    const currentUrl = window.location.href.split('#')[0];
+                    const targetUrl = new URL(href, window.location.origin).href.split('#')[0];
+
+                    if (currentUrl !== targetUrl && loader) {
+                        loader.style.display = 'flex';
+                        loader.classList.remove('fade-out');
+                        body.classList.add('loading');
+                    }
+                } catch (err) {
+                    // Ignore URL parsing errors
+                }
+            });
+        })();
     </script>
-    @stack('scripts')
+@stack('scripts')
 </body>
 </html>
 

@@ -17,7 +17,7 @@
     </script>
     
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="google-site-verification" content="JXAkwIu8Sp6m3NoBdys1fP9YRH7eeUiiVQ49OEGUSqw" />
     <title>@yield('title', 'DungThu.com - Trải Nghiệm & Mua Sắm')</title>
@@ -75,25 +75,13 @@
             width: 100%;
         }
 
-        /* 5. Container padding mobile & IOS Zoom Fix */
+        /* 5. Container padding mobile */
         @media (max-width: 576px) {
             .container, .container-fluid {
                 padding-left: 12px !important;
                 padding-right: 12px !important;
             }
             .ad-block.ad-sidebar { min-height: 200px; } /* Nhỏ hơn trên mobile */
-            
-            /* BẮT BUỘC ĐỂ IOS (iPHONE) KHÔNG TỰ ĐỘNG ZOOM TO MÀN HÌNH KHI NHẬP TEXT */
-            input[type="text"],
-            input[type="number"],
-            input[type="email"],
-            input[type="password"],
-            input[type="tel"],
-            input[type="search"],
-            textarea,
-            select {
-                font-size: 16px !important;
-            }
         }
     </style>
 

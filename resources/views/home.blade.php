@@ -282,7 +282,7 @@ body { background-color:#dae0e6; overflow-y:scroll; }
             <div class="tf-ad mt-4" style="height:250px;">
                 <ins class="adsbygoogle" style="display:block;width:100%;height:250px;"
                      data-ad-client="ca-pub-3065867660863139"
-                     data-ad-slot="auto" data-ad-format="rectangle"></ins>
+                     data-ad-slot="4989157975" data-ad-format="rectangle"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>
@@ -514,7 +514,7 @@ body { background-color:#dae0e6; overflow-y:scroll; }
             <div class="tf-ad mb-3" style="height:260px;">
                 <ins class="adsbygoogle" style="display:block;width:100%;height:260px;"
                      data-ad-client="ca-pub-3065867660863139"
-                     data-ad-slot="auto" data-ad-format="rectangle"></ins>
+                     data-ad-slot="4989157975" data-ad-format="rectangle"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
 
@@ -581,7 +581,7 @@ body { background-color:#dae0e6; overflow-y:scroll; }
             <div class="tf-ad mb-3" style="height:200px;">
                 <ins class="adsbygoogle" style="display:block;width:100%;height:200px;"
                      data-ad-client="ca-pub-3065867660863139"
-                     data-ad-slot="auto" data-ad-format="rectangle"></ins>
+                     data-ad-slot="4989157975" data-ad-format="rectangle"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
 

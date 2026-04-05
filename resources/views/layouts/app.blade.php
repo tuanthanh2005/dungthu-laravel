@@ -56,7 +56,7 @@
         {{-- GLOBAL TOP AD (Desktop only, minimal height) --}}
         <div class="container-fluid d-none d-lg-block pb-3" style="max-width:1200px; margin: 0 auto;">
             <div style="border-bottom: 1px solid #eee; padding: 10px 0; text-align: center; min-height: 90px; overflow: hidden;">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="auto" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>
@@ -66,7 +66,7 @@
         {{-- GLOBAL PRE-FOOTER AD (System wide) --}}
         <div class="container-fluid py-4" style="max-width:1100px; margin: 0 auto;">
             <div style="background: #fdfdfd; border: 1px dashed #ddd; border-radius: 12px; padding: 15px; text-align: center; min-height: 100px; overflow: hidden;">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout="in-article"></ins>
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975" data-ad-format="fluid" data-ad-layout="in-article"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>

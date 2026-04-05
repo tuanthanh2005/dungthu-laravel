@@ -120,8 +120,11 @@ class CartController extends Controller
         $hasDigital = false;
         $hasPhysical = false;
         
+        $productIds = array_keys($cart);
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+        
         foreach($cart as $id => $details) {
-            $product = Product::find($id);
+            $product = $products->get($id);
             if($product) {
                 if($product->delivery_type === 'digital') {
                     $hasDigital = true;
@@ -149,14 +152,10 @@ class CartController extends Controller
         $cart = session()->get('cart');
         
         // Kiểm tra loại đơn hàng
-        $hasPhysical = false;
-        foreach($cart as $id => $details) {
-            $product = Product::find($id);
-            if($product && $product->delivery_type === 'physical') {
-                $hasPhysical = true;
-                break;
-            }
-        }
+        $productIds = array_keys($cart);
+        $hasPhysical = Product::whereIn('id', $productIds)
+            ->where('delivery_type', 'physical')
+            ->exists();
         
         // Validate theo loại đơn hàng
         $rules = [

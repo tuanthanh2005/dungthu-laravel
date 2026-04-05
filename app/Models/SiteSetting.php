@@ -13,8 +13,10 @@ class SiteSetting extends Model
 
     public static function getValue(string $key, $default = null)
     {
-        $record = static::query()->where('key', $key)->first();
-        return $record ? $record->value : $default;
+        return \Illuminate\Support\Facades\Cache::remember('site_setting.' . $key, now()->addHours(24), function () use ($key, $default) {
+            $record = static::query()->where('key', $key)->first();
+            return $record ? $record->value : $default;
+        });
     }
 
     public static function setValue(string $key, $value): void
@@ -23,5 +25,6 @@ class SiteSetting extends Model
             ['key' => $key],
             ['value' => (string) $value]
         );
+        \Illuminate\Support\Facades\Cache::forget('site_setting.' . $key);
     }
 }

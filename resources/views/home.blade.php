@@ -342,9 +342,13 @@ body { background-color:#dae0e6; overflow-y:scroll; }
                 </div>
                 <a href="{{ route('blog.show', $b->slug) }}" class="tf-title">{{ $b->title }}</a>
                 @if($b->image)
-                <div class="tf-media"><img src="{{ $b->image }}" alt="{{ $b->title }}"></div>
+                <div class="tf-media">
+                    <a href="{{ route('blog.show', $b->slug) }}">
+                        <img src="{{ $b->image }}" alt="{{ $b->title }}">
+                    </a>
+                </div>
                 @endif
-                <p class="tf-excerpt">{{ Str::limit(strip_tags($b->content), 140) }}</p>
+                <p class="tf-excerpt">{{ Str::limit(strip_tags(html_entity_decode($b->content)), 140) }}</p>
                 <div class="tf-actions">
                     <a href="{{ route('blog.show', $b->slug) }}" class="tf-action"><i class="fa-regular fa-comment"></i> Đọc thêm</a>
                     <button class="tf-action" onclick="copyLink(this)"><i class="fa-solid fa-share"></i> Chia sẻ</button>
@@ -392,9 +396,13 @@ body { background-color:#dae0e6; overflow-y:scroll; }
                 </div>
                 <a href="{{ route('blog.show', $b->slug) }}" class="tf-title">{{ $b->title }}</a>
                 @if($b->image)
-                <div class="tf-media"><img src="{{ $b->image }}" alt="{{ $b->title }}"></div>
+                <div class="tf-media">
+                    <a href="{{ route('blog.show', $b->slug) }}">
+                        <img src="{{ $b->image }}" alt="{{ $b->title }}">
+                    </a>
+                </div>
                 @endif
-                <p class="tf-excerpt">{{ Str::limit(strip_tags($b->content), 140) }}</p>
+                <p class="tf-excerpt">{{ Str::limit(strip_tags(html_entity_decode($b->content)), 140) }}</p>
                 <div class="tf-actions">
                     <a href="{{ route('blog.show', $b->slug) }}" class="tf-action"><i class="fa-regular fa-comment"></i> Đọc thêm</a>
                     <button class="tf-action" onclick="copyLink(this)"><i class="fa-solid fa-share"></i> Chia sẻ</button>
@@ -443,7 +451,14 @@ body { background-color:#dae0e6; overflow-y:scroll; }
                     <span>•</span> <span>{{ $b->created_at->diffForHumans() }}</span>
                 </div>
                 <a href="{{ route('blog.show', $b->slug) }}" class="tf-title">{{ $b->title }}</a>
-                <p class="tf-excerpt">{{ Str::limit(strip_tags($b->content), 120) }}</p>
+                @if($b->image)
+                <div class="tf-media">
+                    <a href="{{ route('blog.show', $b->slug) }}">
+                        <img src="{{ $b->image }}" alt="{{ $b->title }}">
+                    </a>
+                </div>
+                @endif
+                <p class="tf-excerpt">{{ Str::limit(strip_tags(html_entity_decode($b->content)), 120) }}</p>
                 <div class="tf-actions">
                     <a href="{{ route('blog.show', $b->slug) }}" class="tf-action"><i class="fa-regular fa-comment"></i> Đọc thêm</a>
                     <button class="tf-action" onclick="copyLink(this)"><i class="fa-solid fa-share"></i> Chia sẻ</button>

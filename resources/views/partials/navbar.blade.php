@@ -1,147 +1,118 @@
-<nav class="navbar navbar-expand-lg navbar-light navbar-glass fixed-top">
-    <div class="container-fluid px-4">
-        <a class="navbar-brand fw-bold fs-3" href="{{ route('home') }}" style="color: var(--primary);">
-            <i class="fas fa-layer-group"></i> DungThu<span class="text-dark">.com</span>
+<nav class="navbar navbar-expand-lg navbar-techfeed sticky-top" id="mainNavbar">
+    <div class="container-fluid px-3 px-xl-5">
+        {{-- Logo --}}
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span>DungThu<span class="brand-dot">.com</span></span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center nav-wrap">
-                <li class="nav-item"><a class="nav-link" href="{{ route('shop') }}">Cửa Hàng</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">Cộng đồng</a></li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative d-inline-block" href="{{ route('card-exchange.index') }}"
-                        style="position:relative; display:inline-block;">
-                        Đổi thẻ cào
-                    </a>
-                </li>
-                {{-- -<li class="nav-item">
-                    <a class="nav-link" href="{{ route('buff.index') }}">
-                        🎯 Dịch vụ Buff
-                    </a>
-                </li> --}}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('web-design') }}">
-                        Thiết kế website
-                    </a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">Blog</a></li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">
-                        <i class="fas fa-phone me-1"></i>Liên Hệ
-                    </a>
-                </li>
-                @auth
-                    <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('user.orders') }}"><i
-                                class="fas fa-box me-2"></i>Đơn hàng</a></li>
-                @endauth
-                <li class="nav-item">
-                    <a class="nav-link position-relative" href="{{ route('cart.index') }}">
-                        <i class="fas fa-shopping-cart"></i> Giỏ hàng
-                        @php
-                            $cart = session('cart', []);
-                            $cartCount = count($cart);
-                        @endphp
-                        @if($cartCount > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                                {{ $cartCount }}
-                                <span class="visually-hidden">sản phẩm trong giỏ</span>
-                            </span>
-                        @endif
-                    </a>
-                </li>
 
-                @auth
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            @if(Auth::user()->role === 'admin')
-                                <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                                        Admin</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                            @endif
-                            <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>
-                                    Tài khoản</a></li>
-                            <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>
-                                    Đơn hàng</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-3 py-2 ms-2">Đăng Nhập</a>
-                    </li>
-                @endauth
-            </ul>
+        {{-- Search Bar (desktop) --}}
+        <div class="mx-auto d-none d-lg-flex search-bar-wrap align-items-center">
+            <form class="search-bar-inner" action="{{ route('shop') }}" method="GET">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" name="search" class="search-input" 
+                       placeholder="Tìm kiếm tin tức, sản phẩm, đánh giá..."
+                       value="{{ request('search') }}">
+            </form>
+        </div>
+
+        {{-- Right Actions --}}
+        <div class="d-flex align-items-center gap-2 gap-sm-3">
+            {{-- Shop Button (desktop) --}}
+            <a href="{{ route('shop') }}" class="btn-shop d-none d-sm-flex align-items-center gap-1">
+                <i class="fa-solid fa-store"></i>
+                <span>Cửa hàng</span>
+            </a>
+
+            {{-- Cart --}}
+            <a href="{{ route('cart.index') }}" class="nav-icon-btn position-relative" aria-label="Giỏ hàng">
+                <i class="fa-solid fa-cart-shopping"></i>
+                @php $cartCount = count(session('cart', [])); @endphp
+                @if($cartCount > 0)
+                    <span class="nav-badge">{{ $cartCount }}</span>
+                @endif
+            </a>
+
+            {{-- Mobile Search --}}
+            <button class="nav-icon-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchBar" aria-label="Tìm kiếm">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            {{-- User Menu --}}
+            @auth
+                <div class="dropdown">
+                    <button class="user-avatar-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="user-initial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-techfeed">
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="fw-bold text-sm">{{ Auth::user()->name }}</div>
+                            <div class="text-muted" style="font-size:0.78rem;">{{ Auth::user()->email }}</div>
+                        </li>
+                        @if(Auth::user()->role === 'admin')
+                            <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Admin</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        @endif
+                        <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
+                        <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            @else
+                <a href="{{ route('login') }}" class="btn-login">Đăng Nhập</a>
+            @endauth
+        </div>
+    </div>
+
+    {{-- Mobile Search Bar (collapsed) --}}
+    <div class="collapse w-100" id="mobileSearchBar">
+        <div class="px-3 pb-2">
+            <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
+            </form>
         </div>
     </div>
 </nav>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Handle dropdown submenu clicks on mobile
-        const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu > a');
-
-        dropdownSubmenus.forEach(function (element) {
-            element.addEventListener('click', function (e) {
-                // Only prevent default on mobile (when window is narrow)
-                if (window.innerWidth < 992) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const submenu = this.nextElementSibling;
-                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
-
-                    // Close all other submenus
-                    document.querySelectorAll('.dropdown-submenu > a').forEach(function (el) {
-                        if (el !== element) {
-                            el.setAttribute('aria-expanded', 'false');
-                            const otherSubmenu = el.nextElementSibling;
-                            if (otherSubmenu) {
-                                otherSubmenu.style.display = 'none';
-                            }
-                        }
-                    });
-
-                    // Toggle current submenu
-                    if (isExpanded) {
-                        this.setAttribute('aria-expanded', 'false');
-                        submenu.style.display = 'none';
-                    } else {
-                        this.setAttribute('aria-expanded', 'true');
-                        submenu.style.display = 'block';
-                    }
-                }
-            });
-        });
-
-        // Close submenus when main dropdown is closed
-        document.querySelectorAll('.dropdown').forEach(function (dropdown) {
-            dropdown.addEventListener('hidden.bs.dropdown', function () {
-                this.querySelectorAll('.dropdown-submenu > a').forEach(function (el) {
-                    el.setAttribute('aria-expanded', 'false');
-                    const submenu = el.nextElementSibling;
-                    if (submenu) {
-                        submenu.style.display = 'none';
-                    }
-                });
-            });
-        });
-    });
-</script>
+{{-- Mobile Bottom Nav --}}
+<nav class="mobile-bottom-nav d-lg-none">
+    <a href="{{ route('home') }}" class="mobile-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+        <i class="fa-solid fa-house"></i>
+        <span>Trang chủ</span>
+    </a>
+    <a href="{{ route('shop') }}" class="mobile-nav-item {{ request()->routeIs('shop') ? 'active' : '' }}">
+        <i class="fa-solid fa-store"></i>
+        <span>Cửa hàng</span>
+    </a>
+    <a href="{{ route('blog.index') }}" class="mobile-nav-item {{ request()->routeIs('blog.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-newspaper"></i>
+        <span>Blog</span>
+    </a>
+    <a href="{{ route('cart.index') }}" class="mobile-nav-item position-relative {{ request()->routeIs('cart.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-cart-shopping"></i>
+        @if(isset($cartCount) && $cartCount > 0)
+            <span class="nav-badge">{{ $cartCount }}</span>
+        @endif
+        <span>Giỏ hàng</span>
+    </a>
+    @auth
+        <a href="{{ route('user.account') }}" class="mobile-nav-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-user"></i>
+            <span>Tài khoản</span>
+        </a>
+    @else
+        <a href="{{ route('login') }}" class="mobile-nav-item">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Đăng nhập</span>
+        </a>
+    @endauth
+</nav>

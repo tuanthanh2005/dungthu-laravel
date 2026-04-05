@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TechFeed | Cộng đồng Công nghệ & Mua sắm</title>
+    <meta name="description" content="Trang tổng hợp tin tức công nghệ đa chiều và cửa hàng thiết bị điện tử hiện đại.">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-body: #dae0e6;
+            /* Màu nền xám đặc trưng của dạng Feed */
+            --bg-card: #ffffff;
+            --brand-color: #ff4500;
+            /* Màu cam phong cách Reddit, có thể đổi */
+            --text-main: #1c1c1c;
+            --text-muted: #787c7e;
+            --border-color: #ccc;
+            --hover-bg: #f6f7f8;
+            --radius-md: 12px;
+            /* Bo góc hiện đại */
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-y: scroll;
+        }
+
+        /* Navbar kiểu Reddit: Search bar ở giữa */
+        .navbar {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--text-main) !important;
+            font-size: 1.4rem;
+        }
+
+        .search-bar {
+            background-color: #f6f7f8;
+            border: 1px solid transparent;
+            border-radius: 20px;
+            /* Bo góc tròn trịa */
+            padding: 8px 16px;
+            width: 100%;
+            max-width: 600px;
+            transition: all 0.2s;
+        }
+
+        .search-bar:hover,
+        .search-bar:focus-within {
+            background-color: #fff;
+            border-color: var(--brand-color);
+        }
+
+        .search-input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            margin-left: 10px;
+        }
+
+        /* Bố cục cột Sticky (Giữ nguyên khi cuộn) */
+        .sticky-column {
+            position: sticky;
+            top: 70px;
+            max-height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        /* Ẩn thanh cuộn cho cột sticky */
+        .sticky-column::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Menu Cột Trái */
+        .side-menu-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+        }
+
+        .side-menu-link:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .side-menu-link i {
+            width: 24px;
+            font-size: 1.1rem;
+        }
+
+        /* Thẻ Bài Viết (Feed Card) */
+        .feed-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+            transition: border 0.2s;
+            display: flex;
+            /* Dùng flex để chia cột VOTE và NỘI DUNG */
+            overflow: hidden;
+        }
+
+        .feed-card:hover {
+            border-color: #898989;
+        }
+
+        /* Cột Vote bên trái bài viết */
+        .vote-col {
+            background-color: #f8f9fa;
+            width: 44px;
+            padding: 12px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid transparent;
+        }
+
+        .vote-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .vote-btn:hover {
+            background-color: #e9ecef;
+            color: var(--brand-color);
+        }
+
+        .vote-count {
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin: 4px 0;
+        }
+
+        /* Nội dung bài viết */
+        .post-content {
+            padding: 12px;
+            width: 100%;
+        }
+
+        .post-header {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .post-header img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .category-name {
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .category-name:hover {
+            text-decoration: underline;
+        }
+
+        .post-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Tối ưu ảnh chuẩn SEO CLS */
+        .post-media {
+            width: 100%;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background-color: #eee;
+            margin-bottom: 12px;
+        }
+
+        .post-media img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Thanh công cụ bài viết (Comments, Share...) */
+        .post-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* Card Bán hàng xen kẽ (Shop Card in Feed) */
+        .shop-badge {
+            background-color: #e0f7fa;
+            color: #00838f;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #e53935;
+        }
+
+        /* Cột Sidebar Phải */
+        .widget-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .widget-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        /* Quảng cáo */
+        .ad-slot {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+            font-size: 0.85rem;
+            text-align: center;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid px-3 px-xl-5">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center me-2"
+                        style="width: 32px; height: 32px; background-color: var(--brand-color)!important;">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    TechFeed
+                </a>
+
+                <div class="mx-auto d-none d-md-flex search-bar align-items-center">
+                    <i class="fa-solid fa-magnifying-glass text-muted ps-2"></i>
+                    <input type="text" class="search-input" placeholder="Tìm kiếm tin tức, sản phẩm, đánh giá...">
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <a href="#shop" class="btn btn-outline-dark rounded-pill fw-bold d-none d-sm-block px-3">
+                        <i class="fa-solid fa-store me-1"></i> Cửa hàng
+                    </a>
+                    <a href="#"
+                        class="text-dark position-relative fs-5 text-decoration-none bg-light rounded-circle p-2 d-flex">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            style="font-size: 0.6rem;">2</span>
+                    </a>
+                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center cursor-pointer"
+                        style="width: 36px; height: 36px;">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container-fluid px-3 px-xl-5 mt-4">
+        <div class="row justify-content-center">
+
+            <div class="col-lg-2 d-none d-lg-block">
+                <div class="sticky-column">
+                    <div class="text-muted small fw-bold mb-2 px-3">KHÁM PHÁ</div>
+                    <nav class="d-flex flex-column mb-4">
+                        <a href="#" class="side-menu-link" style="background-color: #f6f7f8;"><i
+                                class="fa-solid fa-house"></i> Trang chủ</a>
+                        <a href="#" class="side-menu-link"><i class="fa-solid fa-fire text-danger"></i> Phổ biến</a>
+                        <a href="#" class="side-menu-link"><i class="fa-solid fa-mobile-screen"></i> Công nghệ mới</a>
+                        <a href="#" class="side-menu-link"><i class="fa-solid fa-gamepad"></i> Gaming & PC</a>
+                    </nav>
+
+                    <div class="text-muted small fw-bold mb-2 px-3">CỬA HÀNG SHOP</div>
+                    <nav class="d-flex flex-column mb-4">
+                        <a href="#" class="side-menu-link"><i class="fa-solid fa-tags text-success"></i> Khuyến mãi
+                            Hot</a>
+                        <a href="#" class="side-menu-link"><i class="fa-solid fa-laptop"></i> Laptop & Mac</a>
+                        <a href="#" class="side-menu-link"><i class="fa-solid fa-headphones"></i> Phụ kiện âm thanh</a>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-7 col-xl-6">
+
+                <div class="feed-card p-2 mb-3 d-flex gap-2 bg-white" style="border-radius: var(--radius-sm);">
+                    <button class="btn btn-light rounded-pill fw-bold text-muted border-0 active"
+                        style="background-color: #f0f2f5; color: var(--text-main)!important;"><i
+                            class="fa-solid fa-certificate me-1"></i> Mới nhất</button>
+                    <button class="btn btn-light rounded-pill fw-bold text-muted border-0"><i
+                            class="fa-solid fa-fire me-1"></i> Hot</button>
+                    <button class="btn btn-light rounded-pill fw-bold text-muted border-0"><i
+                            class="fa-solid fa-arrow-up-right-dots me-1"></i> Xu hướng</button>
+                </div>
+
+                <article class="feed-card">
+                    <div class="vote-col">
+                        <button class="vote-btn"><i class="fa-solid fa-arrow-up"></i></button>
+                        <span class="vote-count">1.2k</span>
+                        <button class="vote-btn"><i class="fa-solid fa-arrow-down"></i></button>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-header">
+                            <img src="https://ui-avatars.com/api/?name=Tech&background=0D8ABC&color=fff" alt="icon">
+                            <a href="#" class="category-name">c/TinCongNghe</a>
+                            <span class="ms-1 text-muted">• Đăng bởi u/HoangDev • 2 giờ trước</span>
+                        </div>
+                        <a href="#" class="post-title">Apple có thể sẽ ra mắt thiết bị màn hình gập đầu tiên vào năm
+                            2026?</a>
+                        <div class="post-media">
+                            <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                                alt="Apple Concept" loading="lazy">
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn"><i class="fa-regular fa-message"></i> 245 Bình luận</button>
+                            <button class="action-btn"><i class="fa-solid fa-share"></i> Chia sẻ</button>
+                            <button class="action-btn"><i class="fa-regular fa-bookmark"></i> Lưu</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="feed-card" style="border: 1px solid #b2ebf2;">
+                    <div class="vote-col" style="background-color: #e0f7fa;">
+                        <button class="vote-btn text-info"><i class="fa-solid fa-arrow-up"></i></button>
+                        <span class="vote-count text-info">Hot</span>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-header">
+                            <img src="https://ui-avatars.com/api/?name=Shop&background=E53935&color=fff" alt="icon">
+                            <a href="#" class="category-name">Cửa Hàng Chính Hãng</a>
+                            <span class="shop-badge"><i class="fa-solid fa-bolt"></i> Flash Sale</span>
+                        </div>
+                        <a href="#" class="post-title">Bàn phím cơ không dây Keychron K2 Pro - Bản nhôm nguyên khối</a>
+
+                        <div class="row g-3 align-items-center mb-3">
+                            <div class="col-sm-5">
+                                <div class="post-media mb-0">
+                                    <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                                        alt="Bàn phím cơ" loading="lazy" style="height: 180px;">
+                                </div>
+                            </div>
+                            <div class="col-sm-7">
+                                <p class="text-muted small mb-2">Trải nghiệm gõ phím đỉnh cao với switch tùy chỉnh. Hỗ
+                                    trợ Hot-swap, pin 4000mAh sử dụng lên đến 2 tháng.</p>
+                                <div class="product-price mb-3">2.150.000 ₫ <del
+                                        class="text-muted fs-6 fw-normal ms-2">2.500.000 ₫</del></div>
+                                <button class="btn btn-danger w-100 rounded-pill fw-bold"><i
+                                        class="fa-solid fa-cart-plus"></i> Thêm vào giỏ hàng ngay</button>
+                            </div>
+                        </div>
+
+                        <div class="post-actions">
+                            <button class="action-btn"><i class="fa-regular fa-message"></i> 89 Đánh giá</button>
+                            <button class="action-btn"><i class="fa-solid fa-share"></i> Chia sẻ</button>
+                        </div>
+                    </div>
+                </article>
+
+                <div class="ad-slot w-100 mb-3" style="height: 120px;">
+                    <i class="fa-solid fa-rectangle-ad me-2"></i> [Quảng Cáo AdSense In-feed tự động (Responsive)]
+                </div>
+
+                <article class="feed-card">
+                    <div class="vote-col">
+                        <button class="vote-btn"><i class="fa-solid fa-arrow-up"></i></button>
+                        <span class="vote-count">854</span>
+                        <button class="vote-btn"><i class="fa-solid fa-arrow-down"></i></button>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-header">
+                            <img src="https://ui-avatars.com/api/?name=Review&background=2E7D32&color=fff" alt="icon">
+                            <a href="#" class="category-name">c/DanhGiaDao</a>
+                            <span class="ms-1 text-muted">• Đăng bởi u/Reviewer • 5 giờ trước</span>
+                        </div>
+                        <a href="#" class="post-title">Đánh giá nhanh tai nghe Sony WF-1000XM5: Có thực sự chống ồn vô
+                            đối?</a>
+                        <p class="small text-dark mb-2">Mình vừa trên tay em này được 2 ngày. Thiết kế nhỏ gọn hơn bản
+                            cũ khá nhiều, đeo cực kỳ fit tai...</p>
+                        <div class="post-actions mt-3">
+                            <button class="action-btn"><i class="fa-regular fa-message"></i> 112 Bình luận</button>
+                            <button class="action-btn"><i class="fa-solid fa-share"></i> Chia sẻ</button>
+                            <button class="action-btn"><i class="fa-regular fa-bookmark"></i> Lưu</button>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="sticky-column">
+
+                    <div class="widget-card">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fa-solid fa-circle-info text-primary fs-4 me-2"></i>
+                            <h2 class="h6 fw-bold mb-0">Về TechFeed</h2>
+                        </div>
+                        <p class="small text-muted mb-3">Nền tảng chia sẻ kiến thức công nghệ kết hợp mua sắm trực
+                            tuyến. Nơi bạn tìm thấy mọi thông tin hữu ích và sản phẩm chất lượng.</p>
+                        <hr class="my-2 border-secondary opacity-25">
+                        <div class="d-flex justify-content-between small fw-bold mt-2">
+                            <div class="text-center">
+                                <div class="fs-5 text-dark">154k</div>
+                                <div class="text-muted">Thành viên</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="fs-5 text-success"><span
+                                        class="bg-success rounded-circle d-inline-block me-1"
+                                        style="width: 8px; height: 8px;"></span>2.5k</div>
+                                <div class="text-muted">Online</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-dark w-100 rounded-pill mt-3 fw-bold">Tạo bài viết mới</button>
+                    </div>
+
+                    <div class="ad-slot w-100 mb-3" style="height: 250px;">
+                        [AdSense Sidebar 300x250]
+                    </div>
+
+                    <div class="widget-card">
+                        <div class="widget-title">Top Bán Chạy Tuần Này</div>
+                        <ul class="list-unstyled mb-0">
+                            <li class="d-flex align-items-center mb-3">
+                                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+                                    alt="Apple Watch" class="rounded me-2"
+                                    style="width: 40px; height: 40px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <a href="#"
+                                        class="text-dark text-decoration-none fw-bold small line-clamp-1 d-block">Apple
+                                        Watch SE 2</a>
+                                    <span class="text-danger fw-bold" style="font-size: 0.8rem;">5.990.000₫</span>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+                                    alt="Headphone" class="rounded me-2"
+                                    style="width: 40px; height: 40px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <a href="#"
+                                        class="text-dark text-decoration-none fw-bold small line-clamp-1 d-block">Tai
+                                        nghe Sony WH-1000XM4</a>
+                                    <span class="text-danger fw-bold" style="font-size: 0.8rem;">6.200.000₫</span>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-primary w-100 btn-sm rounded-pill mt-2 fw-bold">Xem tất cả
+                            cửa hàng</a>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 small text-muted px-2">
+                        <a href="#" class="text-muted text-decoration-none hover-underline">Điều khoản</a>
+                        <a href="#" class="text-muted text-decoration-none hover-underline">Bảo mật</a>
+                        <a href="#" class="text-muted text-decoration-none hover-underline">Chính sách Cookie</a>
+                        <a href="#" class="text-muted text-decoration-none hover-underline">Quảng cáo</a>
+                        <span class="w-100 mt-1">TechFeed Inc © 2026.</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

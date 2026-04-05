@@ -26,179 +26,25 @@
     <link rel="icon" type="image/png" href="{{ asset('images/dungthu.png') }}">
     
     <!-- Bootstrap & Font Awesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    
-    <!-- Custom CSS -->
+
+    <!-- TechFeed Theme -->
+    <link rel="stylesheet" href="{{ asset('css/techfeed.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/techfeed.css')) }}">
+
+    <!-- Page-specific CSS -->
     @stack('styles')
-    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/mobile.css')) }}">
 
     <style>
-        /* Navbar Styling */
-        .navbar-glass {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .navbar-glass .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary) !important;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-glass .navbar-brand:hover {
-            opacity: 0.8;
-        }
-
-        .navbar-glass .navbar-brand span {
-            color: #2d3436;
-        }
-
-        .navbar-glass .nav-link {
-            color: #2d3436 !important;
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin: 0 0.25rem;
-            padding: 0.5rem 0.75rem !important;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            position: relative;
-            white-space: nowrap;
-        }
-
-        .navbar-glass .nav-link:hover {
-            color: var(--primary) !important;
-            background: rgba(108, 92, 231, 0.1);
-        }
-
-        .navbar-glass .nav-link.active {
-            color: var(--primary) !important;
-            background: rgba(108, 92, 231, 0.15);
-        }
-
-        .navbar-glass .dropdown-toggle::after {
-            border: 0.25em solid transparent;
-            border-top-color: #2d3436;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-glass .dropdown-toggle[aria-expanded="true"]::after {
-            transform: rotate(180deg);
-        }
-
-        .navbar-glass .dropdown-menu {
-            border: 1px solid #e9ecef;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            margin-top: 0.5rem;
-        }
-
-        .navbar-glass .dropdown-item {
-            color: #2d3436;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .navbar-glass .dropdown-item:hover {
-            color: var(--primary);
-            background: #f8f9fa;
-        }
-
-        .navbar-glass .dropdown-item.active {
-            background: rgba(108, 92, 231, 0.1);
-            color: var(--primary);
-        }
-
-        .navbar-glass .dropdown-item.text-danger:hover {
-            background: #fff5f5;
-            color: #dc3545;
-        }
-
-        /* Navbar brand icon */
-        .navbar-glass .navbar-brand i {
-            color: var(--primary);
-            margin-right: 0.35rem;
-        }
-
-        /* Nav icons */
-        .navbar-glass .nav-link i {
-            color: inherit;
-        }
-
-        /* Navbar items container - ensure they don't wrap */
-        .navbar-glass .navbar-nav {
-            gap: 0.25rem;
-        }
-
-        /* Button styling in navbar */
-        .navbar-glass .btn-primary {
-
-            border: none;
-            box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-size: 0.95rem;
-            white-space: nowrap;
-            display: inline-block !important;
-            visibility: visible !important;
-            color: white !important;
-        }
-
-        .navbar-glass .btn-primary:hover {
-            background: linear-gradient(135deg, #5f4ec7 0%, #9080d8 100%);
-            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
-            transform: translateY(-1px);
-            color: white !important;
-        }
-
-        .navbar-glass .btn-primary:focus {
-            color: white !important;
-            box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25) !important;
-        }
-
-        .navbar-glass .disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Ensure nav item with button is visible */
-        .navbar-glass .navbar-nav .nav-item:has(.btn-primary) {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Badge styling */
-        .navbar-glass .badge {
-            font-weight: 600;
-        }
-
-        @media (max-width: 991.98px) {
-            .navbar-glass .navbar-collapse {
-                background: white;
-                margin-top: 0.5rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                padding: 0.75rem 0;
-            }
-
-            .navbar-glass .nav-link {
-                padding: 0.7rem 1rem !important;
-            }
-
-            .navbar-glass .navbar-nav {
-                gap: 0;
-            }
-
-            .navbar-glass .nav-item .btn-primary {
-                display: block !important;
-                width: auto !important;
-                margin-top: 0.5rem;
-            }
-        }
+        /* TechFeed global toast overrides */
+        .small-toast { font-size: 13px !important; }
+        .small-toast-title { font-size: 15px !important; margin-bottom: 5px !important; }
+        .small-toast-text { font-size: 13px !important; }
+        .swal2-toast .swal2-icon { width: 2em !important; height: 2em !important; margin: 0.5em 0.8em 0.5em 0 !important; }
+        .swal2-toast { flex-direction: row !important; align-items: center !important; }
     </style>
 </head>
 <body>
@@ -207,7 +53,23 @@
 
     <!-- Main Content -->
     <main>
+        {{-- GLOBAL TOP AD (Desktop only, minimal height) --}}
+        <div class="container-fluid d-none d-lg-block pb-3" style="max-width:1200px; margin: 0 auto;">
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0; text-align: center; min-height: 90px; overflow: hidden;">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="auto" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+        </div>
+
         @yield('content')
+
+        {{-- GLOBAL PRE-FOOTER AD (System wide) --}}
+        <div class="container-fluid py-4" style="max-width:1100px; margin: 0 auto;">
+            <div style="background: #fdfdfd; border: 1px dashed #ddd; border-radius: 12px; padding: 15px; text-align: center; min-height: 100px; overflow: hidden;">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout="in-article"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -217,7 +79,7 @@
     @include('partials.chat')
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

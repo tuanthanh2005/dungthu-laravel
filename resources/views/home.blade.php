@@ -1,1056 +1,675 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
-@section('title', 'DungThu.com - Trải Nghiệm & Mua Sắm')
+@section('title', 'DungThu.com - Tin Công Nghệ & Mua Sắm')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/home.css')) }}">
-    <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <style>
-        .category-row {
-            display: none;
-        }
-        .category-item {
-            min-width: 0;
-        }
-        .category-row .cat-box {
-            padding: 12px;
-        }
-        
-        
-        /* Mobile: Giảm font size section titles */
-        @media (max-width: 768px) {
-            .section-title {
-                font-size: calc(1.5rem - 3px) !important;
-            }
-        }
-        
-        /* Mobile: Giảm font size hero section */
-        @media (max-width: 768px) {
-            .hero-section h1 {
-                font-size: calc(1.18rem + 0.3vw) !important;
-                line-height: 1.25;
-            }
-            .hero-section .typing-text {
-                font-size: calc(1.18rem + 0.3vw) !important;
-                white-space: nowrap;
-                display: inline-block;
-            }
-            .hero-section .lead {
-                font-size: calc(0.92rem + 0.05vw) !important;
-            }
-        }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+/* =========================================================
+   TECHFEED HOME — matching test.html prototype exactly
+   ========================================================= */
 
-        .hero-socials {
-            display: inline-flex;
-            gap: 10px;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .hero-socials a {
-            width: 34px;
-            height: 34px;
-            border-radius: 999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-decoration: none;
-            background: rgba(255,255,255,0.18);
-            border: 1px solid rgba(255,255,255,0.35);
-            backdrop-filter: blur(2px);
-            transition: transform .15s ease, background .15s ease;
-        }
-        .hero-socials a:hover {
-            transform: translateY(-2px);
-            background: rgba(255,255,255,0.28);
-        }
-        .hero-socials .zalo-pill {
-            font-weight: 800;
-            font-size: 14px;
-            letter-spacing: 0.02em;
-        }
+/* ---- Body override for this page ---- */
+body { background-color:#dae0e6; overflow-y:scroll; }
 
-        /* Recent purchase toast (social proof) */
-        .recent-purchase-toast {
-            position: fixed;
-            left: 18px;
-            bottom: 18px;
-            width: min(420px, calc(100vw - 36px));
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 18px 50px rgba(0,0,0,0.18);
-            border: 1px solid rgba(0,0,0,0.06);
-            padding: 14px 14px 12px;
-            z-index: 2000;
-            opacity: 0;
-            transform: translateY(16px);
-            pointer-events: none;
-            transition: opacity .25s ease, transform .25s ease;
-        }
-        .recent-purchase-toast.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .rpt-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .rpt-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 13px;
-            line-height: 1;
-        }
-        .rpt-pill.buy { background: #12b76a; color: #fff; }
-        .rpt-pill.verify { background: rgba(16,185,129,0.12); color: #0f766e; border: 1px solid rgba(16,185,129,0.25); }
-        .rpt-close {
-            margin-left: auto;
-            border: none;
-            background: transparent;
-            font-size: 20px;
-            line-height: 1;
-            color: #6b7280;
-            padding: 0 6px;
-            cursor: pointer;
-        }
-        .rpt-body {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .rpt-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #12b76a, #00cec9);
-            color: #fff;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-            position: relative;
-        }
-        .rpt-avatar .rpt-badge {
-            position: absolute;
-            right: -2px;
-            bottom: -2px;
-            width: 18px;
-            height: 18px;
-            background: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #fff;
-        }
-        .rpt-name { font-weight: 800; font-size: 16px; }
-        .rpt-sub { color: #6b7280; font-size: 13px; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-        .rpt-product {
-            display: block;
-            margin-top: 10px;
-            background: rgba(16,185,129,0.12);
-            border: 1px solid rgba(16,185,129,0.20);
-            border-radius: 12px;
-            padding: 10px 12px;
-            text-decoration: none;
-            color: inherit;
-        }
-        .rpt-product-title {
-            font-weight: 800;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .rpt-product-meta {
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 4px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        @media (max-width: 576px) {
-            /* Mobile-only balance + clarity */
-            .hero-section { padding: 28px 0 40px; }
-            .hero-section h1 { letter-spacing: -0.3px; }
-            .hero-section .lead { line-height: 1.45 !important; }
-            .container { padding-left: 14px; padding-right: 14px; }
-            #shop, #combo-ai, #blog { margin-bottom: 36px !important; }
-            .section-title { font-size: 1.15rem !important; line-height: 1.25; }
-            .section-title + p, .section-title + .text-muted { font-size: 0.95rem; }
-            .text-uppercase.ls-1 { font-size: 0.8rem; }
-            .ls-1 { letter-spacing: 0.04em; }
-            .product-card { border-radius: 14px; box-shadow: 0 8px 18px rgba(0,0,0,0.08); }
-            .product-card .p-3 { padding: 8px 8px 10px !important; }
-            .product-card img { border-radius: 12px 12px 0 0; height: 96px; width: 100%; object-fit: cover; }
-            .badge-custom { font-size: 9px; padding: 3px 7px; }
-            .product-title-2lines { font-size: 0.86rem; line-height: 1.25; }
-            .product-card .text-primary.fw-bold,
-            .product-card .text-success.fw-bold { font-size: 0.92rem; }
-            .sale-badge { font-size: 9px; padding: 2px 5px; }
-            .btn.btn-sm.rounded-circle { width: 30px; height: 30px; padding: 0; }
-            .blog-card { border-radius: 14px; box-shadow: 0 10px 22px rgba(0,0,0,0.08); }
-            .blog-card img { border-radius: 10px; }
-            .blog-title { font-size: 1rem !important; line-height: 1.35; }
-            .btn.btn-outline-primary { padding: 8px 18px; font-size: 0.92rem; }
-            .recent-purchase-toast { left: 8px; bottom: 8px; width: min(240px, calc(100vw - 16px)); }
-            .recent-purchase-toast { padding: 5px 5px 5px; border-radius: 10px; }
-            .rpt-pill { padding: 3px 6px; font-size: 10px; }
-            .rpt-close { font-size: 16px; padding: 0 3px; }
-            .rpt-body { gap: 6px; margin-top: 6px; }
-            .rpt-avatar { width: 26px; height: 26px; font-size: 11px; }
-            .rpt-avatar .rpt-badge { width: 12px; height: 12px; right: -1px; bottom: -1px; }
-            .rpt-name { font-size: 11px; }
-            .rpt-sub { font-size: 9px; }
-            .rpt-product { margin-top: 5px; padding: 5px 7px; border-radius: 9px; }
-            .rpt-product-title { font-size: 10px; }
-            .rpt-product-meta { font-size: 9px; gap: 4px; }
-        }
+/* ---- NAVBAR override ---- */
+.navbar-techfeed {
+    background-color:#fff !important;
+    border-bottom:1px solid #ccc !important;
+    height:56px;
+}
 
-        /* Product cards: balanced, modern */
-        .product-card {
-            background: #fff;
-            border: 1px solid rgba(0,0,0,0.04);
-            border-radius: 18px;
-            box-shadow: 0 14px 30px rgba(0,0,0,0.08);
-            transition: transform .2s ease, box-shadow .2s ease;
-            overflow: hidden;
-        }
-        .product-card.out-of-stock {
-            opacity: 0.6;
-        }
-        .product-card.out-of-stock .btn {
-            pointer-events: none;
-        }
-        .out-of-stock-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ef4444;
-            color: #fff;
-            font-size: 10px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
+/* ---- 3-column grid ---- */
+.tf-layout {
+    display:grid;
+    grid-template-columns:1fr;
+    gap:20px;
+    max-width:1280px;
+    margin:0 auto;
+    padding:20px 12px;
+}
+@media(min-width:1024px){
+    .tf-layout { grid-template-columns:220px 1fr 300px; }
+}
+@media(min-width:1280px){
+    .tf-layout { grid-template-columns:240px 1fr 320px; }
+}
 
-        /* Swiper (mobile product slides) */
-        .product-swiper {
-            padding: 6px 2px 14px;
-        }
-        .product-swiper .swiper-slide {
-            width: auto;
-            height: auto;
-        }
-        .product-swiper .swiper-pagination-bullets {
-            bottom: 0;
-        }
-        .product-swiper .swiper-pagination-bullet {
-            width: 6px;
-            height: 6px;
-            opacity: 0.35;
-        }
-        .product-swiper .swiper-pagination-bullet-active {
-            opacity: 1;
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-        }
-        .product-card .card-img-wrap {
-            position: relative;
-            background: linear-gradient(180deg, rgba(102,126,234,0.08), rgba(118,75,162,0.06));
-        }
-        .product-card .card-img-wrap img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            display: block;
-        }
-        .product-card .badge-custom {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            border-radius: 999px;
-            font-weight: 700;
-            letter-spacing: .02em;
-        }
-        .product-card .p-3 {
-            padding: 14px 14px 16px !important;
-        }
-        .product-title-2lines {
-            font-size: 1rem;
-            line-height: 1.35;
-            min-height: calc(1.35em * 2);
-        }
-        .sale-badge {
-            border-radius: 999px;
-            font-weight: 700;
-        }
-        .product-card .btn.btn-sm.rounded-circle {
-            width: 36px;
-            height: 36px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-        }
-    
+/* ---- LEFT SIDEBAR ---- */
+.tf-sidebar-left { display:none; }
+@media(min-width:1024px){ .tf-sidebar-left { display:block; } }
 
-        /* Flash sale */
-        .flash-sale {
-            background: linear-gradient(135deg, rgba(255,77,79,0.08), rgba(255,122,89,0.08));
-            border: 1px solid rgba(255,77,79,0.16);
-            border-radius: 14px;
-            padding: 12px 14px;
-        }
-        .flash-sale .section-title { margin-bottom: 2px; font-size: 1.05rem; }
-        .flash-sale .product-card { border-radius: 18px; box-shadow: 0 14px 30px rgba(0,0,0,0.08); }
-        .flash-sale .product-card .card-img-wrap { height: 180px; }
-        .flash-sale .product-card .card-img-wrap img { height: 100%; width: 100%; object-fit: cover; display: block; }
-        .flash-sale .product-card .p-3 { padding: 14px 14px 16px !important; }
-        .flash-sale .product-title-2lines { font-size: 1rem; line-height: 1.35; min-height: calc(1.35em * 2); }
-        .flash-sale .badge-custom { font-size: 11px; padding: 4px 8px; }
-        .flash-sale-timer {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: #fff;
-            border-radius: 999px;
-            padding: 6px 10px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        }
-        .flash-sale-timer .timer-label {
-            font-size: 0.78rem;
-            color: #6b7280;
-        }
-        .flash-sale-timer .timer-pills {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-        }
-        .flash-sale-timer .timer-pill {
-            min-width: 28px;
-            text-align: center;
-            background: #111827;
-            color: #fff;
-            padding: 4px 6px;
-            border-radius: 10px;
-            font-variant-numeric: tabular-nums;
-            font-size: 0.8rem;
-        }
-        .flash-sale-timer .timer-sep {
-            color: #9ca3af;
-            font-weight: 800;
-        }
-        @media (max-width: 576px) {
-            .flash-sale { margin-top: 8px; }
-            .flash-sale { padding: 10px 12px; }
-            .flash-sale-timer { padding: 5px 8px; gap: 6px; }
-            .flash-sale-timer .timer-pill { min-width: 24px; font-size: 0.75rem; }
-            .flash-sale .product-card .card-img-wrap { height: 96px; }
-            .flash-sale .product-card .card-img-wrap img { height: 100%; width: 100%; object-fit: cover; display: block; }
-            .flash-sale .product-title-2lines { font-size: 0.86rem; }
-        }
+.tf-sticky { position:sticky; top:66px; max-height:calc(100vh - 70px); overflow-y:auto; scrollbar-width:none; }
+.tf-sticky::-webkit-scrollbar { display:none; }
+
+.tf-sec-label { font-size:.7rem; font-weight:700; color:#787c7e; text-transform:uppercase; letter-spacing:.6px; padding:0 14px; margin:14px 0 4px; }
+.tf-sec-label:first-child { margin-top:0; }
+
+.tf-side-link {
+    display:flex; align-items:center; gap:10px;
+    padding:10px 14px; color:#1c1c1c; text-decoration:none;
+    border-radius:8px; font-weight:500; font-size:.9rem;
+    margin-bottom:2px; transition:background .15s;
+}
+.tf-side-link i { width:22px; font-size:1.05rem; text-align:center; }
+.tf-side-link:hover, .tf-side-link.active { background:#f6f7f8; color:#1c1c1c; }
+.tf-side-link.active { font-weight:700; }
+
+/* ---- MAIN FEED ---- */
+/* Sort bar */
+.tf-sort-bar {
+    background:#fff; border:1px solid #ccc; border-radius:8px;
+    padding:8px 12px; margin-bottom:12px;
+    display:flex; gap:6px;
+}
+.tf-sort-btn {
+    background:none; border:none; border-radius:20px;
+    padding:6px 14px; font-weight:700; font-size:.84rem; color:#787c7e;
+    cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .15s;
+}
+.tf-sort-btn:hover { background:#f6f7f8; }
+.tf-sort-btn.active { background:#f0f2f5; color:#1c1c1c; }
+
+/* Feed card */
+.tf-card {
+    background:#fff; border:1px solid #ccc; border-radius:12px;
+    margin-bottom:12px; display:flex; overflow:hidden;
+    transition:border-color .15s;
+}
+.tf-card:hover { border-color:#898989; }
+
+/* Vote column - REMOVED; kept empty rule for compat */
+.tf-vote { display:none !important; }
+.tf-vote-shop { display:none !important; }
+
+/* Post body */
+.tf-body { padding:12px 14px; flex:1; min-width:0; }
+
+.tf-meta {
+    display:flex; align-items:center; gap:6px;
+    font-size:.78rem; color:#787c7e; margin-bottom:6px; flex-wrap:wrap;
+}
+.tf-meta img { width:18px; height:18px; border-radius:50%; object-fit:cover; }
+.tf-meta .cat { font-weight:700; color:#1c1c1c; text-decoration:none; }
+.tf-meta .cat:hover { text-decoration:underline; }
+
+.tf-title {
+    font-size:1.15rem; font-weight:700; color:#1c1c1c;
+    text-decoration:none; display:block; line-height:1.4;
+    margin-bottom:10px;
+}
+.tf-title:hover { color:#ff4500; }
+
+.tf-excerpt { font-size:.87rem; color:#3c3c3c; line-height:1.5; margin-bottom:10px; }
+
+.tf-media {
+    width:100%; border-radius:8px; overflow:hidden;
+    background:#eee; margin-bottom:10px;
+}
+.tf-media img { width:100%; max-height:400px; object-fit:cover; display:block; }
+
+.tf-actions { display:flex; gap:4px; flex-wrap:wrap; }
+.tf-action {
+    background:none; border:none; color:#787c7e; font-weight:700;
+    font-size:.78rem; padding:5px 10px; border-radius:4px;
+    display:flex; align-items:center; gap:5px; cursor:pointer;
+    text-decoration:none; transition:background .15s;
+}
+.tf-action:hover { background:#f6f7f8; color:#1c1c1c; }
+
+/* ---- SHOP CARD variant ---- */
+.tf-card-shop { border:1px solid #b2ebf2; }
+
+.tf-shop-badge {
+    display:inline-flex; align-items:center; gap:4px;
+    background:#e0f7fa; color:#00838f;
+    padding:2px 9px; border-radius:20px;
+    font-size:.72rem; font-weight:800; text-transform:uppercase;
+}
+.tf-shop-badge.flash { background:#fff3e0; color:#e65100; }
+.tf-shop-badge.hot   { background:#fce4ec; color:#c62828; }
+
+.tf-price { font-size:1.3rem; font-weight:800; color:#e53935; }
+.tf-price-old { font-size:.88rem; color:#787c7e; text-decoration:line-through; }
+
+.tf-buy-btn {
+    background:#e53935; color:#fff; border:none;
+    border-radius:24px; padding:9px 0; width:100%;
+    font-weight:700; font-size:.86rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    transition:background .15s;
+}
+.tf-buy-btn:hover { background:#c62828; }
+.tf-buy-btn.green { background:#2e7d32; }
+.tf-buy-btn.green:hover { background:#1b5e20; }
+
+/* ---- AD SLOT ---- */
+.tf-ad {
+    background:#f8f9fa; border:1px dashed #ced4da; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    color:#adb5bd; font-size:.82rem; text-align:center;
+    margin-bottom:12px; overflow:hidden;
+}
+
+/* ---- RIGHT SIDEBAR ---- */
+.tf-sidebar-right { display:none; }
+@media(min-width:1024px){ .tf-sidebar-right { display:block; } }
+
+.tf-widget {
+    background:#fff; border:1px solid #ccc; border-radius:12px;
+    padding:16px; margin-bottom:14px;
+}
+.tf-widget-title {
+    font-size:.78rem; font-weight:800; color:#787c7e;
+    text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px;
+}
+
+/* Top sell list */
+.tf-top-item {
+    display:flex; align-items:center; gap:10px;
+    padding:8px 0; border-bottom:1px solid #f5f5f5;
+    text-decoration:none; color:#1c1c1c; transition:opacity .15s;
+}
+.tf-top-item:last-child { border-bottom:none; }
+.tf-top-item:hover { opacity:.78; }
+.tf-top-item img { width:44px; height:44px; object-fit:cover; border-radius:8px; flex-shrink:0; }
+.tf-top-item .name { font-size:.83rem; font-weight:700; line-height:1.3;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.tf-top-item .price { font-size:.8rem; font-weight:700; color:#e53935; margin-top:2px; }
+
+/* Blog list sidebar */
+.tf-blog-item {
+    display:flex; gap:10px; padding:8px 0;
+    border-bottom:1px solid #f5f5f5; text-decoration:none; color:#1c1c1c;
+    transition:opacity .15s;
+}
+.tf-blog-item:last-child { border-bottom:none; }
+.tf-blog-item:hover { opacity:.78; }
+.tf-blog-item img { width:60px; height:48px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+.tf-blog-item .title { font-size:.82rem; font-weight:600; line-height:1.35;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.tf-blog-item .time { font-size:.7rem; color:#787c7e; margin-top:3px; }
+
+/* Community widget stats */
+.tf-stat { text-align:center; }
+.tf-stat .num { font-size:1.2rem; font-weight:800; color:#1c1c1c; }
+.tf-stat .lbl { font-size:.74rem; color:#787c7e; }
+
+.tf-join-btn {
+    background:#1c1c1c; color:#fff; border:none; border-radius:24px;
+    width:100%; padding:9px; font-weight:700; font-size:.9rem;
+    cursor:pointer; transition:background .2s; margin-top:12px;
+    text-decoration:none; display:block; text-align:center;
+}
+.tf-join-btn:hover { background:#333; color:#fff; }
+
+/* Flash sale widget */
+.tf-flash-item {
+    display:flex; gap:10px; align-items:center;
+    padding:8px; background:#fff5f2; border-radius:8px;
+    margin-bottom:8px; text-decoration:none; color:#1c1c1c;
+    border:1px solid rgba(255,69,0,.1); transition:border-color .15s;
+}
+.tf-flash-item:hover { border-color:#ff4500; }
+.tf-flash-item img { width:48px; height:48px; object-fit:cover; border-radius:7px; flex-shrink:0; }
+.tf-flash-item .fn { font-size:.82rem; font-weight:700; line-height:1.3;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.tf-flash-item .fp { font-size:.86rem; font-weight:800; color:#e53935; }
+.tf-flash-item .fo { font-size:.72rem; color:#787c7e; text-decoration:line-through; }
+
+/* Recent purchase toast */
+.rpt-toast {
+    position:fixed; left:16px; bottom:16px;
+    width:min(360px,calc(100vw - 32px));
+    background:#fff; border-radius:14px;
+    box-shadow:0 10px 36px rgba(0,0,0,.18);
+    border-left:4px solid #12b76a;
+    padding:12px 14px; z-index:2000;
+    opacity:0; transform:translateY(10px);
+    pointer-events:none; transition:opacity .25s,transform .25s;
+}
+.rpt-toast.show { opacity:1; transform:translateY(0); pointer-events:auto; }
+.rpt-toast .inner { display:flex; gap:10px; align-items:flex-start; }
+.rpt-toast .ava {
+    width:38px; height:38px; border-radius:50%;
+    background:linear-gradient(135deg,#12b76a,#00cec9);
+    color:#fff; font-weight:800; font-size:15px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.rpt-toast .rn  { font-weight:800; font-size:.85rem; }
+.rpt-toast .rs  { font-size:.75rem; color:#6b7280; }
+.rpt-toast .rp  { font-size:.78rem; font-weight:700; color:#ff4500; display:block; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; text-decoration:none; }
+.rpt-toast .rc  { position:absolute; top:8px; right:8px; background:none; border:none; font-size:16px; color:#9ca3af; cursor:pointer; }
+
+/* Mobile adjusts */
+@media(max-width:1023px){
+    .tf-vote { display:none; }
+    .tf-body { padding:10px 12px; }
+    .tf-title { font-size:1rem; }
+}
 </style>
 @endpush
 
 @section('content')
+<div style="background:#dae0e6;">
+<div class="tf-layout">
 
-    <header class="hero-section text-center">
-        <div class="tet-decor" aria-hidden="true">
-            <span class="tet-lantern l1"></span>
-            <span class="tet-lantern l2"></span>
-            <span class="tet-coin c1"></span>
-            <span class="tet-coin c2"></span>
-            <span class="tet-blossom b1"></span>
-            <span class="tet-blossom b2"></span>
-            <span class="tet-ribbon"></span>
-        </div>
-        <div class="shape" style="top: 20%; left: 10%; width: 50px; height: 50px;"></div>
-        <div class="shape" style="top: 60%; right: 15%; width: 80px; height: 80px; animation-delay: 2s;"></div>
-        
-        <div class="container mt-5" data-aos="zoom-in">
-            <h1 class="display-4 fw-bold mb-3">Nơi Bạn Có Thể <span class="typing-text text-warning" id="typewriter"></span></h1>
-            <p class="lead opacity-75 mb-4">Kho tài nguyên số, thời trang và công cụ tiện ích miễn phí hàng đầu.</p>
-            <div class="hero-socials">
-                <a href="https://www.tiktok.com/@spdungthu.com?_r=1&_t=ZS-93Tu65pWubk" target="_blank" rel="noopener" aria-label="TikTok">
-                    <i class="fab fa-tiktok"></i>
+    {{-- ====== LEFT SIDEBAR ====== --}}
+    <aside class="tf-sidebar-left">
+        <div class="tf-sticky">
+            <div class="tf-sec-label">Khám Phá</div>
+            <a href="{{ route('home') }}" class="tf-side-link active"><i class="fa-solid fa-house"></i> Trang chủ</a>
+            <a href="{{ route('blog.index') }}" class="tf-side-link"><i class="fa-solid fa-fire" style="color:#e53935;"></i> Blog mới</a>
+            <a href="{{ route('community.index') }}" class="tf-side-link"><i class="fa-solid fa-users"></i> Cộng đồng</a>
+            <a href="{{ route('web-design') }}" class="tf-side-link"><i class="fa-solid fa-globe"></i> Thiết kế web</a>
+
+            <div class="tf-sec-label">Cửa Hàng</div>
+            <a href="{{ route('shop') }}" class="tf-side-link"><i class="fa-solid fa-tags" style="color:#28a745;"></i> Tất cả SP</a>
+            @if(isset($categories))
+                @foreach($categories->take(5) as $cat)
+                <a href="{{ route('shop', ['category_id' => $cat->id]) }}" class="tf-side-link">
+                    <i class="fa-solid fa-box"></i> {{ $cat->name }}
                 </a>
-                <a href="https://www.facebook.com/thanh.tuan.378686?locale=vi_VN" target="_blank" rel="noopener" aria-label="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://id.zalo.me/account/login?continue=http%3A%2F%2Fzalo.me%2F0708910952" target="_blank" rel="noopener" aria-label="Zalo 0708910952" class="zalo-pill">Z</a>
+                @endforeach
+            @endif
+            <a href="{{ route('card-exchange.index') }}" class="tf-side-link"><i class="fa-solid fa-credit-card" style="color:#f59e0b;"></i> Đổi thẻ cào</a>
+
+            @auth
+            <div class="tf-sec-label">Tài Khoản</div>
+            <a href="{{ route('user.account') }}" class="tf-side-link"><i class="fa-solid fa-user-circle"></i> Tài khoản</a>
+            <a href="{{ route('user.orders') }}" class="tf-side-link"><i class="fa-solid fa-box"></i> Đơn hàng</a>
+            @endauth
+
+            {{-- ADSENSE LEFT SIDEBAR --}}
+            <div class="tf-ad mt-4" style="height:250px;">
+                <ins class="adsbygoogle" style="display:block;width:100%;height:250px;"
+                     data-ad-client="ca-pub-3065867660863139"
+                     data-ad-slot="auto" data-ad-format="rectangle"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>
-    </header>
+    </aside>
 
-    <div class="container" style="margin-top: -80px; position: relative; z-index: 10;">
-        <div class="category-row"></div>
-    </div>
+    {{-- ====== MAIN FEED ====== --}}
+    <main>
 
-    <div class="container" style="margin-top: 80px; padding-top: 20px;">
+        {{-- Sort bar --}}
+        <div class="tf-sort-bar">
+            <button class="tf-sort-btn active" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Mới nhất</button>
+            <button class="tf-sort-btn" id="tab-ai"><i class="fa-solid fa-robot"></i> Combo AI</button>
+            <button class="tf-sort-btn" id="tab-hot"><i class="fa-solid fa-fire"></i> Hot</button>
+        </div>
 
-        <!-- Category Filter Icons (moved above flash sale) -->
-        @if(isset($categories) && $categories->count() > 0)
-        <div class="category-filter-section mb-4" data-aos="fade-up">
-            <div class="d-flex flex-wrap gap-3 justify-content-center">
-                <!-- All Categories -->
-                <a href="{{ route('shop') }}" class="category-filter-link">
-                    <button class="category-filter-btn active" type="button">
-                        <div class="category-icon-wrap">
-                            <i class="fas fa-th-large"></i>
+        {{-- Flash Sale (Chỉ hiện ở tab AI/Shop) --}}
+        @if(isset($saleProducts) && $saleProducts->count() > 0)
+        <div class="tf-widget mb-3 item-shop" id="flash-sale" data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}" style="display:none;">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                <div>
+                    <span class="text-danger fw-bold" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;">⚡ Flash Sale</span>
+                    <div class="fw-bold" style="font-size:1rem;">Giảm giá sốc hôm nay</div>
+                </div>
+                <div style="background:#fff;border-radius:20px;padding:6px 12px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:8px;font-size:.8rem;">
+                    <span style="font-weight:800;">
+                        <span data-unit="hours">00</span>:<span data-unit="minutes">00</span>:<span data-unit="seconds">00</span>
+                    </span>
+                </div>
+            </div>
+            <div class="row row-cols-2 row-cols-md-4 g-3">
+                @foreach($saleProducts->take(4) as $sp)
+                <div class="col">
+                    <div style="background:#fff;border:1px solid #edeff1;border-radius:10px;overflow:hidden;position:relative;">
+                        <img src="{{ $sp->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $sp->name }}" style="width:100%;height:120px;object-fit:cover;">
+                        <div style="padding:8px;">
+                            <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">{{ $sp->name }}</div>
+                            <div style="color:#e53935;font-weight:800;">{{ $sp->formatted_price }}</div>
                         </div>
-                        <span class="category-name">Tất Cả</span>
-                    </button>
-                </a>
-                
-                @foreach($categories as $category)
-                <a href="{{ route('shop', ['category_id' => $category->id]) }}" class="category-filter-link">
-                    <button class="category-filter-btn" type="button">
-                        <div class="category-icon-wrap">
-                            @if($category->image)
-                                <img src="{{ $category->image }}" alt="{{ $category->name }}">
-                            @else
-                                @switch($category->type)
-                                    @case('tech')
-                                        <i class="fas fa-laptop"></i>
-                                        @break
-                                    @case('ebooks')
-                                        <i class="fas fa-book"></i>
-                                        @break
-                                    @case('doc')
-                                        <i class="fas fa-file-alt"></i>
-                                        @break
-                                    @default
-                                        <i class="fas fa-box"></i>
-                                @endswitch
-                            @endif
-                        </div>
-                        <span class="category-name">{{ $category->name }}</span>
-                        @if($category->products_count > 0)
-                            <span class="category-count">{{ $category->products_count }}</span>
-                        @endif
-                    </button>
-                </a>
+                        <a href="{{ route('product.show', $sp->slug) }}" class="stretched-link"></a>
+                    </div>
+                </div>
                 @endforeach
             </div>
         </div>
         @endif
 
-    @if(isset($saleProducts) && $saleProducts->count() > 0)
-        <div id="flash-sale" class="flash-sale mb-5" data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}">
-            <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
-                <div>
-                    <span class="text-danger fw-bold text-uppercase ls-1">Flash sale</span>
-                    <h3 class="fw-bold section-title">Giảm giá hôm nay</h3>
-                    <p class="text-muted mb-0">Giá ưu đãi sẽ kết thúc khi hết thời gian.</p>
+        {{-- Blog #1 --}}
+        @if(isset($latestBlogs[0]))
+        @php $b = $latestBlogs[0]; @endphp
+        <article class="tf-card item-blog">
+            {{-- Bỏ vote div --}}
+            <div class="tf-body">
+                <div class="tf-meta">
+                    <img src="https://ui-avatars.com/api/?name=Tech&background=ff4500&color=fff" alt="">
+                    <a href="{{ route('blog.index') }}" class="cat">c/TinCongNghe</a>
+                    <span>•</span> <span>{{ $b->created_at->diffForHumans() }}</span>
                 </div>
-                <div class="flash-sale-timer">
-                    <span class="timer-label">Kết thúc sau</span>
-                    <div class="timer-pills" aria-live="polite">
-                        <span class="timer-pill" data-unit="hours">00</span>
-                        <span class="timer-sep">:</span>
-                        <span class="timer-pill" data-unit="minutes">00</span>
-                        <span class="timer-sep">:</span>
-                        <span class="timer-pill" data-unit="seconds">00</span>
+                <a href="{{ route('blog.show', $b->slug) }}" class="tf-title">{{ $b->title }}</a>
+                @if($b->image)
+                <div class="tf-media"><img src="{{ $b->image }}" alt="{{ $b->title }}"></div>
+                @endif
+                <p class="tf-excerpt">{{ Str::limit(strip_tags($b->content), 140) }}</p>
+                <div class="tf-actions">
+                    <a href="{{ route('blog.show', $b->slug) }}" class="tf-action"><i class="fa-regular fa-comment"></i> Đọc thêm</a>
+                    <button class="tf-action" onclick="copyLink(this)"><i class="fa-solid fa-share"></i> Chia sẻ</button>
+                </div>
+            </div>
+        </article>
+        @endif
+
+        {{-- Shop Product #1 --}}
+        @if(isset($featuredProducts[0]))
+        @php $p = $featuredProducts[0]; @endphp
+        <article class="tf-card tf-card-shop item-shop" style="display:none;">
+            <div class="tf-body">
+                <div class="tf-meta">
+                    <img src="https://ui-avatars.com/api/?name=Shop&background=E53935&color=fff" alt="">
+                    <a href="{{ route('shop') }}" class="cat">Cửa Hàng</a>
+                    <span class="tf-shop-badge flash">Sản phẩm nổi bật</span>
+                </div>
+                <a href="{{ route('product.show', $p->slug) }}" class="tf-title">{{ $p->name }}</a>
+                <div class="row g-3 align-items-center">
+                    <div class="col-sm-4">
+                        <img src="{{ $p->image ?? 'https://via.placeholder.com/400' }}" alt="" style="width:100%;border-radius:8px;">
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="mb-2"><span class="tf-price">{{ $p->formatted_price }}</span></div>
+                        <form action="{{ route('cart.add', $p->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="tf-buy-btn"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                        </form>
                     </div>
                 </div>
             </div>
+        </article>
+        @endif
 
-            <div class="row row-cols-2 row-cols-md-4 g-3 g-md-4">
-                @foreach($saleProducts as $product)
-                <div class="col" data-aos="fade-up">
-                    <div class="product-card">
-                        <div class="card-img-wrap">
-                            <span class="badge-custom bg-danger">Giảm {{ $product->discount_percent }}%</span>
-                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                        </div>
-                        <div class="p-3">
-                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                                        <span class="text-danger fw-bold">{{ $product->formatted_price }}</span>
-                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                    </div>
-                                </div>
-                                <a href="{{ route('product.show', $product->slug) }}" class="btn btn-sm btn-light rounded-circle text-danger">
-                                    <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
+        {{-- Blog #2 --}}
+        @if(isset($latestBlogs[1]))
+        @php $b = $latestBlogs[1]; @endphp
+        <article class="tf-card item-blog">
+            <div class="tf-body">
+                <div class="tf-meta">
+                    <img src="https://ui-avatars.com/api/?name=Review&background=2E7D32&color=fff" alt="">
+                    <a href="{{ route('blog.index') }}" class="cat">c/DanhGia</a>
+                    <span>•</span> <span>{{ $b->created_at->diffForHumans() }}</span>
+                </div>
+                <a href="{{ route('blog.show', $b->slug) }}" class="tf-title">{{ $b->title }}</a>
+                @if($b->image)
+                <div class="tf-media"><img src="{{ $b->image }}" alt="{{ $b->title }}"></div>
+                @endif
+                <p class="tf-excerpt">{{ Str::limit(strip_tags($b->content), 140) }}</p>
+                <div class="tf-actions">
+                    <a href="{{ route('blog.show', $b->slug) }}" class="tf-action"><i class="fa-regular fa-comment"></i> Đọc thêm</a>
+                    <button class="tf-action" onclick="copyLink(this)"><i class="fa-solid fa-share"></i> Chia sẻ</button>
+                </div>
+            </div>
+        </article>
+        @endif
+
+        {{-- Shop Product #2 --}}
+        @if(isset($featuredProducts[1]))
+        @php $p = $featuredProducts[1]; @endphp
+        <article class="tf-card tf-card-shop item-shop" style="display:none;">
+            <div class="tf-body">
+                <div class="tf-meta">
+                    <img src="https://ui-avatars.com/api/?name=DT&background=2E7D32&color=fff" alt="">
+                    <a href="{{ route('shop') }}" class="cat">Sản Phẩm</a>
+                    <span class="tf-shop-badge hot">Hot pick</span>
+                </div>
+                <a href="{{ route('product.show', $p->slug) }}" class="tf-title">{{ $p->name }}</a>
+                <div class="row g-3 align-items-center">
+                    <div class="col-sm-4">
+                        <img src="{{ $p->image ?? 'https://via.placeholder.com/400' }}" alt="" style="width:100%;border-radius:8px;">
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="mb-2"><span class="tf-price" style="color:#2e7d32;">{{ $p->formatted_price }}</span></div>
+                        @if($p->isInStock())
+                        <form action="{{ route('cart.add', $p->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="tf-buy-btn green"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                        </form>
+                        @endif
                     </div>
                 </div>
+            </div>
+        </article>
+        @endif
+
+        {{-- Remaining blogs loop --}}
+        @if(isset($latestBlogs))
+        @foreach($latestBlogs->skip(2) as $idx => $b)
+        <article class="tf-card item-blog">
+            <div class="tf-body">
+                <div class="tf-meta">
+                    <img src="https://ui-avatars.com/api/?name=KB&background=0D8ABC&color=fff" alt="">
+                    <a href="{{ route('blog.index') }}" class="cat">c/KienThuc</a>
+                    <span>•</span> <span>{{ $b->created_at->diffForHumans() }}</span>
+                </div>
+                <a href="{{ route('blog.show', $b->slug) }}" class="tf-title">{{ $b->title }}</a>
+                <p class="tf-excerpt">{{ Str::limit(strip_tags($b->content), 120) }}</p>
+                <div class="tf-actions">
+                    <a href="{{ route('blog.show', $b->slug) }}" class="tf-action"><i class="fa-regular fa-comment"></i> Đọc thêm</a>
+                    <button class="tf-action" onclick="copyLink(this)"><i class="fa-solid fa-share"></i> Chia sẻ</button>
+                </div>
+            </div>
+        </article>
+
+        {{-- Inline small product every 2 blogs --}}
+        @if($idx % 2 === 0 && isset($featuredProducts[$idx + 2]))
+        @php $ip = $featuredProducts[$idx + 2]; @endphp
+        <article class="tf-card tf-card-shop item-shop" style="display:none;">
+            <div class="tf-body">
+                <div class="tf-meta">
+                    <img src="https://ui-avatars.com/api/?name=DT&background=ff4500&color=fff" alt="">
+                    <a href="{{ route('shop') }}" class="cat">Cửa hàng</a>
+                </div>
+                <div class="d-flex gap-3 align-items-start">
+                    <img src="{{ $ip->image ?? 'https://via.placeholder.com/150' }}" alt="" style="width:80px;height:60px;border-radius:8px;">
+                    <div>
+                        <a href="{{ route('product.show', $ip->slug) }}" class="tf-title" style="font-size:.9rem;">{{ $ip->name }}</a>
+                        <div class="tf-price" style="font-size:1rem;">{{ $ip->formatted_price }}</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        @endif
+        @endforeach
+        @endif
+
+        <div class="text-center py-3">
+            <a href="{{ route('blog.index') }}" class="btn btn-outline-secondary rounded-pill px-5 fw-bold">
+                <i class="fa-solid fa-chevron-down me-1"></i> Xem thêm bài viết
+            </a>
+        </div>
+
+    </main>
+
+    {{-- ====== RIGHT SIDEBAR ====== --}}
+    <aside class="tf-sidebar-right">
+        <div class="tf-sticky">
+
+            {{-- About Widget --}}
+            <div class="tf-widget">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fa-solid fa-circle-info text-primary fs-5"></i>
+                    <h2 class="h6 fw-bold mb-0">Về DungThu.com</h2>
+                </div>
+                <p class="small text-muted mb-3" style="font-size:.83rem;line-height:1.55;">Nền tảng chia sẻ kiến thức công nghệ kết hợp mua sắm trực tuyến. Tìm thấy mọi thông tin hữu ích và sản phẩm chất lượng.</p>
+                <hr class="my-2 opacity-25">
+                <div class="d-flex justify-content-around mt-2">
+                    <div class="tf-stat">
+                        <div class="num">5k+</div>
+                        <div class="lbl">Thành viên</div>
+                    </div>
+                    <div class="tf-stat">
+                        <div class="num" style="color:#28a745;"><span style="width:7px;height:7px;background:#28a745;border-radius:50%;display:inline-block;margin-right:4px;"></span>24/7</div>
+                        <div class="lbl">Online</div>
+                    </div>
+                </div>
+                @auth
+                <a href="{{ route('blog.index') }}" class="tf-join-btn">Đọc thêm bài viết</a>
+                @else
+                <a href="{{ route('login') }}" class="tf-join-btn">Đăng nhập để tham gia</a>
+                @endauth
+            </div>
+
+            {{-- AdSense 300x250 --}}
+            <div class="tf-ad mb-3" style="height:260px;">
+                <ins class="adsbygoogle" style="display:block;width:100%;height:260px;"
+                     data-ad-client="ca-pub-3065867660863139"
+                     data-ad-slot="auto" data-ad-format="rectangle"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+
+            {{-- Flash Sale sidebar --}}
+            @if(isset($saleProducts) && $saleProducts->count() > 0)
+            <div class="tf-widget">
+                <div class="tf-widget-title">
+                    ⚡ Flash Sale &nbsp;
+                    <span id="sf-timer" style="color:#e53935;font-size:.72rem;font-weight:700;"></span>
+                </div>
+                @foreach($saleProducts->take(3) as $sp)
+                <a href="{{ route('product.show', $sp->slug) }}" class="tf-flash-item">
+                    <img src="{{ $sp->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $sp->name }}" loading="lazy">
+                    <div>
+                        <div class="fn">{{ $sp->name }}</div>
+                        <div class="d-flex align-items-baseline gap-2 mt-1">
+                            <span class="fp">{{ $sp->formatted_price }}</span>
+                            <span class="fo">{{ $sp->formatted_original_price }}</span>
+                        </div>
+                    </div>
+                </a>
                 @endforeach
             </div>
-        </div>
-    @endif
-        <div class="row">
-            
-            <div class="col-12">
+            @endif
 
-                {{--
-                @if(!empty($recentPurchases) && count($recentPurchases) > 0)
-                    <!-- KhÃ¡ch hÃ ng vá»«a mua (Social proof) -->
-                    <div class="mb-5" data-aos="fade-up">
-                        <div class="d-flex justify-content-between align-items-end mb-4">
-                            <div>
-                                <span class="text-warning fw-bold text-uppercase ls-1">Uy tÃ­n</span>
-                                <h3 class="fw-bold section-title">KhÃ¡ch HÃ ng Vá»«a Mua</h3>
-                                <p class="text-muted mb-0">ThÃ´ng tin Ä‘Ã£ Ä‘Æ°á»£c áº©n Ä‘á»ƒ báº£o vá»‡ quyá»n riÃªng tÆ°</p>
-                            </div>
-                        </div>
-
-                        <div class="row row-cols-1 row-cols-lg-2 g-3">
-                            @foreach($recentPurchases as $purchase)
-                                <div class="col">
-                                    <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
-                                        <div class="card-body d-flex gap-3 align-items-start">
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                                 style="width: 44px; height: 44px; background: linear-gradient(135deg, rgba(108,92,231,0.12), rgba(0,206,201,0.12)); border: 1px solid rgba(0,0,0,0.06);">
-                                                <i class="fas fa-shopping-bag text-primary"></i>
-                                            </div>
-
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start gap-2">
-                                                    <div class="fw-bold">{{ $purchase['customer_name'] ?? 'Khách hàng' }}</div>
-                                                    <small class="text-muted">{{ $purchase['time_ago'] ?? '' }}</small>
-                                                </div>
-
-                                                <div class="text-muted" style="font-size: 0.95rem;">
-                                                    Vừa {{ ($purchase['verb'] ?? '') === 'mua' ? 'mua' : 'đặt' }}
-                                                    @php
-                                                        $productText = ($purchase['product_name'] ?? 'Sản phẩm') . ((int)($purchase['extra_items'] ?? 0) > 0 ? (' +' . (int)$purchase['extra_items'] . ' SP') : '');
-                                                    @endphp
-                                                    @if(!empty($purchase['product_slug']))
-                                                        <a href="{{ route('product.show', $purchase['product_slug']) }}" class="text-decoration-none fw-bold">{{ $productText }}</a>
-                                                    @else
-                                                        <span class="fw-bold">{{ $productText }}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+            {{-- Top Selling --}}
+            @if(isset($featuredProducts) && $featuredProducts->count() > 0)
+            <div class="tf-widget">
+                <div class="tf-widget-title">🔥 Bán Chạy Tuần Này</div>
+                @foreach($featuredProducts->take(5) as $ri => $prod)
+                <a href="{{ route('product.show', $prod->slug) }}" class="tf-top-item">
+                    <img src="{{ $prod->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $prod->name }}" loading="lazy">
+                    <div>
+                        <div class="name">{{ $prod->name }}</div>
+                        <div class="price">{{ $prod->formatted_price }}</div>
                     </div>
-                @endif
-                --}}
-                <!-- Sản Phẩm Nổi Bật -->
-                <div id="shop" class="mb-5">
-                    <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
-                        <div>
-                            <h3 class="fw-bold section-title">⭐ Sản Phẩm Nổi Bật</h3>
-                        </div>
-                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
-                    </div>
+                </a>
+                @endforeach
+                <a href="{{ route('shop') }}" class="btn btn-outline-primary btn-sm rounded-pill w-100 mt-3 fw-bold">Xem tất cả cửa hàng</a>
+            </div>
+            @endif
 
-                    <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex" id="product-grid">
-                        @foreach($featuredProducts as $product)
-                        <div class="col product-item" data-aos="fade-up" data-category-id="{{ $product->category_id ?? '' }}">
-                            <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                <div class="card-img-wrap">
-                                    <span class="badge-custom">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                    <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                </div>
-                                <div class="p-3">
-                                    <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                                                <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                                @if($product->is_on_sale)
-                                                    <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                        <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
-                                                <i class="fas fa-cart-plus"></i>
-                                            </button>
-                                        </form>
-                                        @else
-                                        <button type="button" class="btn btn-sm btn-light rounded-circle text-muted" disabled>
-                                            <i class="fas fa-cart-plus"></i>
-                                        </button>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <div class="swiper product-swiper d-md-none" id="featuredProductSwiper">
-                        <div class="swiper-wrapper">
-                            @foreach($featuredProducts as $product)
-                                <div class="swiper-slide product-item-mobile" data-category-id="{{ $product->category_id ?? '' }}">
-                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                        <div class="card-img-wrap">
-                                            <span class="badge-custom">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                        </div>
-                                        <div class="p-3">
-                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                                        @if($product->is_on_sale)
-                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="swiper-pagination"></div>
-                    </div>
-                </div>
-
-                <!-- Sản Phẩm Đặc Biệt -->
-                <div class="mb-5">
-                    <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
-                        <div>
-                            <h3 class="fw-bold section-title"> <i class="fas fa-star" style="color: #00ff00;"></i> Sản Phẩm Độc Quyền</h3>
-                        </div>
-                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
-                    </div>
-
-                    <div class="row row-cols-2 row-cols-md-4 g-4 d-none d-md-flex">
-                        @foreach($highlightProducts as $product)
-                        <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                            <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                <div class="card-img-wrap">
-                                    <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết Hàng</span>
-                                    @endif
-                                    <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                </div>
-                                <div class="p-3">
-                                    <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                                                <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
-                                                @if($product->is_on_sale)
-                                                    <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                        <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                        <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
-                                                <i class="fas fa-cart-plus"></i>
-                                            </button>
-                                        </form>
-                                        @else
-                                        <button type="button" class="btn btn-sm btn-light rounded-circle text-muted" disabled>
-                                            <i class="fas fa-cart-plus"></i>
-                                        </button>
-                                        @endif
-                                    </div>
-                                </div>
-                                @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <div class="swiper product-swiper d-md-none" id="highlightProductSwiper">
-                        <div class="swiper-wrapper">
-                            @foreach($highlightProducts as $product)
-                                <div class="swiper-slide">
-                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                        <div class="card-img-wrap">
-                                            <span class="badge-custom bg-success">{{ strtoupper($product->category) }}</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                        </div>
-                                        <div class="p-3">
-                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <span class="text-success fw-bold">{{ $product->formatted_price }}</span>
-                                                        @if($product->is_on_sale)
-                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-success">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="swiper-pagination"></div>
-                    </div>
-                </div>
-             
-                <!-- Combo AI giá rẻ (hiển thị trên Home) -->
-                <div id="combo-ai" class="mb-5" data-combo-ai-section>
-                    <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
-                        <div>
-                            <h3 class="fw-bold section-title"> <i class="fas fa-robot" style="color: #007bff;"></i> Combo AI giá rẻ</h3>
-                        </div>
-                        <a href="{{ route('shop') }}" class="text-decoration-none fw-bold">Xem tất cả <i class="fas fa-arrow-right"></i></a>
-                    </div>
-
-                    @if(isset($comboAiProducts) && $comboAiProducts->count() > 0)
-                        <div class="row row-cols-2 row-cols-md-4 g-4">
-                            @foreach($comboAiProducts as $product)
-                                <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                                    <div class="product-card {{ $product->isInStock() ? '' : 'out-of-stock' }}">
-                                        <div class="card-img-wrap">
-                                            <span class="badge-custom bg-primary">COMBO AI</span>
-                                    @if(!$product->isInStock())
-                                        <span class="out-of-stock-badge">Hết hàng</span>
-                                    @endif
-                                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}">
-                                        </div>
-                                        <div class="p-3">
-                                            <h6 class="fw-bold product-title-2lines">{{ $product->name }}</h6>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <div class="flex-grow-1 me-2" style="min-width: 0;">
-                                                    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                                                        <span class="text-primary fw-bold">{{ $product->formatted_price }}</span>
-                                                        @if($product->is_on_sale)
-                                                            <div class="d-flex align-items-center gap-1 flex-wrap">
-                                                                <span class="text-muted text-decoration-line-through small">{{ $product->formatted_original_price }}</span>
-                                                                <span class="badge bg-danger sale-badge">-{{ $product->discount_percent }}%</span>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-light rounded-circle text-primary">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        @if($product->isInStock())
-                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link"></a>
-                                @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+            {{-- Blog Sidebar --}}
+            @if(isset($latestBlogs) && $latestBlogs->count() > 0)
+            <div class="tf-widget">
+                <div class="tf-widget-title">📰 Bài Viết Mới Nhất</div>
+                @foreach($latestBlogs->take(3) as $b)
+                <a href="{{ route('blog.show', $b->slug) }}" class="tf-blog-item">
+                    @if($b->image)
+                    <img src="{{ $b->image }}" alt="{{ $b->title }}" loading="lazy">
                     @else
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> Chưa có combo nào. Vui lòng quay lại sau!
-                        </div>
+                    <div style="width:60px;height:48px;background:#f5f5f5;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-newspaper text-muted"></i></div>
                     @endif
-                </div>
-
-
-
-                <div id="blog" class="pt-4 border-top">
-                    <div class="mb-4" data-aos="fade-right">
-                        <span class="text-warning fw-bold text-uppercase ls-1">Kiến thức & Thủ thuật</span>
-                        <h3 class="fw-bold section-title">Blog Chia Sẻ</h3>
-                        <p class="text-muted">Cập nhật xu hướng công nghệ, mẹo phối đồ và hướng dẫn dùng tool.</p>
+                    <div>
+                        <div class="title">{{ $b->title }}</div>
+                        <div class="time">{{ $b->created_at->diffForHumans() }}</div>
                     </div>
+                </a>
+                @endforeach
+            </div>
+            @endif
 
-                    <div class="row">
-                        @foreach($latestBlogs as $index => $blog)
-                        <div class="col-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-                            <div class="blog-card w-100 text-center p-3" style="min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                                <a href="{{ route('blog.show', $blog->slug) }}">
-                                    <img src="{{ $blog->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $blog->title }}" style="max-width:100%;max-height:80px;object-fit:cover;border-radius:10px;">
-                                </a>
-                                <a href="{{ route('blog.show', $blog->slug) }}" class="blog-title fw-bold mt-2 d-block" style="font-size:1.05rem;line-height:1.4;">{{ $blog->title }}</a>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="{{ route('blog.index') }}" class="btn btn-outline-primary rounded-pill px-4">Xem thêm bài viết</a>
-                    </div>
-                </div>
-
+            {{-- AdSense 2nd --}}
+            <div class="tf-ad mb-3" style="height:200px;">
+                <ins class="adsbygoogle" style="display:block;width:100%;height:200px;"
+                     data-ad-client="ca-pub-3065867660863139"
+                     data-ad-slot="auto" data-ad-format="rectangle"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
 
+            {{-- Footer mini --}}
+            <div class="d-flex flex-wrap gap-2 px-1" style="font-size:.74rem;color:#787c7e;">
+                <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#aboutModal">Điều khoản</a>·
+                <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#privacyModal">Bảo mật</a>·
+                <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#advertisingModal">Quảng cáo</a>·
+                <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#contactModal">Liên hệ</a>
+                <div class="w-100 mt-1">DungThu.com © {{ date('Y') }}</div>
+            </div>
+
+        </div>
+    </aside>
+
+</div>{{-- tf-layout --}}
+</div>{{-- bg wrapper --}}
+
+{{-- Recent Purchase Toast --}}
+@if(!empty($recentPurchases) && count($recentPurchases) > 0)
+<script type="application/json" id="rptData">@json($recentPurchases)</script>
+<div id="rptToast" class="rpt-toast" role="status" aria-live="polite">
+    <button class="rc" id="rptClose">&times;</button>
+    <div class="inner">
+        <div class="ava" id="rptAva">K</div>
+        <div>
+            <div class="rn" id="rptName">Khách hàng</div>
+            <div class="rs" id="rptSub">vừa mua thành công</div>
+            <a href="#" class="rp" id="rptProd">Sản phẩm</a>
         </div>
     </div>
-
-    @if(!empty($recentPurchases) && count($recentPurchases) > 0)
-        <script type="application/json" id="recentPurchaseData">@json($recentPurchases)</script>
-        <div id="recentPurchaseToast" class="recent-purchase-toast" role="status" aria-live="polite" aria-atomic="true">
-            <div class="rpt-header">
-                <span class="rpt-pill buy">
-                    <i class="fas fa-star"></i> Vừa mua
-                </span>
-                <span class="rpt-pill verify">
-                    <i class="fas fa-check-circle"></i> Đã xác minh
-                </span>
-                <button type="button" class="rpt-close" id="recentPurchaseClose" aria-label="Đóng">&times;</button>
-            </div>
-
-            <div class="rpt-body">
-                <div class="rpt-avatar">
-                    <span id="rptAvatarLetter">N</span>
-                    <span class="rpt-badge">
-                        <i class="fas fa-check-circle" style="font-size: 12px; color: #12b76a;"></i>
-                    </span>
-                </div>
-
-                <div style="min-width:0;flex:1;">
-                    <div class="rpt-name" id="rptName">Khách hàng</div>
-                    <div class="rpt-sub">
-                        <i class="fas fa-check-circle"></i>
-                        <span id="rptAction">vừa mua thành công</span>
-                    </div>
-
-                    <a href="#shop" class="rpt-product" id="rptProductLink">
-                        <div class="rpt-product-title" id="rptProductTitle">Sản phẩm</div>
-                        <div class="rpt-product-meta">
-                            <span id="rptTime">vừa xong</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    @endif
+</div>
+@endif
 
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/home.js') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('js/home.js')) }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const tabLatest = document.getElementById('tab-latest');
+    const tabAi     = document.getElementById('tab-ai');
+    const blogs     = document.querySelectorAll('.item-blog');
+    const shops     = document.querySelectorAll('.item-shop');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const wrap = document.getElementById('flash-sale');
-            if (!wrap) return;
-            const endMs = parseInt(wrap.dataset.countdownEnd || '0', 10);
-            const hoursEl = wrap.querySelector('[data-unit="hours"]');
-            const minutesEl = wrap.querySelector('[data-unit="minutes"]');
-            const secondsEl = wrap.querySelector('[data-unit="seconds"]');
+    tabLatest?.addEventListener('click', function(){
+        document.querySelectorAll('.tf-sort-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        blogs.forEach(el => el.style.display = 'flex');
+        shops.forEach(el => el.style.display = 'none');
+    });
 
-            function pad(num) {
-                return String(num).padStart(2, '0');
-            }
-
-            function tick() {
-                const now = Date.now();
-                let diff = Math.max(0, endMs - now);
-                if (endMs > 0 && diff <= 0) {
-                    wrap.style.display = 'none';
-                    return;
-                }
-                const hours = Math.floor(diff / 3600000);
-                diff = diff % 3600000;
-                const minutes = Math.floor(diff / 60000);
-                const seconds = Math.floor((diff % 60000) / 1000);
-
-                if (hoursEl) hoursEl.textContent = pad(hours);
-                if (minutesEl) minutesEl.textContent = pad(minutes);
-                if (secondsEl) secondsEl.textContent = pad(seconds);
-            }
-
-            tick();
-            setInterval(tick, 1000);
+    tabAi?.addEventListener('click', function(){
+        document.querySelectorAll('.tf-sort-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        blogs.forEach(el => el.style.display = 'none');
+        shops.forEach(el => el.style.display = 'flex');
+        // Đối với card shop nhỏ dùng block
+        shops.forEach(el => {
+            if(el.classList.contains('tf-widget')) el.style.display = 'block';
         });
-    </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
-         document.addEventListener('DOMContentLoaded', function () {
-             const dataEl = document.getElementById('recentPurchaseData');
-             const toastEl = document.getElementById('recentPurchaseToast');
-             const closeEl = document.getElementById('recentPurchaseClose');
+    });
 
-             if (!dataEl || !toastEl) return;
-
-             const storageKey = 'recentPurchaseToastDismissedUntil';
-             const dismissedUntil = parseInt(localStorage.getItem(storageKey) || '0', 10);
-             if (dismissedUntil && Date.now() < dismissedUntil) return;
-
-             let purchases = [];
-             try {
-                 purchases = JSON.parse(dataEl.textContent || '[]');
-             } catch (e) {
-                 return;
-             }
-             if (!Array.isArray(purchases) || purchases.length === 0) return;
-
-             const els = {
-                 avatarLetter: document.getElementById('rptAvatarLetter'),
-                 name: document.getElementById('rptName'),
-                 action: document.getElementById('rptAction'),
-                 productLink: document.getElementById('rptProductLink'),
-                 productTitle: document.getElementById('rptProductTitle'),
-                 time: document.getElementById('rptTime'),
-             };
-
-             let index = 0;
-             let stop = false;
-             let hideTimer = null;
-             let nextTimer = null;
-             const SHOW_MS = 2500; // how long toast stays visible
-             const INTERVAL_MS = 10000; // show a new one every 10s
-
-             function getAvatarLetter(name) {
-                 const s = String(name || '').trim();
-                 const m = s.match(/[A-Za-zÀ-ỹĐđ]/u);
-                 return (m ? m[0] : 'K').toUpperCase();
-             }
-
-             function getProductText(p) {
-                 const base = p?.product_name ? String(p.product_name) : 'Sản phẩm';
-                 const extra = Number(p?.extra_items || 0);
-                 return extra > 0 ? `${base} +${extra} SP` : base;
-             }
-
-             function render(p) {
-                 const customerName = p?.customer_name ? String(p.customer_name) : 'Khách hàng';
-                 const verbValue = String(p?.verb || '').toLowerCase();
-                 const verb = verbValue === 'mua' ? 'mua' : (verbValue === 'đổi' ? 'đổi' : 'đặt');
-                 const timeAgo = p?.time_ago ? String(p.time_ago) : '';
-                 const productText = getProductText(p);
-                 const productUrl = p?.product_url ? String(p.product_url) : '#shop';
-
-                 if (els.avatarLetter) els.avatarLetter.textContent = getAvatarLetter(customerName);
-                 if (els.name) els.name.textContent = customerName;
-                 if (els.action) els.action.textContent = `vừa ${verb} thành công`;
-                 if (els.productTitle) els.productTitle.textContent = productText;
-                 if (els.time) els.time.textContent = timeAgo;
-                 if (els.productLink) els.productLink.setAttribute('href', productUrl);
-             }
-
-             function show() {
-                 toastEl.classList.add('show');
-             }
-
-             function hide() {
-                 toastEl.classList.remove('show');
-             }
-
-             function cycle() {
-                 if (stop) return;
-                 const p = purchases[index % purchases.length];
-                 index += 1;
-
-                 render(p);
-                 show();
-
-                 if (hideTimer) clearTimeout(hideTimer);
-                 if (nextTimer) clearTimeout(nextTimer);
-
-                 hideTimer = setTimeout(function () {
-                     hide();
-                 }, SHOW_MS);
-
-                 nextTimer = setTimeout(cycle, INTERVAL_MS);
-             }
-
-             if (closeEl) {
-                 closeEl.addEventListener('click', function () {
-                     stop = true;
-                     hide();
-                     localStorage.setItem(storageKey, String(Date.now() + 60 * 1000));
-                 });
-             }
-
-             toastEl.addEventListener('mouseenter', function () {
-                 if (hideTimer) clearTimeout(hideTimer);
-                 if (nextTimer) clearTimeout(nextTimer);
-             });
-             toastEl.addEventListener('mouseleave', function () {
-                 if (stop) return;
-                 if (hideTimer) clearTimeout(hideTimer);
-                 hideTimer = setTimeout(function () {
-                     hide();
-                 }, 900);
-             });
-
-             setTimeout(cycle, 800);
-         });
-     </script>
-     @if(session('scrollTo'))
-     <script>
-         document.addEventListener('DOMContentLoaded', function() {
-             const section = document.querySelector('[data-tiktok-section]');
-             if (section) {
-                setTimeout(() => {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Thêm animation highlight
-                    section.style.animation = 'pulse 1s ease-in-out 2';
-                }, 500);
-            }
+    // Copy share link
+    window.copyLink = function(btn) {
+        navigator.clipboard?.writeText(window.location.href).then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Đã sao chép!';
+            setTimeout(() => { btn.innerHTML = orig; }, 2000);
         });
-    </script>
-    <style>
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(255, 0, 80, 0.3); }
-        }
-    </style>
-    @endif
+    }
+
+    // Flash sale countdown logic...
+    const fs = document.getElementById('flash-sale');
+    if(fs){
+        const end = parseInt(fs.dataset.countdownEnd || '0');
+        const pad = n => String(n).padStart(2,'0');
+        setInterval(()=>{
+            let d = Math.max(0, end - Date.now());
+            const H = Math.floor(d/3600000); d%=3600000;
+            const M = Math.floor(d/60000);
+            const S = Math.floor((d%60000)/1000);
+            fs.querySelector('[data-unit="hours"]').textContent = pad(H);
+            fs.querySelector('[data-unit="minutes"]').textContent = pad(M);
+            fs.querySelector('[data-unit="seconds"]').textContent = pad(S);
+        }, 1000);
+    }
+});
+</script>
 @endpush
-

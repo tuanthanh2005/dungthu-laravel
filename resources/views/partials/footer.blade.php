@@ -1,20 +1,25 @@
-<footer class="bg-dark text-white py-5 mt-5">
+<footer class="footer-techfeed">
     <div class="container">
-        <div class="row">
+        <div class="row g-4">
             <div class="col-md-4">
-                <h4 class="fw-bold text-primary">DungThu.com</h4>
-                <p class="small opacity-75">Nền tảng cung cấp giải pháp công nghệ, thời trang và công cụ Marketing miễn phí cho cộng đồng Việt Nam.</p>
+                <div class="footer-brand">
+                    <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+                    DungThu.com
+                </div>
+                <p class="small text-muted">Nền tảng cung cấp giải pháp công nghệ, công cụ Marketing và sản phẩm số chất lượng cho cộng đồng Việt Nam.</p>
             </div>
             <div class="col-md-4">
-                <h5>Liên kết nhanh</h5>
-                <ul class="list-unstyled opacity-75">
-                    <li><a href="#" class="text-white text-decoration-none" data-bs-toggle="modal" data-bs-target="#aboutModal">Về chúng tôi</a></li>
-                    <li><a href="#" class="text-white text-decoration-none" data-bs-toggle="modal" data-bs-target="#privacyModal">Chính sách bảo mật</a></li>
-                    <li><a href="#" class="text-white text-decoration-none" data-bs-toggle="modal" data-bs-target="#advertisingModal">Liên hệ quảng cáo</a></li>
+                <h6 class="fw-bold mb-3">Liên kết nhanh</h6>
+                <ul class="footer-links">
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">Về chúng tôi</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Chính sách bảo mật</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#advertisingModal">Liên hệ quảng cáo</a></li>
+                    <li><a href="{{ route('shop') }}">Cửa hàng</a></li>
+                    <li><a href="{{ route('blog.index') }}">Blog</a></li>
                 </ul>
             </div>
             <div class="col-md-4">
-                <h5>Đăng ký nhận tin</h5>
+                <h6 class="fw-bold mb-3">Đăng ký nhận tin</h6>
                 <form id="newsletter-form">
                     @csrf
                     <div class="input-group mb-3">
@@ -61,10 +66,7 @@
                 });
             </script>
         </div>
-        <hr class="border-secondary">
-        <div class="text-center small opacity-50">
-            &copy; {{ date('Y') }} DungThu.com. All rights reserved.
-        </div>
+        <div class="footer-copy">{{ date('Y') }} DungThu.com &mdash; Made with <i class="fa-solid fa-heart text-danger"></i> in Vietnam</div>
     </div>
 </div>
 

@@ -187,7 +187,7 @@
 @endpush
 
 @section('content')
-<div style="min-height: 70vh;">
+<main style="margin-top: 100px; min-height: 70vh;">
     <div class="buff-hero">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -205,15 +205,6 @@
     </div>
 
     <div class="container">
-
-        <!-- AdSense Top Buff -->
-        <div class="ad-block ad-fluid">
-            <div class="ad-label">Quảng Cáo</div>
-            <ins class="adsbygoogle" style="display:block; width:100%;"
-                data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
-                data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
 
 
         @forelse ($services as $platform => $platformServices)
@@ -285,15 +276,6 @@
                 <li>✅ Hoàn tiền 100% nếu không hài lòng</li>
             </ul>
         </div>
-
-        <!-- AdSense Bottom Buff -->
-        <div class="ad-block ad-fluid mt-4">
-            <div class="ad-label">Quảng Cáo</div>
-            <ins class="adsbygoogle" style="display:block; width:100%;"
-                data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
-                data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
     </div>
-</div>
+</main>
 @endsection

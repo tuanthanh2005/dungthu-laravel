@@ -4,16 +4,7 @@
 
 @section('content')
 <div class="container py-5">
-    <h1 class="mb-4 mt-5 fw-bold text-center">Thanh Toán</h1>
-    
-    <!-- AdSense Top -->
-    <div class="ad-block ad-fluid">
-        <div class="ad-label">Quảng Cáo</div>
-        <ins class="adsbygoogle" style="display:block; width:100%;"
-            data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
-            data-ad-format="auto" data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
+    <h1 class="mb-4 fw-bold text-center">Thanh Toán</h1>
     
     <div class="row">
         <div class="col-md-7">
@@ -69,17 +60,8 @@
                         </li>
                     </ul>
                     
-                    <button type="submit" form="checkout-form" class="btn btn-primary w-100 btn-lg rounded-pill shadow mt-3">Đặt Hàng Ngay</button>
+                    <button type="submit" form="checkout-form" class="btn btn-primary w-100 btn-lg rounded-pill shadow">Đặt Hàng Ngay</button>
                 </div>
-            </div>
-
-            <!-- AdSense Sidebar Checkout -->
-            <div class="ad-block ad-sidebar mt-4">
-                <div class="ad-label">Quảng Cáo</div>
-                <ins class="adsbygoogle" style="display:block; width:100%;"
-                    data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
-                    data-ad-format="auto" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>
     </div>

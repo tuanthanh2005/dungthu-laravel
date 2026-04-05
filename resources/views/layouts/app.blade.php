@@ -36,56 +36,6 @@
     <link rel="stylesheet" href="{{ asset('css/mobile.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/mobile.css')) }}">
 
     <style>
-        /* ===== GLOBAL MOBILE FIX: chống zoom do overflow-x ===== */
-        html, body {
-            overflow-x: hidden;
-            max-width: 100%;
-        }
-        /* Ngăn AdSense tràn ra ngoài viewport mobile */
-        ins.adsbygoogle {
-            max-width: 100% !important;
-        }
-        /* Ngăn bất kỳ ảnh/phần tử nào tràn */
-        img, video, iframe {
-            max-width: 100%;
-        }
-        /* 4. Ngăn nhảy nội dung khi ads load (CLS fix) */
-        .ad-block {
-            background: #fff;
-            border: 1px dashed rgba(102,126,234,0.18);
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .ad-block.ad-fluid { min-height: 120px; }
-        .ad-block.ad-sidebar { min-height: 280px; }
-        .ad-label {
-            font-size: 0.62rem;
-            color: #bbb;
-            text-align: center;
-            padding: 3px 0;
-            background: #fafafa;
-            border-bottom: 1px solid #eee;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            width: 100%;
-        }
-
-        /* 5. Container padding mobile */
-        @media (max-width: 576px) {
-            .container, .container-fluid {
-                padding-left: 12px !important;
-                padding-right: 12px !important;
-            }
-            .ad-block.ad-sidebar { min-height: 200px; } /* Nhỏ hơn trên mobile */
-        }
-    </style>
-
-    <style>
         /* Navbar Styling */
         .navbar-glass {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
@@ -256,7 +206,7 @@
     @include('partials.navbar')
 
     <!-- Main Content -->
-    <main style="padding-top: 66px;">
+    <main>
         @yield('content')
     </main>
 

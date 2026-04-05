@@ -557,9 +557,9 @@
     }
 
     .chat-fab {
-        width: 56px;
-        height: 56px;
-        font-size: 24px;
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
     }
 
     .chat-fab .fab-tooltip {
@@ -567,70 +567,82 @@
     }
 
     .chat-widget {
-        bottom: 90px;
+        bottom: 80px;
         right: 16px;
-        left: 16px;
-        width: auto;
-        height: calc(100vh - 120px);
-        border-radius: 20px;
+        left: auto;
+        width: 340px;
+        max-width: calc(100vw - 32px);
+        height: 480px;
+        max-height: calc(100vh - 100px);
+        border-radius: 16px;
+        transform-origin: bottom right;
     }
 
     .chat-header {
-        padding: 20px;
+        padding: 16px;
     }
 
     .chat-avatar {
-        width: 48px;
-        height: 48px;
-        font-size: 24px;
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
     }
 
     .chat-header-text h3 {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .chat-header-text p {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .chat-body {
-        padding: 16px;
+        padding: 14px;
     }
 
     .message-bubble {
         max-width: 85%;
     }
+    
+    .message-content {
+        font-size: 13px;
+        padding: 12px 16px;
+    }
 
     .chat-footer {
-        padding: 16px;
+        padding: 14px;
     }
 
     .chat-input {
-        padding: 12px 16px;
-        font-size: 14px;
+        padding: 10px 14px;
+        font-size: 13px;
     }
 
     .chat-send-btn {
-        width: 48px;
-        height: 48px;
-        font-size: 18px;
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
     }
 }
 
 @media (max-width: 480px) {
     .chat-widget {
-        bottom: 0;
-        right: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        max-height: 100vh;
-        border-radius: 0;
+        bottom: 70px;
+        right: 12px;
+        width: calc(100vw - 24px);
+        height: 420px;
+        border-radius: 16px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.2);
     }
 
     .chat-fab-container {
-        bottom: 20px;
-        right: 20px;
+        bottom: 12px;
+        right: 12px;
+    }
+    
+    .chat-fab {
+        width: 48px;
+        height: 48px;
     }
 }
 </style>

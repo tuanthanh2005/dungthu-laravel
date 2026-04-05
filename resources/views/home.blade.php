@@ -145,10 +145,8 @@ body { background-color:#dae0e6; overflow-y:scroll; }
 
 /* ---- AD SLOT ---- */
 .tf-ad {
-    background:#f8f9fa; border:1px dashed #ced4da; border-radius:12px;
     display:flex; align-items:center; justify-content:center;
-    color:#adb5bd; font-size:.82rem; text-align:center;
-    margin-bottom:12px; overflow:hidden;
+    overflow:hidden;
 }
 
 /* ---- RIGHT SIDEBAR ---- */

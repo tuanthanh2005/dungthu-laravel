@@ -58,7 +58,7 @@
         .tf-sticky {
             position: sticky;
             top: 66px;
-            max-height: calc(100vh - 70px);
+
             overflow-y: auto;
             scrollbar-width: none;
         }

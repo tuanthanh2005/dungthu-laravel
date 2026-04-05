@@ -75,17 +75,9 @@
         }
     </style>
 </head>
-<body class="loading">
+<body>
     @yield('seo_h1')
-    {{-- PAGE PRELOADER --}}
-    <div id="page-loader" class="tf-preloader">
-        <div class="loader-content">
-            <div class="loader-logo">
-                <i class="fa-solid fa-bolt"></i>
-            </div>
-            <div class="loader-spinner"></div>
-        </div>
-    </div>
+
 
     <!-- Navbar -->
     @include('partials.navbar')
@@ -269,67 +261,7 @@
         }
     </style>
     
-    <script>
-        // High-reliability preloader handler
-        (function() {
-            const loader = document.getElementById('page-loader');
-            const body = document.body;
-            let hidden = false;
 
-            function hidePreloader() {
-                if (hidden || !loader) return;
-                hidden = true;
-                loader.classList.add('fade-out');
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    body.classList.remove('loading');
-                }, 500);
-            }
-
-            // Fallback 1: Window Load (standard)
-            window.addEventListener('load', hidePreloader);
-
-            // Fallback 2: Page Show (Back/Forward button fix)
-            window.addEventListener('pageshow', function(e) {
-                hidePreloader();
-            });
-
-            // Fallback 3: Safety timeout (8 seconds)
-            setTimeout(hidePreloader, 8000);
-
-            // Click listener for showing loader
-            document.addEventListener('click', function(e) {
-                const link = e.target.closest('a');
-                if (!link || e.defaultPrevented) return;
-                
-                const href = link.getAttribute('href');
-                const target = link.getAttribute('target');
-                
-                // Ignore special links
-                if (!href || href.startsWith('#') || href.startsWith('javascript:') || 
-                    href.startsWith('tel:') || href.startsWith('mailto:')) return;
-
-                // Ignore external or new tabs
-                if (target === '_blank') return;
-                
-                // Ignore modified clicks
-                if (e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1) return;
-
-                try {
-                    const currentUrl = window.location.href.split('#')[0];
-                    const targetUrl = new URL(href, window.location.origin).href.split('#')[0];
-
-                    if (currentUrl !== targetUrl && loader) {
-                        loader.style.display = 'flex';
-                        loader.classList.remove('fade-out');
-                        body.classList.add('loading');
-                    }
-                } catch (err) {
-                    // Ignore URL parsing errors
-                }
-            });
-        })();
-    </script>
 @stack('scripts')
 </body>
 </html>

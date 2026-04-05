@@ -29,15 +29,24 @@
 @endpush
 
 @section('content')
-<div class="container py-5" style="margin-top: 80px;">
+<div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="text-center mb-4">
+            <div class="text-center mb-4 mt-4">
                 <h1 class="fw-bold">
                     <i class="fas fa-qrcode text-primary me-2"></i>Thanh Toán QR
                 </h1>
                 <p class="text-muted">Sản phẩm số - Thanh toán nhanh chóng qua QR Code</p>
-                            <p class="lead opacity-75 mb-4">Khi bạn thanh toán xong NHÂN VIÊN sẽ liên lạc với bạn hoặc bạn chủ động nhắn tin với thông tin liên hệ bên shop.</p>
+                <p class="lead opacity-75 mb-4">Khi bạn thanh toán xong NHÂN VIÊN sẽ liên lạc với bạn hoặc bạn chủ động nhắn tin với thông tin liên hệ bên shop.</p>
+            </div>
+
+            <!-- AdSense Top -->
+            <div class="ad-block ad-fluid">
+                <div class="ad-label">Quảng Cáo</div>
+                <ins class="adsbygoogle" style="display:block; width:100%;"
+                    data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
+                    data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
 
             <div class="row g-4">
@@ -143,9 +152,18 @@
                             Sau khi thanh toán, vui lòng nhấn nút "Xác nhận đã thanh toán" bên dưới
                         </div>
 
-                        <button type="submit" form="checkout-form" class="btn btn-warning btn-lg px-5 rounded-pill shadow-lg">
+                        <button type="submit" form="checkout-form" class="btn btn-warning btn-lg px-5 rounded-pill shadow-lg mt-3">
                             <i class="fas fa-check-circle me-2"></i>Xác nhận đã thanh toán
                         </button>
+                    </div>
+
+                    <!-- AdSense Sidebar Checkout -->
+                    <div class="ad-block ad-sidebar mt-4">
+                        <div class="ad-label">Quảng Cáo</div>
+                        <ins class="adsbygoogle" style="display:block; width:100%;"
+                            data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
+                            data-ad-format="auto" data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
                 </div>
             </div>

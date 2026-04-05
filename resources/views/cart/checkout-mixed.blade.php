@@ -31,14 +31,23 @@
 @endpush
 
 @section('content')
-<div class="container py-5" style="margin-top: 80px;">
+<div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-11">
-            <div class="text-center mb-4">
+            <div class="text-center mb-4 mt-4">
                 <h1 class="fw-bold">
                     <i class="fas fa-shopping-cart text-primary me-2"></i>Thanh Toán
                 </h1>
                 <p class="text-muted">Đơn hàng của bạn bao gồm cả sản phẩm số và sản phẩm vật lý</p>
+            </div>
+
+            <!-- AdSense Top -->
+            <div class="ad-block ad-fluid">
+                <div class="ad-label">Quảng Cáo</div>
+                <ins class="adsbygoogle" style="display:block; width:100%;"
+                    data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
+                    data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
 
             <div class="row g-4">
@@ -204,6 +213,15 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- AdSense Sidebar Checkout -->
+                    <div class="ad-block ad-sidebar mt-4">
+                        <div class="ad-label">Quảng Cáo</div>
+                        <ins class="adsbygoogle" style="display:block; width:100%;"
+                            data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
+                            data-ad-format="auto" data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
                 </div>
             </div>

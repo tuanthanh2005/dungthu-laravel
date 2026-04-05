@@ -571,11 +571,13 @@
         right: 16px;
         left: auto;
         width: 340px;
+        /* Chống tràn */
         max-width: calc(100vw - 32px);
         height: 480px;
         max-height: calc(100vh - 100px);
         border-radius: 16px;
         transform-origin: bottom right;
+        box-sizing: border-box;
     }
 
     .chat-header {
@@ -598,6 +600,7 @@
 
     .chat-body {
         padding: 14px;
+        overflow-x: hidden;
     }
 
     .message-bubble {
@@ -605,23 +608,28 @@
     }
     
     .message-content {
-        font-size: 13px;
-        padding: 12px 16px;
+        font-size: 14px;
+        padding: 10px 14px;
     }
 
     .chat-footer {
         padding: 14px;
+        box-sizing: border-box;
     }
 
     .chat-input {
         padding: 10px 14px;
-        font-size: 13px;
+        /* BẮT BUỘC >= 16px ĐỂ IOS KHÔNG TỰ AUTO ZOOM VÀO INPUT */
+        font-size: 16px !important;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .chat-send-btn {
         width: 44px;
         height: 44px;
         font-size: 16px;
+        flex-shrink: 0;
     }
 }
 
@@ -629,7 +637,8 @@
     .chat-widget {
         bottom: 70px;
         right: 12px;
-        width: calc(100vw - 24px);
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
         height: 420px;
         border-radius: 16px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.2);

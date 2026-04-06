@@ -949,7 +949,7 @@ class AdminController extends Controller
             $imagePath = '/images/blogs/' . $fileName;
         }
 
-        Blog::create([
+        $blog = Blog::create([
             'title' => $request->title,
             'slug' => $slug,
             'excerpt' => $request->excerpt,
@@ -962,6 +962,14 @@ class AdminController extends Controller
             'is_published' => true,
             'published_at' => now(),
         ]);
+
+        // Gửi index Google
+        try {
+            $url = url('/blog/' . $blog->slug);
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
+        } catch (\Exception $e) {
+            // Có thể log lỗi nếu cần
+        }
 
         return redirect()->route('admin.blogs')->with('success', 'Thêm bài viết thành công!');
     }
@@ -1019,6 +1027,14 @@ class AdminController extends Controller
             'image' => $imagePath,
             'is_featured' => $request->has('is_featured'),
         ]);
+
+        // Gửi index Google khi update
+        try {
+            $url = url('/blog/' . $blog->slug);
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
+        } catch (\Exception $e) {
+            // Có thể log lỗi nếu cần
+        }
 
         return redirect()->route('admin.blogs')->with('success', 'Cập nhật bài viết thành công!');
     }

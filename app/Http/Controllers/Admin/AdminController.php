@@ -963,10 +963,13 @@ class AdminController extends Controller
             'published_at' => now(),
         ]);
 
-        // Gửi index Google
+        // Gửi index Google cho cả không www và www
         try {
-            $url = url('/blog/' . $blog->slug);
-            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
+            $slug = $blog->slug;
+            $url1 = 'https://dungthu.com/blog/' . $slug;
+            $url2 = 'https://www.dungthu.com/blog/' . $slug;
+            \App\Services\GoogleIndexingService::publishUrlStatic($url1, 'URL_UPDATED');
+            \App\Services\GoogleIndexingService::publishUrlStatic($url2, 'URL_UPDATED');
         } catch (\Exception $e) {
             // Có thể log lỗi nếu cần
         }
@@ -1028,10 +1031,13 @@ class AdminController extends Controller
             'is_featured' => $request->has('is_featured'),
         ]);
 
-        // Gửi index Google khi update
+        // Gửi index Google khi update cho cả không www và www
         try {
-            $url = url('/blog/' . $blog->slug);
-            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
+            $slug = $blog->slug;
+            $url1 = 'https://dungthu.com/blog/' . $slug;
+            $url2 = 'https://www.dungthu.com/blog/' . $slug;
+            \App\Services\GoogleIndexingService::publishUrlStatic($url1, 'URL_UPDATED');
+            \App\Services\GoogleIndexingService::publishUrlStatic($url2, 'URL_UPDATED');
         } catch (\Exception $e) {
             // Có thể log lỗi nếu cần
         }

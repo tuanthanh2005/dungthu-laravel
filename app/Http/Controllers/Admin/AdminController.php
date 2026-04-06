@@ -966,16 +966,8 @@ class AdminController extends Controller
         // Gửi index Google cho cả không www và www
         try {
             $slug = $blog->slug;
-            // Danh sách domain đã xác thực, có thể thêm domain khác nếu cần
-            $domains = [
-                'https://dungthu.com',
-                'https://www.dungthu.com',
-                // Thêm domain khác nếu xác thực thêm
-            ];
-            foreach ($domains as $domain) {
-                $url = $domain . '/blog/' . $slug;
-                \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
-            }
+            $url = 'https://dungthu.com/blog/' . $slug;
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
         } catch (\Exception $e) {
             // Có thể log lỗi nếu cần
         }
@@ -1040,15 +1032,8 @@ class AdminController extends Controller
         // Gửi index Google khi update cho cả không www và www
         try {
             $slug = $blog->slug;
-            $domains = [
-                'https://dungthu.com',
-                'https://www.dungthu.com',
-                // Thêm domain khác nếu xác thực thêm
-            ];
-            foreach ($domains as $domain) {
-                $url = $domain . '/blog/' . $slug;
-                \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
-            }
+            $url = 'https://dungthu.com/blog/' . $slug;
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
         } catch (\Exception $e) {
             // Có thể log lỗi nếu cần
         }

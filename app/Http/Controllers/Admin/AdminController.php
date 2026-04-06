@@ -966,10 +966,16 @@ class AdminController extends Controller
         // Gửi index Google cho cả không www và www
         try {
             $slug = $blog->slug;
-            $url1 = 'https://dungthu.com/blog/' . $slug;
-            $url2 = 'https://www.dungthu.com/blog/' . $slug;
-            \App\Services\GoogleIndexingService::publishUrlStatic($url1, 'URL_UPDATED');
-            \App\Services\GoogleIndexingService::publishUrlStatic($url2, 'URL_UPDATED');
+            // Danh sách domain đã xác thực, có thể thêm domain khác nếu cần
+            $domains = [
+                'https://dungthu.com',
+                'https://www.dungthu.com',
+                // Thêm domain khác nếu xác thực thêm
+            ];
+            foreach ($domains as $domain) {
+                $url = $domain . '/blog/' . $slug;
+                \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
+            }
         } catch (\Exception $e) {
             // Có thể log lỗi nếu cần
         }
@@ -1034,10 +1040,15 @@ class AdminController extends Controller
         // Gửi index Google khi update cho cả không www và www
         try {
             $slug = $blog->slug;
-            $url1 = 'https://dungthu.com/blog/' . $slug;
-            $url2 = 'https://www.dungthu.com/blog/' . $slug;
-            \App\Services\GoogleIndexingService::publishUrlStatic($url1, 'URL_UPDATED');
-            \App\Services\GoogleIndexingService::publishUrlStatic($url2, 'URL_UPDATED');
+            $domains = [
+                'https://dungthu.com',
+                'https://www.dungthu.com',
+                // Thêm domain khác nếu xác thực thêm
+            ];
+            foreach ($domains as $domain) {
+                $url = $domain . '/blog/' . $slug;
+                \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
+            }
         } catch (\Exception $e) {
             // Có thể log lỗi nếu cần
         }

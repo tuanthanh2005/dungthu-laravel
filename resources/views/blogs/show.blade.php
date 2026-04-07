@@ -31,16 +31,46 @@
             .blog-detail-wrapper { padding: 28px 0 48px; }
         }
         
-        .blog-header-image {
+        .blog-header-image-wrapper {
+            position: relative;
             width: 100%;
-            max-height: 560px;
-            object-fit: cover;
+            height: 500px;
             border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.14);
+            overflow: hidden;
             margin: 8px 0 36px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1a1a2e; /* dark fallback */
         }
+
+        .blog-header-image-wrapper .blur-bg {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background-size: cover;
+            background-position: center;
+            filter: blur(25px);
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .blog-header-image {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            margin: 0;
+            border-radius: 8px; /* Slight radius for image inside */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
         @media (max-width: 768px) {
-            .blog-header-image { max-height: 280px; border-radius: 14px; margin-bottom: 26px; }
+            .blog-header-image-wrapper { height: 280px; border-radius: 14px; margin-bottom: 26px; }
         }
         
         .blog-meta {
@@ -384,7 +414,10 @@
 
                 <!-- Featured Image -->
                 @if($blog->image)
-                <img src="{{ $blog->image }}" alt="{{ $blog->title }}" class="blog-header-image" data-aos="zoom-in">
+                <div class="blog-header-image-wrapper" data-aos="zoom-in">
+                    <div class="blur-bg" style="background-image: url('{{ $blog->image }}');"></div>
+                    <img src="{{ $blog->image }}" alt="{{ $blog->title }}" class="blog-header-image">
+                </div>
                 @endif
 
                 <!-- Excerpt -->

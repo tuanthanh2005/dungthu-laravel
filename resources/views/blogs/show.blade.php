@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', $blog->title . ' - DungThu.com')
+@section('meta_description', $blog->excerpt)
+@section('og_image', $blog->image)
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', $product->name . ' - DungThu.com')
+@section('meta_description', Str::limit(strip_tags($product->description), 160))
+@section('og_image', asset($product->image))
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">

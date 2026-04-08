@@ -383,13 +383,19 @@
     <div class="container">
         <div class="blog-detail-card" data-aos="fade-up">
             <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb" class="mb-5">
+            <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb justify-content-center">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="fas fa-home me-1"></i>Trang chủ</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('blog.index') }}"><i class="fas fa-blog me-1"></i>Blog</a></li>
                     <li class="breadcrumb-item active">{{ Str::limit($blog->title, 50) }}</li>
                 </ol>
             </nav>
+
+            <!-- Google Translate Widget (For foreigners) -->
+            <div class="text-center mb-5 d-flex justify-content-center align-items-center gap-2">
+                <span class="text-muted small"><i class="fas fa-globe me-1"></i>Dịch ngôn ngữ (Translate):</span>
+                <div id="google_translate_element"></div>
+            </div>
 
             <!-- Blog Header -->
             <article>
@@ -549,4 +555,25 @@
     <script>
         AOS.init({ duration: 800, once: true });
     </script>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'vi', 
+                includedLanguages: 'en,vi,zh-CN,th,ja,ko',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <style>
+        /* CSS Ẩn logo Google rườm rà */
+        .goog-te-gadget { font-size: 0px !important; }
+        .goog-te-gadget .goog-te-combo { font-size: 14px; padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; outline: none; }
+        .goog-logo-link { display: none !important; }
+        .goog-te-banner-frame { display: none !important; }
+        body { top: 0px !important; }
+    </style>
 @endpush

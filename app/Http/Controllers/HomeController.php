@@ -37,8 +37,8 @@ class HomeController extends Controller
             ->take(12)
             ->get();
         
-        // Lấy 4 blog mới nhất (published)
-        $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(4)->get();
+        // Lấy 10 blog mới nhất (published)
+        $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(10)->get();
         
 
         // S?n ph?m ?ang gi?m gi? (hi?n th? 2-3 sp tr?n home)

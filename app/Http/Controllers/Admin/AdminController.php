@@ -17,9 +17,29 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
 use App\Helpers\PathHelper;
+use App\Services\GoogleIndexingService;
 
 class AdminController extends Controller
 {
+    private function submitBlogToGoogleIndexing(Blog $blog): void
+    {
+        if (!config('services.google_indexing.enabled', false) || !$blog->is_published) {
+            return;
+        }
+
+        try {
+            $baseUrl = rtrim(config('services.google_indexing.site_url', config('app.url')), '/');
+            $url = $baseUrl . '/blog/' . $blog->slug;
+            GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
+        } catch (\Throwable $e) {
+            \Log::warning('Google Indexing API failed for blog URL', [
+                'blog_id' => $blog->id,
+                'slug' => $blog->slug,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
     // Hàm crop ảnh về kích thước chuẩn
     private function cropImage($file, $width = 500, $height = 334)
     {
@@ -963,14 +983,7 @@ class AdminController extends Controller
             'published_at' => now(),
         ]);
 
-        // Gửi index Google cho cả không www và www
-        try {
-            $slug = $blog->slug;
-            $url = 'https://dungthu.com/blog/' . $slug;
-            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
-        } catch (\Exception $e) {
-            // Có thể log lỗi nếu cần
-        }
+        $this->submitBlogToGoogleIndexing($blog);
 
         return redirect()->route('admin.blogs')->with('success', 'Thêm bài viết thành công!');
     }
@@ -1029,14 +1042,7 @@ class AdminController extends Controller
             'is_featured' => $request->has('is_featured'),
         ]);
 
-        // Gửi index Google khi update cho cả không www và www
-        try {
-            $slug = $blog->slug;
-            $url = 'https://dungthu.com/blog/' . $slug;
-            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
-        } catch (\Exception $e) {
-            // Có thể log lỗi nếu cần
-        }
+        $this->submitBlogToGoogleIndexing($blog);
 
         return redirect()->route('admin.blogs')->with('success', 'Cập nhật bài viết thành công!');
     }

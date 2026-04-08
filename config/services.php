@@ -50,4 +50,10 @@ return [
         'model' => env('GROQ_MODEL', 'llama-3.1-8b-instant'),
     ],
 
+    'google_indexing' => [
+        'enabled' => env('GOOGLE_INDEXING_ENABLED', true),
+        'key_file' => env('GOOGLE_INDEXING_KEY_FILE', storage_path('app/google/indexing-service-account.json')),
+        'site_url' => rtrim(env('GOOGLE_INDEXING_SITE_URL', env('APP_URL')), '/'),
+    ],
+
 ];

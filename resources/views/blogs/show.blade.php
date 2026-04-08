@@ -572,20 +572,28 @@
             new google.translate.TranslateElement({
                 pageLanguage: 'vi', 
                 includedLanguages: 'en,vi,zh-CN,th,ja,ko',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
                 autoDisplay: false
             }, 'google_translate_element');
         }
 
         function doGTranslate(lang) {
-            let teCombo = document.querySelector('select.goog-te-combo');
-            if (teCombo == null) {
-                setTimeout(() => doGTranslate(lang), 500);
-                return;
+            var teCombo = document.querySelector('.goog-te-combo');
+            if (teCombo) {
+                teCombo.value = lang;
+                teCombo.dispatchEvent(new Event('change', { bubbles: true }));
             }
-            teCombo.value = lang;
-            teCombo.dispatchEvent(new Event('change'));
         }
+
+        // Tự động set giá trị cho custom select dựa trên cookie hoặc giá trị mặc định web
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var teCombo = document.querySelector('.goog-te-combo');
+                var customSelect = document.getElementById('custom-lang-select');
+                if (teCombo && customSelect && teCombo.value) {
+                    customSelect.value = teCombo.value;
+                }
+            }, 1000);
+        });
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
@@ -597,6 +605,8 @@
         .goog-tooltip:hover { display: none !important; }
         .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
         #goog-gt-tt { display: none !important; }
+        /* Ẩn widget gốc sau khi custom select đã hoạt động */
+        #google_translate_element { display: none !important; }
 
         .custom-lang-selector:hover { border-color: #667eea !important; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2) !important; }
     </style>

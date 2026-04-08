@@ -2,6 +2,15 @@ User-agent: *
 Disallow: /admin
 Disallow: /login
 Disallow: /register
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+Disallow: /orders
+Disallow: /chat
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /test-email
+Disallow: /test-callback
 Allow: /
 
 Sitemap: https://dungthu.com/sitemap.xml

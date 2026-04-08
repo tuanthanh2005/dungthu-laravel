@@ -199,7 +199,11 @@ Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin')->group(functi
     Route::get('/blogs/{blog}/edit', [AdminController::class, 'editBlog'])->name('admin.blogs.edit');
     Route::put('/blogs/{blog}', [AdminController::class, 'updateBlog'])->name('admin.blogs.update');
     Route::delete('/blogs/{blog}', [AdminController::class, 'deleteBlog'])->name('admin.blogs.delete');
+    Route::match(['get', 'post'], '/google-indexing/blogs/submit-all', [GoogleIndexingController::class, 'submitAllBlogs'])->name('admin.google-indexing.submit-all');
+    Route::match(['get', 'post'], '/google-indexing/products/submit-all', [GoogleIndexingController::class, 'submitAllProducts'])->name('admin.google-indexing.submit-all-products');
+    Route::post('/google-indexing/submit-url', [GoogleIndexingController::class, 'submitUrl'])->name('admin.google-indexing.submit-url');
     Route::get('/google-indexing/recent', [GoogleIndexingController::class, 'recent'])->name('admin.google-indexing.recent');
+    Route::get('/google-indexing/status', [GoogleIndexingController::class, 'status'])->name('admin.google-indexing.status');
     
     // Tiktok Deals Management
     Route::get('/tiktok-deals', [TiktokDealController::class, 'index'])->name('admin.tiktok-deals.index');

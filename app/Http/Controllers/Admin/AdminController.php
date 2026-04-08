@@ -21,24 +21,7 @@ use App\Services\GoogleIndexingService;
 
 class AdminController extends Controller
 {
-    private function submitBlogToGoogleIndexing(Blog $blog): void
-    {
-        if (!config('services.google_indexing.enabled', false) || !$blog->is_published) {
-            return;
-        }
 
-        try {
-            $baseUrl = rtrim(config('services.google_indexing.site_url', config('app.url')), '/');
-            $url = $baseUrl . '/blog/' . $blog->slug;
-            GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED');
-        } catch (\Throwable $e) {
-            \Log::warning('Google Indexing API failed for blog URL', [
-                'blog_id' => $blog->id,
-                'slug' => $blog->slug,
-                'message' => $e->getMessage(),
-            ]);
-        }
-    }
 
     // Hàm crop ảnh về kích thước chuẩn
     private function cropImage($file, $width = 500, $height = 334)
@@ -529,6 +512,9 @@ class AdminController extends Controller
             $product->features()->sync($request->features);
         }
 
+        // Submit to Google Indexing
+        GoogleIndexingService::submitProductSafe($product, 'product_create');
+
         return redirect()->route('admin.products')->with('success', 'Thêm sản phẩm thành công!');
     }
 
@@ -687,6 +673,9 @@ class AdminController extends Controller
         } else {
             $product->features()->sync([]);
         }
+
+        // Submit to Google Indexing
+        GoogleIndexingService::submitProductSafe($product, 'product_update');
 
         return redirect()->route('admin.products')->with('success', 'Cập nhật sản phẩm thành công!');
     }
@@ -983,7 +972,8 @@ class AdminController extends Controller
             'published_at' => now(),
         ]);
 
-        $this->submitBlogToGoogleIndexing($blog);
+        // Submit to Google Indexing
+        GoogleIndexingService::submitBlogSafe($blog, 'blog_create');
 
         return redirect()->route('admin.blogs')->with('success', 'Thêm bài viết thành công!');
     }
@@ -1042,13 +1032,17 @@ class AdminController extends Controller
             'is_featured' => $request->has('is_featured'),
         ]);
 
-        $this->submitBlogToGoogleIndexing($blog);
+        // Submit to Google Indexing
+        GoogleIndexingService::submitBlogSafe($blog, 'blog_update');
 
         return redirect()->route('admin.blogs')->with('success', 'Cập nhật bài viết thành công!');
     }
 
     public function deleteBlog(Blog $blog)
     {
+        // Notify Google to remove URL before deleting
+        GoogleIndexingService::removeBlogSafe($blog, 'blog_delete');
+
         // Delete image
         if ($blog->image) {
             $imagePath = parse_url($blog->image, PHP_URL_PATH);

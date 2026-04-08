@@ -4,103 +4,175 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Blog;
-use App\Models\TiktokDeal;
+use App\Models\CommunityPost;
+use App\Models\BuffService;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
-        $blogs = Blog::all();
-        
+        // Only get published blogs
+        $blogs = Blog::published()->orderBy('updated_at', 'desc')->get();
+        $products = Product::orderBy('updated_at', 'desc')->get();
+
         // Lấy danh mục sản phẩm unique
         $productCategories = Product::select('category')->distinct()->pluck('category');
-        // Lấy danh mục blog unique
-        $blogCategories = Blog::select('category')->distinct()->pluck('category');
+        // Lấy danh mục blog unique (from published blogs only)
+        $blogCategories = Blog::published()->select('category')->distinct()->pluck('category');
+
+        // Community posts
+        $communityPosts = [];
+        if (class_exists(CommunityPost::class)) {
+            try {
+                $communityPosts = CommunityPost::orderBy('updated_at', 'desc')->get();
+            } catch (\Throwable $e) {
+                $communityPosts = collect();
+            }
+        }
+
+        // Buff services
+        $buffServices = [];
+        if (class_exists(BuffService::class)) {
+            try {
+                $buffServices = BuffService::orderBy('updated_at', 'desc')->get();
+            } catch (\Throwable $e) {
+                $buffServices = collect();
+            }
+        }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-        
-        // Trang chủ
-        $xml .= '<url>';
-        $xml .= '<loc>' . url('/') . '</loc>';
-        $xml .= '<lastmod>' . date('Y-m-d') . '</lastmod>';
-        $xml .= '<changefreq>daily</changefreq>';
-        $xml .= '<priority>1.0</priority>';
-        $xml .= '</url>';
-        
-        // Shop
-        $xml .= '<url>';
-        $xml .= '<loc>' . route('shop') . '</loc>';
-        $xml .= '<lastmod>' . date('Y-m-d') . '</lastmod>';
-        $xml .= '<changefreq>daily</changefreq>';
-        $xml .= '<priority>0.9</priority>';
-        $xml .= '</url>';
-        
-        // Product Categories
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
+        $xml .= ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
+
+        // ── Trang chủ ──
+        $xml .= $this->buildUrl(url('/'), date('Y-m-d'), 'daily', '1.0');
+
+        // ── Shop ──
+        $xml .= $this->buildUrl(route('shop'), date('Y-m-d'), 'daily', '0.9');
+
+        // ── Trang tĩnh ──
+        $xml .= $this->buildUrl(route('web-design'), date('Y-m-d'), 'monthly', '0.7');
+        $xml .= $this->buildUrl(route('policy'), date('Y-m-d'), 'monthly', '0.5');
+
+        // ── Product Categories ──
         foreach ($productCategories as $category) {
             if ($category) {
-                $xml .= '<url>';
-                $xml .= '<loc>' . route('shop') . '?category=' . urlencode($category) . '</loc>';
-                $xml .= '<lastmod>' . date('Y-m-d') . '</lastmod>';
-                $xml .= '<changefreq>daily</changefreq>';
-                $xml .= '<priority>0.85</priority>';
-                $xml .= '</url>';
+                $xml .= $this->buildUrl(
+                    route('shop') . '?category=' . urlencode($category),
+                    date('Y-m-d'),
+                    'daily',
+                    '0.85'
+                );
             }
         }
-        
-        // Products
+
+        // ── Products ──
         foreach ($products as $product) {
-            $xml .= '<url>';
-            $xml .= '<loc>' . route('product.show', $product->slug) . '</loc>';
-            $xml .= '<lastmod>' . $product->updated_at->format('Y-m-d') . '</lastmod>';
-            $xml .= '<changefreq>weekly</changefreq>';
-            $xml .= '<priority>0.8</priority>';
-            $xml .= '</url>';
+            $imageXml = '';
+            if ($product->image) {
+                $imageXml = '<image:image><image:loc>' . $this->escapeXml($product->image) . '</image:loc>';
+                $imageXml .= '<image:title>' . $this->escapeXml($product->name) . '</image:title>';
+                $imageXml .= '</image:image>';
+            }
+            $xml .= $this->buildUrl(
+                route('product.show', $product->slug),
+                $product->updated_at->format('Y-m-d'),
+                'weekly',
+                '0.8',
+                $imageXml
+            );
         }
-        
-        // Blog index
-        $xml .= '<url>';
-        $xml .= '<loc>' . route('blog.index') . '</loc>';
-        $xml .= '<lastmod>' . date('Y-m-d') . '</lastmod>';
-        $xml .= '<changefreq>daily</changefreq>';
-        $xml .= '<priority>0.8</priority>';
-        $xml .= '</url>';
-        
-        // Blog Categories
+
+        // ── Blog index ──
+        $xml .= $this->buildUrl(route('blog.index'), date('Y-m-d'), 'daily', '0.8');
+
+        // ── Blog Categories ──
         foreach ($blogCategories as $category) {
             if ($category) {
-                $xml .= '<url>';
-                $xml .= '<loc>' . route('blog.category', $category) . '</loc>';
-                $xml .= '<lastmod>' . date('Y-m-d') . '</lastmod>';
-                $xml .= '<changefreq>daily</changefreq>';
-                $xml .= '<priority>0.75</priority>';
-                $xml .= '</url>';
+                $xml .= $this->buildUrl(
+                    route('blog.category', $category),
+                    date('Y-m-d'),
+                    'daily',
+                    '0.75'
+                );
             }
         }
-        
-        // Blogs
+
+        // ── Blogs (published only) ──
         foreach ($blogs as $blog) {
-            $xml .= '<url>';
-            $xml .= '<loc>' . route('blog.show', $blog->slug) . '</loc>';
-            $xml .= '<lastmod>' . $blog->updated_at->format('Y-m-d') . '</lastmod>';
-            $xml .= '<changefreq>weekly</changefreq>';
-            $xml .= '<priority>0.7</priority>';
-            $xml .= '</url>';
+            $imageXml = '';
+            $rawImage = $blog->image;
+            if ($rawImage) {
+                $imageXml = '<image:image><image:loc>' . $this->escapeXml($rawImage) . '</image:loc>';
+                $imageXml .= '<image:title>' . $this->escapeXml($blog->title) . '</image:title>';
+                $imageXml .= '</image:image>';
+            }
+            $xml .= $this->buildUrl(
+                route('blog.show', $blog->slug),
+                $blog->updated_at->format('Y-m-d'),
+                'weekly',
+                '0.7',
+                $imageXml
+            );
         }
-        
-        // Card Exchange
-        $xml .= '<url>';
-        $xml .= '<loc>' . route('card-exchange.index') . '</loc>';
-        $xml .= '<lastmod>' . date('Y-m-d') . '</lastmod>';
-        $xml .= '<changefreq>monthly</changefreq>';
-        $xml .= '<priority>0.6</priority>';
-        $xml .= '</url>';
-        
+
+        // ── Buff Services ──
+        if (count($buffServices) > 0) {
+            $xml .= $this->buildUrl(route('buff.index'), date('Y-m-d'), 'weekly', '0.7');
+            foreach ($buffServices as $service) {
+                $xml .= $this->buildUrl(
+                    route('buff.show', $service),
+                    $service->updated_at->format('Y-m-d'),
+                    'weekly',
+                    '0.6'
+                );
+            }
+        }
+
+        // ── Community ──
+        if (count($communityPosts) > 0) {
+            $xml .= $this->buildUrl(route('community.index'), date('Y-m-d'), 'daily', '0.7');
+            foreach ($communityPosts as $post) {
+                $xml .= $this->buildUrl(
+                    route('community.show', $post),
+                    $post->updated_at->format('Y-m-d'),
+                    'weekly',
+                    '0.6'
+                );
+            }
+        }
+
+        // ── Card Exchange ──
+        $xml .= $this->buildUrl(route('card-exchange.index'), date('Y-m-d'), 'monthly', '0.6');
+
         $xml .= '</urlset>';
 
         return response($xml, 200)
-            ->header('Content-Type', 'application/xml');
+            ->header('Content-Type', 'application/xml')
+            ->header('X-Robots-Tag', 'noindex'); // Sitemap itself shouldn't be indexed
+    }
+
+    /**
+     * Build a single <url> element.
+     */
+    private function buildUrl(string $loc, string $lastmod, string $changefreq, string $priority, string $extra = ''): string
+    {
+        $xml  = '<url>';
+        $xml .= '<loc>' . $this->escapeXml($loc) . '</loc>';
+        $xml .= '<lastmod>' . $lastmod . '</lastmod>';
+        $xml .= '<changefreq>' . $changefreq . '</changefreq>';
+        $xml .= '<priority>' . $priority . '</priority>';
+        $xml .= $extra;
+        $xml .= '</url>';
+        return $xml;
+    }
+
+    /**
+     * Escape special XML characters.
+     */
+    private function escapeXml(string $value): string
+    {
+        return htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
     }
 }

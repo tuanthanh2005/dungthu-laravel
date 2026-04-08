@@ -18,6 +18,8 @@
 /public/storage
 /storage/*.key
 /storage/app/google/*.json
+/google/*.json
+/public/google/*.json
 /storage/pail
 /vendor
 /bootstrap/cache/config.php

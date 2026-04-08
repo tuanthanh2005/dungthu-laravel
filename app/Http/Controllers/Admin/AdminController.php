@@ -951,8 +951,8 @@ class AdminController extends Controller
             $fileName = time() . '_' . uniqid() . '.' . $extension;
             $fullPath = PathHelper::publicRootPath('images/blogs/' . $fileName);
             
-            // Crop ảnh về kích thước 500x334
-            $croppedImage = $this->cropImage($file);
+            // Crop ảnh về kích thước 1200x800 cho blog sắc nét
+            $croppedImage = $this->cropImage($file, 1200, 800);
             $this->saveImage($croppedImage, $fullPath, $extension);
             
             $imagePath = '/images/blogs/' . $fileName;
@@ -1015,8 +1015,8 @@ class AdminController extends Controller
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
             $fullPath = PathHelper::publicRootPath('images/blogs/' . $fileName);
-            
-            $croppedImage = $this->cropImage($file);
+            // Crop ảnh về kích thước 1200x800 cho blog sắc nét
+            $croppedImage = $this->cropImage($file, 1200, 800);
             $this->saveImage($croppedImage, $fullPath, $extension);
             
             $imagePath = asset('/images/blogs/' . $fileName);

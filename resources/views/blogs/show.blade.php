@@ -447,6 +447,18 @@
                     {!! $blog->content !!}
                 </div>
 
+                <!-- AdSense: Bottom Content -->
+                <div class="my-5 d-flex justify-content-center" data-aos="fade-up">
+                    <ins class="adsbygoogle"
+                         style="display:block; width:100%; height:250px;"
+                         data-ad-client="ca-pub-3065867660863139"
+                         data-ad-slot="4989157975"
+                         data-ad-format="rectangle"></ins>
+                </div>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+
                 <!-- Author Info -->
                 <div class="author-info" data-aos="fade-up">
                     <div class="author-avatar">

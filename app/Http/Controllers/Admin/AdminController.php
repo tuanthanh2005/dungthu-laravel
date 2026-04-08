@@ -926,10 +926,10 @@ class AdminController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'excerpt' => 'required|string|max:500',
+            'excerpt' => 'required|string|max:2000',
             'content' => 'required|string',
             'category' => 'required|in:tech,lifestyle,business,other',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3072',
         ], [
             'title.required' => 'Tiêu đề không được để trống',
             'excerpt.required' => 'Tóm tắt không được để trống',
@@ -987,10 +987,10 @@ class AdminController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'excerpt' => 'required|string|max:500',
+            'excerpt' => 'required|string|max:2000',
             'content' => 'required|string',
             'category' => 'required|in:tech,lifestyle,business,other',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3072',
         ]);
 
         $slug = \Str::slug($request->title) . '-' . time();

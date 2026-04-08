@@ -23,6 +23,7 @@ use App\Http\Controllers\CommunityCommentController;
 use App\Http\Controllers\BuffServiceController;
 use App\Http\Controllers\BuffOrderController;
 use App\Http\Controllers\Admin\AdminBuffController;
+use App\Http\Controllers\Admin\GoogleIndexingController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
@@ -198,6 +199,7 @@ Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin')->group(functi
     Route::get('/blogs/{blog}/edit', [AdminController::class, 'editBlog'])->name('admin.blogs.edit');
     Route::put('/blogs/{blog}', [AdminController::class, 'updateBlog'])->name('admin.blogs.update');
     Route::delete('/blogs/{blog}', [AdminController::class, 'deleteBlog'])->name('admin.blogs.delete');
+    Route::get('/google-indexing/recent', [GoogleIndexingController::class, 'recent'])->name('admin.google-indexing.recent');
     
     // Tiktok Deals Management
     Route::get('/tiktok-deals', [TiktokDealController::class, 'index'])->name('admin.tiktok-deals.index');

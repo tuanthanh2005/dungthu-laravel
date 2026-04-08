@@ -833,6 +833,16 @@
                     </article>
                 @endif
 
+                {{-- Mobile-only AdSense (Inline) --}}
+                <div class="tf-ad mb-3 d-block d-lg-none" style="min-height:250px;">
+                    <ins class="adsbygoogle"
+                         style="display:block;width:100%;height:300px;"
+                         data-ad-client="ca-pub-3065867660863139"
+                         data-ad-slot="4989157975"
+                         data-ad-format="rectangle"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+
                 {{-- Shop Product #2 --}}
                 @if(isset($featuredProducts[1]))
                     @php $p = $featuredProducts[1]; @endphp

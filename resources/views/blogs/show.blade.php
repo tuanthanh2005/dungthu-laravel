@@ -391,10 +391,20 @@
                 </ol>
             </nav>
 
-            <!-- Google Translate Widget (For foreigners) -->
-            <div class="text-center mb-5 d-flex justify-content-center align-items-center gap-2">
-                <span class="text-muted small"><i class="fas fa-globe me-1"></i>Dịch ngôn ngữ (Translate):</span>
-                <div id="google_translate_element"></div>
+            <!-- Custom Language Selector -->
+            <div class="d-flex justify-content-center mb-5">
+                <div class="custom-lang-selector" style="background:#fff; border:1px solid #e2e8f0; border-radius:30px; padding:8px 16px; display:inline-flex; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,0.05); transition:all 0.3s;">
+                    <i class="fas fa-language text-primary fs-4 me-2"></i>
+                    <select id="custom-lang-select" style="border:none; outline:none; background:transparent; font-weight:600; font-size: 15px; color:#4a5568; cursor:pointer;" onchange="doGTranslate(this.value)">
+                        <option value="vi">🇻🇳 Tiếng Việt</option>
+                        <option value="en">🇺🇸 English</option>
+                        <option value="zh-CN">🇨🇳 中文 (Chinese)</option>
+                        <option value="ko">🇰🇷 한국어 (Korean)</option>
+                        <option value="ja">🇯🇵 日本語 (Japanese)</option>
+                    </select>
+                </div>
+                <!-- Vị trí giấu widget thật của Google -->
+                <div id="google_translate_element" style="display:none;"></div>
             </div>
 
             <!-- Blog Header -->
@@ -566,14 +576,28 @@
                 autoDisplay: false
             }, 'google_translate_element');
         }
+
+        function doGTranslate(lang) {
+            let teCombo = document.querySelector('select.goog-te-combo');
+            if (teCombo == null) {
+                setTimeout(() => doGTranslate(lang), 500);
+                return;
+            }
+            teCombo.value = lang;
+            teCombo.dispatchEvent(new Event('change'));
+        }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
     <style>
-        /* CSS Ẩn logo Google rườm rà */
-        .goog-te-gadget { font-size: 0px !important; }
-        .goog-te-gadget .goog-te-combo { font-size: 14px; padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; outline: none; }
-        .goog-logo-link { display: none !important; }
-        .goog-te-banner-frame { display: none !important; }
-        body { top: 0px !important; }
+        /* CSS Ẩn triệt để thanh Google Translate gớm ghiếc */
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        body { top: 0px !important; position: static !important; }
+        .goog-tooltip { display: none !important; }
+        .goog-tooltip:hover { display: none !important; }
+        .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+        #goog-gt-tt { display: none !important; }
+
+        .custom-lang-selector:hover { border-color: #667eea !important; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2) !important; }
     </style>
 @endpush

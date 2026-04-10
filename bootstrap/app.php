@@ -12,9 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-            'admin.pin' => \App\Http\Middleware\RequireAdminPin::class,
+            'admin'      => \App\Http\Middleware\AdminMiddleware::class,
+            'admin.pin'  => \App\Http\Middleware\RequireAdminPin::class,
+            'menu.check' => \App\Http\Middleware\CheckMenuEnabled::class,
         ]);
+
+        // Auto-check menu enabled status on every web request
+        $middleware->appendToGroup('web', \App\Http\Middleware\CheckMenuEnabled::class);
+
         
         // Exclude CSRF for OAuth callbacks
         $middleware->validateCsrfTokens(except: [

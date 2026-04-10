@@ -101,6 +101,12 @@
                             <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Admin</a></li>
                             <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>Quản lý Menu</a></li>
                             <li><hr class="dropdown-divider"></li>
+                            <li class="px-3 pb-1" style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;">Quản lý Buff</li>
+                            <li><a class="dropdown-item" href="{{ route('admin.buff.dashboard') }}"><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>Buff Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.buff.orders.index') }}"><i class="fas fa-list-alt me-2" style="color:#ec4899;"></i>Đơn Buff</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.buff.services.index') }}"><i class="fas fa-cogs me-2" style="color:#06b6d4;"></i>Dịch vụ Buff</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.buff.servers.index') }}"><i class="fas fa-server me-2" style="color:#10b981;"></i>Máy chủ Buff</a></li>
+                            <li><hr class="dropdown-divider"></li>
                         @endif
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>

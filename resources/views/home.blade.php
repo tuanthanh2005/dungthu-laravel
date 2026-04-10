@@ -652,21 +652,33 @@
         <div class="tf-layout">
 
             {{-- ====== LEFT SIDEBAR ====== --}}
+            @php
+                $sb_home         = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
+                $sb_blog         = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
+                $sb_community    = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
+                $sb_webdesign    = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
+                $sb_shop         = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
+                $sb_cardexchange = \App\Models\SiteSetting::getValue('menu_card_exchange', '1') === '1';
+            @endphp
             <aside class="tf-sidebar-left">
                 <div class="tf-sticky">
                     <div class="tf-sec-label">Khám Phá</div>
-                    <a href="{{ route('home') }}" class="tf-side-link active"><i class="fa-solid fa-house"></i> Trang
-                        chủ</a>
-                    <a href="{{ route('blog.index') }}" class="tf-side-link"><i class="fa-solid fa-fire"
-                            style="color:#e53935;"></i> Blog mới</a>
-                    <a href="{{ route('community.index') }}" class="tf-side-link"><i class="fa-solid fa-users"></i> Cộng
-                        đồng</a>
-                    <a href="{{ route('web-design') }}" class="tf-side-link"><i class="fa-solid fa-globe"></i> Thiết kế
-                        web</a>
+                    @if($sb_home)
+                    <a href="{{ route('home') }}" class="tf-side-link active"><i class="fa-solid fa-house"></i> Trang chủ</a>
+                    @endif
+                    @if($sb_blog)
+                    <a href="{{ route('blog.index') }}" class="tf-side-link"><i class="fa-solid fa-fire" style="color:#e53935;"></i> Blog mới</a>
+                    @endif
+                    @if($sb_community)
+                    <a href="{{ route('community.index') }}" class="tf-side-link"><i class="fa-solid fa-users"></i> Cộng đồng</a>
+                    @endif
+                    @if($sb_webdesign)
+                    <a href="{{ route('web-design') }}" class="tf-side-link"><i class="fa-solid fa-globe"></i> Thiết kế web</a>
+                    @endif
 
+                    @if($sb_shop)
                     <div class="tf-sec-label">Cửa Hàng</div>
-                    <a href="{{ route('shop') }}" class="tf-side-link"><i class="fa-solid fa-tags"
-                            style="color:#28a745;"></i> Tất cả sản phẩm</a>
+                    <a href="{{ route('shop') }}" class="tf-side-link"><i class="fa-solid fa-tags" style="color:#28a745;"></i> Tất cả sản phẩm</a>
                     @if(isset($categories))
                         @foreach($categories->take(5) as $cat)
                             <a href="{{ route('shop', ['category_id' => $cat->id]) }}" class="tf-side-link">
@@ -674,13 +686,14 @@
                             </a>
                         @endforeach
                     @endif
-                    <a href="{{ route('card-exchange.index') }}" class="tf-side-link"><i class="fa-solid fa-credit-card"
-                            style="color:#f59e0b;"></i> Đổi thẻ cào</a>
+                    @endif
+                    @if($sb_cardexchange)
+                    <a href="{{ route('card-exchange.index') }}" class="tf-side-link"><i class="fa-solid fa-credit-card" style="color:#f59e0b;"></i> Đổi thẻ cào</a>
+                    @endif
 
                     @auth
                         <div class="tf-sec-label">Tài Khoản</div>
-                        <a href="{{ route('user.account') }}" class="tf-side-link"><i class="fa-solid fa-user-circle"></i> Tài
-                            khoản</a>
+                        <a href="{{ route('user.account') }}" class="tf-side-link"><i class="fa-solid fa-user-circle"></i> Tài khoản</a>
                         <a href="{{ route('user.orders') }}" class="tf-side-link"><i class="fa-solid fa-box"></i> Đơn hàng</a>
                     @endauth
 
@@ -699,12 +712,13 @@
 
                 {{-- Sort bar --}}
                 <div class="tf-sort-bar">
-                    <button class="tf-sort-btn active" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Mới
-                        nhất</button>
+                    <button class="tf-sort-btn active" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Mới nhất</button>
                     <button class="tf-sort-btn" id="tab-ai"><i class="fa-solid fa-robot"></i> Combo AI</button>
+                    @if($sb_cardexchange)
                     <a href="{{ route('card-exchange.index') }}" class="tf-sort-btn text-decoration-none">
                         <i class="fa-solid fa-credit-card"></i> Đổi Thẻ
                     </a>
+                    @endif
                 </div>
 
                 {{-- Flash Sale (Chỉ hiện ở tab AI/Shop) --}}

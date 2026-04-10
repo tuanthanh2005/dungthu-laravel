@@ -178,6 +178,28 @@ body {
     border-color: #b0b8bf;
 }
 
+/* Desktop Nav Text Links */
+.nav-text-link {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: color 0.2s, background 0.2s;
+}
+
+.nav-text-link:hover {
+    color: var(--brand);
+    background: rgba(255,69,0,0.06);
+}
+
+.nav-text-link.active {
+    color: var(--brand);
+    font-weight: 700;
+}
+
 /* Login Button */
 .btn-login {
     background: var(--brand);

@@ -1,3 +1,13 @@
+@php
+    $menuHome      = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
+    $menuShop      = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
+    $menuBlog      = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
+    $menuCart      = \App\Models\SiteSetting::getValue('menu_cart', '1') === '1';
+    $menuWebdesign = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
+    $menuBuff      = \App\Models\SiteSetting::getValue('menu_buff', '1') === '1';
+    $menuCommunity = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
+@endphp
+
 <nav class="navbar navbar-expand-lg navbar-techfeed sticky-top" id="mainNavbar">
     <div class="container-fluid px-3 px-xl-5">
         {{-- Logo --}}
@@ -7,6 +17,40 @@
             </div>
             <span>DungThu<span class="brand-dot">.com</span></span>
         </a>
+
+        {{-- Desktop Nav Links --}}
+        <div class="d-none d-lg-flex align-items-center gap-1 ms-3">
+            @if($menuHome)
+            <a href="{{ route('home') }}" class="nav-text-link {{ request()->routeIs('home') ? 'active' : '' }}">
+                Trang chủ
+            </a>
+            @endif
+            @if($menuShop)
+            <a href="{{ route('shop') }}" class="nav-text-link {{ request()->routeIs('shop') ? 'active' : '' }}">
+                Cửa hàng
+            </a>
+            @endif
+            @if($menuBlog)
+            <a href="{{ route('blog.index') }}" class="nav-text-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">
+                Blog
+            </a>
+            @endif
+            @if($menuWebdesign)
+            <a href="{{ route('web-design') }}" class="nav-text-link {{ request()->routeIs('web-design') ? 'active' : '' }}">
+                Thiết kế WS
+            </a>
+            @endif
+            @if($menuBuff)
+            <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}">
+                Buff Mạng XH
+            </a>
+            @endif
+            @if($menuCommunity)
+            <a href="{{ route('community.index') }}" class="nav-text-link {{ request()->routeIs('community.*') ? 'active' : '' }}">
+                Cộng đồng
+            </a>
+            @endif
+        </div>
 
         {{-- Search Bar (desktop) --}}
         <div class="mx-auto d-none d-lg-flex search-bar-wrap align-items-center">
@@ -20,13 +64,8 @@
 
         {{-- Right Actions --}}
         <div class="d-flex align-items-center gap-2 gap-sm-3">
-            {{-- Shop Button (desktop) --}}
-            <a href="{{ route('shop') }}" class="btn-shop d-none d-sm-flex align-items-center gap-1">
-                <i class="fa-solid fa-store"></i>
-                <span>Cửa hàng</span>
-            </a>
-
             {{-- Cart --}}
+            @if($menuCart)
             <a href="{{ route('cart.index') }}" class="nav-icon-btn position-relative" aria-label="Giỏ hàng">
                 <i class="fa-solid fa-cart-shopping"></i>
                 @php $cartCount = count(session('cart', [])); @endphp
@@ -34,6 +73,7 @@
                     <span class="nav-badge">{{ $cartCount }}</span>
                 @endif
             </a>
+            @endif
 
             {{-- Mobile Search --}}
             <button class="nav-icon-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchBar" aria-label="Tìm kiếm">
@@ -53,6 +93,7 @@
                         </li>
                         @if(Auth::user()->role === 'admin')
                             <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Admin</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>Quản lý Menu</a></li>
                             <li><hr class="dropdown-divider"></li>
                         @endif
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
@@ -85,18 +126,25 @@
 
 {{-- Mobile Bottom Nav --}}
 <nav class="mobile-bottom-nav d-lg-none">
+    @if($menuHome)
     <a href="{{ route('home') }}" class="mobile-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
         <i class="fa-solid fa-house"></i>
         <span>Trang chủ</span>
     </a>
+    @endif
+    @if($menuShop)
     <a href="{{ route('shop') }}" class="mobile-nav-item {{ request()->routeIs('shop') ? 'active' : '' }}">
         <i class="fa-solid fa-store"></i>
         <span>Cửa hàng</span>
     </a>
+    @endif
+    @if($menuBlog)
     <a href="{{ route('blog.index') }}" class="mobile-nav-item {{ request()->routeIs('blog.*') ? 'active' : '' }}">
         <i class="fa-solid fa-newspaper"></i>
         <span>Blog</span>
     </a>
+    @endif
+    @if($menuCart)
     <a href="{{ route('cart.index') }}" class="mobile-nav-item position-relative {{ request()->routeIs('cart.*') ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>
         @if(isset($cartCount) && $cartCount > 0)
@@ -104,15 +152,11 @@
         @endif
         <span>Giỏ hàng</span>
     </a>
-    @auth
-        <a href="{{ route('user.account') }}" class="mobile-nav-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
-            <i class="fa-solid fa-user"></i>
-            <span>Tài khoản</span>
-        </a>
-    @else
-        <a href="{{ route('login') }}" class="mobile-nav-item">
-            <i class="fa-solid fa-right-to-bracket"></i>
-            <span>Đăng nhập</span>
-        </a>
-    @endauth
+    @endif
+    @if($menuWebdesign)
+    <a href="{{ route('web-design') }}" class="mobile-nav-item {{ request()->routeIs('web-design') ? 'active' : '' }}">
+        <i class="fa-solid fa-palette"></i>
+        <span>Thiết kế</span>
+    </a>
+    @endif
 </nav>

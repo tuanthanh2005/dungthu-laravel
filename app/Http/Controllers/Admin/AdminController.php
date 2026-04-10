@@ -1108,5 +1108,32 @@ class AdminController extends Controller
 
         \App\Helpers\TelegramHelper::sendMessage($message);
     }
+
+    // ─── Menu Settings ───────────────────────────────────────────────────
+    public function menuSettings()
+    {
+        return view('admin.menu-settings');
+    }
+
+    public function updateMenuSettings(Request $request)
+    {
+        $menuKeys = [
+            'menu_home',
+            'menu_shop',
+            'menu_blog',
+            'menu_cart',
+            'menu_webdesign',
+            'menu_buff',
+            'menu_community',
+        ];
+
+        foreach ($menuKeys as $key) {
+            // Checkbox: present = '1', absent = '0'
+            SiteSetting::setValue($key, $request->has($key) ? '1' : '0');
+        }
+
+        return redirect()->route('admin.menu-settings')
+            ->with('success', 'Đã lưu cài đặt menu thành công!');
+    }
 }
 

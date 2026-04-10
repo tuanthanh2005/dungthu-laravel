@@ -252,6 +252,10 @@ Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin')->group(functi
     // Card Exchange Management
     Route::get('/card-exchanges', [AdminController::class, 'cardExchanges'])->name('admin.card-exchanges');
     Route::put('/card-exchanges/{cardExchange}/status', [AdminController::class, 'updateCardExchangeStatus'])->name('admin.card-exchanges.update-status');
+
+    // Menu Settings Management
+    Route::get('/menu-settings', [AdminController::class, 'menuSettings'])->name('admin.menu-settings');
+    Route::put('/menu-settings', [AdminController::class, 'updateMenuSettings'])->name('admin.menu-settings.update');
 });
 
 // Newsletter subscription

@@ -296,6 +296,13 @@
                             'color'  => 'linear-gradient(135deg,#fa709a,#fee140)',
                             'where'  => 'both',
                         ],
+                        'menu_card_exchange' => [
+                            'label'  => 'Đổi thẻ cào',
+                            'desc'   => 'Trang đổi thẻ cào lấy tiền mặt',
+                            'icon'   => 'fa-credit-card',
+                            'color'  => 'linear-gradient(135deg,#f7971e,#ffd200)',
+                            'where'  => 'both',
+                        ],
                         'menu_buff' => [
                             'label'  => 'Buff Mạng XH',
                             'desc'   => 'Trang dịch vụ buff mạng xã hội',

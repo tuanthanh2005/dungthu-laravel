@@ -1123,6 +1123,7 @@ class AdminController extends Controller
             'menu_blog',
             'menu_cart',
             'menu_webdesign',
+            'menu_card_exchange',
             'menu_buff',
             'menu_community',
         ];

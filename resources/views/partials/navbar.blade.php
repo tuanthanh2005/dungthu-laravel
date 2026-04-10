@@ -1,11 +1,12 @@
 @php
-    $menuHome      = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
-    $menuShop      = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
-    $menuBlog      = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
-    $menuCart      = \App\Models\SiteSetting::getValue('menu_cart', '1') === '1';
-    $menuWebdesign = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
-    $menuBuff      = \App\Models\SiteSetting::getValue('menu_buff', '1') === '1';
-    $menuCommunity = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
+    $menuHome        = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
+    $menuShop        = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
+    $menuBlog        = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
+    $menuCart        = \App\Models\SiteSetting::getValue('menu_cart', '1') === '1';
+    $menuWebdesign   = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
+    $menuBuff        = \App\Models\SiteSetting::getValue('menu_buff', '1') === '1';
+    $menuCommunity   = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
+    $menuCardExchange = \App\Models\SiteSetting::getValue('menu_card_exchange', '1') === '1';
 @endphp
 
 <nav class="navbar navbar-expand-lg navbar-techfeed sticky-top" id="mainNavbar">
@@ -38,6 +39,11 @@
             @if($menuWebdesign)
             <a href="{{ route('web-design') }}" class="nav-text-link {{ request()->routeIs('web-design') ? 'active' : '' }}">
                 Thiết kế WS
+            </a>
+            @endif
+            @if($menuCardExchange)
+            <a href="{{ route('card-exchange.index') }}" class="nav-text-link {{ request()->routeIs('card-exchange.*') ? 'active' : '' }}">
+                Đổi thẻ cào
             </a>
             @endif
             @if($menuBuff)
@@ -157,6 +163,12 @@
     <a href="{{ route('web-design') }}" class="mobile-nav-item {{ request()->routeIs('web-design') ? 'active' : '' }}">
         <i class="fa-solid fa-palette"></i>
         <span>Thiết kế</span>
+    </a>
+    @endif
+    @if($menuCardExchange)
+    <a href="{{ route('card-exchange.index') }}" class="mobile-nav-item {{ request()->routeIs('card-exchange.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-credit-card"></i>
+        <span>Đổi thẻ</span>
     </a>
     @endif
 </nav>

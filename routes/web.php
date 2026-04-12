@@ -153,8 +153,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin routes (requires auth and admin role)
-Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
+    // PIN Verification
+    Route::get('/verify-pin', [AdminController::class, 'showVerifyPin'])->name('admin.verify-pin');
+    Route::post('/verify-pin', [AdminController::class, 'verifyPin'])->name('admin.verify-pin.post');
+    Route::get('/lock', [AdminController::class, 'lockAdmin'])->name('admin.lock');
     
     // Order Management
     Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');

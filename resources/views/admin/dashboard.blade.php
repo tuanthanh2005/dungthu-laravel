@@ -56,6 +56,73 @@
         color: white;
     }
 
+    .stats-icon.revenue {
+        background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        color: white;
+    }
+
+    .revenue-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .revenue-locked-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 20px;
+        transition: all 0.5s ease;
+    }
+
+    .revenue-locked-overlay.unlocked {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(1.1);
+    }
+
+    .revenue-filter {
+        display: none;
+        margin-top: 15px;
+    }
+
+    .revenue-filter.show {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .filter-btn {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #718096;
+    }
+
+    .filter-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
     .stats-number {
         font-size: 42px;
         font-weight: 700;
@@ -119,27 +186,27 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.products') }}">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.products') }}">
                         <i class="fas fa-box me-2"></i>Sản phẩm
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.categories') }}">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.categories') }}">
                         <i class="fas fa-list me-2"></i>Danh mục
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.products', ['flash_sale' => 1]) }}">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.products', ['flash_sale' => 1]) }}">
                         <i class="fas fa-bolt me-2"></i>Flash Sale
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.tiktok-deals.index') }}">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.tiktok-deals.index') }}">
                         <i class="fab fa-tiktok me-2"></i>Săn Sale TikTok
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link position-relative" href="{{ route('admin.orders') }}">
+                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.orders') }}">
                         <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
                         @if(($pendingOrdersCount ?? 0) > 0)
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -151,17 +218,17 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.users') }}">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.users') }}">
                         <i class="fas fa-users me-2"></i>Người dùng
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.blogs') }}">
-                        <i class="fas fa-blog me-2"></i>Bài viết
+                        <i class="fas fa-blog me-2"></i>Blog
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link position-relative" href="{{ route('admin.card-exchanges') }}">
+                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.card-exchanges') }}">
                         <i class="fas fa-credit-card me-2"></i>Đổi thẻ cào
                         @if(($pendingCardExchangeCount ?? 0) > 0)
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
@@ -173,7 +240,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link position-relative" href="{{ route('admin.chat.index') }}">
+                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.chat.index') }}">
                         <i class="fas fa-comments me-2"></i>Chat
                         @if(($unreadChatCount ?? 0) > 0)
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -185,7 +252,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link position-relative" href="{{ route('admin.abandoned-carts') }}">
+                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.abandoned-carts') }}">
                         <i class="fas fa-shopping-basket me-2"></i>Giỏ bỏ quên
                         @if(($abandonedCartsCount ?? 0) > 0)
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info"
@@ -194,6 +261,11 @@
                                 <span class="visually-hidden">giỏ hàng bị bỏ quên</span>
                             </span>
                         @endif
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="javascript:void(0)" onclick="adminLockManual()">
+                        <i class="fas fa-lock me-2"></i>Khóa Admin
                     </a>
                 </li>
             </ul>
@@ -240,6 +312,41 @@
                     <div class="stats-label">Bài viết</div>
                 </div>
             </div>
+
+            <div class="col-lg-12 mb-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="revenue-card text-center">
+                    <!-- Locked Overlay -->
+                    <div id="revenue-overlay" class="revenue-locked-overlay">
+                        <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold mb-3">Thông tin bảo mật</h5>
+                        <div class="input-group mb-2" style="max-width: 250px;">
+                            <input type="password" id="revenue-pass" class="form-control rounded-pill-start" placeholder="Nhập mật khẩu...">
+                            <button class="btn btn-primary rounded-pill-end" onclick="checkRevenuePass()">
+                                <i class="fas fa-key"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Nhập mật khẩu để xem doanh thu</small>
+                    </div>
+
+                    <!-- Content (Hidden initially) -->
+                    <div class="stats-icon revenue mx-auto">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <div id="revenue-display" class="stats-number">
+                        <span id="revenue-val">{{ number_format($revenue30Days, 0, ',', '.') }}</span>đ
+                    </div>
+                    <div class="stats-label">Tổng doanh thu thực tế</div>
+                    
+                    <!-- Filters -->
+                    <div id="revenue-filter-box" class="revenue-filter show">
+                        <div class="filter-btn active" onclick="filterRevenue(30, this)">30 Ngày</div>
+                        <div class="filter-btn" onclick="filterRevenue(10, this)">10 Ngày</div>
+                        <div class="filter-btn" onclick="filterRevenue(5, this)">5 Ngày</div>
+                        <div class="filter-btn" onclick="filterRevenue(60, this)">60 Ngày</div>
+                        <div class="filter-btn" onclick="filterRevenue(90, this)">90 Ngày</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Quick Actions -->
@@ -251,13 +358,13 @@
                     </h4>
                     <div class="row g-3">
                         <div class="col-md-3 col-sm-6">
-                            <a href="{{ route('admin.products.create') }}" class="btn btn-outline-primary w-100 py-3 rounded-3">
+                            <a href="javascript:void(0)" data-url="{{ route('admin.products.create') }}" class="btn btn-outline-primary w-100 py-3 rounded-3 protected-link">
                                 <i class="fas fa-plus-circle d-block fs-3 mb-2"></i>
                                 Thêm sản phẩm
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-6">
-                            <a href="{{ route('admin.products') }}" class="btn btn-outline-success w-100 py-3 rounded-3">
+                            <a href="javascript:void(0)" data-url="{{ route('admin.products') }}" class="btn btn-outline-success w-100 py-3 rounded-3 protected-link">
                                 <i class="fas fa-list d-block fs-3 mb-2"></i>
                                 Quản lý sản phẩm
                             </a>
@@ -332,5 +439,78 @@
 @push('scripts')
 <script>
     AOS.init({ duration: 800, once: true });
+
+    const revenues = {
+        5: '{{ number_format($revenue5Days, 0, ",", ".") }}',
+        10: '{{ number_format($revenue10Days, 0, ",", ".") }}',
+        30: '{{ number_format($revenue30Days, 0, ",", ".") }}',
+        60: '{{ number_format($revenue60Days, 0, ",", ".") }}',
+        90: '{{ number_format($revenue90Days, 0, ",", ".") }}'
+    };
+
+    function checkRevenuePass() {
+        const pass = document.getElementById('revenue-pass').value;
+        if (pass === '113') {
+            unlockEverything();
+        } else {
+            alert('Mật khẩu không chính xác!');
+            document.getElementById('revenue-pass').value = '';
+        }
+    }
+
+    function unlockEverything() {
+        document.getElementById('revenue-overlay').classList.add('unlocked');
+        sessionStorage.setItem('revenue_unlocked', 'true');
+        sessionStorage.setItem('admin_unlocked', 'true');
+    }
+
+    // Protection for other links
+    document.querySelectorAll('.protected-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            
+            if (sessionStorage.getItem('admin_unlocked') === 'true') {
+                window.location.href = url;
+            } else {
+                const pass = prompt('Đây là khu vực bảo mật. Vui lòng nhập mật khẩu để tiếp tục:');
+                if (pass === '113') {
+                    unlockEverything();
+                    window.location.href = url;
+                } else if (pass !== null) {
+                    alert('Mật khẩu không chính xác!');
+                }
+            }
+        });
+    });
+
+    // Enter to submit password
+    document.getElementById('revenue-pass').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            checkRevenuePass();
+        }
+    });
+
+    function filterRevenue(days, btn) {
+        // Update display
+        document.getElementById('revenue-val').innerText = revenues[days];
+        
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // Check if previously unlocked
+    if (sessionStorage.getItem('revenue_unlocked') === 'true' || sessionStorage.getItem('admin_unlocked') === 'true') {
+        document.getElementById('revenue-overlay').classList.add('unlocked');
+    }
+
+    function adminLockManual() {
+        if (confirm('Bạn có muốn khóa lại các khu vực bảo mật không?')) {
+            sessionStorage.removeItem('admin_unlocked');
+            sessionStorage.removeItem('revenue_unlocked');
+            window.location.href = "{{ route('admin.lock') }}";
+        }
+    }
 </script>
 @endpush

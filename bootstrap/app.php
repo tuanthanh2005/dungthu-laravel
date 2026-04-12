@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin'      => \App\Http\Middleware\AdminMiddleware::class,
             'admin.pin'  => \App\Http\Middleware\RequireAdminPin::class,
+            'admin.lock' => \App\Http\Middleware\AdminRouteLock::class,
             'menu.check' => \App\Http\Middleware\CheckMenuEnabled::class,
         ]);
 

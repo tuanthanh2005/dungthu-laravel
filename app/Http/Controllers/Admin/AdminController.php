@@ -109,13 +109,39 @@ class AdminController extends Controller
         
         $latestOrders = Order::with(['user', 'orderItems.product'])->latest()->take(5)->get();
         
+        // Tính toán doanh thu (chỉ tính các đơn hàng đã hoàn thành)
+        $revenue30Days = Order::where('status', 'completed')
+            ->where('updated_at', '>=', now()->subDays(30))
+            ->sum('total_amount');
+            
+        $revenue10Days = Order::where('status', 'completed')
+            ->where('updated_at', '>=', now()->subDays(10))
+            ->sum('total_amount');
+            
+        $revenue5Days = Order::where('status', 'completed')
+            ->where('updated_at', '>=', now()->subDays(5))
+            ->sum('total_amount');
+
+        $revenue60Days = Order::where('status', 'completed')
+            ->where('updated_at', '>=', now()->subDays(60))
+            ->sum('total_amount');
+
+        $revenue90Days = Order::where('status', 'completed')
+            ->where('updated_at', '>=', now()->subDays(90))
+            ->sum('total_amount');
+        
         return view('admin.dashboard', compact(
             'stats', 
             'latestOrders', 
             'unreadChatCount',
             'pendingOrdersCount',
             'pendingCardExchangeCount',
-            'abandonedCartsCount'
+            'abandonedCartsCount',
+            'revenue30Days',
+            'revenue10Days',
+            'revenue5Days',
+            'revenue60Days',
+            'revenue90Days'
         ));
     }
 
@@ -1135,6 +1161,45 @@ class AdminController extends Controller
 
         return redirect()->route('admin.menu-settings')
             ->with('success', 'Đã lưu cài đặt menu thành công!');
+    }
+
+    /**
+     * Hiển thị trang nhập mã PIN bảo mật
+     */
+    public function showVerifyPin()
+    {
+        return view('admin.verify-pin');
+    }
+
+    /**
+     * Xác thực mã PIN bảo mật
+     */
+    public function verifyPin(Request $request)
+    {
+        $request->validate([
+            'pin' => 'required',
+        ]);
+
+        if ($request->pin === '113') {
+            session(['admin_unlocked' => true]);
+            
+            // Check for previous intended URL or dashboard
+            $url = session('target_url') ?? route('admin.dashboard');
+            session()->forget('target_url');
+            
+            return redirect($url)->with('success', 'Xác thực thành công!');
+        }
+
+        return redirect()->back()->with('error', 'Mã PIN không chính xác!');
+    }
+
+    /**
+     * Khóa lại toàn bộ admin (xóa session)
+     */
+    public function lockAdmin()
+    {
+        session()->forget('admin_unlocked');
+        return redirect()->route('admin.dashboard')->with('success', 'Đã khóa các khu vực bảo mật.');
     }
 }
 

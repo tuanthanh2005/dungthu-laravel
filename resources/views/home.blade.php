@@ -644,6 +644,331 @@
                 font-size: 1rem;
             }
         }
+
+        /* ====== COMBO AI TAB STYLES ====== */
+        .combo-ai-wrapper {
+            display: none; /* hidden by default, shown when tab-ai active */
+        }
+
+        /* Header banner */
+        .combo-ai-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+            border-radius: 14px;
+            padding: 20px 22px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .combo-ai-header .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99,102,241,.25);
+            border: 1px solid rgba(99,102,241,.5);
+            color: #a5b4fc;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: .72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 6px;
+        }
+
+        .combo-ai-header h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 0 0 4px;
+            line-height: 1.3;
+        }
+
+        .combo-ai-header p {
+            color: rgba(255,255,255,.6);
+            font-size: .8rem;
+            margin: 0;
+        }
+
+        .combo-ai-header .ai-stats {
+            display: flex;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .combo-ai-header .stat-item {
+            text-align: center;
+            color: #fff;
+        }
+
+        .combo-ai-header .stat-num {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #818cf8;
+            display: block;
+        }
+
+        .combo-ai-header .stat-label {
+            font-size: .68rem;
+            color: rgba(255,255,255,.5);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        /* Category filter pills */
+        .combo-cat-filter {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .combo-cat-pill {
+            background: #f6f7f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: .8rem;
+            font-weight: 700;
+            color: #555;
+            cursor: pointer;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+
+        .combo-cat-pill:hover {
+            background: #e8eaff;
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+
+        .combo-cat-pill.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(99,102,241,.35);
+        }
+
+        /* Category section */
+        .combo-cat-section {
+            margin-bottom: 18px;
+        }
+
+        .combo-cat-section.hidden {
+            display: none;
+        }
+
+        .combo-cat-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: #4b5563;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .combo-cat-title .cat-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .combo-cat-title .cat-count {
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: .68rem;
+            padding: 1px 7px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* Product grid */
+        .combo-product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media(min-width: 640px) {
+            .combo-product-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media(min-width: 900px) {
+            .combo-product-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Product card */
+        .combo-prod-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: #1c1c1c;
+            transition: transform .2s, box-shadow .2s, border-color .2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .combo-prod-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(99,102,241,.15);
+            border-color: #6366f1;
+            text-decoration: none;
+            color: #1c1c1c;
+        }
+
+        .combo-prod-card .img-wrap {
+            position: relative;
+            overflow: hidden;
+            background: #f8f9fa;
+            aspect-ratio: 4/3;
+        }
+
+        .combo-prod-card .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .3s;
+            display: block;
+        }
+
+        .combo-prod-card:hover .img-wrap img {
+            transform: scale(1.05);
+        }
+
+        .combo-prod-card .ai-label {
+            position: absolute;
+            top: 7px;
+            left: 7px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            font-size: .62rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .combo-prod-card .discount-badge {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            background: #ef4444;
+            color: #fff;
+            font-size: .62rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 6px;
+        }
+
+        .combo-prod-card .card-body {
+            padding: 10px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .combo-prod-card .prod-name {
+            font-size: .82rem;
+            font-weight: 700;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 6px;
+            flex: 1;
+        }
+
+        .combo-prod-card .prod-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .combo-prod-card .prod-price {
+            font-size: .96rem;
+            font-weight: 800;
+            color: #6366f1;
+        }
+
+        .combo-prod-card .prod-price-old {
+            font-size: .72rem;
+            color: #9ca3af;
+            text-decoration: line-through;
+        }
+
+        .combo-prod-card .add-cart-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: .78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: opacity .2s, transform .1s;
+            text-decoration: none;
+        }
+
+        .combo-prod-card .add-cart-btn:hover {
+            opacity: .9;
+            transform: scale(1.02);
+        }
+
+        /* View all link */
+        .combo-view-all {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .combo-view-all a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1.5px solid #6366f1;
+            color: #6366f1;
+            border-radius: 24px;
+            padding: 9px 28px;
+            font-weight: 700;
+            font-size: .85rem;
+            text-decoration: none;
+            transition: all .2s;
+        }
+
+        .combo-view-all a:hover {
+            background: #6366f1;
+            color: #fff;
+        }
     </style>
 @endpush
 
@@ -757,6 +1082,118 @@
                             @endforeach
                         </div>
                     </div>
+                @endif
+
+                {{-- ====== COMBO AI SECTION ====== --}}
+                @if(isset($comboAiByCategory) && $comboAiByCategory->count() > 0)
+                <div class="combo-ai-wrapper item-shop" id="combo-ai-section">
+
+                    {{-- Header banner --}}
+                    <div class="combo-ai-header">
+                        <div>
+                            <div class="ai-badge">
+                                <i class="fa-solid fa-robot"></i> Combo AI Giá Rẻ
+                            </div>
+                            <h3>🤖 Tài khoản AI chính hãng</h3>
+                            <p>Tổng hợp <strong style="color:#a5b4fc;">{{ $comboAiProducts->count() }}</strong> sản phẩm AI giá tốt nhất theo từng danh mục</p>
+                        </div>
+                        <div class="ai-stats">
+                            <div class="stat-item">
+                                <span class="stat-num">{{ $comboAiProducts->count() }}</span>
+                                <span class="stat-label">Sản phẩm</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-num">{{ $comboAiByCategory->count() }}</span>
+                                <span class="stat-label">Danh mục</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Category filter pills --}}
+                    <div class="combo-cat-filter">
+                        <button class="combo-cat-pill active" data-cat="all" onclick="filterComboCat(this, 'all')">
+                            <i class="fa-solid fa-th-large me-1"></i> Tất cả
+                        </button>
+                        @php $catColors = ['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6','#ef4444','#8b5cf6','#06b6d4']; $ci = 0; @endphp
+                        @foreach($comboAiByCategory as $catName => $catProducts)
+                            <button class="combo-cat-pill"
+                                data-cat="{{ Str::slug($catName) }}"
+                                onclick="filterComboCat(this, '{{ Str::slug($catName) }}')"
+                                style="--cat-color: {{ $catColors[$ci % count($catColors)] }}">
+                                {{ $catName }}
+                                <span style="background:rgba(0,0,0,.08);border-radius:10px;padding:0 6px;font-size:.68rem;margin-left:4px;">{{ $catProducts->count() }}</span>
+                            </button>
+                            @php $ci++; @endphp
+                        @endforeach
+                    </div>
+
+                    {{-- Products by category --}}
+                    @php $ci2 = 0; @endphp
+                    @foreach($comboAiByCategory as $catName => $catProducts)
+                    @php
+                        $catSlug = Str::slug($catName);
+                        $dotColor = $catColors[$ci2 % count($catColors)];
+                        $ci2++;
+                    @endphp
+                    <div class="combo-cat-section" data-cat-section="{{ $catSlug }}">
+                        <div class="combo-cat-title">
+                            <span class="cat-dot" style="background: {{ $dotColor }};"></span>
+                            <i class="fa-solid fa-robot" style="color:{{ $dotColor }};font-size:.7rem;"></i>
+                            {{ $catName }}
+                            <span class="cat-count">{{ $catProducts->count() }} sản phẩm</span>
+                        </div>
+                        <div class="combo-product-grid">
+                            @foreach($catProducts as $cp)
+                            <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card">
+                                <div class="img-wrap">
+                                    <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=AI' }}"
+                                         alt="{{ $cp->name }}" loading="lazy">
+                                    <span class="ai-label"><i class="fa-solid fa-robot"></i> AI</span>
+                                    @if($cp->is_on_sale)
+                                        <span class="discount-badge">-{{ $cp->discount_percent }}%</span>
+                                    @endif
+                                </div>
+                                <div class="card-body">
+                                    <div class="prod-name">{{ $cp->name }}</div>
+                                    <div class="prod-price-row">
+                                        <span class="prod-price">{{ $cp->formatted_price }}</span>
+                                        @if($cp->is_on_sale)
+                                            <span class="prod-price-old">{{ $cp->formatted_original_price }}</span>
+                                        @endif
+                                    </div>
+                                    <form action="{{ route('cart.add', $cp->id) }}" method="POST"
+                                          onclick="event.preventDefault(); this.submit();">
+                                        @csrf
+                                        <button type="submit" class="add-cart-btn">
+                                            <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+                                        </button>
+                                    </form>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endforeach
+
+                    {{-- View all --}}
+                    <div class="combo-view-all">
+                        <a href="{{ route('shop') }}?combo_ai=1">
+                            <i class="fa-solid fa-robot"></i> Xem tất cả sản phẩm AI
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                </div>
+                @else
+                <div class="combo-ai-wrapper item-shop" id="combo-ai-section">
+                    <div class="combo-ai-header" style="justify-content:center;text-align:center;">
+                        <div>
+                            <div class="ai-badge"><i class="fa-solid fa-robot"></i> Combo AI</div>
+                            <h3>🤖 Chưa có sản phẩm AI</h3>
+                            <p>Các sản phẩm AI sẽ xuất hiện ở đây khi được thêm vào cửa hàng</p>
+                        </div>
+                    </div>
+                </div>
                 @endif
 
                 {{-- Blog #1 --}}
@@ -1110,7 +1547,7 @@
             tabLatest?.addEventListener('click', function () {
                 document.querySelectorAll('.tf-sort-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                blogs.forEach(el => el.style.display = 'flex');
+                blogs.forEach(el => el.style.display = '');
                 shops.forEach(el => el.style.display = 'none');
             });
 
@@ -1118,10 +1555,15 @@
                 document.querySelectorAll('.tf-sort-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 blogs.forEach(el => el.style.display = 'none');
-                shops.forEach(el => el.style.display = 'flex');
-                // Đối với card shop nhỏ dùng block
                 shops.forEach(el => {
-                    if (el.classList.contains('tf-widget')) el.style.display = 'block';
+                    // combo-ai-wrapper dùng block, tf-widget dùng block, tf-card-shop dùng flex
+                    if (el.classList.contains('combo-ai-wrapper')) {
+                        el.style.display = 'block';
+                    } else if (el.classList.contains('tf-widget')) {
+                        el.style.display = 'block';
+                    } else {
+                        el.style.display = 'flex';
+                    }
                 });
             });
 
@@ -1150,5 +1592,22 @@
                 }, 1000);
             }
         });
+
+        // Filter Combo AI by category
+        window.filterComboCat = function(btn, cat) {
+            // Update active pill
+            document.querySelectorAll('.combo-cat-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Show/hide category sections
+            const sections = document.querySelectorAll('.combo-cat-section');
+            sections.forEach(sec => {
+                if (cat === 'all' || sec.dataset.catSection === cat) {
+                    sec.classList.remove('hidden');
+                } else {
+                    sec.classList.add('hidden');
+                }
+            });
+        };
     </script>
 @endpush

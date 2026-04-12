@@ -29,13 +29,19 @@ class HomeController extends Controller
         // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
         $highlightProducts = Product::where('is_exclusive', true)->latest()->take(8)->get();
         
-        // Lấy sản phẩm Combo AI giá rẻ (12 items = 3 hàng x 4)
+        // Lấy sản phẩm Combo AI giá rẻ - group theo danh mục
         $comboAiProducts = Product::query()
+            ->with('categoryRelation')
             ->where('is_combo_ai', true)
             ->inStock()
             ->latest()
-            ->take(12)
+            ->take(24)
             ->get();
+        
+        // Group sản phẩm Combo AI theo danh mục
+        $comboAiByCategory = $comboAiProducts->groupBy(function($p) {
+            return $p->categoryRelation?->name ?? $p->category ?? 'Khác';
+        });
         
         // Lấy 10 blog mới nhất (published)
         $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(10)->get();
@@ -123,6 +129,7 @@ class HomeController extends Controller
             'featuredProducts',
             'highlightProducts',
             'comboAiProducts',
+            'comboAiByCategory',
             'latestBlogs',
             'recentPurchases',
             'saleProducts',

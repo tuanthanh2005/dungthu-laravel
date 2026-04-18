@@ -26,28 +26,43 @@
                 
                 <div class="mb-4">
                     <label class="form-label">Tên sản phẩm / Dịch vụ đã bán</label>
-                    <input type="text" name="product_name" class="form-control" placeholder="Ví dụ: Tài khoản ChatGPT Plus" required>
+                    <input type="text" name="product_name" class="form-control @error('product_name') is-invalid @enderror" placeholder="Ví dụ: Tài khoản ChatGPT Plus" value="{{ old('product_name') }}" required>
+                    @error('product_name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label">Tên khách hàng (Bắt buộc)</label>
-                    <input type="text" name="customer_name" class="form-control" placeholder="Nhập tên khách hàng..." required>
+                    <input type="text" name="customer_name" class="form-control @error('customer_name') is-invalid @enderror" placeholder="Nhập tên khách hàng..." value="{{ old('customer_name') }}" required>
+                    @error('customer_name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <label class="form-label">Email khách hàng (Hoặc SĐT)</label>
-                        <input type="email" name="customer_email" class="form-control" placeholder="Email...">
+                        <input type="text" name="customer_email" class="form-control @error('customer_email') is-invalid @enderror" placeholder="Email hoặc SĐT..." value="{{ old('customer_email') }}">
+                        @error('customer_email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="col-md-6 mb-4">
                         <label class="form-label">Số điện thoại khách hàng (Hoặc Email)</label>
-                        <input type="text" name="customer_phone" class="form-control" placeholder="Số điện thoại...">
+                        <input type="text" name="customer_phone" class="form-control @error('customer_phone') is-invalid @enderror" placeholder="SĐT hoặc Email..." value="{{ old('customer_phone') }}">
+                        @error('customer_phone')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label">Số tiền khách hàng đã trả (VNĐ)</label>
-                    <input type="number" name="amount" id="amount" class="form-control" placeholder="Nhập số tiền..." required oninput="calcCommission()">
+                    <input type="number" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" placeholder="Nhập số tiền..." value="{{ old('amount') }}" required oninput="calcCommission()">
+                    @error('amount')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="commission-box">
@@ -59,7 +74,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">Ảnh hóa đơn / Bill chuyển khoản</label>
-                    <div class="image-preview" onclick="document.getElementById('bill_image').click()">
+                    <div class="image-preview @error('bill_image') border-danger @enderror" onclick="document.getElementById('bill_image').click()">
                         <div id="preview-placeholder">
                             <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
                             <div class="text-muted small">Click để tải ảnh lên</div>
@@ -67,11 +82,17 @@
                         <img id="preview-img" src="#" style="display: none;">
                     </div>
                     <input type="file" name="bill_image" id="bill_image" class="d-none" accept="image/*" required onchange="previewImage(this)">
+                    @error('bill_image')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label">Ghi chú (nếu có)</label>
-                    <textarea name="note" class="form-control" rows="3" placeholder="Thông tin thêm cho Admin..."></textarea>
+                    <textarea name="note" class="form-control @error('note') is-invalid @enderror" rows="3" placeholder="Thông tin thêm cho Admin...">{{ old('note') }}</textarea>
+                    @error('note')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 12px; background: #6366f1;">

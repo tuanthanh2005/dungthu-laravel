@@ -66,7 +66,7 @@ class AffiliateDashboardController extends Controller
         $request->validate([
             'product_name'   => 'required|string|max:255',
             'customer_name'  => 'required|string|max:255',
-            'customer_email' => 'required_without:customer_phone|nullable|email|max:255',
+            'customer_email' => 'required_without:customer_phone|nullable|string|max:255',
             'customer_phone' => 'required_without:customer_email|nullable|string|max:20',
             'amount'         => 'required|numeric|min:1000',
             'bill_image'     => 'required|image|mimes:jpeg,png,jpg|max:5120',

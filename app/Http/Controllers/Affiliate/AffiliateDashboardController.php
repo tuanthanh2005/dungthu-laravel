@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 
 class AffiliateDashboardController extends Controller
 {
+    use \App\Traits\HandleImage;
+
     private function affiliate()
     {
         return Auth::guard('affiliate')->user();
@@ -84,12 +86,8 @@ class AffiliateDashboardController extends Controller
 
         $affiliate = $this->affiliate();
         $billPath  = null;
-
         if ($request->hasFile('bill_image')) {
-            $file     = $request->file('bill_image');
-            $filename = time() . '_bill_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/affiliates'), $filename);
-            $billPath = 'uploads/affiliates/' . $filename;
+            $billPath = $this->uploadStandardImage($request->file('bill_image'), 'affiliates', 1200, 1200, false);
         }
 
         $amount     = (int) $request->amount;

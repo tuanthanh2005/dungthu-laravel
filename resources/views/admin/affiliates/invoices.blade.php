@@ -81,7 +81,7 @@
                                 </span>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#viewBill{{ $invoice->id }}">
+                                <button class="btn btn-sm btn-info text-white" onclick="viewImage('{{ asset($invoice->bill_image) }}', 'Hóa đơn của {{ $invoice->affiliate->name }}')">
                                     <i class="fas fa-image"></i> Xem Bill
                                 </button>
                                 
@@ -93,21 +93,6 @@
                                         <i class="fas fa-times"></i> Hủy
                                     </button>
                                 @endif
-
-                                <!-- Bill Preview Modal -->
-                                <div class="modal fade" id="viewBill{{ $invoice->id }}" tabindex="-1">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Hóa đơn của {{ $invoice->affiliate->name }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body text-center">
-                                                <img src="{{ asset($invoice->bill_image) }}" class="img-fluid" alt="Bill">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <!-- Approve Modal -->
                                 <div class="modal fade" id="approveModal{{ $invoice->id }}" tabindex="-1">

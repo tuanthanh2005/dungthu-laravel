@@ -252,6 +252,17 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link position-relative @if(request()->routeIs('admin.affiliates.*')) active @endif" href="{{ route('admin.affiliates.index') }}">
+                        <i class="fas fa-handshake me-2"></i>Cộng tác viên
+                        @if(($pendingAffCount ?? 0) > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                                {{ $pendingAffCount }}
+                            </span>
+                        @endif
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.abandoned-carts') }}">
                         <i class="fas fa-shopping-basket me-2"></i>Giỏ bỏ quên
                         @if(($abandonedCartsCount ?? 0) > 0)

@@ -24,6 +24,9 @@ use App\Http\Controllers\BuffServiceController;
 use App\Http\Controllers\BuffOrderController;
 use App\Http\Controllers\Admin\AdminBuffController;
 use App\Http\Controllers\Admin\GoogleIndexingController;
+use App\Http\Controllers\Admin\AdminAffiliateController;
+use App\Http\Controllers\Affiliate\AffiliateAuthController;
+use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
@@ -261,9 +264,70 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // Menu Settings Management
     Route::get('/menu-settings', [AdminController::class, 'menuSettings'])->name('admin.menu-settings');
     Route::put('/menu-settings', [AdminController::class, 'updateMenuSettings'])->name('admin.menu-settings.update');
+
+    // Affiliate Management
+    Route::prefix('affiliates')->group(function () {
+        Route::get('/', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');
+        Route::get('/{affiliate}', [AdminAffiliateController::class, 'show'])->name('admin.affiliates.show');
+        Route::post('/{affiliate}/approve', [AdminAffiliateController::class, 'approve'])->name('admin.affiliates.approve');
+        Route::post('/{affiliate}/reject', [AdminAffiliateController::class, 'reject'])->name('admin.affiliates.reject');
+        Route::post('/{affiliate}/reset-password', [AdminAffiliateController::class, 'resetPassword'])->name('admin.affiliates.reset-password');
+
+        // Invoice management
+        Route::get('/invoices/list', [AdminAffiliateController::class, 'invoices'])->name('admin.affiliates.invoices');
+        Route::post('/invoices/{invoice}/approve', [AdminAffiliateController::class, 'approveInvoice'])->name('admin.affiliates.invoices.approve');
+        Route::post('/invoices/{invoice}/reject', [AdminAffiliateController::class, 'rejectInvoice'])->name('admin.affiliates.invoices.reject');
+
+        // Withdrawal management
+        Route::get('/withdrawals/list', [AdminAffiliateController::class, 'withdrawals'])->name('admin.affiliates.withdrawals');
+        Route::post('/withdrawals/{withdrawal}/approve', [AdminAffiliateController::class, 'approveWithdrawal'])->name('admin.affiliates.withdrawals.approve');
+        Route::post('/withdrawals/{withdrawal}/reject', [AdminAffiliateController::class, 'rejectWithdrawal'])->name('admin.affiliates.withdrawals.reject');
+    });
 });
 
-// Newsletter subscription
+// ─── Affiliate (Cộng Tác Viên) Public Routes ─────────────────────────────────
+Route::prefix('cong-tac-vien')->group(function () {
+    Route::get('/dang-nhap', [AffiliateAuthController::class, 'showLogin'])->name('affiliate.login');
+    Route::post('/dang-nhap', [AffiliateAuthController::class, 'login'])->name('affiliate.login.post');
+    Route::get('/dang-ky', [AffiliateAuthController::class, 'showRegister'])->name('affiliate.register');
+    Route::post('/dang-ky', [AffiliateAuthController::class, 'register'])->name('affiliate.register.post');
+    Route::post('/dang-xuat', [AffiliateAuthController::class, 'logout'])->name('affiliate.logout');
+
+    // Status pages (accessible when logged in but not approved)
+    Route::middleware('affiliate.auth')->group(function () {
+        Route::get('/cho-duyet', [AffiliateDashboardController::class, 'pending'])->name('affiliate.pending');
+        Route::get('/tu-choi', [AffiliateDashboardController::class, 'rejected'])->name('affiliate.rejected');
+    });
+
+    // Protected routes (approved affiliates only)
+    Route::middleware('affiliate.approved')->group(function () {
+        Route::get('/dashboard', [AffiliateDashboardController::class, 'dashboard'])->name('affiliate.dashboard');
+
+        // Invoices
+        Route::get('/hoa-don', [AffiliateDashboardController::class, 'invoices'])->name('affiliate.invoices');
+        Route::get('/hoa-don/gui', [AffiliateDashboardController::class, 'createInvoice'])->name('affiliate.invoices.create');
+        Route::post('/hoa-don/gui', [AffiliateDashboardController::class, 'storeInvoice'])->name('affiliate.invoices.store');
+
+        // Withdrawals
+        Route::get('/rut-tien', [AffiliateDashboardController::class, 'withdrawals'])->name('affiliate.withdrawals');
+        Route::get('/rut-tien/tao', [AffiliateDashboardController::class, 'createWithdrawal'])->name('affiliate.withdrawals.create');
+        Route::post('/rut-tien/tao', [AffiliateDashboardController::class, 'storeWithdrawal'])->name('affiliate.withdrawals.store');
+
+        // Chat routes for affiliate
+        Route::get('/chat/messages', [\App\Http\Controllers\Affiliate\AffiliateChatController::class, 'index'])->name('affiliate.chat.messages');
+        Route::post('/chat/send', [\App\Http\Controllers\Affiliate\AffiliateChatController::class, 'store'])->name('affiliate.chat.send');
+        Route::get('/chat/new', [\App\Http\Controllers\Affiliate\AffiliateChatController::class, 'getNewMessages'])->name('affiliate.chat.new');
+        Route::get('/chat/unread-count', [\App\Http\Controllers\Affiliate\AffiliateChatController::class, 'unreadCount'])->name('affiliate.chat.unread-count');
+        Route::post('/chat/mark-read', [\App\Http\Controllers\Affiliate\AffiliateChatController::class, 'markRead'])->name('affiliate.chat.mark-read');
+
+        // Account
+        Route::get('/tai-khoan', [AffiliateDashboardController::class, 'account'])->name('affiliate.account');
+        Route::put('/tai-khoan', [AffiliateDashboardController::class, 'updateAccount'])->name('affiliate.account.update');
+        Route::put('/tai-khoan/mat-khau', [AffiliateDashboardController::class, 'updatePassword'])->name('affiliate.account.password');
+    });
+});
+
+// ─── Admin Affiliate Routes ───────────────────────────────────────────────────
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 
 // Test email route

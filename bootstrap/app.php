@@ -12,10 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin'      => \App\Http\Middleware\AdminMiddleware::class,
-            'admin.pin'  => \App\Http\Middleware\RequireAdminPin::class,
-            'admin.lock' => \App\Http\Middleware\AdminRouteLock::class,
-            'menu.check' => \App\Http\Middleware\CheckMenuEnabled::class,
+            'admin'              => \App\Http\Middleware\AdminMiddleware::class,
+            'admin.pin'          => \App\Http\Middleware\RequireAdminPin::class,
+            'admin.lock'         => \App\Http\Middleware\AdminRouteLock::class,
+            'menu.check'         => \App\Http\Middleware\CheckMenuEnabled::class,
+            'affiliate.auth'     => \App\Http\Middleware\AffiliateAuth::class,
+            'affiliate.approved' => \App\Http\Middleware\AffiliateApproved::class,
         ]);
 
         // Auto-check menu enabled status on every web request

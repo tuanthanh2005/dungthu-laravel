@@ -13,10 +13,8 @@ class SiteSetting extends Model
 
     public static function getValue(string $key, $default = null)
     {
-        return \Illuminate\Support\Facades\Cache::rememberForever("site_setting.{$key}", function () use ($key, $default) {
-            $record = static::query()->where('key', $key)->first();
-            return $record ? $record->value : $default;
-        });
+        $record = static::query()->where('key', $key)->first();
+        return $record ? $record->value : $default;
     }
 
     public static function setValue(string $key, $value): void
@@ -25,6 +23,5 @@ class SiteSetting extends Model
             ['key' => $key],
             ['value' => (string) $value]
         );
-        \Illuminate\Support\Facades\Cache::forget("site_setting.{$key}");
     }
 }

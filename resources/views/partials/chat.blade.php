@@ -20,20 +20,13 @@
 
 .chat-fab-container {
     position: fixed;
-    bottom: 80px; /* Default above mobile nav */
+    bottom: 24px;
     right: 24px;
-    z-index: 100000;
+    z-index: 9998;
     display: flex;
     flex-direction: column;
     gap: 16px;
     align-items: flex-end;
-    touch-action: none; /* Critical for dragging on touch */
-}
-
-@media (min-width: 992px) {
-    .chat-fab-container {
-        bottom: 24px;
-    }
 }
 
 .chat-fab {
@@ -557,15 +550,15 @@
 
 @media (max-width: 768px) {
     .chat-fab-container {
-        bottom: 80px;
+        bottom: 16px;
         right: 16px;
-        gap: 10px;
+        gap: 12px;
     }
 
     .chat-fab {
-        width: 52px;
-        height: 52px;
-        font-size: 22px;
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
     }
 
     .chat-fab .fab-tooltip {
@@ -573,35 +566,34 @@
     }
 
     .chat-widget {
-        bottom: 140px; 
+        bottom: 90px;
         right: 16px;
-        left: auto;
-        width: 300px; 
-        height: 480px; 
-        max-height: calc(100vh - 200px);
-        border-radius: 16px;
+        left: 16px;
+        width: auto;
+        height: calc(100vh - 120px);
+        border-radius: 20px;
     }
 
     .chat-header {
-        padding: 12px 16px;
+        padding: 20px;
     }
 
     .chat-avatar {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
     }
 
     .chat-header-text h3 {
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .chat-header-text p {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .chat-body {
-        padding: 12px;
+        padding: 16px;
     }
 
     .message-bubble {
@@ -609,34 +601,35 @@
     }
 
     .chat-footer {
-        padding: 12px;
+        padding: 16px;
     }
 
     .chat-input {
-        padding: 10px 14px;
+        padding: 12px 16px;
         font-size: 14px;
     }
 
     .chat-send-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
     }
 }
 
 @media (max-width: 480px) {
     .chat-widget {
-        bottom: 140px;
-        right: 10px;
-        left: 10px;
-        width: auto;
-        height: 420px;
-        border-radius: 16px;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
     }
 
     .chat-fab-container {
-        bottom: 80px;
-        right: 16px;
+        bottom: 20px;
+        right: 20px;
     }
 }
 
@@ -775,106 +768,283 @@
 
 <script>
 // ============================================
-// GLOBAL STATE & UTILITIES
+// ADMIN CHAT FUNCTIONALITY
 // ============================================
-let adminChatOpen = false;
-let affiliateChatOpen = false;
-let lastMessageId = 0;
-let lastAffiliateMessageId = 0;
-let pollingInterval = null;
-let affiliatePollingInterval = null;
 
-function escapeHtml(text) {
-    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-    return String(text || '').replace(/[&<>"']/g, m => map[m]);
+let adminChatOpen = false;
+let adminWidget = document.getElementById('adminChatWidget');
+let adminBtn = document.getElementById('adminChatFab');
+let lastMessageId = 0;
+let pollingInterval = null;
+
+@auth
+@if(auth()->user()->role !== 'admin')
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadAdminMessages();
+    startAdminPolling();
+    refreshUnreadCount();
+});
+
+function toggleAdminChat() {
+    if (adminChatOpen) {
+        closeAdminChat();
+    } else {
+        // Close others
+        if (typeof closeAffiliateChat === 'function') closeAffiliateChat();
+        
+        openAdminChat();
+    }
 }
 
-function showTypingIndicator(bodyId) {
-    const chatBody = document.getElementById(bodyId);
-    if (!chatBody) return;
-    const indicator = document.createElement('div');
-    indicator.className = 'typing-indicator';
-    indicator.id = 'typingIndicator';
-    indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-    chatBody.appendChild(indicator);
+function openAdminChat() {
+    const widget = document.getElementById('adminChatWidget');
+    
+    widget.classList.add('active');
+    adminChatOpen = true;
+    document.getElementById('adminChatInput').focus();
+    loadAdminMessages();
+    markAllAsRead();
+}
+
+function closeAdminChat() {
+    const widget = document.getElementById('adminChatWidget');
+    widget.classList.remove('active');
+    adminChatOpen = false;
+}
+
+function sendAdminMessage(event) {
+    event.preventDefault();
+    
+    const input = document.getElementById('adminChatInput');
+    const imageInput = document.getElementById('adminChatImage');
+    const message = input.value.trim();
+    
+    if (!message && !imageInput.files[0]) return;
+    
+    const sendBtn = document.getElementById('adminChatSendBtn');
+    sendBtn.disabled = true;
+    
+    const formData = new FormData();
+    formData.append('message', message);
+    if (imageInput.files[0]) {
+        formData.append('image', imageInput.files[0]);
+    }
+
+    fetch('{{ route('chat.send') }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        appendAdminMessage(data);
+        lastMessageId = Math.max(lastMessageId, data.id);
+        input.value = '';
+        clearImagePreview();
+    })
+    .catch(() => {
+        alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
+    })
+    .finally(() => {
+        sendBtn.disabled = false;
+    });
+}
+
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').src = e.target.result;
+            document.getElementById('imagePreviewContainer').style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function clearImagePreview() {
+    document.getElementById('adminChatImage').value = '';
+    document.getElementById('imagePreviewContainer').style.display = 'none';
+}
+
+function loadAdminMessages() {
+    fetch('{{ route('chat.messages') }}', { headers: { 'Accept': 'application/json' } })
+        .then(res => res.json())
+        .then(data => {
+            const chatBody = document.getElementById('adminChatBody');
+            if (data.length === 0) return;
+            const welcome = chatBody.querySelector('.chat-welcome');
+            if (welcome) welcome.remove();
+            chatBody.innerHTML = '';
+            data.forEach(message => {
+                appendAdminMessage(message);
+                lastMessageId = Math.max(lastMessageId, message.id);
+            });
+            chatBody.scrollTop = chatBody.scrollHeight;
+        })
+        .catch(err => console.error('Error loading messages:', err));
+}
+
+function appendAdminMessage(message) {
+    const chatBody = document.getElementById('adminChatBody');
+    const welcome = chatBody.querySelector('.chat-welcome');
+    if (welcome) welcome.remove();
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
+    const date = new Date(message.created_at);
+    const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    
+    let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
+    if (message.image) {
+        const imageUrl = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
+        content += `<img src="${imageUrl}" class="message-image" onclick="window.open('${imageUrl}')">`;
+    }
+
+    messageDiv.innerHTML = `
+        <div class="message-bubble">
+            ${content}
+            <div class="message-time">${time}</div>
+        </div>
+    `;
+    chatBody.appendChild(messageDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-function removeTypingIndicator(bodyId) {
-    const chatBody = document.getElementById(bodyId);
-    if (!chatBody) return;
-    const indicator = chatBody.querySelector('#typingIndicator');
-    if (indicator) indicator.remove();
+function startAdminPolling() {
+    pollingInterval = setInterval(() => {
+        if (adminChatOpen) {
+            checkNewAdminMessages();
+        } else {
+            refreshUnreadCount();
+        }
+    }, 3000);
 }
 
+function checkNewAdminMessages() {
+    fetch(`{{ route('chat.new') }}?last_id=${lastMessageId}`, { headers: { 'Accept': 'application/json' } })
+        .then(res => res.json())
+        .then(data => {
+            if (data.length > 0) {
+                data.forEach(message => {
+                    appendAdminMessage(message);
+                    lastMessageId = Math.max(lastMessageId, message.id);
+                });
+                markAllAsRead();
+            }
+        })
+        .catch(err => console.error('Error checking messages:', err));
+}
+
+function refreshUnreadCount() {
+    fetch('{{ route('chat.unread-count') }}', { headers: { 'Accept': 'application/json' } })
+        .then(res => res.json())
+        .then(data => {
+            if (data && typeof data.unread !== 'undefined' && !adminChatOpen) {
+                const badge = document.getElementById('adminUnreadBadge');
+                if (data.unread > 0) {
+                    badge.textContent = data.unread;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        })
+        .catch(err => console.error('Error fetching unread count:', err));
+}
+
+function markAllAsRead() {
+    fetch('{{ route('chat.mark-read') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+    .then(() => {
+        const badge = document.getElementById('adminUnreadBadge');
+        if (badge) badge.style.display = 'none';
+    })
+    .catch(err => console.error('Error marking read:', err));
+}
+@endif
+@endauth
+
 // ============================================
-// AFFILIATE CHAT LOGIC
+// AFFILIATE CHAT FUNCTIONALITY
 // ============================================
+
+let affiliateChatOpen = false;
+let affiliatePollingInterval = null;
+let lastAffiliateMessageId = 0;
+let affiliateWidget = document.getElementById('affiliateChatWidget');
+let affiliateBtn = document.getElementById('affiliateChatFab');
+
+@if(Auth::guard('affiliate')->check())
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadAffiliateMessages();
+    startAffiliatePolling();
+    refreshAffiliateUnreadCount();
+});
+
 function toggleAffiliateChat() {
-    const widget = document.getElementById('affiliateChatWidget');
-    if (!widget) return;
-    
     if (affiliateChatOpen) {
-        widget.classList.remove('active');
-        affiliateChatOpen = false;
+        closeAffiliateChat();
     } else {
         // Close others
-        const adminWidget = document.getElementById('adminChatWidget');
-        if (adminWidget) {
-            adminWidget.classList.remove('active');
-            adminChatOpen = false;
-        }
-        
-        widget.classList.add('active');
-        affiliateChatOpen = true;
-        const input = document.getElementById('affiliateChatInput');
-        if (input) input.focus();
-        loadAffiliateMessages();
-        markAffiliateAsRead();
+        if (typeof closeAdminChat === 'function') closeAdminChat();
+
+        openAffiliateChat();
     }
+}
+
+function openAffiliateChat() {
+    const widget = document.getElementById('affiliateChatWidget');
+    widget.classList.add('active');
+    affiliateChatOpen = true;
+    document.getElementById('affiliateChatInput').focus();
+    loadAffiliateMessages();
+    markAffiliateAsRead();
 }
 
 function closeAffiliateChat() {
     const widget = document.getElementById('affiliateChatWidget');
-    if (widget) {
-        widget.classList.remove('active');
-        affiliateChatOpen = false;
+    widget.classList.remove('active');
+    affiliateChatOpen = false;
+}
+
+function previewAffiliateImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('affiliateImagePreview').src = e.target.result;
+            document.getElementById('affiliateImagePreviewContainer').style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
     }
 }
 
-function loadAffiliateMessages() {
-    const body = document.getElementById('affiliateChatBody');
-    if (!body) return;
-    
-    fetch('{{ route('affiliate.chat.messages') }}')
-        .then(res => res.json())
-        .then(data => {
-            if (data.length === 0) return;
-            const welcome = body.querySelector('.chat-welcome');
-            if (welcome) welcome.remove();
-            body.innerHTML = '';
-            data.forEach(msg => {
-                appendAffiliateMessage(msg);
-                lastAffiliateMessageId = Math.max(lastAffiliateMessageId, msg.id);
-            });
-            body.scrollTop = body.scrollHeight;
-        });
+function clearAffiliateImagePreview() {
+    document.getElementById('affiliateChatImage').value = '';
+    document.getElementById('affiliateImagePreviewContainer').style.display = 'none';
 }
 
 function sendAffiliateMessage(event) {
     event.preventDefault();
     const input = document.getElementById('affiliateChatInput');
     const imageInput = document.getElementById('affiliateChatImage');
-    const msg = input.value.trim();
-    if (!msg && (!imageInput || !imageInput.files[0])) return;
-    
+    const message = input.value.trim();
+    if (!message && !imageInput.files[0]) return;
     const sendBtn = document.getElementById('affiliateChatSendBtn');
-    if (sendBtn) sendBtn.disabled = true;
-    
+    sendBtn.disabled = true;
     const formData = new FormData();
-    formData.append('message', msg);
-    if (imageInput && imageInput.files[0]) formData.append('image', imageInput.files[0]);
-    
+    formData.append('message', message);
+    if (imageInput.files[0]) formData.append('image', imageInput.files[0]);
     fetch('{{ route('affiliate.chat.send') }}', {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
@@ -885,30 +1055,45 @@ function sendAffiliateMessage(event) {
         appendAffiliateMessage(data);
         lastAffiliateMessageId = Math.max(lastAffiliateMessageId, data.id);
         input.value = '';
-        if (typeof clearAffiliateImagePreview === 'function') clearAffiliateImagePreview();
+        clearAffiliateImagePreview();
     })
-    .finally(() => { if (sendBtn) sendBtn.disabled = false; });
+    .catch(() => alert('Không thể gửi tin nhắn. Vui lòng thử lại!'))
+    .finally(() => sendBtn.disabled = false);
+}
+
+function loadAffiliateMessages() {
+    fetch('{{ route('affiliate.chat.messages') }}')
+        .then(res => res.json())
+        .then(data => {
+            const chatBody = document.getElementById('affiliateChatBody');
+            if (data.length === 0) return;
+            const welcome = chatBody.querySelector('.chat-welcome');
+            if (welcome) welcome.remove();
+            chatBody.innerHTML = '';
+            data.forEach(message => {
+                appendAffiliateMessage(message);
+                lastAffiliateMessageId = Math.max(lastAffiliateMessageId, message.id);
+            });
+            chatBody.scrollTop = chatBody.scrollHeight;
+        });
 }
 
 function appendAffiliateMessage(message) {
-    const body = document.getElementById('affiliateChatBody');
-    if (!body) return;
-    const welcome = body.querySelector('.chat-welcome');
+    const chatBody = document.getElementById('affiliateChatBody');
+    const welcome = chatBody.querySelector('.chat-welcome');
     if (welcome) welcome.remove();
-    
-    const div = document.createElement('div');
-    div.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
     const date = new Date(message.created_at);
     const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    
     let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
     if (message.image) {
-        const url = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
-        content += `<img src="${url}" class="message-image" onclick="window.open('${url}')">`;
+        const imageUrl = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
+        content += `<img src="${imageUrl}" class="message-image" onclick="window.open('${imageUrl}')">`;
     }
-    div.innerHTML = `<div class="message-bubble">${content}<div class="message-time">${time}</div></div>`;
-    body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
+    messageDiv.innerHTML = `<div class="message-bubble">${content}<div class="message-time">${time}</div></div>`;
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
 }
 
 function startAffiliatePolling() {
@@ -923,9 +1108,9 @@ function checkNewAffiliateMessages() {
         .then(res => res.json())
         .then(data => {
             if (data.length > 0) {
-                data.forEach(msg => {
-                    appendAffiliateMessage(msg);
-                    lastAffiliateMessageId = Math.max(lastAffiliateMessageId, msg.id);
+                data.forEach(message => {
+                    appendAffiliateMessage(message);
+                    lastAffiliateMessageId = Math.max(lastAffiliateMessageId, message.id);
                 });
                 markAffiliateAsRead();
             }
@@ -933,16 +1118,17 @@ function checkNewAffiliateMessages() {
 }
 
 function refreshAffiliateUnreadCount() {
-    const badge = document.getElementById('affiliateUnreadBadge');
-    if (!badge) return;
     fetch('{{ route('affiliate.chat.unread-count') }}')
         .then(res => res.json())
         .then(data => {
-            if (data.unread > 0) {
-                badge.textContent = data.unread;
-                badge.style.display = 'flex';
-            } else {
-                badge.style.display = 'none';
+            if (data && typeof data.unread !== 'undefined' && !affiliateChatOpen) {
+                const badge = document.getElementById('affiliateUnreadBadge');
+                if (data.unread > 0) {
+                    badge.textContent = data.unread;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
             }
         });
 }
@@ -950,45 +1136,93 @@ function refreshAffiliateUnreadCount() {
 function markAffiliateAsRead() {
     fetch('{{ route('affiliate.chat.mark-read') }}', {
         method: 'POST',
-        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    }).then(() => {
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({})
+    })
+    .then(() => {
         const badge = document.getElementById('affiliateUnreadBadge');
         if (badge) badge.style.display = 'none';
     });
 }
-
-function previewAffiliateImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            document.getElementById('affiliateImagePreview').src = e.target.result;
-            document.getElementById('affiliateImagePreviewContainer').style.display = 'block';
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function clearAffiliateImagePreview() {
-    const input = document.getElementById('affiliateChatImage');
-    if (input) input.value = '';
-    const container = document.getElementById('affiliateImagePreviewContainer');
-    if (container) container.style.display = 'none';
-}
+@endif
 
 // ============================================
-// DRAGGABLE LOGIC
+// SHARED UTILITIES
+// ============================================
+
+function showTypingIndicator(bodyId) {
+    const chatBody = document.getElementById(bodyId);
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+    `;
+    chatBody.appendChild(indicator);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function removeTypingIndicator(bodyId) {
+    const chatBody = document.getElementById(bodyId);
+    const indicator = chatBody.querySelector('#typingIndicator');
+    if (indicator) indicator.remove();
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return String(text || '').replace(/[&<>"']/g, m => map[m]);
+}
+
+// Close chat when clicking outside
+document.addEventListener('click', function(event) {
+    const adminWidget = document.getElementById('adminChatWidget');
+    const adminBtn = document.getElementById('adminChatFab');
+    const affiliateWidget = document.getElementById('affiliateChatWidget');
+    const affiliateBtn = document.getElementById('affiliateChatFab');
+    const aiWidget = document.getElementById('aiChatWidget');
+    const aiBtn = document.getElementById('aiChatFab');
+    
+    if (adminChatOpen && adminWidget && !adminWidget.contains(event.target) && adminBtn && !adminBtn.contains(event.target)) {
+        closeAdminChat();
+    }
+    
+    if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && affiliateBtn && !affiliateBtn.contains(event.target)) {
+        closeAffiliateChat();
+    }
+});
+
+// Prevent chat from closing when clicking inside
+document.getElementById('affiliateChatWidget')?.addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+
+// ============================================
+// DRAGGABLE CHAT COMPONENTS
 // ============================================
 (function() {
+    // 1. Draggable FAB Container
     const fabContainer = document.querySelector('.chat-fab-container');
     if (fabContainer) {
         let isDraggingFab = false;
         let startX, startY, initialRight, initialBottom;
-        fabContainer.addEventListener('mousedown', e => fabDragStart(e)); // Wrapping for safety
-        fabContainer.addEventListener('touchstart', e => fabDragStart(e), { passive: false });
+        let dragThreshold = 5;
+
+        fabContainer.addEventListener('mousedown', fabDragStart);
+        fabContainer.addEventListener('touchstart', fabDragStart, { passive: false });
 
         function fabDragStart(e) {
             const touch = e.type === 'touchstart';
-            if (touch && e.touches.length > 1) return;
             startX = touch ? e.touches[0].clientX : e.clientX;
             startY = touch ? e.touches[0].clientY : e.clientY;
             const style = window.getComputedStyle(fabContainer);
@@ -998,86 +1232,97 @@ function clearAffiliateImagePreview() {
             document.addEventListener(touch ? 'touchend' : 'mouseup', fabDragEnd);
             isDraggingFab = false;
         }
+
         function fabDrag(e) {
             const touch = e.type === 'touchmove';
-            const dx = startX - (touch ? e.touches[0].clientX : e.clientX);
-            const dy = startY - (touch ? e.touches[0].clientY : e.clientY);
-            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDraggingFab = true;
+            const currentX = touch ? e.touches[0].clientX : e.clientX;
+            const currentY = touch ? e.touches[0].clientY : e.clientY;
+            const dx = startX - currentX;
+            const dy = startY - currentY;
+            if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) isDraggingFab = true;
             if (isDraggingFab) {
                 if (touch) e.preventDefault();
-                let nR = initialRight + dx, nB = initialBottom + dy;
-                fabContainer.style.right = Math.max(10, Math.min(nR, window.innerWidth - 70)) + 'px';
-                fabContainer.style.bottom = Math.max(10, Math.min(nB, window.innerHeight - 150)) + 'px';
+                let newRight = initialRight + dx;
+                let newBottom = initialBottom + dy;
+                const padding = 10;
+                newRight = Math.max(padding, Math.min(newRight, window.innerWidth - 70));
+                newBottom = Math.max(padding, Math.min(newBottom, window.innerHeight - 70));
+                fabContainer.style.right = newRight + 'px';
+                fabContainer.style.bottom = newBottom + 'px';
             }
         }
-        function fabDragEnd() {
-            document.removeEventListener('mousemove', fabDrag);
-            document.removeEventListener('touchmove', fabDrag);
-            document.removeEventListener('mouseup', fabDragEnd);
-            document.removeEventListener('touchend', fabDragEnd);
+
+        function fabDragEnd(e) {
+            const touch = e.type === 'touchend';
+            document.removeEventListener(touch ? 'touchmove' : 'mousemove', fabDrag);
+            document.removeEventListener(touch ? 'touchend' : 'mouseup', fabDragEnd);
         }
+
         fabContainer.querySelectorAll('.chat-fab').forEach(fab => {
             fab.addEventListener('click', e => { if (isDraggingFab) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
         });
     }
 
-    // Draggable Widgets
-    document.querySelectorAll('.chat-widget').forEach(widget => {
+    // 2. Draggable Chat Widgets (via Header)
+    const widgets = document.querySelectorAll('.chat-widget');
+    widgets.forEach(widget => {
         const header = widget.querySelector('.chat-header');
         if (!header) return;
-        let startX, startY, initialRight, initialBottom;
+
+        let isDraggingWidget = false;
+        let startX, startY;
+        let initialRight, initialBottom;
+
         header.style.cursor = 'move';
-        header.addEventListener('mousedown', wDragStart);
-        header.addEventListener('touchstart', wDragStart, { passive: false });
-        function wDragStart(e) {
+        header.addEventListener('mousedown', widgetDragStart);
+        header.addEventListener('touchstart', widgetDragStart, { passive: false });
+
+        function widgetDragStart(e) {
             const touch = e.type === 'touchstart';
             startX = touch ? e.touches[0].clientX : e.clientX;
             startY = touch ? e.touches[0].clientY : e.clientY;
             const style = window.getComputedStyle(widget);
-            initialRight = parseInt(style.right);
-            initialBottom = parseInt(style.bottom);
-            document.addEventListener(touch ? 'touchmove' : 'mousemove', wDrag, touch ? { passive: false } : false);
-            document.addEventListener(touch ? 'touchend' : 'mouseup', wDragEnd);
+            initialRight = parseInt(style.right) || 0;
+            initialBottom = parseInt(style.bottom) || 0;
+            document.addEventListener(touch ? 'touchmove' : 'widgetDrag', widgetDrag, touch ? { passive: false } : false); // Standard mousemove
+            if (!touch) document.addEventListener('mousemove', widgetDrag);
+            document.addEventListener(touch ? 'touchend' : 'mouseup', widgetDragEnd);
         }
-        function wDrag(e) {
+
+        function widgetDrag(e) {
             const touch = e.type === 'touchmove';
+            const currentX = touch ? e.touches[0].clientX : e.clientX;
+            const currentY = touch ? e.touches[0].clientY : e.clientY;
+            const dx = startX - currentX;
+            const dy = startY - currentY;
             if (touch) e.preventDefault();
-            const dx = startX - (touch ? e.touches[0].clientX : e.clientX);
-            const dy = startY - (touch ? e.touches[0].clientY : e.clientY);
-            widget.style.right = (initialRight + dx) + 'px';
-            widget.style.bottom = (initialBottom + dy) + 'px';
-            widget.style.left = 'auto';
+            
+            let newRight = initialRight + dx;
+            let newBottom = initialBottom + dy;
+            
+            // Limit within viewport
+            newRight = Math.max(-widget.offsetWidth + 100, Math.min(newRight, window.innerWidth - 100));
+            newBottom = Math.max(0, Math.min(newBottom, window.innerHeight - 100));
+            
+            widget.style.right = newRight + 'px';
+            widget.style.bottom = newBottom + 'px';
+            widget.style.left = 'auto'; // Ensure right/bottom takes precedence
         }
-        function wDragEnd() {
-            document.removeEventListener('mousemove', wDrag);
-            document.removeEventListener('touchmove', wDrag);
+
+        function widgetDragEnd(e) {
+            const touch = e.type === 'touchend';
+            document.removeEventListener('mousemove', widgetDrag);
+            document.removeEventListener('touchmove', widgetDrag);
+            document.removeEventListener(touch ? 'touchend' : 'mouseup', widgetDragEnd);
         }
     });
 })();
 
-// ============================================
-// INITIALIZATION
-// ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
-        startAffiliatePolling();
-        refreshAffiliateUnreadCount();
-    @endif
-
-    // Close on click outside
-    document.addEventListener('click', function(event) {
-        const affiliateWidget = document.getElementById('affiliateChatWidget');
-        const affiliateBtn = document.getElementById('affiliateChatFab');
-        if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && !affiliateBtn?.contains(event.target)) {
-            closeAffiliateChat();
-        }
-    });
-
     const widgets = document.querySelectorAll('.chat-widget');
     widgets.forEach(widget => {
         widget.addEventListener('click', function(e) {
             e.stopPropagation();
         });
     });
-});
 </script>

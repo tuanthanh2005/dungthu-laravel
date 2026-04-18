@@ -753,66 +753,11 @@
 </div>
 @endif
 
-<!-- AI Chatbot (PERK for Approved Affiliates) -->
-@if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
-<div id="aiChatWidget" class="chat-widget ai-bot">
-    <div class="chat-header">
-        <div class="chat-header-content">
-            <div class="chat-avatar">
-                <i class="fas fa-robot"></i>
-            </div>
-            <div class="chat-header-text">
-                <h3>AI Assistant</h3>
-                <p class="chat-status-indicator">
-                    <span class="chat-status-dot"></span>
-                    Trực tuyến
-                </p>
-            </div>
-        </div>
-        <button class="chat-close-btn" onclick="toggleAIChat()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-
-    <div class="chat-body" id="aiChatBody">
-        <div class="chat-welcome">
-            <i class="fas fa-robot"></i>
-            <h4>Xin chào! Tôi là AI Assistant.</h4>
-            <p>Tôi có thể hỗ trợ bạn tìm hiểu về sản phẩm, dịch vụ và giải đáp các thắc mắc nhanh chóng.</p>
-        </div>
-    </div>
-
-    <div class="chat-footer">
-        <form id="aiChatForm" onsubmit="sendAIMessage(event)">
-            <div class="chat-input-wrapper">
-                <input 
-                    type="text" 
-                    class="chat-input" 
-                    id="aiChatInput" 
-                    placeholder="Hỏi AI bất cứ điều gì..."
-                    autocomplete="off"
-                >
-                <button class="chat-send-btn" type="submit" id="aiChatSendBtn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-@endif
-
 <!-- Floating Action Buttons -->
 <div class="chat-fab-container">
 
-    <!-- Admin / AI Chat Buttons (Only for Approved Affiliates) -->
+    <!-- Admin Chat Button (Only for Approved Affiliates) -->
     @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
-    <!-- AI Bot Button -->
-    <button class="chat-fab ai-bot" onclick="toggleAIChat()" id="aiChatFab">
-        <i class="fas fa-robot fab-icon"></i>
-        <span class="fab-tooltip">Chat với AI Assistant</span>
-    </button>
-    
-    <!-- Admin Chat Button -->
     <button class="chat-fab admin-chat" onclick="toggleAffiliateChat()" id="affiliateChatFab">
         <i class="fas fa-headset fab-icon"></i>
         <span class="unread-badge" id="affiliateUnreadBadge" style="display: none;">0</span>
@@ -823,94 +768,6 @@
 
 <script>
 // ============================================
-// AI CHATBOT FUNCTIONALITY
-// ============================================
-
-let aiChatOpen = false;
-
-function toggleAIChat() {
-    const widget = document.getElementById('aiChatWidget');
-    if (aiChatOpen) {
-        widget.classList.remove('active');
-        aiChatOpen = false;
-    } else {
-        // Close other widgets
-        if (typeof closeAdminChat === 'function') closeAdminChat();
-        if (typeof closeAffiliateChat === 'function') closeAffiliateChat();
-        
-        widget.classList.add('active');
-        aiChatOpen = true;
-        document.getElementById('aiChatInput').focus();
-    }
-}
-
-function sendAIMessage(event) {
-    event.preventDefault();
-    const input = document.getElementById('aiChatInput');
-    const message = input.value.trim();
-    if (!message) return;
-
-    const chatBody = document.getElementById('aiChatBody');
-    const sendBtn = document.getElementById('aiChatSendBtn');
-    
-    // Remove welcome
-    const welcome = chatBody.querySelector('.chat-welcome');
-    if (welcome) welcome.remove();
-
-    // Append user message
-    appendAIMessage('user', message);
-    input.value = '';
-    sendBtn.disabled = true;
-
-    // Show indicator
-    showTypingIndicator('aiChatBody');
-
-    fetch('{{ route('guest-chat.send') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ message: message })
-    })
-    .then(res => res.json())
-    .then(data => {
-        removeTypingIndicator('aiChatBody');
-        if (data.reply) {
-            appendAIMessage('bot', data.reply);
-        } else {
-            appendAIMessage('bot', 'Xin lỗi, tôi gặp chút trục trặc. Bạn có thể hỏi lại sau nhé!');
-        }
-    })
-    .catch(() => {
-        removeTypingIndicator('aiChatBody');
-        appendAIMessage('bot', 'Hiện tại tôi không thể kết nối. Vui lòng kiểm tra mạng!');
-    })
-    .finally(() => {
-        sendBtn.disabled = false;
-    });
-}
-
-function appendAIMessage(role, text) {
-    const chatBody = document.getElementById('aiChatBody');
-    const div = document.createElement('div');
-    div.className = `chat-message ${role}`;
-    
-    div.innerHTML = `
-        <div class="message-bubble">
-            <div class="message-content">${role === 'bot' ? formatBotMessage(text) : escapeHtml(text)}</div>
-            <div class="message-time">${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</div>
-        </div>
-    `;
-    
-    chatBody.appendChild(div);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-function formatBotMessage(text) {
-    // Basic formatting for AI response (newlines to br, bold)
-    return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-}
 // ADMIN CHAT FUNCTIONALITY
 // ============================================
 
@@ -934,7 +791,6 @@ function toggleAdminChat() {
         closeAdminChat();
     } else {
         // Close others
-        if (typeof toggleAIChat === 'function' && aiChatOpen) toggleAIChat();
         if (typeof closeAffiliateChat === 'function') closeAffiliateChat();
         
         openAdminChat();
@@ -1141,7 +997,6 @@ function toggleAffiliateChat() {
         closeAffiliateChat();
     } else {
         // Close others
-        if (typeof toggleAIChat === 'function' && aiChatOpen) toggleAIChat();
         if (typeof closeAdminChat === 'function') closeAdminChat();
 
         openAffiliateChat();
@@ -1345,13 +1200,99 @@ document.addEventListener('click', function(event) {
     if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && affiliateBtn && !affiliateBtn.contains(event.target)) {
         closeAffiliateChat();
     }
-
-    if (aiChatOpen && aiWidget && !aiWidget.contains(event.target) && aiBtn && !aiBtn.contains(event.target)) {
-        toggleAIChat();
-    }
 });
 
 // Prevent chat from closing when clicking inside
+document.getElementById('affiliateChatWidget')?.addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+
+// ============================================
+// DRAGGABLE CHAT FAB CONTAINER
+// ============================================
+(function() {
+    const fabContainer = document.querySelector('.chat-fab-container');
+    if (!fabContainer) return;
+
+    let isDragging = false;
+    let startX, startY, initialRight, initialBottom;
+    let dragThreshold = 5; // pixels to distinguish click from drag
+
+    fabContainer.addEventListener('mousedown', dragStart);
+    fabContainer.addEventListener('touchstart', dragStart, { passive: false });
+
+    function dragStart(e) {
+        if (e.type === 'touchstart') {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        } else {
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+
+        const style = window.getComputedStyle(fabContainer);
+        initialRight = parseInt(style.right);
+        initialBottom = parseInt(style.bottom);
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+        
+        isDragging = false;
+    }
+
+    function drag(e) {
+        let currentX, currentY;
+        if (e.type === 'touchmove') {
+            currentX = e.touches[0].clientX;
+            currentY = e.touches[0].clientY;
+            e.preventDefault(); // Prevent scrolling while dragging
+        } else {
+            currentX = e.clientX;
+            currentY = e.clientY;
+        }
+
+        const dx = startX - currentX;
+        const dy = startY - currentY;
+
+        if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) {
+            isDragging = true;
+        }
+
+        if (isDragging) {
+            let newRight = initialRight + dx;
+            let newBottom = initialBottom + dy;
+
+            // Boundaries
+            const padding = 10;
+            newRight = Math.max(padding, Math.min(newRight, window.innerWidth - 70));
+            newBottom = Math.max(padding, Math.min(newBottom, window.innerHeight - 70));
+
+            fabContainer.style.right = newRight + 'px';
+            fabContainer.style.bottom = newBottom + 'px';
+        }
+    }
+
+    function dragEnd() {
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', dragEnd);
+        document.removeEventListener('touchmove', drag);
+        document.removeEventListener('touchend', dragEnd);
+    }
+
+    // Intercept clicks on FAB buttons to prevent toggle if we were just dragging
+    const fabs = fabContainer.querySelectorAll('.chat-fab');
+    fabs.forEach(fab => {
+        fab.addEventListener('click', function(e) {
+            if (isDragging) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            }
+        }, true);
+    });
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
     const widgets = document.querySelectorAll('.chat-widget');
     widgets.forEach(widget => {
@@ -1359,5 +1300,4 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
         });
     });
-});
 </script>

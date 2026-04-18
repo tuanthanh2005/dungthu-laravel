@@ -250,69 +250,97 @@
         <div class="chat-admin-card">
             <div class="users-sidebar">
                 <div class="users-header">
-                    <h5><i class="fas fa-users"></i> Danh sách Users</h5>
+                    <h5><i class="fas fa-users"></i> Danh sách Chat</h5>
                 </div>
                 <div class="users-list" id="usersList">
-                    <div class="users-subheader">Users da chat</div>
-                    @forelse($users as $user)
-                        <div class="user-item" data-user-id="{{ $user->id }}" onclick="selectUser(event, {{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->email }}')">
-                            <div class="user-avatar">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                    <div class="users-subheader">Tin nhắn gần đây</div>
+                    @forelse($recentChats as $item)
+                        <div class="user-item" data-id="{{ $item->id }}" data-type="{{ $item->type }}" 
+                             onclick="selectTarget(event, {{ $item->id }}, '{{ addslashes($item->name) }}', '{{ $item->email }}', '{{ $item->type }}')">
+                            <div class="user-avatar" style="{{ $item->type === 'affiliate' ? 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);' : '' }}">
+                                {{ strtoupper(substr($item->name, 0, 1)) }}
                             </div>
                             <div class="user-info">
-                                <div class="user-name">{{ $user->name }}</div>
-                                <div class="user-email">{{ $user->email }}</div>
+                                <div class="user-name">
+                                    {{ $item->name }}
+                                    @if($item->type === 'affiliate')
+                                        <span class="badge bg-info ms-1" style="font-size: 9px;">CTV</span>
+                                    @endif
+                                </div>
+                                <div class="user-email">{{ $item->email }}</div>
                             </div>
-                            @if(isset($user->unread_count) && $user->unread_count > 0)
-                                <span class="badge bg-danger rounded-pill">{{ $user->unread_count }}</span>
+                            @if(isset($item->unread_count) && $item->unread_count > 0)
+                                <span class="badge bg-danger rounded-pill">{{ $item->unread_count }}</span>
                             @endif
                         </div>
                     @empty
-                        <div class="text-center py-4 text-muted">
-                            <p>Chưa có tin nhắn nào</p>
-                        </div>
-                    @endforelse
-                    <div class="users-subheader">Users chua chat</div>
-                    @forelse($allUsers as $user)
-                        <div class="user-item" data-user-id="{{ $user->id }}" onclick="selectUser(event, {{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->email }}')">
-                            <div class="user-avatar">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                            </div>
-                            <div class="user-info">
-                                <div class="user-name">{{ $user->name }}</div>
-                                <div class="user-email">{{ $user->email }}</div>
-                            </div>
-                            <span class="badge bg-secondary rounded-pill">Moi</span>
-                        </div>
-                    @empty
-                        <div class="text-center py-3 text-muted">
-                            <p>Khong co user moi</p>
-                        </div>
+                        <div class="text-center py-4 text-muted small">Chưa có tin nhắn nào</div>
                     @endforelse
 
+                    <div class="users-subheader">Cộng tác viên mới</div>
+                    @foreach($allAffiliates as $aff)
+                        @if(!$recentChats->where('id', $aff->id)->where('type', 'affiliate')->first())
+                        <div class="user-item" data-id="{{ $aff->id }}" data-type="affiliate" 
+                             onclick="selectTarget(event, {{ $aff->id }}, '{{ addslashes($aff->name) }}', '{{ $aff->email }}', 'affiliate')">
+                            <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                {{ strtoupper(substr($aff->name, 0, 1)) }}
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">{{ $aff->name }} <span class="badge bg-info ms-1" style="font-size: 9px;">CTV</span></div>
+                                <div class="user-email">{{ $aff->email }}</div>
+                            </div>
+                        </div>
+                        @endif
+                    @endforeach
+
+                    <div class="users-subheader">Người dùng mới</div>
+                    @foreach($allUsers as $u)
+                        @if(!$recentChats->where('id', $u->id)->where('type', 'user')->first())
+                        <div class="user-item" data-id="{{ $u->id }}" data-type="user" 
+                             onclick="selectTarget(event, {{ $u->id }}, '{{ addslashes($u->name) }}', '{{ $u->email }}', 'user')">
+                            <div class="user-avatar">
+                                {{ strtoupper(substr($u->name, 0, 1)) }}
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">{{ $u->name }}</div>
+                                <div class="user-email">{{ $u->email }}</div>
+                            </div>
+                        </div>
+                        @endif
+                    @endforeach
                 </div>
             </div>
 
             <div class="chat-main">
                 <div class="chat-header-main" id="chatHeaderMain">
                     <h5 class="mb-0 text-muted">
-                        <i class="fas fa-comments"></i> Chọn user để xem tin nhắn
+                        <i class="fas fa-comments"></i> Chọn đối tượng để chat
                     </h5>
                 </div>
 
                 <div class="chat-messages" id="chatMessages">
                     <div class="empty-state">
                         <i class="fas fa-comments"></i>
-                        <p>Chọn một user để bắt đầu trò chuyện</p>
+                        <p>Chọn một tài khoản để bắt đầu trò chuyện</p>
                     </div>
                 </div>
 
                 <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                    <div id="adminImagePreview" class="mb-2" style="display: none;">
+                        <div class="position-relative d-inline-block">
+                            <img id="imgPreview" src="" style="height: 100px; border-radius: 10px; border: 2px solid #667eea;">
+                            <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" onclick="clearPreview()" style="width: 24px; height: 24px; padding: 0;">&times;</button>
+                        </div>
+                    </div>
                     <form id="adminChatForm" onsubmit="sendAdminMessage(event)">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="adminChatInput" placeholder="Nhập tin nhắn..." required>
+                            <label for="adminFile">
+                                <span class="btn btn-light rounded-circle me-1"><i class="fas fa-image"></i></span>
+                                <input type="file" id="adminFile" hidden accept="image/*" onchange="previewImage(this)">
+                            </label>
+                            <input type="text" class="form-control" id="adminChatInput" placeholder="Nhập tin nhắn..." autocomplete="off">
                             <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-paper-plane"></i> Gửi
+                                <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
                     </form>
@@ -323,84 +351,83 @@
 </div>
 
 <script>
-let selectedUserId = null;
+let selectedId = null;
+let selectedType = 'user';
 let lastMessageId = 0;
 let pollingInterval = null;
 
-function selectUser(evt, userId, userName, userEmail) {
-    selectedUserId = userId;
+function selectTarget(evt, id, name, email, type) {
+    selectedId = id;
+    selectedType = type;
     lastMessageId = 0;
     
-    // Update active state
-    document.querySelectorAll('.user-item').forEach(item => {
-        item.classList.remove('active');
-    });
+    document.querySelectorAll('.user-item').forEach(item => item.classList.remove('active'));
     evt.currentTarget.classList.add('active');
     
-    // Update header
     document.getElementById('chatHeaderMain').innerHTML = `
         <h5 class="mb-0">
-            <i class="fas fa-user"></i> ${userName}
-            <small class="text-muted" style="font-size: 14px;">(${userEmail})</small>
+            <i class="fas fa-user"></i> ${name}
+            ${type === 'affiliate' ? '<span class="badge bg-info ms-1">CTV</span>' : ''}
+            <small class="text-muted d-block" style="font-size: 11px;">${email}</small>
         </h5>
     `;
     
-    // Show input area
     document.getElementById('chatInputArea').style.display = 'block';
+    loadMessages();
     
-    // Load messages
-    loadUserMessages(userId);
-    
-    // Start polling
-    if (pollingInterval) {
-        clearInterval(pollingInterval);
-    }
-    pollingInterval = setInterval(() => {
-        checkNewAdminMessages();
-    }, 3000);
+    if (pollingInterval) clearInterval(pollingInterval);
+    pollingInterval = setInterval(checkNewMessages, 3000);
 }
 
-function loadUserMessages(userId) {
-    fetch(`/admin/chat/messages/${userId}`)
-        .then(response => response.json())
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imgPreview').src = e.target.result;
+            document.getElementById('adminImagePreview').style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function clearPreview() {
+    document.getElementById('adminFile').value = '';
+    document.getElementById('adminImagePreview').style.display = 'none';
+}
+
+function loadMessages() {
+    fetch(`/admin/chat/messages/${selectedId}?type=${selectedType}`, {
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(res => res.json())
         .then(data => {
-            const chatMessages = document.getElementById('chatMessages');
-            chatMessages.innerHTML = '';
-            
+            const chatBox = document.getElementById('chatMessages');
+            chatBox.innerHTML = '';
             if (data.length === 0) {
-                chatMessages.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-comments"></i>
-                        <p>Chưa có tin nhắn nào</p>
-                    </div>
-                `;
+                chatBox.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>Chưa có tin nhắn</p></div>';
                 return;
             }
-            
-            data.forEach(message => {
-                appendAdminMessage(message);
-                lastMessageId = Math.max(lastMessageId, message.id);
+            data.forEach(msg => {
+                appendMsg(msg);
+                lastMessageId = Math.max(lastMessageId, msg.id);
             });
-            
             scrollToBottom();
-        })
-        .catch(error => {
-            console.error('Error loading messages:', error);
         });
 }
 
 function sendAdminMessage(event) {
-    event.preventDefault();
-    
-    if (!selectedUserId) return;
+    if (event) event.preventDefault();
+    if (!selectedId) return;
     
     const input = document.getElementById('adminChatInput');
+    const fileInput = document.getElementById('adminFile');
     const message = input.value.trim();
     
-    if (!message) return;
+    if (!message && !fileInput.files[0]) return;
 
-    function send(payload) {
-        return fetch(`/admin/chat/reply/${selectedUserId}`, {
+    // Helper to send JSON (text-only)
+    function sendJson(payload) {
+        return fetch(`/admin/chat/reply/${selectedId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -409,132 +436,116 @@ function sendAdminMessage(event) {
             },
             body: JSON.stringify(payload)
         })
-        .then(async (response) => {
-            const contentType = response.headers.get('content-type') || '';
-
-            let data = null;
-            if (contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                const err = new Error(text || `HTTP ${response.status}`);
-                err.status = response.status;
-                throw err;
+        .then(async (res) => {
+            if (res.status === 403) {
+                const pin = window.prompt('Nhập mã xác nhận (3 số) để tiếp tục:');
+                if (pin === null) return null;
+                return sendJson({ ...payload, admin_pin: pin });
             }
-
-            if (!response.ok) {
-                const err = new Error(data?.message || `HTTP ${response.status}`);
-                err.status = response.status;
-                throw err;
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Lỗi gửi tin nhắn');
             }
-
-            return data;
+            return res.json();
         });
     }
 
-    send({ message })
-        .then(data => {
-            appendAdminMessage(data);
-            lastMessageId = Math.max(lastMessageId, data.id);
-            input.value = '';
-            scrollToBottom();
+    // Helper to send FormData (with images)
+    function sendFormData(formData) {
+        return fetch(`/admin/chat/reply/${selectedId}`, {
+            method: 'POST',
+            headers: { 
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: formData
         })
-        .catch(error => {
-            console.error('Error sending message:', error);
-
-            const msg = error?.message || 'Không thể gửi tin nhắn. Vui lòng thử lại!';
-            const status = error?.status;
-
-            // Nếu server yêu cầu mã xác nhận, mở ô nhập và gửi lại kèm admin_pin
-            if (status === 403 && /mã xác nhận/i.test(msg)) {
-                const pin = window.prompt('Nhập mã xác nhận 3 số (vd: 123):');
-                if (pin === null) return;
-                if (!/^\d{3}$/.test(pin)) {
-                    alert('Mã xác nhận phải đúng 3 số.');
-                    return;
-                }
-
-                send({ message, admin_pin: pin })
-                    .then(data => {
-                        appendAdminMessage(data);
-                        lastMessageId = Math.max(lastMessageId, data.id);
-                        input.value = '';
-                        scrollToBottom();
-                    })
-                    .catch(err2 => {
-                        console.error('Error sending message after pin:', err2);
-                        alert(err2?.message || 'Không thể gửi tin nhắn. Vui lòng thử lại!');
-                    });
-
-                return;
+        .then(async (res) => {
+            if (res.status === 403) {
+                const pin = window.prompt('Nhập mã xác nhận (3 số) để tiếp tục:');
+                if (pin === null) return null;
+                formData.set('admin_pin', pin); // Use set instead of append to avoid duplicates on retry
+                return sendFormData(formData);
             }
-
-            alert(msg);
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Lỗi gửi tin nhắn');
+            }
+            return res.json();
         });
-}
-
-function appendAdminMessage(message) {
-    const chatMessages = document.getElementById('chatMessages');
-    
-    // Remove empty state if exists
-    const emptyState = chatMessages.querySelector('.empty-state');
-    if (emptyState) {
-        emptyState.remove();
     }
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
-    
-    const date = new Date(message.created_at);
-    const timeStr = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    
-    messageDiv.innerHTML = `
-        <div>
-            <div class="message-content">
-                ${escapeHtml(message.message)}
-            </div>
-            <div class="message-time">${timeStr}</div>
-        </div>
-    `;
-    
-    chatMessages.appendChild(messageDiv);
+
+    if (fileInput.files[0]) {
+        const formData = new FormData();
+        formData.append('message', message);
+        formData.append('type', selectedType);
+        formData.append('image', fileInput.files[0]);
+
+        sendFormData(formData)
+            .then(data => {
+                if (!data) return;
+                appendMsg(data);
+                lastMessageId = Math.max(lastMessageId, data.id);
+                input.value = '';
+                clearPreview();
+                scrollToBottom();
+            })
+            .catch(err => alert(err.message));
+    } else {
+        sendJson({ message, type: selectedType })
+            .then(data => {
+                if (!data) return;
+                appendMsg(data);
+                lastMessageId = Math.max(lastMessageId, data.id);
+                input.value = '';
+                scrollToBottom();
+            })
+            .catch(err => alert(err.message));
+    }
 }
 
-function scrollToBottom() {
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+function appendMsg(msg) {
+    const chatBox = document.getElementById('chatMessages');
+    const empty = chatBox.querySelector('.empty-state');
+    if (empty) empty.remove();
+    
+    const div = document.createElement('div');
+    div.className = `chat-message ${msg.is_admin ? 'admin' : 'user'}`;
+    const time = new Date(msg.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    
+    let content = msg.message ? `<div class="message-content">${escapeHtml(msg.message)}</div>` : '';
+    if (msg.image) content += `<img src="/${msg.image}" style="max-width: 200px; border-radius: 10px; margin-top: 5px; cursor: pointer;" onclick="window.open('/${msg.image}')">`;
+
+    div.innerHTML = `<div>${content}<div class="message-time">${time}</div></div>`;
+    chatBox.appendChild(div);
 }
 
-function checkNewAdminMessages() {
-    if (!selectedUserId) return;
-    
-    fetch(`/admin/chat/messages/${selectedUserId}?last_id=${lastMessageId}`)
-        .then(response => response.json())
+function checkNewMessages() {
+    if (!selectedId) return;
+    fetch(`/admin/chat/messages/${selectedId}?type=${selectedType}&last_id=${lastMessageId}`, {
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(res => res.json())
         .then(data => {
-            const newMessages = data.filter(msg => msg.id > lastMessageId);
-            
-            if (newMessages.length > 0) {
-                newMessages.forEach(message => {
-                    appendAdminMessage(message);
-                    lastMessageId = Math.max(lastMessageId, message.id);
+            const fresh = data.filter(m => m.id > lastMessageId);
+            if (fresh.length > 0) {
+                fresh.forEach(m => {
+                    appendMsg(m);
+                    lastMessageId = Math.max(lastMessageId, m.id);
                 });
                 scrollToBottom();
             }
-        })
-        .catch(error => {
-            console.error('Error checking new messages:', error);
         });
 }
 
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, m => map[m]);
+function scrollToBottom() {
+    const box = document.getElementById('chatMessages');
+    box.scrollTop = box.scrollHeight;
+}
+
+function escapeHtml(t) {
+    const m = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return t.replace(/[&<>"']/g, s => m[s]);
 }
 
 // Stop polling when page is hidden
@@ -543,10 +554,8 @@ document.addEventListener('visibilitychange', function() {
         if (pollingInterval) {
             clearInterval(pollingInterval);
         }
-    } else if (selectedUserId) {
-        pollingInterval = setInterval(() => {
-            checkNewAdminMessages();
-        }, 3000);
+    } else if (selectedId) {
+        pollingInterval = setInterval(checkNewMessages, 3000);
     }
 });
 </script>

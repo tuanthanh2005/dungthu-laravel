@@ -514,10 +514,7 @@ function appendMsg(msg) {
     const time = new Date(msg.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     
     let content = msg.message ? `<div class="message-content">${escapeHtml(msg.message)}</div>` : '';
-    if (msg.image) {
-        const fullUrl = msg.image.startsWith('http') ? msg.image : `/${msg.image}`;
-        content += `<img src="${fullUrl}" style="max-width: 200px; border-radius: 10px; margin-top: 5px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onclick="viewImage('${fullUrl}', 'Hình ảnh từ ${msg.is_admin ? 'Admin' : 'Khách hàng'}')">`;
-    }
+    if (msg.image) content += `<img src="/${msg.image}" style="max-width: 200px; border-radius: 10px; margin-top: 5px; cursor: pointer;" onclick="window.open('/${msg.image}')">`;
 
     div.innerHTML = `<div>${content}<div class="message-time">${time}</div></div>`;
     chatBox.appendChild(div);

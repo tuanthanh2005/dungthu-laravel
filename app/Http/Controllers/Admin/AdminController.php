@@ -24,7 +24,69 @@ use App\Services\GoogleIndexingService;
 
 class AdminController extends Controller
 {
-    use \App\Traits\HandleImage;
+
+
+    // Hàm crop ảnh về kích thước chuẩn
+    private function cropImage($file, $width = 500, $height = 334)
+    {
+        $image = imagecreatefromstring(file_get_contents($file));
+        $srcWidth = imagesx($image);
+        $srcHeight = imagesy($image);
+        
+        // Tính toán kích thước crop để giữ tỷ lệ 500:334
+        $targetRatio = $width / $height;
+        $srcRatio = $srcWidth / $srcHeight;
+        
+        if ($srcRatio > $targetRatio) {
+            // Ảnh rộng hơn, crop theo chiều ngang
+            $cropHeight = $srcHeight;
+            $cropWidth = $srcHeight * $targetRatio;
+            $srcX = ($srcWidth - $cropWidth) / 2;
+            $srcY = 0;
+        } else {
+            // Ảnh cao hơn, crop theo chiều dọc
+            $cropWidth = $srcWidth;
+            $cropHeight = $srcWidth / $targetRatio;
+            $srcX = 0;
+            $srcY = ($srcHeight - $cropHeight) / 2;
+        }
+        
+        // Tạo ảnh mới với kích thước chuẩn
+        $newImage = imagecreatetruecolor($width, $height);
+        
+        // Giữ trong suốt cho PNG
+        imagealphablending($newImage, false);
+        imagesavealpha($newImage, true);
+        
+        // Crop và resize
+        imagecopyresampled(
+            $newImage, $image,
+            0, 0, $srcX, $srcY,
+            $width, $height, $cropWidth, $cropHeight
+        );
+        
+        return $newImage;
+    }
+    
+    // Lưu ảnh đã crop
+    private function saveImage($image, $path, $extension)
+    {
+        switch(strtolower($extension)) {
+            case 'jpg':
+            case 'jpeg':
+                imagejpeg($image, $path, 90);
+                break;
+            case 'png':
+                imagepng($image, $path, 8);
+                break;
+            case 'gif':
+                imagegif($image, $path);
+                break;
+            default:
+                imagejpeg($image, $path, 90);
+        }
+        imagedestroy($image);
+    }
 
     public function dashboard()
     {

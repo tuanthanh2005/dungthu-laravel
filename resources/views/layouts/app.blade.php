@@ -278,25 +278,6 @@
     </style>
     
 
-    <!-- Global image viewer -->
-    <script>
-        function viewImage(url, title = 'Xem ảnh') {
-            if (!url) return;
-            Swal.fire({
-                title: title,
-                imageUrl: url,
-                imageAlt: title,
-                width: 'auto',
-                maxWidth: '900px',
-                showConfirmButton: false,
-                showCloseButton: true,
-                padding: '10px',
-                background: '#fff',
-                backdrop: `rgba(0,0,123,0.4)`
-            });
-        }
-    </script>
-
 @stack('scripts')
 </body>
 </html>

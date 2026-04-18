@@ -6,12 +6,9 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class ChatController extends Controller
 {
-    use \App\Traits\HandleImage;
-
     // Hiển thị danh sách tin nhắn của user hiện tại
     public function index()
     {
@@ -44,7 +41,10 @@ class ChatController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $this->uploadStandardImage($request->file('image'), 'chat', 800, 800, false);
+            $file = $request->file('image');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/chat'), $fileName);
+            $imagePath = 'uploads/chat/' . $fileName;
         }
 
         $message = Message::create([
@@ -211,7 +211,10 @@ class ChatController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $this->uploadStandardImage($request->file('image'), 'chat', 800, 800, false);
+            $file = $request->file('image');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/chat'), $fileName);
+            $imagePath = 'uploads/chat/' . $fileName;
         }
 
         $data = [

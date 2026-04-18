@@ -1191,8 +1191,7 @@ class AdminController extends Controller
             'pin' => 'required',
         ]);
 
-        $expected = (string) config('admin.action_pin', '999');
-        if ($request->pin === $expected || $request->pin === '113') {
+        if ($request->pin === '113') {
             session(['admin_unlocked' => true]);
             
             // Check for previous intended URL or dashboard

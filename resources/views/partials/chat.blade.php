@@ -912,11 +912,34 @@ function appendAffiliateMessage(message) {
 }
 
 function startAffiliatePolling() {
+    if (affiliatePollingInterval) clearInterval(affiliatePollingInterval);
+    
     affiliatePollingInterval = setInterval(() => {
-        if (affiliateChatOpen) checkNewAffiliateMessages();
-        else refreshAffiliateUnreadCount();
+        if (document.hidden) return; // Don't poll if tab is hidden
+        
+        if (affiliateChatOpen) {
+            checkNewAffiliateMessages();
+        } else {
+            // Check unread count less frequently when closed
+            // We use a simple counter to only request every 5th tick (approx 15s)
+            window._affiliatePollCounter = (window._affiliatePollCounter || 0) + 1;
+            if (window._affiliatePollCounter >= 5) {
+                refreshAffiliateUnreadCount();
+                window._affiliatePollCounter = 0;
+            }
+        }
     }, 3000);
 }
+
+// Handle tab visibility changes manually as well
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        if (typeof refreshAffiliateUnreadCount === 'function' && document.getElementById('affiliateChatWidget')) {
+            refreshAffiliateUnreadCount();
+            if (affiliateChatOpen) checkNewAffiliateMessages();
+        }
+    }
+});
 
 function checkNewAffiliateMessages() {
     fetch(`{{ route('affiliate.chat.new') }}?last_id=${lastAffiliateMessageId}`)

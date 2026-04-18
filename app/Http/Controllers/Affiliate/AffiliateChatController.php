@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Affiliate;
 
+use App\Helpers\PathHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Models\Affiliate;
@@ -39,7 +40,11 @@ class AffiliateChatController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/chat'), $fileName);
+            $uploadPath = PathHelper::publicRootPath('uploads/chat');
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $fileName);
             $imagePath = 'uploads/chat/' . $fileName;
         }
 

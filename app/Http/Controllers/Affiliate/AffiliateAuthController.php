@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Affiliate;
 
+use App\Helpers\PathHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Affiliate;
 use App\Helpers\TelegramHelper;
@@ -84,14 +85,22 @@ class AffiliateAuthController extends Controller
         if ($request->hasFile('cccd_front')) {
             $file = $request->file('cccd_front');
             $filename = time() . '_cccd_front_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/cccd'), $filename);
+            $uploadPath = PathHelper::publicRootPath('images/cccd');
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $filename);
             $cccdFrontPath = 'images/cccd/' . $filename;
         }
 
         if ($request->hasFile('cccd_back')) {
             $file = $request->file('cccd_back');
             $filename = time() . '_cccd_back_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/cccd'), $filename);
+            $uploadPath = PathHelper::publicRootPath('images/cccd');
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $filename);
             $cccdBackPath = 'images/cccd/' . $filename;
         }
 

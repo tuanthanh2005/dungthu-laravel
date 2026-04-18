@@ -514,7 +514,10 @@ function appendMsg(msg) {
     const time = new Date(msg.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     
     let content = msg.message ? `<div class="message-content">${escapeHtml(msg.message)}</div>` : '';
-    if (msg.image) content += `<img src="/${msg.image}" style="max-width: 200px; border-radius: 10px; margin-top: 5px; cursor: pointer;" onclick="window.open('/${msg.image}')">`;
+    if (msg.image) {
+        const imageUrl = msg.image.startsWith('http') ? msg.image : `{{ asset('') }}${msg.image}`;
+        content += `<img src="${imageUrl}" style="max-width: 200px; border-radius: 10px; margin-top: 5px; cursor: pointer;" onclick="window.open('${imageUrl}')">`;
+    }
 
     div.innerHTML = `<div>${content}<div class="message-time">${time}</div></div>`;
     chatBox.appendChild(div);

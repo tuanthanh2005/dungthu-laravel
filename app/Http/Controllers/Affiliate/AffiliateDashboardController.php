@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Affiliate;
 
+use App\Helpers\PathHelper;
 use App\Http\Controllers\Controller;
 use App\Models\AffiliateInvoice;
 use App\Models\AffiliateWithdrawal;
@@ -88,7 +89,11 @@ class AffiliateDashboardController extends Controller
         if ($request->hasFile('bill_image')) {
             $file     = $request->file('bill_image');
             $filename = time() . '_bill_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/affiliates'), $filename);
+            $uploadPath = PathHelper::publicRootPath('uploads/affiliates');
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $filename);
             $billPath = 'uploads/affiliates/' . $filename;
         }
 

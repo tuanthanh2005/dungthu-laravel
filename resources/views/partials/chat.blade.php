@@ -974,7 +974,8 @@ function appendAdminMessage(message) {
     
     let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
     if (message.image) {
-        content += `<img src="/${message.image}" class="message-image" onclick="window.open('/${message.image}')">`;
+        const imageUrl = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
+        content += `<img src="${imageUrl}" class="message-image" onclick="window.open('${imageUrl}')">`;
     }
 
     messageDiv.innerHTML = `
@@ -1158,7 +1159,10 @@ function appendAffiliateMessage(message) {
     const date = new Date(message.created_at);
     const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
-    if (message.image) content += `<img src="/${message.image}" class="message-image" onclick="window.open('/${message.image}')">`;
+    if (message.image) {
+        const imageUrl = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
+        content += `<img src="${imageUrl}" class="message-image" onclick="window.open('${imageUrl}')">`;
+    }
     messageDiv.innerHTML = `<div class="message-bubble">${content}<div class="message-time">${time}</div></div>`;
     chatBody.appendChild(messageDiv);
     chatBody.scrollTop = chatBody.scrollHeight;

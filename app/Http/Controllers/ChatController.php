@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PathHelper;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -43,7 +44,11 @@ class ChatController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/chat'), $fileName);
+            $uploadPath = PathHelper::publicRootPath('uploads/chat');
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $fileName);
             $imagePath = 'uploads/chat/' . $fileName;
         }
 
@@ -213,7 +218,11 @@ class ChatController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/chat'), $fileName);
+            $uploadPath = PathHelper::publicRootPath('uploads/chat');
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $fileName);
             $imagePath = 'uploads/chat/' . $fileName;
         }
 

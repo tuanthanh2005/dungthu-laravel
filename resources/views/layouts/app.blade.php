@@ -123,11 +123,14 @@
     <!-- Admin action PIN: require 3-digit code for /admin POST/PUT/DELETE -->
     <script>
         (function () {
+            // Biến từ Laravel session
+            const isAdminUnlocked = {{ session('admin_unlocked') ? 'true' : 'false' }};
+
             function isAdminAction(form) {
                 try {
                     const action = form.getAttribute('action') || window.location.href;
                     const url = new URL(action, window.location.origin);
-                    return url.pathname.startsWith('/admin');
+                    return url.pathname.startsWith('/admin') || url.pathname.startsWith('/cong-tac-vien/chat');
                 } catch (e) {
                     return false;
                 }
@@ -143,6 +146,10 @@
                 const form = e.target;
                 if (!(form instanceof HTMLFormElement)) return;
                 if (!isAdminAction(form)) return;
+                
+                // Nếu đã mở khóa trong session thì không cần hỏi mã PIN nữa
+                if (isAdminUnlocked) return;
+                
                 if (form.dataset.adminPinSkip === '1') return;
 
                 const intended = getIntendedMethod(form);

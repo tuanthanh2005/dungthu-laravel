@@ -693,124 +693,8 @@
 </style>
 
 
-<!-- AI Chatbot Widget -->
-<div id="aiChatWidget" class="chat-widget ai-bot">
-    <div class="chat-header">
-        <div class="chat-header-content">
-            <div class="chat-avatar">
-                <i class="fas fa-robot"></i>
-            </div>
-            <div class="chat-header-text">
-                <h3>AI Assistant</h3>
-                <p class="chat-status-indicator">
-                    <span class="chat-status-dot"></span>
-                    Trực tuyến
-                </p>
-            </div>
-        </div>
-        <button class="chat-close-btn" onclick="toggleAIChat()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-
-    <div class="chat-body" id="aiChatBody">
-        <div class="chat-welcome">
-            <i class="fas fa-robot"></i>
-            <h4>Xin chào! Tôi là AI Assistant.</h4>
-            <p>Tôi có thể hỗ trợ bạn tìm hiểu về sản phẩm, dịch vụ và giải đáp các thắc mắc nhanh chóng.</p>
-        </div>
-    </div>
-
-    <div class="chat-footer">
-        <form id="aiChatForm" onsubmit="sendAIMessage(event)">
-            <div class="chat-input-wrapper">
-                <input 
-                    type="text" 
-                    class="chat-input" 
-                    id="aiChatInput" 
-                    placeholder="Hỏi AI bất cứ điều gì..."
-                    autocomplete="off"
-                >
-                <button class="chat-send-btn" type="submit" id="aiChatSendBtn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Admin Chat Widget (for guests and regular users) -->
-@if(!Auth::guard('affiliate')->check() && (!auth()->check() || auth()->user()->role !== 'admin'))
-<div id="adminChatWidget" class="chat-widget admin-chat">
-    <div class="chat-header">
-        <div class="chat-header-content">
-            <div class="chat-avatar">
-                <i class="fas fa-headset"></i>
-            </div>
-            <div class="chat-header-text">
-                <h3>Chat với Admin</h3>
-                <p class="chat-status-indicator">
-                    <span class="chat-status-dot"></span>
-                    Hỗ trợ 24/7
-                </p>
-            </div>
-        </div>
-        <button class="chat-close-btn" onclick="closeAdminChat()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-
-    <div class="chat-body" id="adminChatBody">
-        <div class="chat-welcome">
-            <i class="fas fa-headset"></i>
-            <h4>Chào {{ auth()->check() ? auth()->user()->name : 'Bạn' }}! 👋</h4>
-            @if(auth()->check())
-                <p>Bắt đầu cuộc trò chuyện với admin<br>Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
-            @else
-                <p>Vui lòng <a href="{{ route('login') }}" class="text-primary fw-bold">Đăng nhập</a> để bắt đầu trò chuyện trực tiếp với Admin.</p>
-                <div class="mt-4">
-                    <button class="btn btn-outline-primary btn-sm rounded-pill px-4" onclick="closeAdminChat(); toggleAIChat();">
-                        <i class="fas fa-robot me-2"></i>Trò chuyện với AI thay thế
-                    </button>
-                </div>
-            @endif
-        </div>
-    </div>
-
-    <div class="chat-footer">
-        <form id="adminChatForm" onsubmit="sendAdminMessage(event)">
-            <div class="chat-input-wrapper">
-                <label for="adminChatImage" class="chat-tool-btn">
-                    <i class="fas fa-image"></i>
-                    <input type="file" id="adminChatImage" hidden accept="image/*" onchange="previewImage(this)">
-                </label>
-                <div class="chat-input-container">
-                    <div id="imagePreviewContainer" style="display: none;">
-                        <span class="preview-item">
-                            <img id="imagePreview" src="" alt="preview">
-                            <button type="button" onclick="clearImagePreview()"><i class="fas fa-times"></i></button>
-                        </span>
-                    </div>
-                    <input 
-                        type="text" 
-                        class="chat-input" 
-                        id="adminChatInput" 
-                        placeholder="Nhập tin nhắn..."
-                        autocomplete="off"
-                    >
-                </div>
-                <button class="chat-send-btn" type="submit" id="adminChatSendBtn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-@endif
-@endauth
-
 <!-- Affiliate Chat Widget -->
-@if(Auth::guard('affiliate')->check())
+@if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
 <div id="affiliateChatWidget" class="chat-widget admin-chat">
     <div class="chat-header">
         <div class="chat-header-content">
@@ -869,26 +753,66 @@
 </div>
 @endif
 
+<!-- AI Chatbot (PERK for Approved Affiliates) -->
+@if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
+<div id="aiChatWidget" class="chat-widget ai-bot">
+    <div class="chat-header">
+        <div class="chat-header-content">
+            <div class="chat-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="chat-header-text">
+                <h3>AI Assistant</h3>
+                <p class="chat-status-indicator">
+                    <span class="chat-status-dot"></span>
+                    Trực tuyến
+                </p>
+            </div>
+        </div>
+        <button class="chat-close-btn" onclick="toggleAIChat()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="chat-body" id="aiChatBody">
+        <div class="chat-welcome">
+            <i class="fas fa-robot"></i>
+            <h4>Xin chào! Tôi là AI Assistant.</h4>
+            <p>Tôi có thể hỗ trợ bạn tìm hiểu về sản phẩm, dịch vụ và giải đáp các thắc mắc nhanh chóng.</p>
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <form id="aiChatForm" onsubmit="sendAIMessage(event)">
+            <div class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="aiChatInput" 
+                    placeholder="Hỏi AI bất cứ điều gì..."
+                    autocomplete="off"
+                >
+                <button class="chat-send-btn" type="submit" id="aiChatSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
 <!-- Floating Action Buttons -->
 <div class="chat-fab-container">
 
-    <!-- AI Bot Button (for everyone) -->
+    <!-- Admin / AI Chat Buttons (Only for Approved Affiliates) -->
+    @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
+    <!-- AI Bot Button -->
     <button class="chat-fab ai-bot" onclick="toggleAIChat()" id="aiChatFab">
         <i class="fas fa-robot fab-icon"></i>
         <span class="fab-tooltip">Chat với AI Assistant</span>
     </button>
-
-    <!-- Admin Chat Button (for guests and regular users) -->
-    @if(!Auth::guard('affiliate')->check() && (!auth()->check() || auth()->user()->role !== 'admin'))
-    <button class="chat-fab admin-chat" onclick="toggleAdminChat()" id="adminChatFab">
-        <i class="fas fa-headset fab-icon"></i>
-        <span class="unread-badge" id="adminUnreadBadge" style="display: none;">0</span>
-        <span class="fab-tooltip">Chat với Admin</span>
-    </button>
-    @endif
-
-    <!-- Admin Chat Button (for affiliates) -->
-    @if(Auth::guard('affiliate')->check())
+    
+    <!-- Admin Chat Button -->
     <button class="chat-fab admin-chat" onclick="toggleAffiliateChat()" id="affiliateChatFab">
         <i class="fas fa-headset fab-icon"></i>
         <span class="unread-badge" id="affiliateUnreadBadge" style="display: none;">0</span>

@@ -180,10 +180,8 @@
         <span>Thiết kế</span>
     </a>
     @endif
-    @if($menuCardExchange)
-    <a href="{{ route('card-exchange.index') }}" class="mobile-nav-item {{ request()->routeIs('card-exchange.*') ? 'active' : '' }}">
-        <i class="fa-solid fa-credit-card"></i>
-        <span>Đổi thẻ</span>
+    <a href="{{ route('affiliate.login') }}" class="mobile-nav-item {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
+        <i class="fa-solid fa-handshake"></i>
+        <span>CTV</span>
     </a>
-    @endif
 </nav>

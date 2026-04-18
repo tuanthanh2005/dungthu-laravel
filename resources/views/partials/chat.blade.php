@@ -693,9 +693,54 @@
 </style>
 
 
-<!-- Admin Chat Widget (for authenticated users) -->
-@auth
-@if(auth()->user()->role !== 'admin')
+<!-- AI Chatbot Widget -->
+<div id="aiChatWidget" class="chat-widget ai-bot">
+    <div class="chat-header">
+        <div class="chat-header-content">
+            <div class="chat-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="chat-header-text">
+                <h3>AI Assistant</h3>
+                <p class="chat-status-indicator">
+                    <span class="chat-status-dot"></span>
+                    Trực tuyến
+                </p>
+            </div>
+        </div>
+        <button class="chat-close-btn" onclick="toggleAIChat()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="chat-body" id="aiChatBody">
+        <div class="chat-welcome">
+            <i class="fas fa-robot"></i>
+            <h4>Xin chào! Tôi là AI Assistant.</h4>
+            <p>Tôi có thể hỗ trợ bạn tìm hiểu về sản phẩm, dịch vụ và giải đáp các thắc mắc nhanh chóng.</p>
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <form id="aiChatForm" onsubmit="sendAIMessage(event)">
+            <div class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="aiChatInput" 
+                    placeholder="Hỏi AI bất cứ điều gì..."
+                    autocomplete="off"
+                >
+                <button class="chat-send-btn" type="submit" id="aiChatSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Admin Chat Widget (for guests and regular users) -->
+@if(!Auth::guard('affiliate')->check() && (!auth()->check() || auth()->user()->role !== 'admin'))
 <div id="adminChatWidget" class="chat-widget admin-chat">
     <div class="chat-header">
         <div class="chat-header-content">
@@ -718,8 +763,17 @@
     <div class="chat-body" id="adminChatBody">
         <div class="chat-welcome">
             <i class="fas fa-headset"></i>
-            <h4>Chào {{ auth()->user()->name }}! 👋</h4>
-            <p>Bắt đầu cuộc trò chuyện với admin<br>Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
+            <h4>Chào {{ auth()->check() ? auth()->user()->name : 'Bạn' }}! 👋</h4>
+            @if(auth()->check())
+                <p>Bắt đầu cuộc trò chuyện với admin<br>Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
+            @else
+                <p>Vui lòng <a href="{{ route('login') }}" class="text-primary fw-bold">Đăng nhập</a> để bắt đầu trò chuyện trực tiếp với Admin.</p>
+                <div class="mt-4">
+                    <button class="btn btn-outline-primary btn-sm rounded-pill px-4" onclick="closeAdminChat(); toggleAIChat();">
+                        <i class="fas fa-robot me-2"></i>Trò chuyện với AI thay thế
+                    </button>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -818,16 +872,20 @@
 <!-- Floating Action Buttons -->
 <div class="chat-fab-container">
 
-    <!-- Admin Chat Button (for regular users) -->
-    @auth
-    @if(auth()->user()->role !== 'admin')
+    <!-- AI Bot Button (for everyone) -->
+    <button class="chat-fab ai-bot" onclick="toggleAIChat()" id="aiChatFab">
+        <i class="fas fa-robot fab-icon"></i>
+        <span class="fab-tooltip">Chat với AI Assistant</span>
+    </button>
+
+    <!-- Admin Chat Button (for guests and regular users) -->
+    @if(!Auth::guard('affiliate')->check() && (!auth()->check() || auth()->user()->role !== 'admin'))
     <button class="chat-fab admin-chat" onclick="toggleAdminChat()" id="adminChatFab">
         <i class="fas fa-headset fab-icon"></i>
         <span class="unread-badge" id="adminUnreadBadge" style="display: none;">0</span>
         <span class="fab-tooltip">Chat với Admin</span>
     </button>
     @endif
-    @endauth
 
     <!-- Admin Chat Button (for affiliates) -->
     @if(Auth::guard('affiliate')->check())
@@ -844,8 +902,91 @@
 // AI CHATBOT FUNCTIONALITY
 // ============================================
 
+let aiChatOpen = false;
 
-// ============================================
+function toggleAIChat() {
+    const widget = document.getElementById('aiChatWidget');
+    if (aiChatOpen) {
+        widget.classList.remove('active');
+        aiChatOpen = false;
+    } else {
+        // Close other widgets
+        if (typeof closeAdminChat === 'function') closeAdminChat();
+        if (typeof closeAffiliateChat === 'function') closeAffiliateChat();
+        
+        widget.classList.add('active');
+        aiChatOpen = true;
+        document.getElementById('aiChatInput').focus();
+    }
+}
+
+function sendAIMessage(event) {
+    event.preventDefault();
+    const input = document.getElementById('aiChatInput');
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatBody = document.getElementById('aiChatBody');
+    const sendBtn = document.getElementById('aiChatSendBtn');
+    
+    // Remove welcome
+    const welcome = chatBody.querySelector('.chat-welcome');
+    if (welcome) welcome.remove();
+
+    // Append user message
+    appendAIMessage('user', message);
+    input.value = '';
+    sendBtn.disabled = true;
+
+    // Show indicator
+    showTypingIndicator('aiChatBody');
+
+    fetch('{{ route('guest-chat.send') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(res => res.json())
+    .then(data => {
+        removeTypingIndicator('aiChatBody');
+        if (data.reply) {
+            appendAIMessage('bot', data.reply);
+        } else {
+            appendAIMessage('bot', 'Xin lỗi, tôi gặp chút trục trặc. Bạn có thể hỏi lại sau nhé!');
+        }
+    })
+    .catch(() => {
+        removeTypingIndicator('aiChatBody');
+        appendAIMessage('bot', 'Hiện tại tôi không thể kết nối. Vui lòng kiểm tra mạng!');
+    })
+    .finally(() => {
+        sendBtn.disabled = false;
+    });
+}
+
+function appendAIMessage(role, text) {
+    const chatBody = document.getElementById('aiChatBody');
+    const div = document.createElement('div');
+    div.className = `chat-message ${role}`;
+    
+    div.innerHTML = `
+        <div class="message-bubble">
+            <div class="message-content">${role === 'bot' ? formatBotMessage(text) : escapeHtml(text)}</div>
+            <div class="message-time">${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</div>
+        </div>
+    `;
+    
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function formatBotMessage(text) {
+    // Basic formatting for AI response (newlines to br, bold)
+    return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
 // ADMIN CHAT FUNCTIONALITY
 // ============================================
 
@@ -868,6 +1009,10 @@ function toggleAdminChat() {
     if (adminChatOpen) {
         closeAdminChat();
     } else {
+        // Close others
+        if (typeof toggleAIChat === 'function' && aiChatOpen) toggleAIChat();
+        if (typeof closeAffiliateChat === 'function') closeAffiliateChat();
+        
         openAdminChat();
     }
 }
@@ -1071,6 +1216,10 @@ function toggleAffiliateChat() {
     if (affiliateChatOpen) {
         closeAffiliateChat();
     } else {
+        // Close others
+        if (typeof toggleAIChat === 'function' && aiChatOpen) toggleAIChat();
+        if (typeof closeAdminChat === 'function') closeAdminChat();
+
         openAffiliateChat();
     }
 }
@@ -1262,6 +1411,8 @@ document.addEventListener('click', function(event) {
     const adminBtn = document.getElementById('adminChatFab');
     const affiliateWidget = document.getElementById('affiliateChatWidget');
     const affiliateBtn = document.getElementById('affiliateChatFab');
+    const aiWidget = document.getElementById('aiChatWidget');
+    const aiBtn = document.getElementById('aiChatFab');
     
     if (adminChatOpen && adminWidget && !adminWidget.contains(event.target) && adminBtn && !adminBtn.contains(event.target)) {
         closeAdminChat();
@@ -1269,6 +1420,10 @@ document.addEventListener('click', function(event) {
     
     if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && affiliateBtn && !affiliateBtn.contains(event.target)) {
         closeAffiliateChat();
+    }
+
+    if (aiChatOpen && aiWidget && !aiWidget.contains(event.target) && aiBtn && !aiBtn.contains(event.target)) {
+        toggleAIChat();
     }
 });
 

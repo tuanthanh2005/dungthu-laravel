@@ -1208,88 +1208,113 @@ document.getElementById('affiliateChatWidget')?.addEventListener('click', functi
 });
 
 // ============================================
-// DRAGGABLE CHAT FAB CONTAINER
+// DRAGGABLE CHAT COMPONENTS
 // ============================================
 (function() {
+    // 1. Draggable FAB Container
     const fabContainer = document.querySelector('.chat-fab-container');
-    if (!fabContainer) return;
+    if (fabContainer) {
+        let isDraggingFab = false;
+        let startX, startY, initialRight, initialBottom;
+        let dragThreshold = 5;
 
-    let isDragging = false;
-    let startX, startY, initialRight, initialBottom;
-    let dragThreshold = 5; // pixels to distinguish click from drag
+        fabContainer.addEventListener('mousedown', fabDragStart);
+        fabContainer.addEventListener('touchstart', fabDragStart, { passive: false });
 
-    fabContainer.addEventListener('mousedown', dragStart);
-    fabContainer.addEventListener('touchstart', dragStart, { passive: false });
-
-    function dragStart(e) {
-        if (e.type === 'touchstart') {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-        } else {
-            startX = e.clientX;
-            startY = e.clientY;
+        function fabDragStart(e) {
+            const touch = e.type === 'touchstart';
+            startX = touch ? e.touches[0].clientX : e.clientX;
+            startY = touch ? e.touches[0].clientY : e.clientY;
+            const style = window.getComputedStyle(fabContainer);
+            initialRight = parseInt(style.right);
+            initialBottom = parseInt(style.bottom);
+            document.addEventListener(touch ? 'touchmove' : 'mousemove', fabDrag, touch ? { passive: false } : false);
+            document.addEventListener(touch ? 'touchend' : 'mouseup', fabDragEnd);
+            isDraggingFab = false;
         }
 
-        const style = window.getComputedStyle(fabContainer);
-        initialRight = parseInt(style.right);
-        initialBottom = parseInt(style.bottom);
+        function fabDrag(e) {
+            const touch = e.type === 'touchmove';
+            const currentX = touch ? e.touches[0].clientX : e.clientX;
+            const currentY = touch ? e.touches[0].clientY : e.clientY;
+            const dx = startX - currentX;
+            const dy = startY - currentY;
+            if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) isDraggingFab = true;
+            if (isDraggingFab) {
+                if (touch) e.preventDefault();
+                let newRight = initialRight + dx;
+                let newBottom = initialBottom + dy;
+                const padding = 10;
+                newRight = Math.max(padding, Math.min(newRight, window.innerWidth - 70));
+                newBottom = Math.max(padding, Math.min(newBottom, window.innerHeight - 70));
+                fabContainer.style.right = newRight + 'px';
+                fabContainer.style.bottom = newBottom + 'px';
+            }
+        }
 
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', dragEnd);
-        document.addEventListener('touchmove', drag, { passive: false });
-        document.addEventListener('touchend', dragEnd);
-        
-        isDragging = false;
+        function fabDragEnd(e) {
+            const touch = e.type === 'touchend';
+            document.removeEventListener(touch ? 'touchmove' : 'mousemove', fabDrag);
+            document.removeEventListener(touch ? 'touchend' : 'mouseup', fabDragEnd);
+        }
+
+        fabContainer.querySelectorAll('.chat-fab').forEach(fab => {
+            fab.addEventListener('click', e => { if (isDraggingFab) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+        });
     }
 
-    function drag(e) {
-        let currentX, currentY;
-        if (e.type === 'touchmove') {
-            currentX = e.touches[0].clientX;
-            currentY = e.touches[0].clientY;
-            e.preventDefault(); // Prevent scrolling while dragging
-        } else {
-            currentX = e.clientX;
-            currentY = e.clientY;
+    // 2. Draggable Chat Widgets (via Header)
+    const widgets = document.querySelectorAll('.chat-widget');
+    widgets.forEach(widget => {
+        const header = widget.querySelector('.chat-header');
+        if (!header) return;
+
+        let isDraggingWidget = false;
+        let startX, startY;
+        let initialRight, initialBottom;
+
+        header.style.cursor = 'move';
+        header.addEventListener('mousedown', widgetDragStart);
+        header.addEventListener('touchstart', widgetDragStart, { passive: false });
+
+        function widgetDragStart(e) {
+            const touch = e.type === 'touchstart';
+            startX = touch ? e.touches[0].clientX : e.clientX;
+            startY = touch ? e.touches[0].clientY : e.clientY;
+            const style = window.getComputedStyle(widget);
+            initialRight = parseInt(style.right) || 0;
+            initialBottom = parseInt(style.bottom) || 0;
+            document.addEventListener(touch ? 'touchmove' : 'widgetDrag', widgetDrag, touch ? { passive: false } : false); // Standard mousemove
+            if (!touch) document.addEventListener('mousemove', widgetDrag);
+            document.addEventListener(touch ? 'touchend' : 'mouseup', widgetDragEnd);
         }
 
-        const dx = startX - currentX;
-        const dy = startY - currentY;
-
-        if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) {
-            isDragging = true;
-        }
-
-        if (isDragging) {
+        function widgetDrag(e) {
+            const touch = e.type === 'touchmove';
+            const currentX = touch ? e.touches[0].clientX : e.clientX;
+            const currentY = touch ? e.touches[0].clientY : e.clientY;
+            const dx = startX - currentX;
+            const dy = startY - currentY;
+            if (touch) e.preventDefault();
+            
             let newRight = initialRight + dx;
             let newBottom = initialBottom + dy;
-
-            // Boundaries
-            const padding = 10;
-            newRight = Math.max(padding, Math.min(newRight, window.innerWidth - 70));
-            newBottom = Math.max(padding, Math.min(newBottom, window.innerHeight - 70));
-
-            fabContainer.style.right = newRight + 'px';
-            fabContainer.style.bottom = newBottom + 'px';
+            
+            // Limit within viewport
+            newRight = Math.max(-widget.offsetWidth + 100, Math.min(newRight, window.innerWidth - 100));
+            newBottom = Math.max(0, Math.min(newBottom, window.innerHeight - 100));
+            
+            widget.style.right = newRight + 'px';
+            widget.style.bottom = newBottom + 'px';
+            widget.style.left = 'auto'; // Ensure right/bottom takes precedence
         }
-    }
 
-    function dragEnd() {
-        document.removeEventListener('mousemove', drag);
-        document.removeEventListener('mouseup', dragEnd);
-        document.removeEventListener('touchmove', drag);
-        document.removeEventListener('touchend', dragEnd);
-    }
-
-    // Intercept clicks on FAB buttons to prevent toggle if we were just dragging
-    const fabs = fabContainer.querySelectorAll('.chat-fab');
-    fabs.forEach(fab => {
-        fab.addEventListener('click', function(e) {
-            if (isDragging) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
-            }
-        }, true);
+        function widgetDragEnd(e) {
+            const touch = e.type === 'touchend';
+            document.removeEventListener('mousemove', widgetDrag);
+            document.removeEventListener('touchmove', widgetDrag);
+            document.removeEventListener(touch ? 'touchend' : 'mouseup', widgetDragEnd);
+        }
     });
 })();
 

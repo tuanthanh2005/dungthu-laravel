@@ -20,13 +20,20 @@
 
 .chat-fab-container {
     position: fixed;
-    bottom: 24px;
+    bottom: 80px; /* Default above mobile nav */
     right: 24px;
-    z-index: 9998;
+    z-index: 100000;
     display: flex;
     flex-direction: column;
     gap: 16px;
     align-items: flex-end;
+    touch-action: none; /* Critical for dragging on touch */
+}
+
+@media (min-width: 992px) {
+    .chat-fab-container {
+        bottom: 24px;
+    }
 }
 
 .chat-fab {
@@ -550,15 +557,15 @@
 
 @media (max-width: 768px) {
     .chat-fab-container {
-        bottom: 16px;
+        bottom: 80px;
         right: 16px;
-        gap: 12px;
+        gap: 10px;
     }
 
     .chat-fab {
-        width: 56px;
-        height: 56px;
-        font-size: 24px;
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
     }
 
     .chat-fab .fab-tooltip {
@@ -566,34 +573,35 @@
     }
 
     .chat-widget {
-        bottom: 90px;
+        bottom: 140px; 
         right: 16px;
-        left: 16px;
-        width: auto;
-        height: calc(100vh - 120px);
-        border-radius: 20px;
+        left: auto;
+        width: 300px; 
+        height: 480px; 
+        max-height: calc(100vh - 200px);
+        border-radius: 16px;
     }
 
     .chat-header {
-        padding: 20px;
+        padding: 12px 16px;
     }
 
     .chat-avatar {
-        width: 48px;
-        height: 48px;
-        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
     }
 
     .chat-header-text h3 {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .chat-header-text p {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .chat-body {
-        padding: 16px;
+        padding: 12px;
     }
 
     .message-bubble {
@@ -601,35 +609,34 @@
     }
 
     .chat-footer {
-        padding: 16px;
+        padding: 12px;
     }
 
     .chat-input {
-        padding: 12px 16px;
+        padding: 10px 14px;
         font-size: 14px;
     }
 
     .chat-send-btn {
-        width: 48px;
-        height: 48px;
-        font-size: 18px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
     }
 }
 
 @media (max-width: 480px) {
     .chat-widget {
-        bottom: 0;
-        right: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        max-height: 100vh;
-        border-radius: 0;
+        bottom: 140px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        height: 420px;
+        border-radius: 16px;
     }
 
     .chat-fab-container {
-        bottom: 20px;
-        right: 20px;
+        bottom: 80px;
+        right: 16px;
     }
 }
 
@@ -768,283 +775,106 @@
 
 <script>
 // ============================================
-// ADMIN CHAT FUNCTIONALITY
+// GLOBAL STATE & UTILITIES
 // ============================================
-
 let adminChatOpen = false;
-let adminWidget = document.getElementById('adminChatWidget');
-let adminBtn = document.getElementById('adminChatFab');
+let affiliateChatOpen = false;
 let lastMessageId = 0;
+let lastAffiliateMessageId = 0;
 let pollingInterval = null;
+let affiliatePollingInterval = null;
 
-@auth
-@if(auth()->user()->role !== 'admin')
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadAdminMessages();
-    startAdminPolling();
-    refreshUnreadCount();
-});
-
-function toggleAdminChat() {
-    if (adminChatOpen) {
-        closeAdminChat();
-    } else {
-        // Close others
-        if (typeof closeAffiliateChat === 'function') closeAffiliateChat();
-        
-        openAdminChat();
-    }
+function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return String(text || '').replace(/[&<>"']/g, m => map[m]);
 }
 
-function openAdminChat() {
-    const widget = document.getElementById('adminChatWidget');
-    
-    widget.classList.add('active');
-    adminChatOpen = true;
-    document.getElementById('adminChatInput').focus();
-    loadAdminMessages();
-    markAllAsRead();
-}
-
-function closeAdminChat() {
-    const widget = document.getElementById('adminChatWidget');
-    widget.classList.remove('active');
-    adminChatOpen = false;
-}
-
-function sendAdminMessage(event) {
-    event.preventDefault();
-    
-    const input = document.getElementById('adminChatInput');
-    const imageInput = document.getElementById('adminChatImage');
-    const message = input.value.trim();
-    
-    if (!message && !imageInput.files[0]) return;
-    
-    const sendBtn = document.getElementById('adminChatSendBtn');
-    sendBtn.disabled = true;
-    
-    const formData = new FormData();
-    formData.append('message', message);
-    if (imageInput.files[0]) {
-        formData.append('image', imageInput.files[0]);
-    }
-
-    fetch('{{ route('chat.send') }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-        },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        appendAdminMessage(data);
-        lastMessageId = Math.max(lastMessageId, data.id);
-        input.value = '';
-        clearImagePreview();
-    })
-    .catch(() => {
-        alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
-    })
-    .finally(() => {
-        sendBtn.disabled = false;
-    });
-}
-
-function previewImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('imagePreview').src = e.target.result;
-            document.getElementById('imagePreviewContainer').style.display = 'block';
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function clearImagePreview() {
-    document.getElementById('adminChatImage').value = '';
-    document.getElementById('imagePreviewContainer').style.display = 'none';
-}
-
-function loadAdminMessages() {
-    fetch('{{ route('chat.messages') }}', { headers: { 'Accept': 'application/json' } })
-        .then(res => res.json())
-        .then(data => {
-            const chatBody = document.getElementById('adminChatBody');
-            if (data.length === 0) return;
-            const welcome = chatBody.querySelector('.chat-welcome');
-            if (welcome) welcome.remove();
-            chatBody.innerHTML = '';
-            data.forEach(message => {
-                appendAdminMessage(message);
-                lastMessageId = Math.max(lastMessageId, message.id);
-            });
-            chatBody.scrollTop = chatBody.scrollHeight;
-        })
-        .catch(err => console.error('Error loading messages:', err));
-}
-
-function appendAdminMessage(message) {
-    const chatBody = document.getElementById('adminChatBody');
-    const welcome = chatBody.querySelector('.chat-welcome');
-    if (welcome) welcome.remove();
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
-    const date = new Date(message.created_at);
-    const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    
-    let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
-    if (message.image) {
-        const imageUrl = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
-        content += `<img src="${imageUrl}" class="message-image" onclick="window.open('${imageUrl}')">`;
-    }
-
-    messageDiv.innerHTML = `
-        <div class="message-bubble">
-            ${content}
-            <div class="message-time">${time}</div>
-        </div>
-    `;
-    chatBody.appendChild(messageDiv);
+function showTypingIndicator(bodyId) {
+    const chatBody = document.getElementById(bodyId);
+    if (!chatBody) return;
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    chatBody.appendChild(indicator);
     chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-function startAdminPolling() {
-    pollingInterval = setInterval(() => {
-        if (adminChatOpen) {
-            checkNewAdminMessages();
-        } else {
-            refreshUnreadCount();
-        }
-    }, 3000);
+function removeTypingIndicator(bodyId) {
+    const chatBody = document.getElementById(bodyId);
+    if (!chatBody) return;
+    const indicator = chatBody.querySelector('#typingIndicator');
+    if (indicator) indicator.remove();
 }
-
-function checkNewAdminMessages() {
-    fetch(`{{ route('chat.new') }}?last_id=${lastMessageId}`, { headers: { 'Accept': 'application/json' } })
-        .then(res => res.json())
-        .then(data => {
-            if (data.length > 0) {
-                data.forEach(message => {
-                    appendAdminMessage(message);
-                    lastMessageId = Math.max(lastMessageId, message.id);
-                });
-                markAllAsRead();
-            }
-        })
-        .catch(err => console.error('Error checking messages:', err));
-}
-
-function refreshUnreadCount() {
-    fetch('{{ route('chat.unread-count') }}', { headers: { 'Accept': 'application/json' } })
-        .then(res => res.json())
-        .then(data => {
-            if (data && typeof data.unread !== 'undefined' && !adminChatOpen) {
-                const badge = document.getElementById('adminUnreadBadge');
-                if (data.unread > 0) {
-                    badge.textContent = data.unread;
-                    badge.style.display = 'flex';
-                } else {
-                    badge.style.display = 'none';
-                }
-            }
-        })
-        .catch(err => console.error('Error fetching unread count:', err));
-}
-
-function markAllAsRead() {
-    fetch('{{ route('chat.mark-read') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({})
-    })
-    .then(() => {
-        const badge = document.getElementById('adminUnreadBadge');
-        if (badge) badge.style.display = 'none';
-    })
-    .catch(err => console.error('Error marking read:', err));
-}
-@endif
-@endauth
 
 // ============================================
-// AFFILIATE CHAT FUNCTIONALITY
+// AFFILIATE CHAT LOGIC
 // ============================================
-
-let affiliateChatOpen = false;
-let affiliatePollingInterval = null;
-let lastAffiliateMessageId = 0;
-let affiliateWidget = document.getElementById('affiliateChatWidget');
-let affiliateBtn = document.getElementById('affiliateChatFab');
-
-@if(Auth::guard('affiliate')->check())
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadAffiliateMessages();
-    startAffiliatePolling();
-    refreshAffiliateUnreadCount();
-});
-
 function toggleAffiliateChat() {
+    const widget = document.getElementById('affiliateChatWidget');
+    if (!widget) return;
+    
     if (affiliateChatOpen) {
-        closeAffiliateChat();
+        widget.classList.remove('active');
+        affiliateChatOpen = false;
     } else {
         // Close others
-        if (typeof closeAdminChat === 'function') closeAdminChat();
-
-        openAffiliateChat();
+        const adminWidget = document.getElementById('adminChatWidget');
+        if (adminWidget) {
+            adminWidget.classList.remove('active');
+            adminChatOpen = false;
+        }
+        
+        widget.classList.add('active');
+        affiliateChatOpen = true;
+        const input = document.getElementById('affiliateChatInput');
+        if (input) input.focus();
+        loadAffiliateMessages();
+        markAffiliateAsRead();
     }
-}
-
-function openAffiliateChat() {
-    const widget = document.getElementById('affiliateChatWidget');
-    widget.classList.add('active');
-    affiliateChatOpen = true;
-    document.getElementById('affiliateChatInput').focus();
-    loadAffiliateMessages();
-    markAffiliateAsRead();
 }
 
 function closeAffiliateChat() {
     const widget = document.getElementById('affiliateChatWidget');
-    widget.classList.remove('active');
-    affiliateChatOpen = false;
-}
-
-function previewAffiliateImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('affiliateImagePreview').src = e.target.result;
-            document.getElementById('affiliateImagePreviewContainer').style.display = 'block';
-        }
-        reader.readAsDataURL(input.files[0]);
+    if (widget) {
+        widget.classList.remove('active');
+        affiliateChatOpen = false;
     }
 }
 
-function clearAffiliateImagePreview() {
-    document.getElementById('affiliateChatImage').value = '';
-    document.getElementById('affiliateImagePreviewContainer').style.display = 'none';
+function loadAffiliateMessages() {
+    const body = document.getElementById('affiliateChatBody');
+    if (!body) return;
+    
+    fetch('{{ route('affiliate.chat.messages') }}')
+        .then(res => res.json())
+        .then(data => {
+            if (data.length === 0) return;
+            const welcome = body.querySelector('.chat-welcome');
+            if (welcome) welcome.remove();
+            body.innerHTML = '';
+            data.forEach(msg => {
+                appendAffiliateMessage(msg);
+                lastAffiliateMessageId = Math.max(lastAffiliateMessageId, msg.id);
+            });
+            body.scrollTop = body.scrollHeight;
+        });
 }
 
 function sendAffiliateMessage(event) {
     event.preventDefault();
     const input = document.getElementById('affiliateChatInput');
     const imageInput = document.getElementById('affiliateChatImage');
-    const message = input.value.trim();
-    if (!message && !imageInput.files[0]) return;
+    const msg = input.value.trim();
+    if (!msg && (!imageInput || !imageInput.files[0])) return;
+    
     const sendBtn = document.getElementById('affiliateChatSendBtn');
-    sendBtn.disabled = true;
+    if (sendBtn) sendBtn.disabled = true;
+    
     const formData = new FormData();
-    formData.append('message', message);
-    if (imageInput.files[0]) formData.append('image', imageInput.files[0]);
+    formData.append('message', msg);
+    if (imageInput && imageInput.files[0]) formData.append('image', imageInput.files[0]);
+    
     fetch('{{ route('affiliate.chat.send') }}', {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
@@ -1055,45 +885,30 @@ function sendAffiliateMessage(event) {
         appendAffiliateMessage(data);
         lastAffiliateMessageId = Math.max(lastAffiliateMessageId, data.id);
         input.value = '';
-        clearAffiliateImagePreview();
+        if (typeof clearAffiliateImagePreview === 'function') clearAffiliateImagePreview();
     })
-    .catch(() => alert('Không thể gửi tin nhắn. Vui lòng thử lại!'))
-    .finally(() => sendBtn.disabled = false);
-}
-
-function loadAffiliateMessages() {
-    fetch('{{ route('affiliate.chat.messages') }}')
-        .then(res => res.json())
-        .then(data => {
-            const chatBody = document.getElementById('affiliateChatBody');
-            if (data.length === 0) return;
-            const welcome = chatBody.querySelector('.chat-welcome');
-            if (welcome) welcome.remove();
-            chatBody.innerHTML = '';
-            data.forEach(message => {
-                appendAffiliateMessage(message);
-                lastAffiliateMessageId = Math.max(lastAffiliateMessageId, message.id);
-            });
-            chatBody.scrollTop = chatBody.scrollHeight;
-        });
+    .finally(() => { if (sendBtn) sendBtn.disabled = false; });
 }
 
 function appendAffiliateMessage(message) {
-    const chatBody = document.getElementById('affiliateChatBody');
-    const welcome = chatBody.querySelector('.chat-welcome');
+    const body = document.getElementById('affiliateChatBody');
+    if (!body) return;
+    const welcome = body.querySelector('.chat-welcome');
     if (welcome) welcome.remove();
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
+    
+    const div = document.createElement('div');
+    div.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
     const date = new Date(message.created_at);
     const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    
     let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
     if (message.image) {
-        const imageUrl = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
-        content += `<img src="${imageUrl}" class="message-image" onclick="window.open('${imageUrl}')">`;
+        const url = message.image.startsWith('http') ? message.image : `{{ asset('') }}${message.image}`;
+        content += `<img src="${url}" class="message-image" onclick="window.open('${url}')">`;
     }
-    messageDiv.innerHTML = `<div class="message-bubble">${content}<div class="message-time">${time}</div></div>`;
-    chatBody.appendChild(messageDiv);
-    chatBody.scrollTop = chatBody.scrollHeight;
+    div.innerHTML = `<div class="message-bubble">${content}<div class="message-time">${time}</div></div>`;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
 }
 
 function startAffiliatePolling() {
@@ -1108,9 +923,9 @@ function checkNewAffiliateMessages() {
         .then(res => res.json())
         .then(data => {
             if (data.length > 0) {
-                data.forEach(message => {
-                    appendAffiliateMessage(message);
-                    lastAffiliateMessageId = Math.max(lastAffiliateMessageId, message.id);
+                data.forEach(msg => {
+                    appendAffiliateMessage(msg);
+                    lastAffiliateMessageId = Math.max(lastAffiliateMessageId, msg.id);
                 });
                 markAffiliateAsRead();
             }
@@ -1118,17 +933,16 @@ function checkNewAffiliateMessages() {
 }
 
 function refreshAffiliateUnreadCount() {
+    const badge = document.getElementById('affiliateUnreadBadge');
+    if (!badge) return;
     fetch('{{ route('affiliate.chat.unread-count') }}')
         .then(res => res.json())
         .then(data => {
-            if (data && typeof data.unread !== 'undefined' && !affiliateChatOpen) {
-                const badge = document.getElementById('affiliateUnreadBadge');
-                if (data.unread > 0) {
-                    badge.textContent = data.unread;
-                    badge.style.display = 'flex';
-                } else {
-                    badge.style.display = 'none';
-                }
+            if (data.unread > 0) {
+                badge.textContent = data.unread;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
             }
         });
 }
@@ -1136,93 +950,45 @@ function refreshAffiliateUnreadCount() {
 function markAffiliateAsRead() {
     fetch('{{ route('affiliate.chat.mark-read') }}', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({})
-    })
-    .then(() => {
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    }).then(() => {
         const badge = document.getElementById('affiliateUnreadBadge');
         if (badge) badge.style.display = 'none';
     });
 }
-@endif
 
-// ============================================
-// SHARED UTILITIES
-// ============================================
-
-function showTypingIndicator(bodyId) {
-    const chatBody = document.getElementById(bodyId);
-    const indicator = document.createElement('div');
-    indicator.className = 'typing-indicator';
-    indicator.id = 'typingIndicator';
-    indicator.innerHTML = `
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-    `;
-    chatBody.appendChild(indicator);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-function removeTypingIndicator(bodyId) {
-    const chatBody = document.getElementById(bodyId);
-    const indicator = chatBody.querySelector('#typingIndicator');
-    if (indicator) indicator.remove();
-}
-
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return String(text || '').replace(/[&<>"']/g, m => map[m]);
-}
-
-// Close chat when clicking outside
-document.addEventListener('click', function(event) {
-    const adminWidget = document.getElementById('adminChatWidget');
-    const adminBtn = document.getElementById('adminChatFab');
-    const affiliateWidget = document.getElementById('affiliateChatWidget');
-    const affiliateBtn = document.getElementById('affiliateChatFab');
-    const aiWidget = document.getElementById('aiChatWidget');
-    const aiBtn = document.getElementById('aiChatFab');
-    
-    if (adminChatOpen && adminWidget && !adminWidget.contains(event.target) && adminBtn && !adminBtn.contains(event.target)) {
-        closeAdminChat();
+function previewAffiliateImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('affiliateImagePreview').src = e.target.result;
+            document.getElementById('affiliateImagePreviewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
     }
-    
-    if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && affiliateBtn && !affiliateBtn.contains(event.target)) {
-        closeAffiliateChat();
-    }
-});
+}
 
-// Prevent chat from closing when clicking inside
-document.getElementById('affiliateChatWidget')?.addEventListener('click', function(event) {
-    event.stopPropagation();
-});
+function clearAffiliateImagePreview() {
+    const input = document.getElementById('affiliateChatImage');
+    if (input) input.value = '';
+    const container = document.getElementById('affiliateImagePreviewContainer');
+    if (container) container.style.display = 'none';
+}
 
 // ============================================
-// DRAGGABLE CHAT COMPONENTS
+// DRAGGABLE LOGIC
 // ============================================
 (function() {
-    // 1. Draggable FAB Container
     const fabContainer = document.querySelector('.chat-fab-container');
     if (fabContainer) {
         let isDraggingFab = false;
         let startX, startY, initialRight, initialBottom;
-        let dragThreshold = 5;
-
-        fabContainer.addEventListener('mousedown', fabDragStart);
-        fabContainer.addEventListener('touchstart', fabDragStart, { passive: false });
+        fabContainer.addEventListener('mousedown', e => fabDragStart(e)); // Wrapping for safety
+        fabContainer.addEventListener('touchstart', e => fabDragStart(e), { passive: false });
 
         function fabDragStart(e) {
             const touch = e.type === 'touchstart';
+            if (touch && e.touches.length > 1) return;
             startX = touch ? e.touches[0].clientX : e.clientX;
             startY = touch ? e.touches[0].clientY : e.clientY;
             const style = window.getComputedStyle(fabContainer);
@@ -1232,97 +998,86 @@ document.getElementById('affiliateChatWidget')?.addEventListener('click', functi
             document.addEventListener(touch ? 'touchend' : 'mouseup', fabDragEnd);
             isDraggingFab = false;
         }
-
         function fabDrag(e) {
             const touch = e.type === 'touchmove';
-            const currentX = touch ? e.touches[0].clientX : e.clientX;
-            const currentY = touch ? e.touches[0].clientY : e.clientY;
-            const dx = startX - currentX;
-            const dy = startY - currentY;
-            if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) isDraggingFab = true;
+            const dx = startX - (touch ? e.touches[0].clientX : e.clientX);
+            const dy = startY - (touch ? e.touches[0].clientY : e.clientY);
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDraggingFab = true;
             if (isDraggingFab) {
                 if (touch) e.preventDefault();
-                let newRight = initialRight + dx;
-                let newBottom = initialBottom + dy;
-                const padding = 10;
-                newRight = Math.max(padding, Math.min(newRight, window.innerWidth - 70));
-                newBottom = Math.max(padding, Math.min(newBottom, window.innerHeight - 70));
-                fabContainer.style.right = newRight + 'px';
-                fabContainer.style.bottom = newBottom + 'px';
+                let nR = initialRight + dx, nB = initialBottom + dy;
+                fabContainer.style.right = Math.max(10, Math.min(nR, window.innerWidth - 70)) + 'px';
+                fabContainer.style.bottom = Math.max(10, Math.min(nB, window.innerHeight - 150)) + 'px';
             }
         }
-
-        function fabDragEnd(e) {
-            const touch = e.type === 'touchend';
-            document.removeEventListener(touch ? 'touchmove' : 'mousemove', fabDrag);
-            document.removeEventListener(touch ? 'touchend' : 'mouseup', fabDragEnd);
+        function fabDragEnd() {
+            document.removeEventListener('mousemove', fabDrag);
+            document.removeEventListener('touchmove', fabDrag);
+            document.removeEventListener('mouseup', fabDragEnd);
+            document.removeEventListener('touchend', fabDragEnd);
         }
-
         fabContainer.querySelectorAll('.chat-fab').forEach(fab => {
             fab.addEventListener('click', e => { if (isDraggingFab) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
         });
     }
 
-    // 2. Draggable Chat Widgets (via Header)
-    const widgets = document.querySelectorAll('.chat-widget');
-    widgets.forEach(widget => {
+    // Draggable Widgets
+    document.querySelectorAll('.chat-widget').forEach(widget => {
         const header = widget.querySelector('.chat-header');
         if (!header) return;
-
-        let isDraggingWidget = false;
-        let startX, startY;
-        let initialRight, initialBottom;
-
+        let startX, startY, initialRight, initialBottom;
         header.style.cursor = 'move';
-        header.addEventListener('mousedown', widgetDragStart);
-        header.addEventListener('touchstart', widgetDragStart, { passive: false });
-
-        function widgetDragStart(e) {
+        header.addEventListener('mousedown', wDragStart);
+        header.addEventListener('touchstart', wDragStart, { passive: false });
+        function wDragStart(e) {
             const touch = e.type === 'touchstart';
             startX = touch ? e.touches[0].clientX : e.clientX;
             startY = touch ? e.touches[0].clientY : e.clientY;
             const style = window.getComputedStyle(widget);
-            initialRight = parseInt(style.right) || 0;
-            initialBottom = parseInt(style.bottom) || 0;
-            document.addEventListener(touch ? 'touchmove' : 'widgetDrag', widgetDrag, touch ? { passive: false } : false); // Standard mousemove
-            if (!touch) document.addEventListener('mousemove', widgetDrag);
-            document.addEventListener(touch ? 'touchend' : 'mouseup', widgetDragEnd);
+            initialRight = parseInt(style.right);
+            initialBottom = parseInt(style.bottom);
+            document.addEventListener(touch ? 'touchmove' : 'mousemove', wDrag, touch ? { passive: false } : false);
+            document.addEventListener(touch ? 'touchend' : 'mouseup', wDragEnd);
         }
-
-        function widgetDrag(e) {
+        function wDrag(e) {
             const touch = e.type === 'touchmove';
-            const currentX = touch ? e.touches[0].clientX : e.clientX;
-            const currentY = touch ? e.touches[0].clientY : e.clientY;
-            const dx = startX - currentX;
-            const dy = startY - currentY;
             if (touch) e.preventDefault();
-            
-            let newRight = initialRight + dx;
-            let newBottom = initialBottom + dy;
-            
-            // Limit within viewport
-            newRight = Math.max(-widget.offsetWidth + 100, Math.min(newRight, window.innerWidth - 100));
-            newBottom = Math.max(0, Math.min(newBottom, window.innerHeight - 100));
-            
-            widget.style.right = newRight + 'px';
-            widget.style.bottom = newBottom + 'px';
-            widget.style.left = 'auto'; // Ensure right/bottom takes precedence
+            const dx = startX - (touch ? e.touches[0].clientX : e.clientX);
+            const dy = startY - (touch ? e.touches[0].clientY : e.clientY);
+            widget.style.right = (initialRight + dx) + 'px';
+            widget.style.bottom = (initialBottom + dy) + 'px';
+            widget.style.left = 'auto';
         }
-
-        function widgetDragEnd(e) {
-            const touch = e.type === 'touchend';
-            document.removeEventListener('mousemove', widgetDrag);
-            document.removeEventListener('touchmove', widgetDrag);
-            document.removeEventListener(touch ? 'touchend' : 'mouseup', widgetDragEnd);
+        function wDragEnd() {
+            document.removeEventListener('mousemove', wDrag);
+            document.removeEventListener('touchmove', wDrag);
         }
     });
 })();
 
+// ============================================
+// INITIALIZATION
+// ============================================
 document.addEventListener('DOMContentLoaded', function() {
+    @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
+        startAffiliatePolling();
+        refreshAffiliateUnreadCount();
+    @endif
+
+    // Close on click outside
+    document.addEventListener('click', function(event) {
+        const affiliateWidget = document.getElementById('affiliateChatWidget');
+        const affiliateBtn = document.getElementById('affiliateChatFab');
+        if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && !affiliateBtn?.contains(event.target)) {
+            closeAffiliateChat();
+        }
+    });
+
     const widgets = document.querySelectorAll('.chat-widget');
     widgets.forEach(widget => {
         widget.addEventListener('click', function(e) {
             e.stopPropagation();
         });
     });
+});
 </script>

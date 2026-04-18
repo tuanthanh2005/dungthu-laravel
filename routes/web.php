@@ -256,6 +256,11 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::put('/buff-orders/{buffOrder}', [AdminBuffController::class, 'ordersUpdate'])->name('admin.buff.orders.update');
 
     Route::get('/abandoned-carts', [AdminController::class, 'abandonedCarts'])->name('admin.abandoned-carts');
+    Route::post('/abandoned-carts/send', [AdminController::class, 'sendAbandonedCartReminders'])->name('admin.abandoned-carts.send');
+
+    // System Notifications
+    Route::get('/system-notifications', [AdminController::class, 'systemNotifications'])->name('admin.system-notifications');
+    Route::post('/system-notifications/send', [AdminController::class, 'sendSystemNotifications'])->name('admin.system-notifications.send');
     
     // Card Exchange Management
     Route::get('/card-exchanges', [AdminController::class, 'cardExchanges'])->name('admin.card-exchanges');

@@ -17,7 +17,9 @@ use App\Models\Affiliate;
 use App\Models\AffiliateInvoice;
 use App\Models\AffiliateWithdrawal;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\SystemNotificationMail;
 use App\Mail\OrderCompletedMail;
+use App\Mail\AbandonedCartReminder;
 use App\Helpers\TelegramHelper;
 use App\Helpers\PathHelper;
 use App\Services\GoogleIndexingService;
@@ -176,6 +178,76 @@ class AdminController extends Controller
             ->paginate(20);
 
         return view('admin.abandoned-carts.index', compact('carts'));
+    }
+
+    public function sendAbandonedCartReminders(Request $request)
+    {
+        $request->validate([
+            'cart_ids' => 'required|array',
+            'cart_ids.*' => 'exists:abandoned_carts,id',
+            'message' => 'required|string'
+        ], [
+            'cart_ids.required' => 'Vui lòng chọn ít nhất 1 giỏ hàng để gửi.',
+            'message.required' => 'Vui lòng nhập nội dung thông báo.'
+        ]);
+
+        $carts = AbandonedCart::whereIn('id', $request->cart_ids)->with('user')->get();
+        $successCount = 0;
+
+        foreach ($carts as $cart) {
+            try {
+                if ($cart->email) {
+                    Mail::to($cart->email)->send(new AbandonedCartReminder($cart, $request->message));
+                    
+                    // Cập nhật số lần nhắc nhở
+                    $cart->increment('reminder_stage');
+                    $cart->update(['last_reminder_at' => now()]);
+                    
+                    $successCount++;
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error sending abandoned cart reminder to ' . $cart->email . ': ' . $e->getMessage());
+            }
+        }
+
+        return redirect()->back()->with('success', "Đã gửi thông báo thành công tới {$successCount} khách hàng!");
+    }
+
+    public function systemNotifications()
+    {
+        // Lấy danh sách user để gửi thông báo
+        $users = User::where('role', 'user')->orderBy('created_at', 'desc')->paginate(50);
+        return view('admin.system-notifications.index', compact('users'));
+    }
+
+    public function sendSystemNotifications(Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string'
+        ], [
+            'user_ids.required' => 'Vui lòng chọn ít nhất 1 người dùng để gửi.',
+            'subject.required' => 'Vui lòng nhập tiêu đề.',
+            'message.required' => 'Vui lòng nhập nội dung thông báo.'
+        ]);
+
+        $users = User::whereIn('id', $request->user_ids)->get();
+        $successCount = 0;
+
+        foreach ($users as $user) {
+            try {
+                if ($user->email) {
+                    Mail::to($user->email)->send(new SystemNotificationMail($user, $request->subject, $request->message));
+                    $successCount++;
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error sending system notification to ' . $user->email . ': ' . $e->getMessage());
+            }
+        }
+
+        return redirect()->back()->with('success', "Đã gửi thông báo hệ thống thành công tới {$successCount} người dùng!");
     }
 
     public function userHistory($id)

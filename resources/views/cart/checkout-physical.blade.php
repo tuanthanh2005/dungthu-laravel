@@ -66,6 +66,25 @@
                                     </div>
                                 </div>
                                 
+                                <div class="alert alert-info py-2 mb-3" style="font-size: 14px;">
+                                    <i class="fas fa-headset me-2"></i><strong>Hãy để lại thông tin, Bộ phận hỗ trợ sẽ kết nối và hỗ trợ bạn ngay !</strong>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="fw-normal text-muted">(Không bắt buộc)</small>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" name="customer_zalo" placeholder="Nhập số Zalo của bạn">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="fw-normal text-muted">(Không bắt buộc)</small>
+                                        </label>
+                                        <input type="url" class="form-control form-control-lg" name="customer_facebook" placeholder="Ví dụ: https://facebook.com/username">
+                                    </div>
+                                </div>
+                                
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">
                                         <i class="fas fa-home me-2 text-primary"></i>Địa chỉ giao hàng

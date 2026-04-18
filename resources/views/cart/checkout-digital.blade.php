@@ -37,7 +37,7 @@
                     <i class="fas fa-qrcode text-primary me-2"></i>Thanh Toán QR
                 </h1>
                 <p class="text-muted">Sản phẩm số - Thanh toán nhanh chóng qua QR Code</p>
-                            <p class="lead opacity-75 mb-4">Khi bạn thanh toán xong NHÂN VIÊN sẽ liên lạc với bạn hoặc bạn chủ động nhắn tin với thông tin liên hệ bên shop.</p>
+                            <p class="lead opacity-75 mb-4">Cách nâng cấp nhanh nhất: Hãy để lại thông tin, Bộ phận hỗ trợ sẽ kết nối và hỗ trợ bạn.</p>
             </div>
 
             <div class="row g-4">
@@ -70,6 +70,23 @@
                                         <i class="fas fa-phone me-2 text-primary"></i>Số điện thoại
                                     </label>
                                     <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
+                                </div>
+                                
+                                <div class="alert alert-info py-2 mb-3" style="font-size: 14px;">
+                                    <i class="fas fa-headset me-2"></i><strong>Hãy để lại thông tin, Bộ phận hỗ trợ sẽ kết nối và hỗ trợ bạn ngay !</strong>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-muted fw-normal">(Không bắt buộc)</small>
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" name="customer_zalo" placeholder="Nhập số Zalo của bạn">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-muted fw-normal">(Không bắt buộc)</small>
+                                    </label>
+                                    <input type="url" class="form-control form-control-lg" name="customer_facebook" placeholder="Ví dụ: https://facebook.com/username">
                                 </div>
 
                                 <!-- Đơn hàng -->

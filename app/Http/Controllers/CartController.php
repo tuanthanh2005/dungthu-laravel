@@ -176,6 +176,14 @@ class CartController extends Controller
             $totalAmount += $details['price'] * $details['quantity'];
         }
 
+        $customerAddress = $request->customer_address ?? 'Sản phẩm số - không cần giao hàng';
+        if ($request->filled('customer_zalo')) {
+            $customerAddress .= "\nZalo: " . $request->customer_zalo;
+        }
+        if ($request->filled('customer_facebook')) {
+            $customerAddress .= "\nFacebook: " . $request->customer_facebook;
+        }
+
         DB::beginTransaction();
         try {
             $order = Order::create([
@@ -183,7 +191,7 @@ class CartController extends Controller
                 'customer_name' => $request->customer_name,
                 'customer_email' => $request->customer_email,
                 'customer_phone' => $request->customer_phone,
-                'customer_address' => $request->customer_address ?? 'Sản phẩm số - không cần giao hàng',
+                'customer_address' => $customerAddress,
                 'total_amount' => $totalAmount,
             ]);
 
@@ -206,7 +214,7 @@ class CartController extends Controller
             
             $this->clearAbandonedCart();
             session()->forget('cart');
-            return redirect()->route('home')->with('success', 'Đặt hàng thành công! Vui lòng chờ admin xác nhận.');
+            return redirect()->route('user.orders')->with('success', 'Đặt hàng thành công! Vui lòng chờ admin xác nhận.');
 
         } catch (\Exception $e) {
             DB::rollback();

@@ -275,6 +275,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.system-notifications') }}">
+                        <i class="fas fa-bullhorn me-2"></i>Thông báo hệ thống
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link text-danger" href="javascript:void(0)" onclick="adminLockManual()">
                         <i class="fas fa-lock me-2"></i>Khóa Admin
                     </a>

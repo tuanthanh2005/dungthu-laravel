@@ -43,6 +43,7 @@
     color: white;
     box-shadow: var(--chat-shadow);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
 .chat-fab::before {
@@ -632,66 +633,57 @@
         right: 20px;
     }
 }
-
-/* Chat Tools & Image Preview */
-.chat-tool-btn {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6b7280;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-radius: 50%;
-}
-.chat-tool-btn:hover {
-    background: #f3f4f6;
-    color: var(--widget-color);
-}
-.chat-input-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-#imagePreviewContainer, #affiliateImagePreviewContainer {
-    padding: 8px;
-    background: #f9fafb;
-    border-radius: 12px;
-}
-.preview-item {
-    position: relative;
-    display: inline-block;
-}
-.preview-item img {
-    height: 60px;
-    border-radius: 8px;
-    object-fit: cover;
-}
-.preview-item button {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.message-image {
-    max-width: 100%;
-    border-radius: 12px;
-    margin-top: 8px;
-    cursor: pointer;
-}
 </style>
 
+<!-- AI Chatbot Widget -->
+<div id="aiChatWidget" class="chat-widget ai-bot">
+    <div class="chat-header">
+        <div class="chat-header-content">
+            <div class="chat-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="chat-header-text">
+                <h3>Trợ lý AI</h3>
+                <p class="chat-status-indicator">
+                    <span class="chat-status-dot"></span>
+                    Đang hoạt động
+                </p>
+            </div>
+        </div>
+        <button class="chat-close-btn" onclick="closeAiChat()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="chat-body" id="aiChatBody">
+        <div class="chat-welcome">
+            <i class="fas fa-robot"></i>
+            <h4>Xin chào! 👋</h4>
+            <p>Tôi là trợ lý AI của DungThu.com<br>Bạn cần tư vấn gì về sản phẩm?</p>
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <form id="aiChatForm" onsubmit="sendAiMessage(event)">
+            <div class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="aiChatInput" 
+                    placeholder="Nhập câu hỏi của bạn..."
+                    autocomplete="off"
+                    required
+                >
+                <button class="chat-send-btn" type="submit" id="aiChatSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+        <div class="chat-disclaimer">
+            💡 AI có thể tư vấn sai. Đăng nhập để chat với admin để được hỗ trợ chính xác hơn.
+        </div>
+    </div>
+</div>
 
 <!-- Admin Chat Widget (for authenticated users) -->
 @auth
@@ -726,25 +718,14 @@
     <div class="chat-footer">
         <form id="adminChatForm" onsubmit="sendAdminMessage(event)">
             <div class="chat-input-wrapper">
-                <label for="adminChatImage" class="chat-tool-btn">
-                    <i class="fas fa-image"></i>
-                    <input type="file" id="adminChatImage" hidden accept="image/*" onchange="previewImage(this)">
-                </label>
-                <div class="chat-input-container">
-                    <div id="imagePreviewContainer" style="display: none;">
-                        <span class="preview-item">
-                            <img id="imagePreview" src="" alt="preview">
-                            <button type="button" onclick="clearImagePreview()"><i class="fas fa-times"></i></button>
-                        </span>
-                    </div>
-                    <input 
-                        type="text" 
-                        class="chat-input" 
-                        id="adminChatInput" 
-                        placeholder="Nhập tin nhắn..."
-                        autocomplete="off"
-                    >
-                </div>
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="adminChatInput" 
+                    placeholder="Nhập tin nhắn..."
+                    autocomplete="off"
+                    required
+                >
                 <button class="chat-send-btn" type="submit" id="adminChatSendBtn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -755,70 +736,15 @@
 @endif
 @endauth
 
-<!-- Affiliate Chat Widget -->
-@if(Auth::guard('affiliate')->check())
-<div id="affiliateChatWidget" class="chat-widget admin-chat">
-    <div class="chat-header">
-        <div class="chat-header-content">
-            <div class="chat-avatar">
-                <i class="fas fa-headset"></i>
-            </div>
-            <div class="chat-header-text">
-                <h3>Chat với Admin</h3>
-                <p class="chat-status-indicator">
-                    <span class="chat-status-dot"></span>
-                    Hỗ trợ CTV
-                </p>
-            </div>
-        </div>
-        <button class="chat-close-btn" onclick="closeAffiliateChat()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-
-    <div class="chat-body" id="affiliateChatBody">
-        <div class="chat-welcome">
-            <i class="fas fa-headset"></i>
-            <h4>Chào {{ Auth::guard('affiliate')->user()->name }}! 👋</h4>
-            <p>Admin sẽ phản hồi ngay khi có thể<br>Vui lòng để lại tin nhắn hoặc ảnh bill</p>
-        </div>
-    </div>
-
-    <div class="chat-footer">
-        <form id="affiliateChatForm" onsubmit="sendAffiliateMessage(event)">
-            <div class="chat-input-wrapper">
-                <label for="affiliateChatImage" class="chat-tool-btn">
-                    <i class="fas fa-image"></i>
-                    <input type="file" id="affiliateChatImage" hidden accept="image/*" onchange="previewAffiliateImage(this)">
-                </label>
-                <div class="chat-input-container">
-                    <div id="affiliateImagePreviewContainer" style="display: none;">
-                        <span class="preview-item">
-                            <img id="affiliateImagePreview" src="" alt="preview">
-                            <button type="button" onclick="clearAffiliateImagePreview()"><i class="fas fa-times"></i></button>
-                        </span>
-                    </div>
-                    <input 
-                        type="text" 
-                        class="chat-input" 
-                        id="affiliateChatInput" 
-                        placeholder="Nhập tin nhắn..."
-                        autocomplete="off"
-                    >
-                </div>
-                <button class="chat-send-btn" type="submit" id="affiliateChatSendBtn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-@endif
-
 <!-- Floating Action Buttons -->
 <div class="chat-fab-container">
+    <!-- AI Chatbot Button -->
+    <button class="chat-fab ai-bot" onclick="toggleAiChat()" id="aiChatFab">
+        <i class="fas fa-robot fab-icon"></i>
+        <span class="fab-tooltip">Trợ lý AI tư vấn</span>
+    </button>
 
-    <!-- Admin Chat Button (for regular users) -->
+    <!-- Admin Chat Button (for authenticated users) -->
     @auth
     @if(auth()->user()->role !== 'admin')
     <button class="chat-fab admin-chat" onclick="toggleAdminChat()" id="adminChatFab">
@@ -828,15 +754,6 @@
     </button>
     @endif
     @endauth
-
-    <!-- Admin Chat Button (for affiliates) -->
-    @if(Auth::guard('affiliate')->check())
-    <button class="chat-fab admin-chat" onclick="toggleAffiliateChat()" id="affiliateChatFab">
-        <i class="fas fa-headset fab-icon"></i>
-        <span class="unread-badge" id="affiliateUnreadBadge" style="display: none;">0</span>
-        <span class="fab-tooltip">Chat với Admin</span>
-    </button>
-    @endif
 </div>
 
 <script>
@@ -844,19 +761,115 @@
 // AI CHATBOT FUNCTIONALITY
 // ============================================
 
+let aiChatOpen = false;
+
+function toggleAiChat() {
+    const widget = document.getElementById('aiChatWidget');
+    if (aiChatOpen) {
+        closeAiChat();
+    } else {
+        openAiChat();
+    }
+}
+
+function openAiChat() {
+    const widget = document.getElementById('aiChatWidget');
+    const adminWidget = document.getElementById('adminChatWidget');
+    
+    // Close admin chat if open
+    if (adminWidget && adminWidget.classList.contains('active')) {
+        closeAdminChat();
+    }
+    
+    widget.classList.add('active');
+    aiChatOpen = true;
+    document.getElementById('aiChatInput').focus();
+}
+
+function closeAiChat() {
+    const widget = document.getElementById('aiChatWidget');
+    widget.classList.remove('active');
+    aiChatOpen = false;
+}
+
+function sendAiMessage(event) {
+    event.preventDefault();
+    
+    const input = document.getElementById('aiChatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    appendAiMessage('user', message);
+    input.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator('aiChatBody');
+    
+    // Disable send button
+    const sendBtn = document.getElementById('aiChatSendBtn');
+    sendBtn.disabled = true;
+    
+    // Send to server
+    fetch('{{ route('guest-chat.send') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ message })
+    })
+    .then(res => res.json())
+    .then(data => {
+        removeTypingIndicator('aiChatBody');
+        if (data && data.reply) {
+            appendAiMessage('bot', data.reply);
+        } else {
+            appendAiMessage('bot', 'Xin lỗi, hiện tại tôi không thể trả lời. Vui lòng thử lại sau hoặc chat với admin để được hỗ trợ tốt hơn.');
+        }
+    })
+    .catch(() => {
+        removeTypingIndicator('aiChatBody');
+        appendAiMessage('bot', 'Đã có lỗi xảy ra. Vui lòng thử lại sau.');
+    })
+    .finally(() => {
+        sendBtn.disabled = false;
+    });
+}
+
+function appendAiMessage(type, content) {
+    const chatBody = document.getElementById('aiChatBody');
+    
+    // Remove welcome message
+    const welcome = chatBody.querySelector('.chat-welcome');
+    if (welcome) welcome.remove();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${type}`;
+    
+    const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    
+    messageDiv.innerHTML = `
+        <div class="message-bubble">
+            <div class="message-content">${escapeHtml(content)}</div>
+            <div class="message-time">${time}</div>
+        </div>
+    `;
+    
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
 
 // ============================================
 // ADMIN CHAT FUNCTIONALITY
 // ============================================
 
-let adminChatOpen = false;
-let adminWidget = document.getElementById('adminChatWidget');
-let adminBtn = document.getElementById('adminChatFab');
-let lastMessageId = 0;
-let pollingInterval = null;
-
 @auth
 @if(auth()->user()->role !== 'admin')
+let adminChatOpen = false;
+let lastMessageId = 0;
+let pollingInterval = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     loadAdminMessages();
@@ -874,6 +887,12 @@ function toggleAdminChat() {
 
 function openAdminChat() {
     const widget = document.getElementById('adminChatWidget');
+    const aiWidget = document.getElementById('aiChatWidget');
+    
+    // Close AI chat if open
+    if (aiWidget && aiWidget.classList.contains('active')) {
+        closeAiChat();
+    }
     
     widget.classList.add('active');
     adminChatOpen = true;
@@ -892,34 +911,26 @@ function sendAdminMessage(event) {
     event.preventDefault();
     
     const input = document.getElementById('adminChatInput');
-    const imageInput = document.getElementById('adminChatImage');
     const message = input.value.trim();
     
-    if (!message && !imageInput.files[0]) return;
+    if (!message) return;
     
     const sendBtn = document.getElementById('adminChatSendBtn');
     sendBtn.disabled = true;
     
-    const formData = new FormData();
-    formData.append('message', message);
-    if (imageInput.files[0]) {
-        formData.append('image', imageInput.files[0]);
-    }
-
     fetch('{{ route('chat.send') }}', {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
         },
-        body: formData
+        body: JSON.stringify({ message })
     })
     .then(res => res.json())
     .then(data => {
         appendAdminMessage(data);
         lastMessageId = Math.max(lastMessageId, data.id);
         input.value = '';
-        clearImagePreview();
     })
     .catch(() => {
         alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
@@ -929,30 +940,20 @@ function sendAdminMessage(event) {
     });
 }
 
-function previewImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('imagePreview').src = e.target.result;
-            document.getElementById('imagePreviewContainer').style.display = 'block';
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function clearImagePreview() {
-    document.getElementById('adminChatImage').value = '';
-    document.getElementById('imagePreviewContainer').style.display = 'none';
-}
-
 function loadAdminMessages() {
-    fetch('{{ route('chat.messages') }}', { headers: { 'Accept': 'application/json' } })
+    fetch('{{ route('chat.messages') }}')
         .then(res => res.json())
         .then(data => {
             const chatBody = document.getElementById('adminChatBody');
-            if (data.length === 0) return;
+            
+            if (data.length === 0) {
+                return;
+            }
+            
+            // Remove welcome message
             const welcome = chatBody.querySelector('.chat-welcome');
             if (welcome) welcome.remove();
+            
             chatBody.innerHTML = '';
             data.forEach(message => {
                 appendAdminMessage(message);
@@ -965,24 +966,24 @@ function loadAdminMessages() {
 
 function appendAdminMessage(message) {
     const chatBody = document.getElementById('adminChatBody');
+    
+    // Remove welcome message
     const welcome = chatBody.querySelector('.chat-welcome');
     if (welcome) welcome.remove();
+    
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
+    
     const date = new Date(message.created_at);
     const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     
-    let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
-    if (message.image) {
-        content += `<img src="/${message.image}" class="message-image" onclick="window.open('/${message.image}')">`;
-    }
-
     messageDiv.innerHTML = `
         <div class="message-bubble">
-            ${content}
+            <div class="message-content">${escapeHtml(message.message)}</div>
             <div class="message-time">${time}</div>
         </div>
     `;
+    
     chatBody.appendChild(messageDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
 }
@@ -998,7 +999,7 @@ function startAdminPolling() {
 }
 
 function checkNewAdminMessages() {
-    fetch(`{{ route('chat.new') }}?last_id=${lastMessageId}`, { headers: { 'Accept': 'application/json' } })
+    fetch(`{{ route('chat.new') }}?last_id=${lastMessageId}`)
         .then(res => res.json())
         .then(data => {
             if (data.length > 0) {
@@ -1013,7 +1014,7 @@ function checkNewAdminMessages() {
 }
 
 function refreshUnreadCount() {
-    fetch('{{ route('chat.unread-count') }}', { headers: { 'Accept': 'application/json' } })
+    fetch('{{ route('chat.unread-count') }}')
         .then(res => res.json())
         .then(data => {
             if (data && typeof data.unread !== 'undefined' && !adminChatOpen) {
@@ -1034,188 +1035,18 @@ function markAllAsRead() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({})
-    })
-    .then(() => {
-        const badge = document.getElementById('adminUnreadBadge');
-        if (badge) badge.style.display = 'none';
-    })
-    .catch(err => console.error('Error marking read:', err));
-}
-@endif
-@endauth
-
-// ============================================
-// AFFILIATE CHAT FUNCTIONALITY
-// ============================================
-
-let affiliateChatOpen = false;
-let affiliatePollingInterval = null;
-let lastAffiliateMessageId = 0;
-let affiliateWidget = document.getElementById('affiliateChatWidget');
-let affiliateBtn = document.getElementById('affiliateChatFab');
-
-@if(Auth::guard('affiliate')->check())
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadAffiliateMessages();
-    startAffiliatePolling();
-    refreshAffiliateUnreadCount();
-});
-
-function toggleAffiliateChat() {
-    if (affiliateChatOpen) {
-        closeAffiliateChat();
-    } else {
-        openAffiliateChat();
-    }
-}
-
-function openAffiliateChat() {
-    const widget = document.getElementById('affiliateChatWidget');
-    widget.classList.add('active');
-    affiliateChatOpen = true;
-    document.getElementById('affiliateChatInput').focus();
-    loadAffiliateMessages();
-    markAffiliateAsRead();
-}
-
-function closeAffiliateChat() {
-    const widget = document.getElementById('affiliateChatWidget');
-    widget.classList.remove('active');
-    affiliateChatOpen = false;
-}
-
-function previewAffiliateImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('affiliateImagePreview').src = e.target.result;
-            document.getElementById('affiliateImagePreviewContainer').style.display = 'block';
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function clearAffiliateImagePreview() {
-    document.getElementById('affiliateChatImage').value = '';
-    document.getElementById('affiliateImagePreviewContainer').style.display = 'none';
-}
-
-function sendAffiliateMessage(event) {
-    event.preventDefault();
-    const input = document.getElementById('affiliateChatInput');
-    const imageInput = document.getElementById('affiliateChatImage');
-    const message = input.value.trim();
-    if (!message && !imageInput.files[0]) return;
-    const sendBtn = document.getElementById('affiliateChatSendBtn');
-    sendBtn.disabled = true;
-    const formData = new FormData();
-    formData.append('message', message);
-    if (imageInput.files[0]) formData.append('image', imageInput.files[0]);
-    fetch('{{ route('affiliate.chat.send') }}', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        appendAffiliateMessage(data);
-        lastAffiliateMessageId = Math.max(lastAffiliateMessageId, data.id);
-        input.value = '';
-        clearAffiliateImagePreview();
-    })
-    .catch(() => alert('Không thể gửi tin nhắn. Vui lòng thử lại!'))
-    .finally(() => sendBtn.disabled = false);
-}
-
-function loadAffiliateMessages() {
-    fetch('{{ route('affiliate.chat.messages') }}')
-        .then(res => res.json())
-        .then(data => {
-            const chatBody = document.getElementById('affiliateChatBody');
-            if (data.length === 0) return;
-            const welcome = chatBody.querySelector('.chat-welcome');
-            if (welcome) welcome.remove();
-            chatBody.innerHTML = '';
-            data.forEach(message => {
-                appendAffiliateMessage(message);
-                lastAffiliateMessageId = Math.max(lastAffiliateMessageId, message.id);
-            });
-            chatBody.scrollTop = chatBody.scrollHeight;
-        });
-}
-
-function appendAffiliateMessage(message) {
-    const chatBody = document.getElementById('affiliateChatBody');
-    const welcome = chatBody.querySelector('.chat-welcome');
-    if (welcome) welcome.remove();
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
-    const date = new Date(message.created_at);
-    const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    let content = message.message ? `<div class="message-content">${escapeHtml(message.message)}</div>` : '';
-    if (message.image) content += `<img src="/${message.image}" class="message-image" onclick="window.open('/${message.image}')">`;
-    messageDiv.innerHTML = `<div class="message-bubble">${content}<div class="message-time">${time}</div></div>`;
-    chatBody.appendChild(messageDiv);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-function startAffiliatePolling() {
-    affiliatePollingInterval = setInterval(() => {
-        if (affiliateChatOpen) checkNewAffiliateMessages();
-        else refreshAffiliateUnreadCount();
-    }, 3000);
-}
-
-function checkNewAffiliateMessages() {
-    fetch(`{{ route('affiliate.chat.new') }}?last_id=${lastAffiliateMessageId}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.length > 0) {
-                data.forEach(message => {
-                    appendAffiliateMessage(message);
-                    lastAffiliateMessageId = Math.max(lastAffiliateMessageId, message.id);
-                });
-                markAffiliateAsRead();
-            }
-        });
-}
-
-function refreshAffiliateUnreadCount() {
-    fetch('{{ route('affiliate.chat.unread-count') }}')
-        .then(res => res.json())
-        .then(data => {
-            if (data && typeof data.unread !== 'undefined' && !affiliateChatOpen) {
-                const badge = document.getElementById('affiliateUnreadBadge');
-                if (data.unread > 0) {
-                    badge.textContent = data.unread;
-                    badge.style.display = 'flex';
-                } else {
-                    badge.style.display = 'none';
-                }
-            }
-        });
-}
-
-function markAffiliateAsRead() {
-    fetch('{{ route('affiliate.chat.mark-read') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
         },
         body: JSON.stringify({})
     })
     .then(() => {
-        const badge = document.getElementById('affiliateUnreadBadge');
-        if (badge) badge.style.display = 'none';
-    });
+        const badge = document.getElementById('adminUnreadBadge');
+        badge.style.display = 'none';
+    })
+    .catch(err => console.error('Error marking read:', err));
 }
 @endif
+@endauth
 
 // ============================================
 // SHARED UTILITIES
@@ -1254,17 +1085,17 @@ function escapeHtml(text) {
 
 // Close chat when clicking outside
 document.addEventListener('click', function(event) {
+    const aiWidget = document.getElementById('aiChatWidget');
+    const aiBtn = document.getElementById('aiChatFab');
     const adminWidget = document.getElementById('adminChatWidget');
     const adminBtn = document.getElementById('adminChatFab');
-    const affiliateWidget = document.getElementById('affiliateChatWidget');
-    const affiliateBtn = document.getElementById('affiliateChatFab');
+    
+    if (aiChatOpen && !aiWidget.contains(event.target) && !aiBtn.contains(event.target)) {
+        closeAiChat();
+    }
     
     if (adminChatOpen && adminWidget && !adminWidget.contains(event.target) && adminBtn && !adminBtn.contains(event.target)) {
         closeAdminChat();
-    }
-    
-    if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && affiliateBtn && !affiliateBtn.contains(event.target)) {
-        closeAffiliateChat();
     }
 });
 

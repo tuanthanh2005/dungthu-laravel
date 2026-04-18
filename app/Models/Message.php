@@ -9,11 +9,9 @@ class Message extends Model
 {
     protected $fillable = [
         'user_id',
-        'affiliate_id',
         'message',
-        'image',
         'is_admin',
-        'is_read',
+        'is_read'
     ];
 
     protected $casts = [
@@ -24,10 +22,5 @@ class Message extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function affiliate(): BelongsTo
-    {
-        return $this->belongsTo(Affiliate::class);
     }
 }

@@ -13,9 +13,6 @@ use App\Models\AbandonedCart;
 use App\Models\CardExchange;
 use App\Models\SiteSetting;
 use App\Models\ProductCategory;
-use App\Models\Affiliate;
-use App\Models\AffiliateInvoice;
-use App\Models\AffiliateWithdrawal;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCompletedMail;
 use App\Helpers\TelegramHelper;
@@ -132,11 +129,6 @@ class AdminController extends Controller
         $revenue90Days = Order::where('status', 'completed')
             ->where('updated_at', '>=', now()->subDays(90))
             ->sum('total_amount');
-
-        // Affiliate stats
-        $pendingAffCount = Affiliate::where('status', 'pending')->count();
-        $pendingAffInvoiceCount = AffiliateInvoice::where('status', 'pending')->count();
-        $pendingAffWithdrawCount = AffiliateWithdrawal::where('status', 'pending')->count();
         
         return view('admin.dashboard', compact(
             'stats', 
@@ -149,10 +141,7 @@ class AdminController extends Controller
             'revenue10Days',
             'revenue5Days',
             'revenue60Days',
-            'revenue90Days',
-            'pendingAffCount',
-            'pendingAffInvoiceCount',
-            'pendingAffWithdrawCount'
+            'revenue90Days'
         ));
     }
 

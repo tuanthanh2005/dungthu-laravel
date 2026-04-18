@@ -31,26 +31,12 @@ class ChatController extends Controller
         }
 
         $request->validate([
-            'message' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'message' => 'required|string|max:1000'
         ]);
-
-        if (!$request->message && !$request->hasFile('image')) {
-            return response()->json(['error' => 'Vui lòng nhập tin nhắn hoặc chọn ảnh'], 422);
-        }
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/chat'), $fileName);
-            $imagePath = 'uploads/chat/' . $fileName;
-        }
 
         $message = Message::create([
             'user_id' => Auth::id(),
             'message' => $request->message,
-            'image' => $imagePath,
             'is_admin' => false,
             'is_read' => false
         ]);
@@ -105,16 +91,14 @@ class ChatController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    // Admin: Xem danh sách users/affiliates có tin nhắn
+    // Admin: Xem danh sách users có tin nhắn
     public function adminIndex()
     {
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             abort(403);
         }
 
-        // Get users who chatted
-        $usersResult = Message::whereNotNull('user_id')
-            ->with('user')
+        $users = Message::with('user')
             ->select('user_id')
             ->selectRaw('MAX(created_at) as last_message_at')
             ->selectRaw('SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread_count')
@@ -123,114 +107,58 @@ class ChatController extends Controller
             ->get()
             ->map(function($item) {
                 $user = $item->user;
-                if ($user) {
-                    $user->unread_count = $item->unread_count;
-                    $user->last_message_at = $item->last_message_at;
-                    $user->type = 'user';
-                }
+                $user->unread_count = $item->unread_count;
                 return $user;
-            })->filter();
+            });
 
-        // Get affiliates who chatted
-        $affiliatesResult = Message::whereNotNull('affiliate_id')
-            ->with('affiliate')
-            ->select('affiliate_id')
-            ->selectRaw('MAX(created_at) as last_message_at')
-            ->selectRaw('SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread_count')
-            ->groupBy('affiliate_id')
-            ->orderBy('last_message_at', 'desc')
-            ->get()
-            ->map(function($item) {
-                $aff = $item->affiliate;
-                if ($aff) {
-                    $aff->unread_count = $item->unread_count;
-                    $aff->last_message_at = $item->last_message_at;
-                    $aff->type = 'affiliate';
-                }
-                return $aff;
-            })->filter();
+        $existingUserIds = $users->pluck('id')->filter()->all();
+        $allUsers = User::where('role', '!=', 'admin')
+            ->when(!empty($existingUserIds), function ($query) use ($existingUserIds) {
+                $query->whereNotIn('id', $existingUserIds);
+            })
+            ->orderBy('name')
+            ->get();
 
-        // Merge and sort
-        $recentChats = $usersResult->concat($affiliatesResult)->sortByDesc('last_message_at');
-
-        $allUsers = User::where('role', '!=', 'admin')->orderBy('name')->get();
-        $allAffiliates = \App\Models\Affiliate::orderBy('name')->get();
-
-        return view('admin.chat.index', compact('recentChats', 'allUsers', 'allAffiliates'));
+        return view('admin.chat.index', compact('users', 'allUsers'));
     }
 
-    // Admin: Xem tin nhắn của một user/affiliate
-    public function adminMessages($id)
+    // Admin: Xem tin nhắn của một user
+    public function adminMessages($userId)
     {
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $type = request('type', 'user');
-        
-        $query = Message::query();
-        if ($type === 'affiliate') {
-            $query->where('affiliate_id', $id);
-        } else {
-            $query->where('user_id', $id);
-        }
-
-        $messages = $query->orderBy('created_at', 'asc')->get();
+        $messages = Message::where('user_id', $userId)
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         // Đánh dấu tin nhắn từ user là đã đọc
-        $updateQuery = Message::query();
-        if ($type === 'affiliate') {
-            $updateQuery->where('affiliate_id', $id);
-        } else {
-            $updateQuery->where('user_id', $id);
-        }
-        
-        $updateQuery->where('is_admin', false)
+        Message::where('user_id', $userId)
+            ->where('is_admin', false)
             ->where('is_read', false)
             ->update(['is_read' => true]);
 
         return response()->json($messages);
     }
 
-    // Admin: Gửi tin nhắn cho user/affiliate
-    public function adminReply(Request $request, $id)
+    // Admin: Gửi tin nhắn cho user
+    public function adminReply(Request $request, $userId)
     {
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $request->validate([
-            'message' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'type' => 'required|in:user,affiliate'
+            'message' => 'required|string|max:1000'
         ]);
 
-        if (!$request->message && !$request->hasFile('image')) {
-            return response()->json(['error' => 'Vui lòng nhập tin nhắn hoặc chọn ảnh'], 422);
-        }
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/chat'), $fileName);
-            $imagePath = 'uploads/chat/' . $fileName;
-        }
-
-        $data = [
+        $message = Message::create([
+            'user_id' => $userId,
             'message' => $request->message,
-            'image' => $imagePath,
             'is_admin' => true,
             'is_read' => false
-        ];
-
-        if ($request->type === 'affiliate') {
-            $data['affiliate_id'] = $id;
-        } else {
-            $data['user_id'] = $id;
-        }
-
-        $message = Message::create($data);
+        ]);
 
         return response()->json($message);
     }

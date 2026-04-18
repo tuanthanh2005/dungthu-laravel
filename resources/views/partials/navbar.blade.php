@@ -56,9 +56,6 @@
                 Cộng đồng
             </a>
             @endif
-            <a href="{{ route('affiliate.login') }}" class="nav-text-link {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
-                Cộng tác viên
-            </a>
         </div>
 
         {{-- Search Bar (desktop) --}}
@@ -110,12 +107,6 @@
                             <li><a class="dropdown-item" href="{{ route('admin.buff.services.index') }}"><i class="fas fa-cogs me-2" style="color:#06b6d4;"></i>Dịch vụ Buff</a></li>
                             <li><a class="dropdown-item" href="{{ route('admin.buff.servers.index') }}"><i class="fas fa-server me-2" style="color:#10b981;"></i>Máy chủ Buff</a></li>
                             <li><hr class="dropdown-divider"></li>
-                        @endif
-                        @if(Auth::guard('affiliate')->check())
-                            <li><a class="dropdown-item fw-bold text-primary" href="{{ route('affiliate.dashboard') }}"><i class="fas fa-handshake me-2"></i>Dashboard CTV</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                        @else
-                            <li><a class="dropdown-item" href="{{ route('affiliate.login') }}"><i class="fas fa-handshake me-2"></i>Đăng ký CTV</a></li>
                         @endif
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>

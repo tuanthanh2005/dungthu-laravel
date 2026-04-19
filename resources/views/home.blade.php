@@ -649,85 +649,92 @@
         .combo-ai-wrapper {
             display: none; /* hidden by default, shown when tab-ai active */
         }
-
-        /* Header banner */
         .combo-ai-header {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
-            border-radius: 14px;
-            padding: 20px 22px;
-            margin-bottom: 16px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 24px;
+            padding: 24px 32px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 20px;
             flex-wrap: wrap;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .combo-ai-header .ai-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(99,102,241,.25);
-            border: 1px solid rgba(99,102,241,.5);
+            gap: 6px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
             color: #a5b4fc;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: .72rem;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: .5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
         }
 
         .combo-ai-header h3 {
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            margin: 0 0 4px;
-            line-height: 1.3;
+            margin: 0 0 6px;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
         }
 
         .combo-ai-header p {
-            color: rgba(255,255,255,.6);
-            font-size: .8rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
             margin: 0;
+            font-weight: 500;
         }
 
         .combo-ai-header .ai-stats {
             display: flex;
-            gap: 16px;
+            gap: 30px;
             flex-shrink: 0;
         }
 
         .combo-ai-header .stat-item {
             text-align: center;
             color: #fff;
+            min-width: 80px;
         }
 
         .combo-ai-header .stat-num {
-            font-size: 1.4rem;
-            font-weight: 800;
+            font-size: 2rem;
+            font-weight: 900;
             color: #818cf8;
             display: block;
+            line-height: 1;
+            margin-bottom: 4px;
         }
 
         .combo-ai-header .stat-label {
-            font-size: .68rem;
-            color: rgba(255,255,255,.5);
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
-            letter-spacing: .4px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
         /* Category filter pills */
         .combo-cat-filter {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 14px;
-            padding: 10px 14px;
+            margin-bottom: 20px;
+            padding: 12px 16px;
             background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 10px;
+            border: 1px solid #f0f0f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
         .combo-cat-pill {
@@ -1121,7 +1128,7 @@
                                 onclick="filterComboCat(this, '{{ Str::slug($catName) }}')"
                                 style="--cat-color: {{ $catColors[$ci % count($catColors)] }}">
                                 {{ $catName }}
-                                <span style="background:rgba(0,0,0,.08);border-radius:10px;padding:0 6px;font-size:.68rem;margin-left:4px;">{{ $catProducts->count() }}</span>
+                                <span style="background:rgba(0,0,0,.05); border-radius:8px; padding:1px 6px; font-size:.7rem; margin-left:6px; color:#6b7280;">{{ $catProducts->count() }}</span>
                             </button>
                             @php $ci++; @endphp
                         @endforeach

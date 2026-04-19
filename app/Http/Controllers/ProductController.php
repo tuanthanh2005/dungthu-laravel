@@ -37,7 +37,7 @@ class ProductController extends Controller
             });
         }
         
-        $items = $query->latest()->paginate(12)->withQueryString();
+        $items = $query->latest()->paginate(24)->withQueryString();
         
         return view('products.index', compact('items', 'categories', 'currentCategoryId', 'searchTerm'));
     }

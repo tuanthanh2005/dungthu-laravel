@@ -24,7 +24,7 @@ class HomeController extends Controller
             ->get();
         
         // Lấy 4 sản phẩm featured cho trang home - Hàng 1
-        $featuredProducts = Product::featured(8)->get();
+        $featuredProducts = Product::featured(24)->get();
         
         // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
         $highlightProducts = Product::where('is_exclusive', true)->latest()->take(8)->get();

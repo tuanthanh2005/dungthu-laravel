@@ -1044,8 +1044,8 @@
 
                 {{-- Sort bar --}}
                 <div class="tf-sort-bar">
-                    <button class="tf-sort-btn active" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Mới nhất</button>
-                    <button class="tf-sort-btn" id="tab-ai"><i class="fa-solid fa-robot"></i> Combo AI</button>
+                    <button class="tf-sort-btn" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Bài Viết</button>
+                    <button class="tf-sort-btn active" id="tab-ai"><i class="fa-solid fa-box-open"></i> Sản Phẩm</button>
                     @if($sb_cardexchange)
                     <a href="{{ route('card-exchange.index') }}" class="tf-sort-btn text-decoration-none">
                         <i class="fa-solid fa-credit-card"></i> Đổi Thẻ
@@ -1573,6 +1573,12 @@
                     }
                 });
             });
+
+            // Set default active tab
+            // Trigger tabAi click on load to show products by default
+            if(tabAi) {
+                tabAi.click();
+            }
 
             // Copy share link
             window.copyLink = function (btn) {

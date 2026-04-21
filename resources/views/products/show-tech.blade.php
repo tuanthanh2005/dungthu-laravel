@@ -12,11 +12,7 @@
         }        .description-content {
             font-size: 1rem;
         }
-        @media (max-width: 768px) {
-            .description-content {
-                font-size: calc(1rem - 5px);
-            }
-        }        .tech-card {
+        .tech-card {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
             padding: 30px;
@@ -151,6 +147,100 @@
         .rating-input label:hover ~ label,
         .rating-input input:checked ~ label {
             color: #ffc107;
+        }
+
+        /* --- MOBILE RESPONSIVE TWEAKS --- */
+        @media (max-width: 768px) {
+            .tech-wrapper {
+                padding: 15px 0;
+            }
+            .tech-card {
+                padding: 15px;
+                border-radius: 16px;
+            }
+            .product-detail-image {
+                border-radius: 12px;
+                border-width: 2px;
+            }
+            h1.fw-bold {
+                font-size: 1.4rem;
+                line-height: 1.4;
+            }
+            .lead.text-muted {
+                font-size: 0.95rem;
+                margin-bottom: 1rem !important;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            h2.text-info {
+                font-size: 1.6rem;
+            }
+            
+            /* Buttons layout */
+            .d-flex.gap-3.mb-3 {
+                gap: 10px !important;
+                flex-direction: column;
+            }
+            .btn-lg {
+                padding: 12px 15px !important;
+                font-size: 1rem;
+                width: 100%;
+                border-radius: 12px !important;
+            }
+            
+            /* Tabs responsive */
+            .nav-tabs.nav-fill {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 5px;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 12px;
+            }
+            .nav-tabs.nav-fill::-webkit-scrollbar {
+                display: none;
+            }
+            .tech-tab.nav-link {
+                padding: 10px 5px;
+                margin: 0 4px;
+                border-radius: 12px;
+                min-width: 90px;
+                gap: 4px;
+            }
+            .tech-tab.nav-link i {
+                font-size: 20px;
+            }
+            .tech-tab.nav-link span {
+                font-size: 11px;
+                white-space: nowrap;
+            }
+            
+            /* Features Badges */
+            .tech-badge {
+                padding: 15px;
+                border-radius: 12px;
+                flex-direction: row;
+                text-align: left;
+                gap: 15px;
+            }
+            .tech-badge i {
+                margin-right: 0;
+                font-size: 1.8rem;
+            }
+            
+            /* Typography & Spacing inside cards */
+            .description-content {
+                font-size: 0.95rem;
+            }
+            .alert {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .bg-light.p-4 {
+                padding: 15px !important;
+                border-radius: 12px !important;
+            }
         }
     </style>
 @endpush

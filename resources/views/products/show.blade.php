@@ -15,11 +15,6 @@
         .description-content {
             font-size: 1rem;
         }
-        @media (max-width: 768px) {
-            .description-content {
-                font-size: calc(1rem - 5px);
-            }
-        }
         .product-detail-image:hover {
             transform: scale(1.02);
         }
@@ -76,6 +71,86 @@
         .rating-input label:hover ~ label,
         .rating-input input:checked ~ label {
             color: #ffc107;
+        }
+
+        /* --- MOBILE RESPONSIVE TWEAKS --- */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+                margin-top: 60px !important;
+            }
+            .product-detail-image {
+                border-radius: 12px;
+            }
+            h1.fw-bold {
+                font-size: 1.4rem;
+                line-height: 1.4;
+            }
+            .lead.text-muted {
+                font-size: 0.95rem;
+                margin-bottom: 1.2rem !important;
+            }
+            h2.text-primary {
+                font-size: 1.6rem;
+            }
+            
+            /* Buttons layout */
+            .d-flex.gap-3.mb-3 {
+                gap: 10px !important;
+                flex-direction: column;
+            }
+            .btn-lg {
+                padding: 12px 15px !important;
+                font-size: 1rem;
+                width: 100%;
+                border-radius: 12px !important;
+            }
+            
+            /* Badges */
+            .info-badge {
+                padding: 12px 15px;
+                border-radius: 10px;
+                flex-direction: row;
+                text-align: left;
+                gap: 10px;
+            }
+            .info-badge i {
+                margin-right: 0;
+                font-size: 1.4rem;
+            }
+            
+            /* Tabs responsive */
+            .nav-tabs.nav-fill {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 5px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-tabs.nav-fill::-webkit-scrollbar {
+                display: none;
+            }
+            .nav-tabs .nav-link {
+                padding: 10px 15px;
+                margin: 0 4px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+                min-width: 120px;
+            }
+            
+            /* Typography & Spacing inside cards */
+            .card-body {
+                padding: 1.2rem !important;
+            }
+            .description-content {
+                font-size: 0.95rem;
+            }
+            .display-4 {
+                font-size: 2.2rem;
+            }
+            .rating-input label {
+                font-size: 24px;
+            }
         }
     </style>
 @endpush

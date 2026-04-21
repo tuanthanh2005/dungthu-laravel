@@ -15,81 +15,52 @@
         background: white;
         border-radius: 20px;
         padding: 40px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        border: 1px solid #e9ecef;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+        border: 1px solid rgba(0,0,0,0.05);
     }
 
     .order-item {
-        background: #f7fafc;
-        border-radius: 15px;
+        background: #fff;
+        border-radius: 16px;
         padding: 25px;
         margin-bottom: 20px;
         transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     }
 
     .order-item:hover {
         transform: translateY(-3px);
-        box-shadow: 0 5px 20px rgba(102,126,234,0.2);
+        box-shadow: 0 8px 25px rgba(102,126,234,0.1);
+        border-color: rgba(102,126,234,0.3);
     }
 
     .order-header {
-        border-bottom: 2px solid #e2e8f0;
+        border-bottom: 1px dashed #e2e8f0;
         padding-bottom: 15px;
         margin-bottom: 15px;
     }
 
-    @media (max-width: 991.98px) {
-        .orders-wrapper {
-            padding: 80px 0 40px;
-        }
-        .orders-card {
-            padding: 20px 15px;
-            border-radius: 15px;
-        }
-        .order-item {
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
-        .order-header {
-            padding-bottom: 12px;
-            margin-bottom: 12px;
-        }
-    }
-
     .order-type-badge {
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
         font-weight: 600;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
     }
 
-    .type-qr {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-    }
-
-    .type-document {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: white;
-    }
-
-    .type-shipping {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        color: white;
-    }
-
-    .type-digital {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        color: white;
-    }
+    .type-qr { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+    .type-document { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+    .type-shipping { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; }
+    .type-digital { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
 
     .product-mini {
         display: flex;
         align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #e2e8f0;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
     }
 
     .product-mini:last-child {
@@ -97,20 +68,20 @@
     }
 
     .product-mini img {
-        width: 60px;
-        height: 60px;
+        width: 65px;
+        height: 65px;
         object-fit: cover;
-        border-radius: 10px;
+        border-radius: 12px;
         margin-right: 15px;
+        border: 1px solid #e2e8f0;
     }
 
     .empty-state {
         text-align: center;
         padding: 60px 20px;
     }
-
     .empty-state i {
-        font-size: 5rem;
+        font-size: 4rem;
         color: #cbd5e0;
         margin-bottom: 20px;
     }
@@ -119,21 +90,18 @@
         border-radius: 20px;
         border: none;
     }
-
     .contact-modal .modal-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border-radius: 20px 20px 0 0;
         border: none;
-        padding: 25px 30px;
+        padding: 20px 25px;
     }
-
     .contact-modal .modal-header .btn-close {
         filter: brightness(0) invert(1);
     }
-
     .contact-option {
-        padding: 20px;
+        padding: 15px;
         border-radius: 15px;
         margin-bottom: 15px;
         transition: all 0.3s ease;
@@ -143,43 +111,101 @@
         display: block;
         color: inherit;
     }
-
     .contact-option:hover {
         transform: translateY(-3px);
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         text-decoration: none;
     }
 
-    .contact-option.email {
-        background: linear-gradient(135deg, #f093fb15 0%, #f5576c15 100%);
-        border-color: #f5576c;
-    }
-
-    .contact-option.telegram {
-        background: linear-gradient(135deg, #4facfe15 0%, #00f2fe15 100%);
-        border-color: #0088cc;
-    }
-
-    .contact-option.zalo {
-        background: linear-gradient(135deg, #43e97b15 0%, #38f9d715 100%);
-        border-color: #0068ff;
-    }
-
-    .contact-option i {
-        font-size: 2rem;
-        margin-bottom: 10px;
-    }
-
-    .contact-option .icon-email {
-        color: #f5576c;
-    }
-
-    .contact-option .icon-telegram {
-        color: #0088cc;
-    }
-
-    .contact-option .icon-zalo {
-        color: #0068ff;
+    /* --- MOBILE RESPONSIVE TWEAKS --- */
+    @media (max-width: 768px) {
+        .orders-wrapper {
+            padding: 80px 0 30px;
+        }
+        .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .orders-card {
+            padding: 20px 15px;
+            border-radius: 16px;
+        }
+        .order-item {
+            padding: 15px;
+            border-radius: 14px;
+            margin-bottom: 15px;
+        }
+        
+        /* Arrange the header cleanly in a 2x2 grid */
+        .order-header .row {
+            gap: 10px 0;
+        }
+        .mobile-align-right {
+            text-align: right !important;
+        }
+        
+        .fw-bold.mb-2 {
+            font-size: 0.95rem;
+            margin-bottom: 4px !important;
+        }
+        .text-muted i {
+            font-size: 0.8rem;
+        }
+        
+        .product-mini img {
+            width: 55px;
+            height: 55px;
+            margin-right: 12px;
+            border-radius: 10px;
+        }
+        .product-mini .fw-bold {
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+        }
+        .product-mini .text-end {
+            min-width: 75px;
+        }
+        .product-mini .text-end .fw-bold {
+            font-size: 0.95rem;
+        }
+        
+        /* Action buttons stacked on mobile */
+        .order-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .order-actions .btn {
+            width: 100%;
+            margin-left: 0 !important;
+        }
+        
+        /* Card Exchange details */
+        .card-exchange-details {
+            font-size: 0.9rem;
+        }
+        .card-exchange-details p {
+            margin-bottom: 6px !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-exchange-details p strong {
+            font-weight: 500;
+            color: #64748b;
+        }
+        .card-exchange-details p span {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .card-exchange-details i {
+            display: none; /* Hide icons to save horizontal space on mobile */
+        }
     }
 </style>
 @endpush
@@ -195,32 +221,32 @@
             @forelse($orders as $order)
                 <div class="order-item">
                     <div class="order-header">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
+                        <div class="row align-items-center g-0">
+                            <div class="col-6 col-md-3">
                                 <div class="fw-bold mb-2">Đơn hàng #{{ $order->id }}</div>
                                 <small class="text-muted">
                                     <i class="fas fa-calendar me-1"></i>{{ $order->created_at->format('d/m/Y H:i') }}
                                 </small>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-6 col-md-3 mobile-align-right">
                                 <span class="order-type-badge type-{{ $order->order_type }}">
                                     @if($order->order_type == 'qr')
-                                        <i class="fas fa-qrcode me-1"></i>QR Deal
+                                        <i class="fas fa-qrcode"></i> QR Deal
                                     @elseif($order->order_type == 'document')
-                                        <i class="fas fa-file-pdf me-1"></i>Tài liệu
+                                        <i class="fas fa-file-pdf"></i> Tài liệu
                                     @elseif($order->order_type == 'shipping')
-                                        <i class="fas fa-shipping-fast me-1"></i>Giao hàng
+                                        <i class="fas fa-shipping-fast"></i> Giao hàng
                                     @else
-                                        <i class="fas fa-download me-1"></i>Digital
+                                        <i class="fas fa-download"></i> Digital
                                     @endif
                                 </span>
                             </div>
-                            <div class="col-md-3">
-                                <span class="badge bg-{{ $order->status_color }} px-3 py-2">
+                            <div class="col-6 col-md-3 mt-md-0 mt-2">
+                                <span class="badge bg-{{ $order->status_color }} px-2 py-1 rounded-pill">
                                     {{ $order->status_label }}
                                 </span>
                             </div>
-                            <div class="col-md-3 text-end">
+                            <div class="col-6 col-md-3 mt-md-0 mt-2 mobile-align-right">
                                 <div class="fw-bold text-primary fs-5">{{ $order->formatted_total }}</div>
                             </div>
                         </div>
@@ -235,31 +261,31 @@
                                 @else
                                     <div style="width: 60px; height: 60px; background: #e2e8f0; border-radius: 10px; margin-right: 15px;"></div>
                                 @endif
-                                <div class="flex-grow-1">
+                                <div class="flex-grow-1 pe-2">
                                     <div class="fw-bold">{{ $item->product->name ?? 'Sản phẩm không tồn tại' }}</div>
-                                    <small class="text-muted">Số lượng: {{ $item->quantity }}</small>
+                                    <small class="text-muted">Số lượng: x{{ $item->quantity }}</small>
                                 </div>
                                 <div class="text-end">
-                                    <div class="fw-bold">{{ number_format($item->price, 0, ',', '.') }}đ</div>
+                                    <div class="fw-bold text-dark">{{ number_format($item->price, 0, ',', '.') }}đ</div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
 
                     <!-- Actions -->
-                    <div class="text-end">
-                        <a href="{{ route('user.orders.detail', $order) }}" class="btn btn-outline-primary rounded-pill px-4">
+                    <div class="text-end order-actions">
+                        <a href="{{ route('user.orders.detail', $order) }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
                             <i class="fas fa-eye me-2"></i>Xem chi tiết
                         </a>
 
                         @if($order->status == 'completed')
-                            <button type="button" class="btn btn-info rounded-pill px-4 ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">
-                                <i class="fas fa-headset me-2"></i>Liên hệ Admin
+                            <button type="button" class="btn btn-info text-white rounded-pill px-4 ms-2 fw-bold" data-bs-toggle="modal" data-bs-target="#contactModal">
+                                <i class="fas fa-headset me-2"></i>Hỗ trợ
                             </button>
 
                             @foreach($order->orderItems as $item)
                                 @if($item->product && $item->product->category == 'ebooks' && $item->product->file_path)
-                                    <a href="{{ route('product.download', $item->product) }}" class="btn btn-success rounded-pill px-4 ms-2">
+                                    <a href="{{ route('product.download', $item->product) }}" class="btn btn-success rounded-pill px-4 ms-2 fw-bold">
                                         <i class="fas fa-download me-2"></i>Tải file
                                     </a>
                                 @endif
@@ -269,86 +295,90 @@
                 </div>
             @empty
                 <div class="empty-state">
-                    <h5 class="text-muted">Chưa có đơn hàng nào</h5>
-                    <a href="{{ route('shop') }}">Mua sắm ngay
+                    <i class="fas fa-box-open text-muted opacity-50"></i>
+                    <h5 class="fw-bold text-secondary">Chưa có đơn hàng nào</h5>
+                    <p class="text-muted mb-4">Bạn chưa thực hiện giao dịch nào trên hệ thống.</p>
+                    <a href="{{ route('shop') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                        <i class="fas fa-shopping-cart me-2"></i> Mua sắm ngay
                     </a>
                 </div>
             @endforelse
 
             <!-- Pagination -->
             @if($orders->hasPages())
-                <div class="mt-4">
+                <div class="mt-4 d-flex justify-content-center">
                     {{ $orders->links() }}
                 </div>
             @endif
 
             <!-- Card Exchange History -->
-            <h3 class="fw-bold mb-4 mt-5">
-                <i class="fas fa-credit-card text-success me-3"></i>Lịch sử đổi thẻ cào
+            <h3 class="fw-bold mb-4 mt-5 pt-3 border-top">
+                <i class="fas fa-exchange-alt text-success me-3"></i>Lịch sử đổi thẻ cào
             </h3>
 
             @forelse($cardExchanges as $exchange)
                     <div class="order-item">
                         <div class="order-header">
-                            <div class="row align-items-center">
-                                <div class="col-md-3">
-                                    <div class="fw-bold mb-2">Giao dịch #{{ $exchange->id }}</div>
+                            <div class="row align-items-center g-0">
+                                <div class="col-6 col-md-3">
+                                    <div class="fw-bold mb-1">Giao dịch #{{ $exchange->id }}</div>
                                     <small class="text-muted">
                                         <i class="fas fa-calendar me-1"></i>{{ $exchange->created_at->format('d/m/Y H:i') }}
                                     </small>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-6 col-md-3 mobile-align-right">
                                     <span class="order-type-badge" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
-                                        <i class="fas fa-credit-card me-1"></i>Đổi thẻ cào
+                                        <i class="fas fa-credit-card"></i> Đổi thẻ
                                     </span>
                                 </div>
-                                <div class="col-md-3">
-                                    <span class="badge 
+                                <div class="col-6 col-md-3 mt-md-0 mt-2">
+                                    <span class="badge rounded-pill
                                         @if($exchange->status == 'pending') bg-warning
                                         @elseif($exchange->status == 'approved') bg-success
                                         @elseif($exchange->status == 'rejected') bg-danger
-                                        @endif px-3 py-2">
+                                        @endif px-3 py-1">
                                         @if($exchange->status == 'pending') Đang xử lý
-                                        @elseif($exchange->status == 'approved') Đã chuyển tiền
+                                        @elseif($exchange->status == 'approved') Hoàn tất
                                         @elseif($exchange->status == 'rejected') Từ chối
                                         @endif
                                     </span>
                                 </div>
-                                <div class="col-md-3 text-end">
-                                    <div class="fw-bold text-success fs-5">{{ number_format($exchange->card_value, 0, ',', '.') }}đ</div>
+                                <div class="col-6 col-md-3 mt-md-0 mt-2 mobile-align-right">
+                                    <div class="fw-bold text-success fs-5">+{{ number_format($exchange->card_value, 0, ',', '.') }}đ</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p class="mb-1"><i class="fas fa-sim-card me-2 text-muted"></i><strong>Loại thẻ:</strong> {{ $exchange->card_type }}</p>
-                                    <p class="mb-1"><i class="fas fa-hashtag me-2 text-muted"></i><strong>Seri:</strong> {{ $exchange->card_serial }}</p>
-                                    <p class="mb-1"><i class="fas fa-key me-2 text-muted"></i><strong>Mã thẻ:</strong> {{ substr($exchange->card_code, 0, 4) }}****</p>
+                        <div class="mt-3 card-exchange-details">
+                            <div class="row g-3">
+                                <div class="col-md-6 border-end-md">
+                                    <p class="mb-1"><i class="fas fa-sim-card me-2 text-muted"></i><strong>Loại thẻ:</strong> <span>{{ $exchange->card_type }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-hashtag me-2 text-muted"></i><strong>Seri:</strong> <span>{{ $exchange->card_serial }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-key me-2 text-muted"></i><strong>Mã thẻ:</strong> <span>{{ substr($exchange->card_code, 0, 4) }}****</span></p>
                                 </div>
-                                <div class="col-md-6">
-                                    <p class="mb-1"><i class="fas fa-university me-2 text-muted"></i><strong>Ngân hàng:</strong> {{ $exchange->bank_name }}</p>
-                                    <p class="mb-1"><i class="fas fa-credit-card me-2 text-muted"></i><strong>STK:</strong> {{ $exchange->bank_account_number }}</p>
-                                    <p class="mb-1"><i class="fas fa-user me-2 text-muted"></i><strong>Chủ TK:</strong> {{ $exchange->bank_account_name }}</p>
+                                <div class="col-md-6 ps-md-4">
+                                    <p class="mb-1"><i class="fas fa-university me-2 text-muted"></i><strong>Ngân hàng:</strong> <span>{{ $exchange->bank_name }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-credit-card me-2 text-muted"></i><strong>STK:</strong> <span>{{ $exchange->bank_account_number }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-user me-2 text-muted"></i><strong>Chủ TK:</strong> <span>{{ $exchange->bank_account_name }}</span></p>
                                 </div>
                             </div>
                             @if($exchange->admin_note)
-                                <div class="alert alert-info mt-3 mb-0">
-                                    <i class="fas fa-info-circle me-2"></i><strong>Ghi chú:</strong> {{ $exchange->admin_note }}
+                                <div class="alert alert-info mt-3 mb-0 py-2 px-3" style="font-size: 0.9rem;">
+                                    <i class="fas fa-info-circle me-1"></i><strong>Ghi chú từ Admin:</strong> {{ $exchange->admin_note }}
                                 </div>
                             @endif
                         </div>
                     </div>
                 @empty
                     <div class="empty-state">
-                        <h5 class="text-muted">Chưa có lịch sử đổi thẻ</h5>
-                        <p class="text-muted mb-0">Bạn chưa thực hiện giao dịch đổi thẻ cào nào</p>
+                        <i class="fas fa-money-check text-muted opacity-50"></i>
+                        <h6 class="fw-bold text-secondary mt-3">Chưa có lịch sử đổi thẻ</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">Bạn chưa thực hiện giao dịch đổi thẻ cào nào trên hệ thống.</p>
                     </div>
                 @endforelse
 
                 @if($cardExchanges->hasPages())
-                    <div class="mt-4">
+                    <div class="mt-4 d-flex justify-content-center">
                         {{ $cardExchanges->links() }}
                     </div>
                 @endif
@@ -357,52 +387,58 @@
 </div>
 
 <!-- Contact Admin Modal -->
-<div class="modal fade contact-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+<div class="modal fade contact-modal" id="contactModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="contactModalLabel">
-                    <i class="fas fa-headset me-2"></i>Liên hệ Admin để cấp tài khoản
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-headset me-2"></i>Hỗ trợ đơn hàng
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <div class="alert alert-warning mb-4">
-                    <i class="fas fa-camera me-2"></i>
-                    <strong>Lưu ý:</strong> Hãy chụp màn hình đơn hàng và gửi cho admin để được hỗ trợ nhanh hơn!
+                <div class="alert alert-warning mb-4 py-2 px-3" style="font-size: 0.9rem;">
+                    <i class="fas fa-camera me-1"></i>
+                    Mẹo: Chụp màn hình đơn hàng và gửi cho admin để được hỗ trợ cấp tốc!
                 </div>
-                <p class="text-center mb-4">Vui lòng chọn phương thức liên hệ bên dưới để được hỗ trợ:</p>
+                <p class="text-center mb-3 fw-medium">Chọn phương thức liên hệ:</p>
                 
-                <!-- Email Contact -->
-                <a href="mailto:tranthanhtuanfix@gmail.com?subject=Yêu cầu cấp tài khoản&body=Xin chào Admin,%0A%0ATôi đã thanh toán đơn hàng QR thành công và muốn được cấp tài khoản.%0A%0AThông tin đơn hàng:%0A- Mã đơn hàng: [Mã đơn hàng]%0A- Email: [Email của bạn]%0A%0AXin cảm ơn!" class="contact-option email">
-                    <div class="text-center">
-                        <i class="fas fa-envelope icon-email"></i>
-                        <h6 class="fw-bold mt-2 mb-1">Liên hệ qua Email</h6>
-                        <small class="text-muted">tranthanhtuanfix@gmail.com</small>
-                    </div>
-                </a>
+                <div class="d-flex flex-column gap-2">
+                    <a href="mailto:tranthanhtuanfix@gmail.com" class="contact-option email m-0">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white rounded-circle p-2 me-3 shadow-sm" style="color: #f5576c;">
+                                <i class="fas fa-envelope fa-fw fs-5 m-0"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Email hỗ trợ</h6>
+                                <small class="text-muted">tranthanhtuanfix@gmail.com</small>
+                            </div>
+                        </div>
+                    </a>
 
-                <!-- Telegram Contact -->
-                <a href="https://t.me/dungthucom" target="_blank" class="contact-option telegram">
-                    <div class="text-center">
-                        <i class="fab fa-telegram icon-telegram"></i>
-                        <h6 class="fw-bold mt-2 mb-1">Liên hệ qua Telegram</h6>
-                        <small class="text-muted"><i class="fab fa-telegram me-1"></i>Chat ngay</small>
-                    </div>
-                </a>
+                    <a href="https://t.me/dungthucom" target="_blank" class="contact-option telegram m-0">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white rounded-circle p-2 me-3 shadow-sm" style="color: #0088cc;">
+                                <i class="fab fa-telegram fa-fw fs-5 m-0"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Telegram Admin</h6>
+                                <small class="text-muted">Phản hồi 24/7</small>
+                            </div>
+                        </div>
+                    </a>
 
-                <!-- Zalo Contact -->
-                <a href="https://zalo.me/0708910952" target="_blank" class="contact-option zalo">
-                    <div class="text-center">
-                        <i class="fas fa-comments icon-zalo"></i>
-                        <h6 class="fw-bold mt-2 mb-1">Liên hệ qua Zalo</h6>
-                        <small class="text-muted"><i class="fas fa-comments me-1"></i>Chat ngay</small>
-                    </div>
-                </a>
-
-                <div class="alert alert-info mt-4 mb-0">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <small>Admin sẽ phản hồi trong thời gian sớm nhất. Vui lòng cung cấp đầy đủ thông tin đơn hàng khi liên hệ.</small>
+                    <a href="https://zalo.me/0708910952" target="_blank" class="contact-option zalo m-0">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white rounded-circle p-2 me-3 shadow-sm" style="color: #0068ff;">
+                                <i class="fas fa-comments fa-fw fs-5 m-0"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Zalo Hỗ trợ</h6>
+                                <small class="text-muted">Phản hồi giờ hành chính</small>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -413,6 +449,10 @@
 
 @push('scripts')
 <script>
-    AOS.init({ duration: 800, once: true });
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+            AOS.init({ duration: 800, once: true });
+        }
+    });
 </script>
 @endpush

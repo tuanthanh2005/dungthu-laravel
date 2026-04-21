@@ -180,8 +180,10 @@
         <span>Thiết kế</span>
     </a>
     @endif
+    {{--
     <a href="{{ route('affiliate.login') }}" class="mobile-nav-item {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
         <i class="fa-solid fa-handshake"></i>
         <span>CTV</span>
     </a>
+    --}}
 </nav>

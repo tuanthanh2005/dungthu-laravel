@@ -1091,71 +1091,19 @@
                     </div>
                 @endif
 
-                {{-- ====== COMBO AI SECTION ====== --}}
-                @if(isset($comboAiByCategory) && $comboAiByCategory->count() > 0)
-                <div class="combo-ai-wrapper item-shop" id="combo-ai-section">
-
-                    {{-- Header banner --}}
-                    <div class="combo-ai-header">
-                        <div>
-                            <div class="ai-badge">
-                                <i class="fa-solid fa-robot"></i> Combo AI Giá Rẻ
-                            </div>
-                            <h3>🤖 Tài khoản AI chính hãng</h3>
-                            <p>Tổng hợp <strong style="color:#a5b4fc;">{{ $comboAiProducts->count() }}</strong> sản phẩm AI giá tốt nhất theo từng danh mục</p>
-                        </div>
-                        <div class="ai-stats">
-                            <div class="stat-item">
-                                <span class="stat-num">{{ $comboAiProducts->count() }}</span>
-                                <span class="stat-label">Sản phẩm</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-num">{{ $comboAiByCategory->count() }}</span>
-                                <span class="stat-label">Danh mục</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Category filter pills --}}
-                    <div class="combo-cat-filter">
-                        <button class="combo-cat-pill active" data-cat="all" onclick="filterComboCat(this, 'all')">
-                            <i class="fa-solid fa-th-large me-1"></i> Tất cả
-                        </button>
-                        @php $catColors = ['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6','#ef4444','#8b5cf6','#06b6d4']; $ci = 0; @endphp
-                        @foreach($comboAiByCategory as $catName => $catProducts)
-                            <button class="combo-cat-pill"
-                                data-cat="{{ Str::slug($catName) }}"
-                                onclick="filterComboCat(this, '{{ Str::slug($catName) }}')"
-                                style="--cat-color: {{ $catColors[$ci % count($catColors)] }}">
-                                {{ $catName }}
-                                <span style="background:rgba(0,0,0,.05); border-radius:8px; padding:1px 6px; font-size:.7rem; margin-left:6px; color:#6b7280;">{{ $catProducts->count() }}</span>
-                            </button>
-                            @php $ci++; @endphp
-                        @endforeach
-                    </div>
-
-                    {{-- Products by category --}}
-                    @php $ci2 = 0; @endphp
-                    @foreach($comboAiByCategory as $catName => $catProducts)
-                    @php
-                        $catSlug = Str::slug($catName);
-                        $dotColor = $catColors[$ci2 % count($catColors)];
-                        $ci2++;
-                    @endphp
-                    <div class="combo-cat-section" data-cat-section="{{ $catSlug }}">
-                        <div class="combo-cat-title">
-                            <span class="cat-dot" style="background: {{ $dotColor }};"></span>
-                            <i class="fa-solid fa-robot" style="color:{{ $dotColor }};font-size:.7rem;"></i>
-                            {{ $catName }}
-                            <span class="cat-count">{{ $catProducts->count() }} sản phẩm</span>
+                {{-- ====== LATEST PRODUCTS SECTION ====== --}}
+                @if(isset($latestProducts) && $latestProducts->count() > 0)
+                <div class="combo-ai-wrapper item-shop" style="display:none;">
+                    <div class="combo-cat-section">
+                        <div class="combo-cat-title" style="border-bottom:none; margin-bottom: 15px; font-size: 1.1rem; padding-bottom: 0;">
+                            <i class="fa-solid fa-box-open" style="color:#6366f1;"></i> Sản Phẩm Mới Nhất
                         </div>
                         <div class="combo-product-grid">
-                            @foreach($catProducts as $cp)
+                            @foreach($latestProducts as $cp)
                             <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card">
                                 <div class="img-wrap">
-                                    <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=AI' }}"
+                                    <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
                                          alt="{{ $cp->name }}" loading="lazy">
-                                    <span class="ai-label"><i class="fa-solid fa-robot"></i> AI</span>
                                     @if($cp->is_on_sale)
                                         <span class="discount-badge">-{{ $cp->discount_percent }}%</span>
                                     @endif
@@ -1180,24 +1128,22 @@
                             @endforeach
                         </div>
                     </div>
-                    @endforeach
-
+                    
                     {{-- View all --}}
                     <div class="combo-view-all">
-                        <a href="{{ route('shop') }}?combo_ai=1">
-                            <i class="fa-solid fa-robot"></i> Xem tất cả sản phẩm AI
+                        <a href="{{ route('shop') }}">
+                            <i class="fa-solid fa-store"></i> Xem tất cả sản phẩm
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
-
                 </div>
                 @else
-                <div class="combo-ai-wrapper item-shop" id="combo-ai-section">
+                <div class="combo-ai-wrapper item-shop" style="display:none;">
                     <div class="combo-ai-header" style="justify-content:center;text-align:center;">
                         <div>
-                            <div class="ai-badge"><i class="fa-solid fa-robot"></i> Combo AI</div>
-                            <h3>🤖 Chưa có sản phẩm AI</h3>
-                            <p>Các sản phẩm AI sẽ xuất hiện ở đây khi được thêm vào cửa hàng</p>
+                            <div class="ai-badge"><i class="fa-solid fa-box-open"></i> Cửa Hàng</div>
+                            <h3>🤖 Chưa có sản phẩm nào</h3>
+                            <p>Các sản phẩm sẽ xuất hiện ở đây khi được thêm vào hệ thống</p>
                         </div>
                     </div>
                 </div>

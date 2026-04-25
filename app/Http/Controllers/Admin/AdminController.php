@@ -18,7 +18,6 @@ use App\Models\AffiliateInvoice;
 use App\Models\AffiliateWithdrawal;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SystemNotificationMail;
-use App\Mail\OrderCompletedMail;
 use App\Mail\OrderApprovedMail;
 use App\Mail\AbandonedCartReminder;
 use App\Helpers\TelegramHelper;
@@ -306,8 +305,8 @@ class AdminController extends Controller
             // Gửi email cảm ơn / xác nhận duyệt đơn tới khách hàng
             $this->sendOrderApprovedEmail($order);
 
-            // Gửi thông báo nội bộ (email chi tiết demo + Telegram)
-            $this->sendOrderCompletedNotifications($order);
+            // Gửi thông báo Telegram nội bộ
+            $this->sendOrderCompletedTelegram($order);
         }
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
@@ -336,57 +335,26 @@ class AdminController extends Controller
     }
 
     /**
-     * Gửi thông báo khi đơn hàng hoàn thành
+     * Gửi thông báo Telegram khi đơn hàng hoàn thành
      */
-    private function sendOrderCompletedNotifications(Order $order)
+    private function sendOrderCompletedTelegram(Order $order)
     {
         try {
-            // Tạo username demo từ email hoặc tên khách hàng
-            $demoUsername = $this->generateDemoUsername($order);
-            $demoPassword = $this->generateRandomPassword();
-
-            // Gửi email
-            if ($order->customer_email) {
-                Mail::to($order->customer_email)->send(
-                    new OrderCompletedMail($order, $demoUsername, $demoPassword)
-                );
-            }
-
-            // Gửi thông báo Telegram
-            $telegramMessage = $this->formatCompletedOrderTelegramMessage($order, $demoUsername, $demoPassword);
+            $telegramMessage = $this->formatCompletedOrderTelegramMessage($order);
             TelegramHelper::sendMessage($telegramMessage);
-
         } catch (\Exception $e) {
-            \Log::error('Error sending order completed notifications: ' . $e->getMessage());
+            \Log::error('Error sending order completed Telegram: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Tạo username demo từ thông tin khách hàng
-     */
-    private function generateDemoUsername(Order $order)
-    {
-        // Lấy phần trước @ từ email
-        if ($order->customer_email) {
-            $emailParts = explode('@', $order->customer_email);
-            $username = strtolower($emailParts[0]);
-            // Thêm số đơn hàng để unique
-            return $username . '_demo_' . $order->id;
-        }
-        
-        // Fallback: dùng tên khách hàng
-        $name = strtolower(str_replace(' ', '', $order->customer_name));
-        return $name . '_demo_' . $order->id;
     }
 
     /**
      * Format thông báo Telegram cho đơn hàng completed
      */
-    private function formatCompletedOrderTelegramMessage(Order $order, $demoUsername, $demoPassword)
+    private function formatCompletedOrderTelegramMessage(Order $order)
     {
         $order->load('orderItems.product');
 
-        $message = "✅ <b>ĐƠN HÀNG ĐÃ HOÀN THÀNH - ĐÃ CÁP TÀI KHOẢN</b>\n";
+        $message = "✅ <b>ĐƠN HÀNG ĐÃ ĐƯỢC DUYỆT</b>\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
         // Thông tin đơn hàng
@@ -401,11 +369,6 @@ class AdminController extends Controller
         $message .= "• Email: <b>" . $order->customer_email . "</b>\n";
         $message .= "• SĐT: <b>" . $order->customer_phone . "</b>\n\n";
 
-        // Thông tin tài khoản demo
-        $message .= "🔐 <b>TÀI KHOẢN DEMO ĐÃ CÁP</b>\n";
-        $message .= "• Username: <code>" . $demoUsername . "</code>\n";
-        $message .= "• Password: <code>" . $demoPassword . "</code>\n\n";
-
         // Sản phẩm
         $message .= "🛒 <b>SẢN PHẨM</b>\n";
         foreach ($order->orderItems as $index => $item) {
@@ -413,40 +376,9 @@ class AdminController extends Controller
             $message .= "   • SL: " . $item->quantity . " | Giá: " . number_format($item->price, 0, ',', '.') . "đ\n";
         }
 
-        $message .= "\n📧 Email thông báo đã được gửi tự động!";
+        $message .= "\n📧 Email xác nhận đã được gửi tới khách hàng!";
 
         return $message;
-    }
-
-    /**
-     * Generate mật khẩu random mạnh
-     */
-    private function generateRandomPassword($length = 12)
-    {
-        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
-        $numbers = '0772698113';
-        $special = '!@#$%^&*';
-        
-        $allChars = $uppercase . $lowercase . $numbers . $special;
-        $password = '';
-        
-        // Đảm bảo có ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt
-        $password .= $uppercase[rand(0, strlen($uppercase) - 1)];
-        $password .= $lowercase[rand(0, strlen($lowercase) - 1)];
-        $password .= $numbers[rand(0, strlen($numbers) - 1)];
-        $password .= $special[rand(0, strlen($special) - 1)];
-        
-        // Tạo phần còn lại
-        for ($i = 4; $i < $length; $i++) {
-            $password .= $allChars[rand(0, strlen($allChars) - 1)];
-        }
-        
-        // Shuffle password để ngẫu nhiên hơn
-        $passwordArray = str_split($password);
-        shuffle($passwordArray);
-        
-        return implode('', $passwordArray);
     }
 
     public function deleteOrder(Order $order)

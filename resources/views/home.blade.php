@@ -645,6 +645,70 @@
             }
         }
 
+        /* Top Buyers Podium */
+        .podium-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        
+        .avatar-wrap {
+            position: relative;
+            margin-bottom: 5px;
+        }
+        
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 2px solid white;
+        }
+        
+        .rank-badge {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 900;
+            color: white;
+            border: 1.5px solid white;
+            z-index: 2;
+        }
+        
+        .badge-gold { background: #ffca28; color: #fff; }
+        .badge-silver { background: #bdbdbd; color: #fff; }
+        .badge-bronze { background: #ff8a65; color: #fff; }
+        
+        .podium-bar {
+            width: 100%;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.05);
+        }
+        
+        .rank-1 .podium-bar { height: 75px; background: #ffca28; border-radius: 8px 8px 0 0; z-index: 3; position: relative; }
+        .rank-2 .podium-bar { height: 55px; background: #e0e0e0; border-radius: 8px 0 0 0; }
+        .rank-3 .podium-bar { height: 40px; background: #ffab91; border-radius: 0 8px 0 0; }
+
         /* ====== COMBO AI TAB STYLES ====== */
         .combo-ai-wrapper {
             display: none; /* hidden by default, shown when tab-ai active */
@@ -1343,33 +1407,68 @@
             <aside class="tf-sidebar-right">
                 <div class="tf-sticky">
 
-                    {{-- About Widget --}}
-                    <div class="tf-widget">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <i class="fa-solid fa-circle-info text-primary fs-5"></i>
-                            <h2 class="h6 fw-bold mb-0">Về DungThu.com</h2>
+                    {{-- Top Buyers Widget --}}
+                    <div class="tf-widget top-buyers-widget text-center">
+                        <div class="d-flex align-items-center gap-2 mb-3 justify-content-center">
+                            <i class="fa-solid fa-crown text-warning fs-5"></i>
+                            <h2 class="h6 fw-bold mb-0 text-uppercase" style="letter-spacing: 0.5px;">Top Mua Hàng</h2>
                         </div>
-                        <p class="small text-muted mb-3" style="font-size:.83rem;line-height:1.55;">Nền tảng chia sẻ kiến
-                            thức công nghệ kết hợp mua sắm trực tuyến. Tìm thấy mọi thông tin hữu ích và sản phẩm chất
-                            lượng.</p>
-                        <hr class="my-2 opacity-25">
-                        <div class="d-flex justify-content-around mt-2">
-                            <div class="tf-stat">
-                                <div class="num">5k+</div>
-                                <div class="lbl">Thành viên</div>
-                            </div>
-                            <div class="tf-stat">
-                                <div class="num" style="color:#28a745;"><span
-                                        style="width:7px;height:7px;background:#28a745;border-radius:50%;display:inline-block;margin-right:4px;"></span>24/7
+                        
+                        @php
+                            $topBuyers = \App\Models\User::withCount('orders')
+                                ->orderByDesc('orders_count')
+                                ->take(3)
+                                ->get();
+                            
+                            $rank1 = $topBuyers->get(0);
+                            $rank2 = $topBuyers->get(1);
+                            $rank3 = $topBuyers->get(2);
+                        @endphp
+                        
+                        <div class="podium-container d-flex justify-content-center align-items-end mb-3 mt-2">
+                            <!-- Rank 2 -->
+                            @if($rank2)
+                            <div class="podium-item rank-2 text-center" style="flex: 1;">
+                                <div class="avatar-wrap mx-auto">
+                                    <div class="rank-badge badge-silver">2</div>
+                                    <div class="avatar bg-secondary text-white mx-auto">{{ strtoupper(substr($rank2->name, 0, 1)) }}</div>
                                 </div>
-                                <div class="lbl">Online</div>
+                                <div class="name mt-2 fw-bold text-truncate mx-auto" style="max-width: 60px; font-size: 0.75rem;">{{ explode(' ', trim($rank2->name))[count(explode(' ', trim($rank2->name)))-1] }}</div>
+                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank2->orders_count }} đơn</div>
+                                <div class="podium-bar bar-silver"></div>
                             </div>
+                            @endif
+                            
+                            <!-- Rank 1 -->
+                            @if($rank1)
+                            <div class="podium-item rank-1 text-center" style="flex: 1.2; z-index: 5;">
+                                <div class="avatar-wrap mx-auto">
+                                    <div class="rank-badge badge-gold"><i class="fa-solid fa-crown" style="font-size: 0.55rem; margin-top: -1px;"></i></div>
+                                    <div class="avatar bg-warning text-white mx-auto" style="width: 55px; height: 55px; font-size: 1.5rem;">{{ strtoupper(substr($rank1->name, 0, 1)) }}</div>
+                                </div>
+                                <div class="name mt-2 fw-bold text-truncate text-danger mx-auto" style="max-width: 70px; font-size: 0.85rem;">{{ explode(' ', trim($rank1->name))[count(explode(' ', trim($rank1->name)))-1] }}</div>
+                                <div class="orders text-muted" style="font-size: 0.7rem;">{{ $rank1->orders_count }} đơn</div>
+                                <div class="podium-bar bar-gold"></div>
+                            </div>
+                            @endif
+                            
+                            <!-- Rank 3 -->
+                            @if($rank3)
+                            <div class="podium-item rank-3 text-center" style="flex: 1;">
+                                <div class="avatar-wrap mx-auto">
+                                    <div class="rank-badge badge-bronze">3</div>
+                                    <div class="avatar bg-info text-white mx-auto">{{ strtoupper(substr($rank3->name, 0, 1)) }}</div>
+                                </div>
+                                <div class="name mt-2 fw-bold text-truncate mx-auto" style="max-width: 60px; font-size: 0.75rem;">{{ explode(' ', trim($rank3->name))[count(explode(' ', trim($rank3->name)))-1] }}</div>
+                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank3->orders_count }} đơn</div>
+                                <div class="podium-bar bar-bronze"></div>
+                            </div>
+                            @endif
                         </div>
-                        @auth
-                            <a href="{{ route('blog.index') }}" class="tf-join-btn">Đọc thêm bài viết</a>
-                        @else
-                            <a href="{{ route('login') }}" class="tf-join-btn">Đăng nhập để tham gia</a>
-                        @endauth
+                        
+                        <a href="{{ route('shop') }}" class="tf-join-btn text-white mt-2 w-100 fw-bold py-2" style="background: linear-gradient(45deg, #ff416c, #ff4b2b); border: none; box-shadow: 0 4px 10px rgba(255, 75, 43, 0.3); border-radius: 8px;">
+                            <i class="fa-solid fa-cart-shopping me-2"></i>Mua hàng ngay
+                        </a>
                     </div>
 
                     {{-- AdSense 300x250 --}}

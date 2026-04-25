@@ -624,8 +624,8 @@
                 <div class="modal-body p-4 bg-light">
                     <div class="d-flex flex-column gap-3">
                         <a href="https://t.me/specademy" target="_blank" class="text-decoration-none bg-white p-3 rounded-3 shadow-sm d-flex align-items-center">
-                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                <i class="fab fa-telegram fa-fw fs-4 text-primary"></i>
+                            <div class="rounded-circle p-2 me-3" style="background-color: rgba(0, 136, 204, 0.1);">
+                                <i class="fab fa-telegram fa-fw fs-4" style="color: #0088cc;"></i>
                             </div>
                             <div class="text-dark">
                                 <h6 class="fw-bold mb-0">Telegram</h6>
@@ -634,8 +634,8 @@
                         </a>
                         
                         <a href="https://zalo.me/0708910952" target="_blank" class="text-decoration-none bg-white p-3 rounded-3 shadow-sm d-flex align-items-center">
-                            <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
-                                <i class="fas fa-comments fa-fw fs-4 text-success"></i>
+                            <div class="rounded-circle p-2 me-3" style="background-color: rgba(0, 104, 255, 0.1);">
+                                <i class="fas fa-comments fa-fw fs-4" style="color: #0068ff;"></i>
                             </div>
                             <div class="text-dark">
                                 <h6 class="fw-bold mb-0">Zalo Hỗ Trợ</h6>

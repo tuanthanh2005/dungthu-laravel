@@ -313,8 +313,8 @@
 
         <!-- CTA -->
         <div class="cta-wrapper">
-            <a href="{{ config('app.url') }}/user/orders" class="cta-btn">
-                📋 Xem chi tiết đơn hàng
+            <a href="https://dungthu.com/user/orders" class="cta-btn">
+                Xem Chi Tiết
             </a>
         </div>
 

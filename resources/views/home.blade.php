@@ -1434,7 +1434,7 @@
                                     <div class="avatar bg-secondary text-white mx-auto">{{ strtoupper(substr($rank2->name, 0, 1)) }}</div>
                                 </div>
                                 <div class="name mt-2 fw-bold text-truncate mx-auto" style="max-width: 60px; font-size: 0.75rem;">{{ explode(' ', trim($rank2->name))[count(explode(' ', trim($rank2->name)))-1] }}</div>
-                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank2->orders_count }} đơn</div>
+                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank2->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top2', 19) }} đơn</div>
                                 <div class="podium-bar bar-silver"></div>
                             </div>
                             @endif
@@ -1447,7 +1447,7 @@
                                     <div class="avatar bg-warning text-white mx-auto" style="width: 55px; height: 55px; font-size: 1.5rem;">{{ strtoupper(substr($rank1->name, 0, 1)) }}</div>
                                 </div>
                                 <div class="name mt-2 fw-bold text-truncate text-danger mx-auto" style="max-width: 70px; font-size: 0.85rem;">{{ explode(' ', trim($rank1->name))[count(explode(' ', trim($rank1->name)))-1] }}</div>
-                                <div class="orders text-muted" style="font-size: 0.7rem;">{{ $rank1->orders_count }} đơn</div>
+                                <div class="orders text-muted" style="font-size: 0.7rem;">{{ $rank1->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top1', 30) }} đơn</div>
                                 <div class="podium-bar bar-gold"></div>
                             </div>
                             @endif
@@ -1460,7 +1460,7 @@
                                     <div class="avatar bg-info text-white mx-auto">{{ strtoupper(substr($rank3->name, 0, 1)) }}</div>
                                 </div>
                                 <div class="name mt-2 fw-bold text-truncate mx-auto" style="max-width: 60px; font-size: 0.75rem;">{{ explode(' ', trim($rank3->name))[count(explode(' ', trim($rank3->name)))-1] }}</div>
-                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank3->orders_count }} đơn</div>
+                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank3->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top3', 10) }} đơn</div>
                                 <div class="podium-bar bar-bronze"></div>
                             </div>
                             @endif

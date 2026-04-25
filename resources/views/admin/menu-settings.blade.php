@@ -358,6 +358,47 @@
                     @endforeach
                 </div>
 
+
+
+                {{-- Thêm cài đặt Top Mua Hàng (Fake Orders) --}}
+                <div class="settings-header mt-5">
+                    <h2><i class="fas fa-crown me-2"></i>Cài đặt Top Mua Hàng</h2>
+                    <p class="text-muted mb-0">Điều chỉnh số lượng đơn hàng cộng thêm hiển thị trên bục vinh quang trang chủ.</p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="menu-item-row flex-column align-items-start">
+                            <label class="form-label fw-bold text-warning mb-2"><i class="fas fa-crown"></i> Top 1</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-plus text-muted"></i></span>
+                                <input type="number" class="form-control border-start-0 ps-0" name="fake_orders_top1" value="{{ \App\Models\SiteSetting::getValue('fake_orders_top1', '30') }}" min="0">
+                                <span class="input-group-text bg-light">đơn</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="menu-item-row flex-column align-items-start">
+                            <label class="form-label fw-bold text-secondary mb-2">Top 2</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-plus text-muted"></i></span>
+                                <input type="number" class="form-control border-start-0 ps-0" name="fake_orders_top2" value="{{ \App\Models\SiteSetting::getValue('fake_orders_top2', '19') }}" min="0">
+                                <span class="input-group-text bg-light">đơn</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="menu-item-row flex-column align-items-start">
+                            <label class="form-label fw-bold mb-2" style="color: #CD7F32;">Top 3</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-plus text-muted"></i></span>
+                                <input type="number" class="form-control border-start-0 ps-0" name="fake_orders_top3" value="{{ \App\Models\SiteSetting::getValue('fake_orders_top3', '10') }}" min="0">
+                                <span class="input-group-text bg-light">đơn</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-center mt-4">
                     <button type="submit" class="save-btn">
                         <i class="fas fa-save me-2"></i>Lưu thay đổi

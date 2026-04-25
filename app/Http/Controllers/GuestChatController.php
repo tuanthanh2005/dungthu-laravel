@@ -121,7 +121,7 @@ class GuestChatController extends Controller
         $lines[] = '3) Nhấn xác nhận đặt hàng.';
         $lines[] = '4) Sản phẩm số sẽ gửi qua email sau khi xác nhận thanh toán.';
         $lines[] = '5) Sản phẩm vật lý giao trong 3-5 ngày.';
-        $lines[] = 'Liên hệ: Telegram @dungthucom, Zalo 0708910952, Email tranthanhtuanfix@gmail.com.';
+        $lines[] = 'Liên hệ: Telegram @specademy, Zalo 0708910952, Email tranthanhtuanfix@gmail.com.';
 
         return implode("\n", $lines);
     }

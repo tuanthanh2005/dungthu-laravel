@@ -337,9 +337,15 @@
         }
         
         /* Custom Pagination */
+        .pagination-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 0 8px;
+        }
         .pagination {
             gap: 8px;
             margin-bottom: 0;
+            flex-wrap: nowrap;
         }
         .page-link {
             border-radius: 12px !important;
@@ -354,6 +360,7 @@
             transition: all 0.3s;
             background: #fff;
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            white-space: nowrap;
         }
         .page-link:hover {
             background: rgba(108, 92, 231, 0.1);
@@ -370,6 +377,19 @@
             background: #f1f2f6;
             color: #b2bec3;
             box-shadow: none;
+        }
+
+        /* Mobile Pagination */
+        @media (max-width: 576px) {
+            .pagination {
+                gap: 4px;
+            }
+            .page-link {
+                width: 36px;
+                height: 36px;
+                font-size: 0.85rem;
+                border-radius: 10px !important;
+            }
         }
         
         /* Category Filter Tweaks */
@@ -667,7 +687,9 @@
 
     <!-- Pagination -->
     <div class="mt-5 d-flex justify-content-center" data-aos="fade-up">
-        {{ $items->links('pagination::bootstrap-5') }}
+        <div class="pagination-wrapper d-flex justify-content-center">
+            {{ $items->links('pagination::bootstrap-5') }}
+        </div>
     </div>
     @else
     <!-- Empty State -->

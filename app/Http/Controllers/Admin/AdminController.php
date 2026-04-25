@@ -1201,8 +1201,16 @@ class AdminController extends Controller
             SiteSetting::setValue($key, $request->has($key) ? '1' : '0');
         }
 
+        // Save fake orders settings
+        $fakeOrdersKeys = ['fake_orders_top1', 'fake_orders_top2', 'fake_orders_top3'];
+        foreach ($fakeOrdersKeys as $key) {
+            if ($request->has($key)) {
+                SiteSetting::setValue($key, $request->input($key));
+            }
+        }
+
         return redirect()->route('admin.menu-settings')
-            ->with('success', 'Đã lưu cài đặt menu thành công!');
+            ->with('success', 'Đã lưu cài đặt hiển thị thành công!');
     }
 
     /**

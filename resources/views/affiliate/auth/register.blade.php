@@ -250,7 +250,7 @@
         <!-- Benefits -->
         <div class="benefit-list">
             <h6><i class="fas fa-gift me-2"></i>Quyền lợi khi tham gia</h6>
-            <div class="benefit-item"><i class="fas fa-check-circle"></i>Hoa hồng <strong>10%</strong> trên mỗi đơn hàng giới thiệu thành công</div>
+            <div class="benefit-item"><i class="fas fa-check-circle"></i>Hoa hồng <strong>5%</strong> trên mỗi đơn hàng giới thiệu thành công</div>
             <div class="benefit-item"><i class="fas fa-check-circle"></i>Rút tiền linh hoạt qua chuyển khoản ngân hàng</div>
             <div class="benefit-item"><i class="fas fa-check-circle"></i>Dashboard quản lý thu nhập chuyên nghiệp</div>
             <div class="benefit-item"><i class="fas fa-check-circle"></i>Hỗ trợ 24/7 qua Zalo & Telegram</div>

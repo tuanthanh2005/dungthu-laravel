@@ -62,29 +62,39 @@
 
                 <form action="{{ route('affiliate.withdrawals.store') }}" method="POST">
                     @csrf
+                    
+                    @if($errors->any())
+                        <div class="alert alert-danger mb-4" style="border-radius: 12px;">
+                            <ul class="mb-0" style="padding-left: 15px;">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     <div class="mb-4">
                         <label class="form-label">Số tiền muốn rút (VNĐ)</label>
                         <input type="number" name="amount" class="form-control" placeholder="Tối thiểu 50.000đ" required
-                            min="50000" max="{{ $affiliate->balance }}">
+                            min="50000" max="{{ $affiliate->balance }}" value="{{ old('amount') }}">
                         <div class="form-text small">Số tiền rút phải nhỏ hơn hoặc bằng số dư hiện tại.</div>
                     </div>
 
                     <div class="row">
                         <div class="col-12 mb-4">
                             <label class="form-label">Tên ngân hàng</label>
-                            <input type="text" name="bank_name" class="form-control" value="{{ $affiliate->bank_name }}"
+                            <input type="text" name="bank_name" class="form-control" value="{{ old('bank_name', $affiliate->bank_name) }}"
                                 placeholder="Ví dụ: Vietcombank" required>
                         </div>
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Số tài khoản</label>
                             <input type="text" name="bank_account_number" class="form-control"
-                                value="{{ $affiliate->bank_account_number }}" placeholder="Nhập số tài khoản..." required>
+                                value="{{ old('bank_account_number', $affiliate->bank_account_number) }}" placeholder="Nhập số tài khoản..." required>
                         </div>
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Họ tên chủ tài khoản</label>
                             <input type="text" name="bank_account_name" class="form-control"
-                                value="{{ $affiliate->bank_account_name }}" placeholder="Ví dụ: NGUYEN VAN A" required
+                                value="{{ old('bank_account_name', $affiliate->bank_account_name) }}" placeholder="Ví dụ: NGUYEN VAN A" required
                                 style="text-transform: uppercase;">
                         </div>
                     </div>
@@ -92,7 +102,7 @@
                     <div class="mb-4">
                         <label class="form-label">Ghi chú (nếu có)</label>
                         <textarea name="note" class="form-control" rows="2"
-                            placeholder="Thông nhắn nhủ Admin..."></textarea>
+                            placeholder="Thông nhắn nhủ Admin...">{{ old('note') }}</textarea>
                     </div>
 
                     <div class="alert alert-info py-2" style="border-radius: 10px; font-size: 13px;">

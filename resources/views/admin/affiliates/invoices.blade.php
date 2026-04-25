@@ -48,7 +48,7 @@
                             <th>Cộng tác viên</th>
                             <th>Sản phẩm</th>
                             <th>Số tiền khách trả</th>
-                            <th>Hoa hồng (10%)</th>
+                            <th>Hoa hồng (5%)</th>
                             <th>Ghi chú CTV</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>

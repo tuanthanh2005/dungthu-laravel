@@ -29,7 +29,12 @@
 
         <div class="admin-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold mb-0">Danh sách Cộng tác viên</h4>
+                <div class="d-flex align-items-center gap-3">
+                    <h4 class="fw-bold mb-0">Danh sách Cộng tác viên</h4>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createAffiliateModal">
+                        <i class="fas fa-plus"></i> Tạo CTV
+                    </button>
+                </div>
                 
                 <form action="{{ route('admin.affiliates.index') }}" method="GET" class="d-flex gap-2">
                     <select name="status" class="form-select" style="width: 150px;" onchange="this.form.submit()">
@@ -127,6 +132,65 @@
             <div class="mt-4">
                 {{ $affiliates->links() }}
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Affiliate Modal -->
+<div class="modal fade" id="createAffiliateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{{ route('admin.affiliates.store') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Tạo Cộng tác viên mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Họ và tên *</label>
+                            <input type="text" name="name" class="form-control" required placeholder="Nhập họ tên...">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" name="email" class="form-control" required placeholder="email@example.com">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mật khẩu *</label>
+                            <input type="password" name="password" class="form-control" required placeholder="Tối thiểu 8 ký tự">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số điện thoại *</label>
+                            <input type="text" name="phone" class="form-control" required placeholder="Nhập SĐT...">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Số CCCD / CMND *</label>
+                            <input type="text" name="cccd_number" class="form-control" required placeholder="Nhập số CCCD...">
+                        </div>
+                        
+                        <div class="col-12 mt-3 mb-2">
+                            <h6 class="fw-bold text-muted border-bottom pb-2">Thông tin thanh toán (Có thể bổ sung sau)</h6>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Ngân hàng</label>
+                            <input type="text" name="bank_name" class="form-control" placeholder="VD: Vietcombank">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Số tài khoản</label>
+                            <input type="text" name="bank_account_number" class="form-control" placeholder="Số tài khoản">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Chủ tài khoản</label>
+                            <input type="text" name="bank_account_name" class="form-control" placeholder="Tên in hoa không dấu">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary fw-bold"><i class="fas fa-save me-1"></i> Tạo tài khoản</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

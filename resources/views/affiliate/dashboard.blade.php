@@ -197,7 +197,7 @@
                 <div class="profile-banner d-flex justify-content-between align-items-center">
                     <div>
                         <h4 class="fw-bold mb-2">Chào mừng, {{ explode(' ', $affiliate->name)[0] }}! 👋</h4>
-                        <p class="mb-0 opacity-75">Hôm nay bạn đã có giao dịch mới chưa? Gửi hóa đơn để nhận hoa hồng 10% ngay nhé.</p>
+                        <p class="mb-0 opacity-75">Hôm nay bạn đã có giao dịch mới chưa? Gửi hóa đơn để nhận hoa hồng 5% ngay nhé.</p>
                     </div>
                     <a href="{{ route('affiliate.invoices.create') }}" class="btn btn-light fw-bold" style="border-radius: 12px; padding: 10px 20px;">
                         + Gửi hóa đơn mới
@@ -250,7 +250,7 @@
                                         <tr>
                                             <th>Sản phẩm</th>
                                             <th>Số tiền</th>
-                                            <th>Hoa hồng (10%)</th>
+                                            <th>Hoa hồng (5%)</th>
                                             <th>Trạng thái</th>
                                             <th>Ngày</th>
                                         </tr>

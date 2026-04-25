@@ -623,7 +623,7 @@
                 </div>
                 <div class="modal-body p-4 bg-light">
                     <div class="d-flex flex-column gap-3">
-                        <a href="https://t.me/dungthucom" target="_blank" class="text-decoration-none bg-white p-3 rounded-3 shadow-sm d-flex align-items-center">
+                        <a href="https://t.me/specademy" target="_blank" class="text-decoration-none bg-white p-3 rounded-3 shadow-sm d-flex align-items-center">
                             <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                                 <i class="fab fa-telegram fa-fw fs-4 text-primary"></i>
                             </div>

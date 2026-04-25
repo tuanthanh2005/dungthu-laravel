@@ -269,13 +269,36 @@
 
         <div class="text-center" style="color:rgba(255,255,255,0.6);font-size:14px;">
             Chưa có tài khoản?
-            <a href="{{ route('affiliate.register') }}" class="aff-link ms-1">Đăng ký ngay</a>
+            <a href="javascript:void(0)" class="aff-link ms-1" data-bs-toggle="modal" data-bs-target="#contactAdminModal">Đăng ký ngay</a>
         </div>
 
         <div class="text-center mt-3">
             <a href="{{ route('home') }}" class="aff-link" style="font-size:13px;opacity:0.7;">
                 <i class="fas fa-arrow-left me-1"></i>Về trang chủ
             </a>
+        </div>
+    </div>
+</div>
+<!-- Contact Admin Modal -->
+<div class="modal fade" id="contactAdminModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white fw-bold"><i class="fas fa-info-circle me-2" style="color: #48cfad;"></i>Thông báo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-4">
+                    <i class="fas fa-user-plus fa-4x" style="color: #6c63ff;"></i>
+                </div>
+                <h5 class="text-white mb-3">Đăng ký Cộng Tác Viên</h5>
+                <p style="color: rgba(255,255,255,0.7); font-size: 15px;">Bạn hãy liên hệ Admin để cấp tài khoản nhé!</p>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <a href="https://t.me/specademy" target="_blank" class="btn btn-primary rounded-pill px-4 fw-bold" style="background: linear-gradient(135deg, #6c63ff, #48cfad); border: none;">
+                        <i class="fab fa-telegram me-2"></i>Liên hệ Admin
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

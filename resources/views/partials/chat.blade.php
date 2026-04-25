@@ -893,10 +893,14 @@ function sendAffiliateMessage(event) {
 function appendAffiliateMessage(message) {
     const body = document.getElementById('affiliateChatBody');
     if (!body) return;
+
+    if (document.getElementById('aff-msg-' + message.id)) return;
+
     const welcome = body.querySelector('.chat-welcome');
     if (welcome) welcome.remove();
     
     const div = document.createElement('div');
+    div.id = 'aff-msg-' + message.id;
     div.className = `chat-message ${message.is_admin ? 'admin' : 'user'}`;
     const date = new Date(message.created_at);
     const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });

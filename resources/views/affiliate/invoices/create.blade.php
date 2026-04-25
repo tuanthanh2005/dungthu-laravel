@@ -24,6 +24,16 @@
             <form action="{{ route('affiliate.invoices.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
+                @if($errors->any())
+                    <div class="alert alert-danger mb-4" style="border-radius: 12px;">
+                        <ul class="mb-0" style="padding-left: 15px;">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
                 <div class="mb-4">
                     <label class="form-label">Tên sản phẩm / Dịch vụ đã bán</label>
                     <input type="text" name="product_name" class="form-control @error('product_name') is-invalid @enderror" placeholder="Ví dụ: Tài khoản ChatGPT Plus" value="{{ old('product_name') }}" required>
@@ -67,7 +77,7 @@
 
                 <div class="commission-box">
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-muted small">Hoa hồng của bạn (10%)</span>
+                        <span class="text-muted small">Hoa hồng của bạn (5%)</span>
                         <span class="fw-bold text-primary" id="commission-val">0đ</span>
                     </div>
                 </div>
@@ -85,6 +95,9 @@
                     @error('bill_image')
                         <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
+                    @if($errors->any())
+                        <div class="text-warning small mt-1"><i class="fas fa-exclamation-triangle"></i> Vui lòng chọn lại ảnh nếu form có lỗi nhé!</div>
+                    @endif
                 </div>
 
                 <div class="mb-4">
@@ -112,7 +125,7 @@
 <script>
     function calcCommission() {
         const amount = document.getElementById('amount').value;
-        const commission = Math.round(amount * 0.1);
+        const commission = Math.round(amount * 0.05);
         document.getElementById('commission-val').innerText = commission.toLocaleString() + 'đ';
     }
 
@@ -127,5 +140,12 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    // Trigger calc on load to restore commission if amount exists
+    document.addEventListener('DOMContentLoaded', function() {
+        if(document.getElementById('amount').value) {
+            calcCommission();
+        }
+    });
 </script>
 @endpush

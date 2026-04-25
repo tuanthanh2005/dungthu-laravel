@@ -273,6 +273,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // Affiliate Management
     Route::prefix('affiliates')->group(function () {
         Route::get('/', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');
+        Route::post('/store', [AdminAffiliateController::class, 'store'])->name('admin.affiliates.store');
         Route::get('/{affiliate}', [AdminAffiliateController::class, 'show'])->name('admin.affiliates.show');
         Route::post('/{affiliate}/approve', [AdminAffiliateController::class, 'approve'])->name('admin.affiliates.approve');
         Route::post('/{affiliate}/reject', [AdminAffiliateController::class, 'reject'])->name('admin.affiliates.reject');

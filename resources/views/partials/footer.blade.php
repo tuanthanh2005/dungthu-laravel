@@ -244,7 +244,7 @@
                     </a>
 
                     <!-- Telegram Contact -->
-                    <a href="https://t.me/dungthucom" target="_blank" class="d-block p-3 mb-3 rounded-3"
+                    <a href="https://t.me/specademy" target="_blank" class="d-block p-3 mb-3 rounded-3"
                         style="background: linear-gradient(135deg, #4facfe15 0%, #00f2fe15 100%); border: 2px solid #0088cc; text-decoration: none; color: inherit; transition: all 0.3s ease;">
                         <div style="text-align: center;">
                             <i class="fab fa-telegram"

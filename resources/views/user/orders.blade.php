@@ -416,7 +416,7 @@
                         </div>
                     </a>
 
-                    <a href="https://t.me/dungthucom" target="_blank" class="contact-option telegram m-0">
+                    <a href="https://t.me/specademy" target="_blank" class="contact-option telegram m-0">
                         <div class="d-flex align-items-center">
                             <div class="bg-white rounded-circle p-2 me-3 shadow-sm" style="color: #0088cc;">
                                 <i class="fab fa-telegram fa-fw fs-5 m-0"></i>

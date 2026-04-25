@@ -72,7 +72,7 @@
                                 <tr>
                                     <th>Sản phẩm</th>
                                     <th>Số tiền khách trả</th>
-                                    <th>Hoa hồng (10%)</th>
+                                    <th>Hoa hồng (5%)</th>
                                     <th>Trạng thái</th>
                                     <th>Ngày tạo</th>
                                     <th>Thao tác</th>

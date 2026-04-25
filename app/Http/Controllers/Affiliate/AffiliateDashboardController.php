@@ -98,7 +98,7 @@ class AffiliateDashboardController extends Controller
         }
 
         $amount     = (int) $request->amount;
-        $commission = (int) round($amount * 0.10); // 10%
+        $commission = (int) round($amount * 0.05); // 5%
 
         $invoice = AffiliateInvoice::create([
             'affiliate_id'   => $affiliate->id,
@@ -123,7 +123,7 @@ class AffiliateDashboardController extends Controller
             $msg .= "• Thông tin KH: " . implode(' | ', array_filter([$invoice->customer_email, $invoice->customer_phone])) . "\n";
         }
         $msg .= "• Số tiền KH trả: <b>" . number_format($amount, 0, ',', '.') . "đ</b>\n";
-        $msg .= "• Hoa hồng 10%: <b>" . number_format($commission, 0, ',', '.') . "đ</b>\n";
+        $msg .= "• Hoa hồng 5%: <b>" . number_format($commission, 0, ',', '.') . "đ</b>\n";
         $msg .= "• Thời gian: <b>" . now()->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') . "</b>\n\n";
         $msg .= "⚠️ <i>Vui lòng kiểm tra và duyệt hóa đơn!</i>\n";
         $msg .= "🔗 " . url('/admin/affiliates/invoices');

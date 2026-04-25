@@ -46,6 +46,35 @@ class AdminAffiliateController extends Controller
         return view('admin.affiliates.show', compact('affiliate'));
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|string|email|max:255|unique:affiliates',
+            'password'      => 'required|string|min:8',
+            'phone'         => 'required|string|max:20',
+            'cccd_number'   => 'required|string|max:20',
+            'bank_name'     => 'nullable|string|max:100',
+            'bank_account_number' => 'nullable|string|max:50',
+            'bank_account_name'   => 'nullable|string|max:100',
+        ]);
+
+        Affiliate::create([
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'phone'         => $request->phone,
+            'cccd_number'   => $request->cccd_number,
+            'bank_name'     => $request->bank_name,
+            'bank_account_number' => $request->bank_account_number,
+            'bank_account_name'   => $request->bank_account_name,
+            'status'        => 'approved', // Auto approved when admin creates
+            'approved_at'   => now(),
+        ]);
+
+        return back()->with('success', 'Đã tạo tài khoản Cộng tác viên thành công!');
+    }
+
     // ─── Duyệt / Từ chối cộng tác viên ──────────────────────────────────────
     public function approve(Affiliate $affiliate)
     {

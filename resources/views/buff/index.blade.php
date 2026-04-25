@@ -1,281 +1,387 @@
 @extends('layouts.app')
 
-@section('title', 'Dịch vụ Buff - DungThu.com')
+@section('title', 'Dịch vụ Tăng Tương Tác - DungThu.com')
 
 @push('styles')
 <style>
+    :root {
+        --buff-primary: #4F46E5;
+        --buff-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        --buff-bg: #F8FAFC;
+    }
+
+    body {
+        background-color: var(--buff-bg);
+    }
+
     .buff-hero {
-        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-        padding: 1.5rem 0;
+        background: var(--buff-gradient);
+        padding: 60px 0 40px;
         color: white;
-        margin-bottom: 2rem;
+        margin-top: 70px;
+        position: relative;
+        overflow: hidden;
     }
 
-    .buff-hero h1 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+    .buff-hero::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="rgba(255,255,255,0.05)"/></svg>');
     }
 
-    .buff-hero p {
-        font-size: 1rem;
+    .buff-hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .buff-hero-content h1 {
+        font-weight: 800;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .buff-hero-content p {
+        font-size: 1.1rem;
         opacity: 0.9;
-        margin-bottom: 0;
+        max-width: 600px;
+        margin: 0 auto 25px;
     }
 
-    .platform-section {
-        margin-bottom: 2.5rem;
+    .history-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s;
     }
 
-    .platform-title {
+    .history-btn:hover {
+        background: white;
+        color: var(--buff-primary);
+    }
+
+    .platform-header {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #6c5ce7;
+        gap: 12px;
+        margin: 40px 0 20px;
     }
 
-    .platform-title i {
+    .platform-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .platform-header h3 {
+        margin: 0;
+        font-weight: 800;
+        color: #1e293b;
         font-size: 1.5rem;
+    }
+
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
     }
 
     .service-card {
         background: white;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 1.25rem;
-        transition: all 0.3s ease;
-        height: 100%;
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        border-color: #e2e8f0;
+        color: inherit;
+    }
+
+    .service-card-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: #f8fafc;
+        color: var(--buff-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 16px;
+        transition: all 0.3s;
+    }
+
+    .service-card:hover .service-card-icon {
+        background: var(--buff-primary);
+        color: white;
+    }
+
+    .service-card h4 {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .service-card p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+
+    .service-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .price-tag {
         display: flex;
         flex-direction: column;
     }
 
-    .service-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-        border-color: #6c5ce7;
+    .price-tag small {
+        color: #94a3b8;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .service-icon {
-        font-size: 2rem;
-        margin-bottom: 0.75rem;
+    .price-tag span {
+        color: #ef4444;
+        font-weight: 800;
+        font-size: 1.1rem;
     }
 
-    .service-name {
-        font-size: 1rem;
+    .use-btn {
+        background: #f1f5f9;
+        color: #334155;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 10px;
         font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 0.4rem;
-    }
-
-    .service-description {
         font-size: 0.9rem;
-        color: #666;
-        margin-bottom: 1rem;
-        flex-grow: 1;
+        transition: all 0.3s;
     }
 
-    .service-price {
+    .service-card:hover .use-btn {
+        background: var(--buff-primary);
+        color: white;
+    }
+
+    .features-section {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        margin: 60px 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: #f0fdf4;
+        color: #16a34a;
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 0.75rem;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
     }
 
-    .price-label {
-        font-size: 0.85rem;
-        color: #999;
-    }
-
-    .price-value {
-        font-size: 1.2rem;
+    .feature-item h5 {
         font-weight: 700;
-        color: #dc3545;
+        font-size: 1rem;
+        margin-bottom: 4px;
     }
 
-    .btn-select {
-        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 600;
+    .feature-item p {
+        color: #64748b;
         font-size: 0.9rem;
-        transition: all 0.3s ease;
-        display: inline-block;
-        text-align: center;
-    }
-
-    .btn-select:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
-        color: white;
-    }
-
-    .info-box {
-        background: white;
-        border: 1px solid #e0e0e0;
-        border-left: 4px solid #6c5ce7;
-        border-radius: 8px;
-        padding: 1.5rem;
-    }
-
-    .info-box h4 {
-        color: #2d3436;
-        margin-bottom: 1rem;
-        font-weight: 700;
-    }
-
-    .info-box ul {
         margin: 0;
-        padding-left: 1.5rem;
     }
 
-    .info-box li {
-        margin-bottom: 0.5rem;
-        color: #555;
-    }
+    @media (max-width: 768px) {
+        .service-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
 
+        .service-card {
+            padding: 16px;
+        }
 
-{
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        text-align: center;
-        text-decoration: none;
-        display: block;
-        transition: all 0.3s ease;
-        width: 100%;
-    }
+        .service-card-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+        }
 
-    .btn-select:hover {
-        background: linear-gradient(135deg, #5f4ec7 0%, #9080d8 100%);
-        color: white;
-        transform: scale(1.02);
-    }
+        .service-card h4 {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
 
-    /* Info box */
-    .info-box {
-        background: #f8f9fa;
-        border-left: 4px solid #6c5ce7;
-        padding: 1.5rem;
-        border-radius: 6px;
-        margin-bottom: 2rem;
-    }
+        .service-card p {
+            font-size: 0.75rem;
+            margin-bottom: 12px;
+        }
 
-    .info-box h4 {
-        color: #2d3436;
-        margin-bottom: 0.5rem;
-    }
+        .service-card-footer {
+            padding-top: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
 
-    .info-box ul {
-        margin: 0;
-        padding-left: 1.5rem;
-        color: #555;
-    }
+        .price-tag span {
+            font-size: 0.95rem;
+        }
 
-    .info-box li {
-        margin-bottom: 0.5rem;
+        .use-btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
     }
 </style>
 @endpush
 
 @section('content')
-<main style="margin-top: 100px; min-height: 70vh;">
-    <div class="buff-hero">
+<main style="min-height: 80vh;">
+    <section class="buff-hero">
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1>💎 Dịch vụ Buff</h1>
-                    <p>Tăng tương tác - An toàn - Giá tốt</p>
-                </div>
+            <div class="buff-hero-content">
+                <h1>Hệ Thống Tăng Tương Tác</h1>
+                <p>Giải pháp tối ưu giúp tăng cường sự hiện diện của bạn trên mạng xã hội một cách nhanh chóng, an toàn và hoàn toàn tự động.</p>
+                
                 @auth
-                    <a href="{{ route('buff.history') }}" style="background: rgba(255,255,255,0.2); color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; border: 1px solid rgba(255,255,255,0.3); font-weight: 600; font-size: 0.9rem;">
-                        📋 Lịch sử đơn
-                    </a>
+                <a href="{{ route('buff.history') }}" class="history-btn">
+                    <i class="fas fa-history"></i> Lịch sử đơn hàng
+                </a>
                 @endauth
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="container">
-
-
+    <div class="container pb-5">
         @forelse ($services as $platform => $platformServices)
-            <div class="platform-section">
-                @php
-                    $platformName = match($platform) {
-                        'facebook' => 'Facebook',
-                        'tiktok' => 'TikTok',
-                        'instagram' => 'Instagram',
-                        default => $platform
-                    };
-                    $platformIcon = match($platform) {
-                        'facebook' => 'fab fa-facebook',
-                        'tiktok' => 'fab fa-tiktok',
-                        'instagram' => 'fab fa-instagram',
-                        default => 'fas fa-star'
-                    };
-                @endphp
+            @php
+                $platformInfo = match($platform) {
+                    'facebook' => ['name' => 'Facebook', 'icon' => 'fab fa-facebook', 'color' => '#1877F2'],
+                    'tiktok' => ['name' => 'TikTok', 'icon' => 'fab fa-tiktok', 'color' => '#000000'],
+                    'instagram' => ['name' => 'Instagram', 'icon' => 'fab fa-instagram', 'color' => '#E4405F'],
+                    default => ['name' => ucfirst($platform), 'icon' => 'fas fa-star', 'color' => '#f59e0b']
+                };
+            @endphp
 
-                <div class="platform-title">
-                    <i class="{{ $platformIcon }}"></i>
-                    {{ $platformName }}
+            <div class="platform-header">
+                <div class="platform-icon" style="color: {{ $platformInfo['color'] }};">
+                    <i class="{{ $platformInfo['icon'] }}"></i>
                 </div>
+                <h3>{{ $platformInfo['name'] }}</h3>
+            </div>
 
-                <div class="row g-3">
-                    @foreach ($platformServices as $service)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="service-card">
-                                <div class="service-icon">
-                                    <i class="{{ $service->getIcon() }}"></i>
-                                </div>
-
-                                <div class="service-name">
-                                    {{ $service->name }}
-                                </div>
-
-                                <div class="service-description">
-                                    {{ $service->description ?? 'Tăng ' . strtolower($service->service_type) }}
-                                </div>
-
-                                <div class="service-price">
-                                    <span class="price-label">Từ:</span>
-                                    <span class="price-value">
-                                        {{ number_format($service->base_price + $service->price_per_unit, 0, ',', '.') }}đ
-                                    </span>
-                                </div>
-
-                                <a href="{{ route('buff.show', $service) }}" class="btn-select">
-                                    Chọn →
-                                </a>
-                            </div>
+            <div class="service-grid">
+                @foreach ($platformServices as $service)
+                    <a href="{{ route('buff.show', $service) }}" class="service-card">
+                        <div class="service-card-icon">
+                            <i class="{{ $service->getIcon() }}"></i>
                         </div>
-                    @endforeach
-                </div>
+                        <h4>{{ $service->name }}</h4>
+                        <p>{{ $service->description ?? 'Dịch vụ tăng tương tác tự động tốc độ cao' }}</p>
+                        
+                        <div class="service-card-footer">
+                            <div class="price-tag">
+                                <small>Chỉ từ</small>
+                                <span>{{ number_format($service->price_per_unit, 0, ',', '.') }}đ</span>
+                            </div>
+                            <div class="use-btn">Sử dụng ngay</div>
+                        </div>
+                    </a>
+                @endforeach
             </div>
         @empty
-            <div class="alert alert-info text-center py-5">
-                <h4>Chưa có dịch vụ</h4>
-                <p class="mt-2">Admin đang cập nhật...</p>
+            <div class="text-center py-5 mt-5">
+                <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #94a3b8; font-size: 32px;">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Hệ thống đang cập nhật</h4>
+                <p class="text-muted">Các dịch vụ sẽ sớm quay trở lại. Vui lòng quay lại sau!</p>
             </div>
         @endforelse
-                <!-- Quick Info -->
-        <div class="info-box" style="margin-bottom: 2.5rem;">
-            <h4>⚡ Tại sao chọn dịch vụ buff của chúng tôi?</h4>
-            <ul style="margin-bottom: 0;">
-                <li>✅ Tăng tương tác thực từ những tài khoản thực</li>
-                <li>✅ Hỗ trợ đa nền tảng: Facebook, TikTok, Instagram</li>
-                <li>✅ Giá cạnh tranh, không giá ẩn</li>
-                <li>✅ Hoàn tiền 100% nếu không hài lòng</li>
-            </ul>
+
+        @if($services->isNotEmpty())
+        <div class="features-section">
+            <h4 class="fw-bold mb-4 text-center">Tại sao nên chọn hệ thống của chúng tôi?</h4>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <div>
+                            <h5>Siêu Tốc Độ</h5>
+                            <p>Hệ thống tự động xử lý đơn hàng ngay lập tức sau khi tạo.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon" style="color: #3b82f6; background: #eff6ff;"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <h5>An Toàn Tuyệt Đối</h5>
+                            <p>Không yêu cầu mật khẩu. Cam kết an toàn cho tài khoản 100%.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon" style="color: #eab308; background: #fefce8;"><i class="fas fa-headset"></i></div>
+                        <div>
+                            <h5>Bảo Hành Dài Hạn</h5>
+                            <p>Hỗ trợ bảo hành tuột, hoàn tiền nếu lỗi. Support nhiệt tình 24/7.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        @endif
     </div>
 </main>
 @endsection

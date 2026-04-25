@@ -32,7 +32,7 @@ class BuffServiceController extends Controller
         
         return response()->json([
             'price' => $price,
-            'base_price' => $buffService->base_price,
+            'base_price' => 0,
         ]);
     }
 
@@ -47,11 +47,11 @@ class BuffServiceController extends Controller
         $service = BuffService::find($validated['service_id']);
         $unitPrice = $service->getPriceForServer($validated['server_id']);
         
-        $totalPrice = $service->base_price + ($unitPrice * $validated['quantity']);
+        $totalPrice = ($unitPrice * $validated['quantity']);
 
         return response()->json([
             'unit_price' => $unitPrice,
-            'base_price' => $service->base_price,
+            'base_price' => 0,
             'quantity' => $validated['quantity'],
             'total_price' => $totalPrice,
             'total_price_formatted' => number_format($totalPrice, 0, ',', '.') . ' đ',

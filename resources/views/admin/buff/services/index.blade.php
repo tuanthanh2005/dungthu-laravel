@@ -182,10 +182,6 @@
                             <strong>{{ ucfirst($service->service_type) }}</strong>
                         </div>
                         <div class="info-row">
-                            <span>Giá cơ bản:</span>
-                            <strong>{{ number_format($service->base_price, 0, ',', '.') }}đ</strong>
-                        </div>
-                        <div class="info-row">
                             <span>Giá/đơn vị:</span>
                             <strong>{{ number_format($service->price_per_unit, 0, ',', '.') }}đ</strong>
                         </div>

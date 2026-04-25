@@ -295,10 +295,6 @@
                     <span>{{ number_format($buffOrder->quantity) }}</span>
                 </div>
                 <div class="summary-row">
-                    <strong>Giá cơ bản:</strong>
-                    <span>{{ number_format($buffOrder->base_price, 0, ',', '.') }}đ</span>
-                </div>
-                <div class="summary-row">
                     <strong>Giá/đơn vị:</strong>
                     <span>{{ number_format($buffOrder->unit_price, 0, ',', '.') }}đ</span>
                 </div>

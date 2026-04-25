@@ -392,10 +392,6 @@
                     <h3>💰 Chi Tiết Giá Tiền</h3>
                     <div class="price-breakdown">
                         <div class="price-row">
-                            <span>Giá cơ bản:</span>
-                            <span>{{ number_format($buffOrder->base_price, 0, ',', '.') }}đ</span>
-                        </div>
-                        <div class="price-row">
                             <span>Giá/{{ strtolower($buffOrder->buffService->service_type) }}:</span>
                             <span>{{ number_format($buffOrder->unit_price, 0, ',', '.') }}đ</span>
                         </div>

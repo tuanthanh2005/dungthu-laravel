@@ -215,16 +215,7 @@
             </div>
 
             <div class="form-row">
-                <div class="form-group @error('base_price') has-error @enderror">
-                    <label class="form-label">Giá Cơ Bản (đ) <span style="color: #dc3545;">*</span></label>
-                    <input type="number" name="base_price" class="form-control" 
-                        step="1000" min="0"
-                        placeholder="0"
-                        value="{{ old('base_price', 0) }}" required>
-                    @error('base_price')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
+                <input type="hidden" name="base_price" value="0">
 
                 <div class="form-group @error('price_per_unit') has-error @enderror">
                     <label class="form-label">Giá/Đơn Vị (đ) <span style="color: #dc3545;">*</span></label>

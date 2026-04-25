@@ -4,35 +4,58 @@
 
 @push('styles')
 <style>
+    :root {
+        --buff-primary: #4F46E5;
+        --buff-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        --buff-bg: #F8FAFC;
+        --buff-border: #E2E8F0;
+        --buff-text: #1E293B;
+        --buff-muted: #64748B;
+    }
+
+    body {
+        background-color: var(--buff-bg);
+    }
+
     .service-detail-hero {
         background: white;
-        border-bottom: 1px solid #e0e0e0;
-        padding: 1rem 0;
-        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--buff-border);
+        padding: 30px 0;
+        margin-bottom: 30px;
+        margin-top: 70px;
     }
 
     .service-detail-header {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 24px;
     }
 
     .service-icon-large {
-        font-size: 3.5rem;
-        min-width: 100px;
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: #f1f5f9;
+        color: var(--buff-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        flex-shrink: 0;
     }
 
     .service-info h1 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--buff-text);
+        margin-bottom: 8px;
     }
 
     .service-meta {
         display: flex;
-        gap: 1.5rem;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin-top: 12px;
     }
 
     .meta-item {
@@ -41,190 +64,237 @@
     }
 
     .meta-label {
-        color: #999;
+        color: var(--buff-muted);
         font-size: 0.8rem;
-        margin-bottom: 0.15rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 4px;
     }
 
     .meta-value {
-        font-weight: 600;
-        color: #2d3436;
+        font-weight: 700;
+        color: var(--buff-primary);
+        font-size: 1.1rem;
     }
 
     .form-section {
         background: white;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
+        border: 1px solid var(--buff-border);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
     .form-section h3 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #f0f0f0;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--buff-text);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .step-badge {
+        background: var(--buff-primary);
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
     }
 
     .form-group {
-        margin-bottom: 1rem;
+        margin-bottom: 20px;
     }
 
     .form-label {
-        font-weight: 600;
-        color: #2d3436;
-        margin-bottom: 0.3rem;
+        font-weight: 700;
+        color: var(--buff-text);
+        margin-bottom: 8px;
         display: block;
         font-size: 0.95rem;
     }
 
     .form-label .required {
-        color: #dc3545;
+        color: #ef4444;
     }
 
-    .form-control {
-        border: 1px solid #ddd;
-        padding: 0.6rem;
-        border-radius: 6px;
-        font-size: 0.9rem;
+    .form-control, .form-select {
+        border: 2px solid var(--buff-border);
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 1rem;
         transition: all 0.2s ease;
+        background: #f8fafc;
+        width: 100%;
+        max-width: 100%;
     }
 
-    .form-control:focus {
-        border-color: #6c5ce7;
-        box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+    select.form-control {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 30px;
     }
 
-    .form-check {
-        margin-bottom: 0.75rem;
+    select.form-control option {
+        max-width: 100%;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--buff-primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        outline: none;
     }
 
     .emotion-selector {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-        gap: 0.75rem;
-        margin-bottom: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
     .emotion-btn {
-        border: 2px solid #ddd;
+        border: 2px solid var(--buff-border);
         background: white;
-        padding: 0.75rem;
-        border-radius: 6px;
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
         cursor: pointer;
         transition: all 0.2s ease;
-        text-align: center;
-        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
     }
 
     .emotion-btn:hover {
-        border-color: #6c5ce7;
-        background: #f8f9fa;
+        border-color: #cbd5e1;
+        transform: translateY(-2px);
     }
 
     .emotion-btn.selected {
-        border-color: #6c5ce7;
-        background: rgba(108, 92, 231, 0.1);
+        border-color: var(--buff-primary);
+        background: rgba(79, 70, 229, 0.05);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
     }
 
     .price-calculator {
-        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        background: var(--buff-gradient);
         color: white;
-        padding: 1.25rem;
-        border-radius: 8px;
-        margin-top: 1rem;
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.2);
     }
 
     .calc-row {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
+        margin-bottom: 12px;
+        font-size: 1rem;
+        opacity: 0.9;
     }
 
     .calc-total {
-        font-size: 1.3rem;
-        font-weight: 700;
-        border-top: 1px solid rgba(255, 255, 255, 0.3);
-        padding-top: 0.75rem;
-        margin-top: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-top: 16px;
+        margin-top: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .btn-submit {
         width: 100%;
-        padding: 0.75rem;
-        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        padding: 16px;
+        background: var(--buff-text);
         color: white;
         border: none;
-        border-radius: 6px;
-        font-weight: 700;
-        font-size: 1rem;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: 1.1rem;
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-top: 0.75rem;
+        margin-top: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
     }
 
-    .btn-submit:hover {
-        background: linear-gradient(135deg, #5f4ec7 0%, #9080d8 100%);
-        transform: scale(1.02);
+    .btn-submit:hover:not(:disabled) {
+        background: black;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
 
     .btn-submit:disabled {
-        opacity: 0.5;
+        background: #cbd5e1;
         cursor: not-allowed;
-        transform: none;
     }
 
     .helper-text {
-        font-size: 0.8rem;
-        color: #666;
-        margin-top: 0.3rem;
+        font-size: 0.85rem;
+        color: var(--buff-muted);
+        margin-top: 6px;
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
     }
 
-    .warning-box {
-        background: #fff3cd;
-        border-left: 3px solid #ffc107;
-        padding: 0.75rem;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-        font-size: 0.9rem;
-        color: #856404;
+    .sidebar-widget {
+        background: white;
+        border: 1px solid var(--buff-border);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 24px;
     }
 
-    .loading-spinner {
-        display: none;
-        text-align: center;
+    .sidebar-widget h4 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--buff-text);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
-    .loading-spinner.show {
-        display: block;
+    .sidebar-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
 
-    /* Responsive */
+    .sidebar-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+        color: #475569;
+        font-size: 0.95rem;
+    }
+
+    .sidebar-list li i {
+        color: #10b981;
+        margin-top: 4px;
+    }
+
     @media (max-width: 768px) {
         .service-detail-header {
             flex-direction: column;
-            gap: 1rem;
+            text-align: center;
         }
-
-        .service-info h1 {
-            font-size: 1.3rem;
-        }
-
         .service-meta {
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .emotion-selector {
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-            gap: 0.5rem;
-        }
-
-        .emotion-btn {
-            font-size: 1.5rem;
-            padding: 0.5rem;
+            justify-content: center;
         }
     }
 </style>
@@ -250,10 +320,6 @@
                             <span class="meta-label">Loại</span>
                             <span class="meta-value">{{ ucfirst($buffService->service_type) }}</span>
                         </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Giá cơ bản</span>
-                            <span class="meta-value">{{ number_format($buffService->base_price, 0, ',', '.') }}đ</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -268,7 +334,7 @@
 
                     <!-- Server Selection -->
                     <div class="form-section">
-                        <h3>1️⃣ Chọn Server</h3>
+                        <h3><span class="step-badge">1</span> Chọn Server</h3>
                         <div class="form-group">
                             @if($servers->isEmpty())
                                 <div class="alert alert-warning">
@@ -279,15 +345,15 @@
                                     <option value="">-- Chọn server --</option>
                                     @foreach($servers as $server)
                                         <option value="{{ $server->id }}" 
-                                            @selected(old('server_id') == $server->id)>
-                                            {{ $server->name }}
-                                            @if($server->description)
-                                                - {{ $server->description }}
-                                            @endif
+                                            @selected(old('server_id') == $server->id)
+                                            data-fulltext="{{ $server->name }}{{ $server->description ? ' - ' . $server->description : '' }}"
+                                            title="{{ $server->name }}{{ $server->description ? ' - ' . $server->description : '' }}">
+                                            {{ $server->name }}{{ $server->description ? ' - ' . $server->description : '' }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <div class="helper-text">
+                                <div id="selectedServerInfo" class="mt-2 text-primary fw-bold" style="font-size: 0.85rem;"></div>
+                                <div class="helper-text mt-1">
                                     💡 Mỗi server sẽ có giá khác nhau. Hãy chọn server có giá tốt nhất cho bạn.
                                 </div>
                             @endif
@@ -299,7 +365,7 @@
 
                     <!-- Social Link -->
                     <div class="form-section">
-                        <h3>2️⃣ Nhập Link {{ ucfirst($buffService->platform) }}</h3>
+                        <h3><span class="step-badge">2</span> Nhập Link {{ ucfirst($buffService->platform) }}</h3>
                         <div class="form-group">
                             <label class="form-label">
                                 Link
@@ -325,7 +391,7 @@
 
                     <!-- Quantity -->
                     <div class="form-section">
-                        <h3>3️⃣ Số Lượng</h3>
+                        <h3><span class="step-badge">3</span> Số Lượng</h3>
                         <div class="form-group">
                             <label class="form-label">
                                 Số lượng {{ strtolower($buffService->service_type) }}
@@ -347,7 +413,7 @@
                     <!-- Emotion Type (for comments) -->
                     @if($buffService->service_type === 'comment')
                         <div class="form-section">
-                            <h3>😊 Chọn Loại Cảm Xúc</h3>
+                            <h3><span class="step-badge"><i class="fas fa-smile"></i></span> Chọn Loại Cảm Xúc</h3>
                             <div class="emotion-selector">
                                 <button type="button" class="emotion-btn" data-emotion="like" title="Like">
                                     👍
@@ -375,13 +441,13 @@
 
                     <!-- Notes -->
                     <div class="form-section">
-                        <h3>📝 Ghi Chú (Tùy Chọn)</h3>
+                        <h3><span class="step-badge"><i class="fas fa-pen"></i></span> Ghi Chú (Tùy Chọn)</h3>
                         <div class="form-group">
                             <label class="form-label">Ghi chú thêm</label>
                             <textarea name="notes" id="notes" class="form-control" rows="3"
                                 placeholder="Ghi chú gì đó nếu cần..."
                                 maxlength="1000">{{ old('notes') }}</textarea>
-                            <div class="helper-text">Tối đa 1000 ký tự</div>
+                            <div class="helper-text"><i class="fas fa-info-circle"></i> Tối đa 1000 ký tự</div>
                         </div>
                     </div>
 
@@ -390,51 +456,41 @@
                     <!-- Price Calculator -->
                     <div class="price-calculator">
                         <div class="calc-row">
-                            <span>Giá cơ bản:</span>
-                            <span id="calcBase">{{ number_format($buffService->base_price, 0, ',', '.') }}đ</span>
-                        </div>
-                        <div class="calc-row">
                             <span id="calcQtyLabel">Số lượng:</span>
                             <span id="calcQty">0đ</span>
                         </div>
                         <div class="calc-total">
-                            <div class="calc-row" style="border: none; margin: 0; font-size: 1.3rem;">
-                                <span>Tổng cộng:</span>
-                                <span id="calcTotal">{{ number_format($buffService->base_price + ($buffService->price_per_unit * $buffService->min_amount), 0, ',', '.') }}đ</span>
-                            </div>
+                            <span>Tổng thanh toán:</span>
+                            <span id="calcTotal">{{ number_format(($buffService->price_per_unit * $buffService->min_amount), 0, ',', '.') }}đ</span>
                         </div>
                     </div>
 
                     <button type="submit" class="btn-submit">
-                        Tạo Đơn Hàng →
+                        <i class="fas fa-rocket"></i> Tạo Đơn Hàng Ngay
                     </button>
                 </form>
             </div>
 
             <!-- Sidebar Info -->
             <div class="col-lg-4">
-                <div class="form-section">
-                    <h4 style="font-size: 1rem; margin-bottom: 0.75rem;">📌 Lưu Ý Quan Trọng</h4>
-                    <ul class="mb-0" style="padding-left: 1.5rem; font-size: 0.9rem;">
-                        <li>✓ Hỗ trợ tài khoản Public/Private</li>
-                        <li>✓ An toàn 100% - Không cần mật khẩu</li>
-                        <li>✓ Tốc độ buff: 1-24h hoàn thành</li>
-                        <li>✓ Hoàn tiền nếu gặp lỗi</li>
-                        <li>✓ Hỗ trợ 24/7 qua chat</li>
+                <div class="sidebar-widget">
+                    <h4><i class="fas fa-thumbtack text-primary"></i> Lưu Ý Quan Trọng</h4>
+                    <ul class="sidebar-list">
+                        <li><i class="fas fa-check-circle"></i> Hỗ trợ tài khoản Public/Private</li>
+                        <li><i class="fas fa-check-circle"></i> An toàn 100% - Không cần mật khẩu</li>
+                        <li><i class="fas fa-check-circle"></i> Tốc độ buff: 1-24h hoàn thành</li>
+                        <li><i class="fas fa-check-circle"></i> Hoàn tiền nếu gặp lỗi</li>
+                        <li><i class="fas fa-check-circle"></i> Hỗ trợ 24/7 qua chat</li>
                     </ul>
                 </div>
 
-                <div class="form-section">
-                    <h4 style="font-size: 1rem; margin-bottom: 0.75rem;">⚡ Thông Tin Thêm</h4>
-                    <p style="margin-bottom: 0.35rem; font-size: 0.9rem;">
-                        <strong>Tốc độ:</strong> Tuỳ server
-                    </p>
-                    <p style="margin-bottom: 0.35rem; font-size: 0.9rem;">
-                        <strong>Bảo hành:</strong> 30 ngày giữ nguyên số liệu
-                    </p>
-                    <p style="margin-bottom: 0; font-size: 0.9rem;">
-                        <strong>Hỗ trợ:</strong> Chat & Email 24/7
-                    </p>
+                <div class="sidebar-widget">
+                    <h4><i class="fas fa-info-circle text-info"></i> Thông Tin Thêm</h4>
+                    <ul class="sidebar-list">
+                        <li><strong>Tốc độ:</strong> Tuỳ server</li>
+                        <li><strong>Bảo hành:</strong> 30 ngày giữ nguyên số liệu</li>
+                        <li><strong>Hỗ trợ:</strong> Chat & Email 24/7</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -444,7 +500,6 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const serviceBasePrice = {{ $buffService->base_price }};
     const serverId = document.getElementById('serverId');
     const quantity = document.getElementById('quantity');
     const emotionBtns = document.querySelectorAll('.emotion-btn');
@@ -484,11 +539,33 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    serverId.addEventListener('change', updatePrice);
+    serverId.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const infoDiv = document.getElementById('selectedServerInfo');
+        
+        if (selectedOption && selectedOption.value) {
+            infoDiv.textContent = selectedOption.getAttribute('data-fulltext');
+            infoDiv.style.display = 'block';
+        } else {
+            infoDiv.textContent = '';
+            infoDiv.style.display = 'none';
+        }
+        
+        updatePrice();
+    });
+    
     quantity.addEventListener('change', updatePrice);
     quantity.addEventListener('input', updatePrice);
 
-    // Initial calculation
+    // Initial load
+    if(serverId.value) {
+        const selectedOption = serverId.options[serverId.selectedIndex];
+        const infoDiv = document.getElementById('selectedServerInfo');
+        if (selectedOption && selectedOption.value) {
+            infoDiv.textContent = selectedOption.getAttribute('data-fulltext');
+            infoDiv.style.display = 'block';
+        }
+    }
     updatePrice();
 
     // Form validation

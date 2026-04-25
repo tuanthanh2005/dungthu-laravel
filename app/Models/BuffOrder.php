@@ -80,7 +80,6 @@ class BuffOrder extends Model
             default => 'dark'
         };
     }
-
     public function getPriceToShow(): float
     {
         return $this->actual_price ?? $this->total_price;
@@ -88,6 +87,6 @@ class BuffOrder extends Model
 
     public function calculateTotalPrice(): float
     {
-        return $this->base_price + ($this->unit_price * $this->quantity);
+        return ($this->unit_price * $this->quantity);
     }
 }

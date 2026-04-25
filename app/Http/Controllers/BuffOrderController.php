@@ -46,7 +46,7 @@ class BuffOrderController extends Controller
         }
 
         $unitPrice = $service->getPriceForServer($server->id);
-        $totalPrice = $service->base_price + ($unitPrice * $validated['quantity']);
+        $totalPrice = ($unitPrice * $validated['quantity']);
 
         $order = new BuffOrder();
         $order->user_id = $request->user()->id;
@@ -57,7 +57,7 @@ class BuffOrderController extends Controller
         $order->quantity = $validated['quantity'];
         $order->notes = $validated['notes'] ?? null;
         $order->emotion_type = $validated['emotion_type'] ?? null;
-        $order->base_price = $service->base_price;
+        $order->base_price = 0;
         $order->unit_price = $unitPrice;
         $order->total_price = $totalPrice;
         $order->status = 'pending';

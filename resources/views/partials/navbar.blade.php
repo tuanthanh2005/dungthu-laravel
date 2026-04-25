@@ -47,7 +47,7 @@
             </a>
             @endif
             @if($menuBuff)
-            <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}">
+            <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}" style="color: #ff5e00; font-weight: 700;">
                 Buff Mạng XH
             </a>
             @endif
@@ -117,6 +117,17 @@
                         @else
                             <li><a class="dropdown-item" href="{{ route('affiliate.login') }}"><i class="fas fa-handshake me-2"></i>Đăng ký CTV</a></li>
                         @endif
+                        @if($menuCardExchange)
+                            <li class="d-lg-none"><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fas fa-exchange-alt me-2 text-warning"></i>Đổi thẻ cào</a></li>
+                        @endif
+                        @if($menuBuff)
+                            <li class="d-lg-none"><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fas fa-rocket me-2"></i>Buff Mạng XH</a></li>
+                        @endif
+                        @if($menuCommunity)
+                            <li class="d-lg-none"><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
+                        @endif
+                        <li class="d-lg-none"><hr class="dropdown-divider"></li>
+
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>
                         <li><hr class="dropdown-divider"></li>

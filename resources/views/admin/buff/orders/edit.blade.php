@@ -418,11 +418,6 @@
             <div class="box-title">💰 Thông Tin Giá</div>
 
             <div class="info-item">
-                <div class="info-label">Giá Cơ Bản:</div>
-                <div class="info-value">{{ number_format($buffOrder->base_price) }} đ</div>
-            </div>
-
-            <div class="info-item">
                 <div class="info-label">Giá/Đơn Vị:</div>
                 <div class="info-value">{{ number_format($buffOrder->unit_price) }} đ</div>
             </div>

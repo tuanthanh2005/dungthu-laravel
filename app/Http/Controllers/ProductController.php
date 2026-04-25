@@ -29,11 +29,32 @@ class ProductController extends Controller
             $query->where('category_id', $currentCategoryId);
         }
         
-        // Search theo tên hoặc mô tả
+        // Search theo tên hoặc mô tả (hỗ trợ tìm kiếm linh hoạt: "chat gpt" → "chatgpt")
         if ($searchTerm) {
             $query->where(function($q) use ($searchTerm) {
+                // 1. Match chuỗi nguyên gốc
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
                   ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+
+                // 2. Match chuỗi bỏ khoảng trắng (vd: "chat gpt" → "chatgpt")
+                $noSpace = str_replace(' ', '', $searchTerm);
+                if ($noSpace !== $searchTerm) {
+                    $q->orWhere('name', 'LIKE', "%{$noSpace}%")
+                      ->orWhere('description', 'LIKE', "%{$noSpace}%");
+                }
+
+                // 3. Tách từng token, mỗi token phải match trong name hoặc description
+                $tokens = array_filter(explode(' ', trim($searchTerm)));
+                if (count($tokens) > 1) {
+                    $q->orWhere(function($sub) use ($tokens) {
+                        foreach ($tokens as $token) {
+                            $sub->where(function($t) use ($token) {
+                                $t->where('name', 'LIKE', "%{$token}%")
+                                  ->orWhere('description', 'LIKE', "%{$token}%");
+                            });
+                        }
+                    });
+                }
             });
         }
         

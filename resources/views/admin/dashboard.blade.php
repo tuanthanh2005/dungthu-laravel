@@ -392,7 +392,7 @@
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-6">
-                            <a href="javascript:void(0)" class="btn btn-outline-danger w-100 py-3 rounded-3" title="Tính năng sắp có">
+                            <a href="{{ route('admin.menu-settings') }}" class="btn btn-outline-danger w-100 py-3 rounded-3">
                                 <i class="fas fa-cog d-block fs-3 mb-2"></i>
                                 Cài đặt
                             </a>

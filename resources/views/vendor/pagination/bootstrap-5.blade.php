@@ -1,4 +1,34 @@
 @if ($paginator->hasPages())
+@php
+    $current   = $paginator->currentPage();
+    $last      = $paginator->lastPage();
+
+    // Build the set of page numbers to always show:
+    // always: 1, last, current, current-1, current+1
+    $window = collect(range(max(1, $current - 1), min($last, $current + 1)));
+    $always = $window->merge([1, $last])->unique()->sort()->values();
+
+    // Build final list with '...' gaps
+    $pages = collect();
+    $prev  = null;
+    foreach ($always as $p) {
+        if ($prev !== null && $p - $prev > 1) {
+            $pages->push('...');
+        }
+        $pages->push($p);
+        $prev = $p;
+    }
+
+    // Get URL map from $elements
+    $urlMap = [];
+    foreach ($elements as $element) {
+        if (is_array($element)) {
+            foreach ($element as $page => $url) {
+                $urlMap[$page] = $url;
+            }
+        }
+    }
+@endphp
     <nav>
         <ul class="pagination">
             {{-- Previous Page Link --}}
@@ -12,22 +42,16 @@
                 </li>
             @endif
 
-            {{-- Pagination Elements --}}
-            @foreach ($elements as $element)
-                {{-- "Three Dots" Separator --}}
-                @if (is_string($element))
-                    <li class="page-item disabled" aria-disabled="true"><span class="page-link">{{ $element }}</span></li>
-                @endif
-
-                {{-- Array Of Links --}}
-                @if (is_array($element))
-                    @foreach ($element as $page => $url)
-                        @if ($page == $paginator->currentPage())
-                            <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
-                        @else
-                            <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
-                        @endif
-                    @endforeach
+            {{-- Smart page list --}}
+            @foreach ($pages as $p)
+                @if ($p === '...')
+                    <li class="page-item disabled" aria-disabled="true"><span class="page-link">&hellip;</span></li>
+                @elseif ($p == $current)
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ $p }}</span></li>
+                @else
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $urlMap[$p] ?? $paginator->url($p) }}">{{ $p }}</a>
+                    </li>
                 @endif
             @endforeach
 

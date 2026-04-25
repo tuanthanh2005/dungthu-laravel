@@ -19,6 +19,7 @@ use App\Models\AffiliateWithdrawal;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SystemNotificationMail;
 use App\Mail\OrderCompletedMail;
+use App\Mail\OrderApprovedMail;
 use App\Mail\AbandonedCartReminder;
 use App\Helpers\TelegramHelper;
 use App\Helpers\PathHelper;
@@ -300,12 +301,38 @@ class AdminController extends Controller
         $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
-        // Nếu đơn hàng được chuyển sang trạng thái completed, gửi email và telegram
+        // Nếu đơn hàng được chuyển sang trạng thái completed, gửi email thông báo duyệt đơn + telegram
         if ($request->status === 'completed' && $oldStatus !== 'completed') {
+            // Gửi email cảm ơn / xác nhận duyệt đơn tới khách hàng
+            $this->sendOrderApprovedEmail($order);
+
+            // Gửi thông báo nội bộ (email chi tiết demo + Telegram)
             $this->sendOrderCompletedNotifications($order);
         }
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
+    }
+
+    /**
+     * Gửi email thông báo duyệt đơn thành công tới khách hàng
+     */
+    private function sendOrderApprovedEmail(Order $order)
+    {
+        try {
+            $email = $order->customer_email;
+
+            if (!$email && $order->user_id) {
+                $email = optional($order->user)->email;
+            }
+
+            if ($email) {
+                $order->load('orderItems.product');
+                Mail::to($email)->send(new OrderApprovedMail($order));
+                \Log::info('Order approved email sent to ' . $email . ' for order #' . $order->id);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error sending order approved email for order #' . $order->id . ': ' . $e->getMessage());
+        }
     }
 
     /**

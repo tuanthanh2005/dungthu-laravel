@@ -20,7 +20,7 @@
         </a>
 
         {{-- Desktop Nav Links --}}
-        <div class="d-none d-lg-flex align-items-center gap-1 ms-3">
+        <div class="d-none d-lg-flex align-items-center gap-2 mx-auto" style="font-size: 14.5px;">
             @if($menuHome)
             <a href="{{ route('home') }}" class="nav-text-link {{ request()->routeIs('home') ? 'active' : '' }}">
                 Trang chủ
@@ -65,17 +65,17 @@
         </div>
 
         {{-- Search Bar (desktop) --}}
-        <div class="mx-auto d-none d-lg-flex search-bar-wrap align-items-center" style="max-width: 350px;">
-            <form class="search-bar-inner" action="{{ route('shop') }}" method="GET">
+        <div class="d-none d-xl-flex search-bar-wrap align-items-center ms-auto me-3" style="max-width: 250px;">
+            <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" name="search" class="search-input" 
-                       placeholder="Tìm kiếm sản phẩm, đánh giá..."
+                <input type="text" name="search" class="search-input w-100" 
+                       placeholder="Tìm kiếm sản phẩm..."
                        value="{{ request('search') }}">
             </form>
         </div>
 
         {{-- Right Actions --}}
-        <div class="d-flex align-items-center gap-2 gap-sm-3">
+        <div class="d-flex align-items-center gap-2 gap-sm-3 ms-auto ms-xl-0">
             {{-- Cart --}}
             @if($menuCart)
             <a href="{{ route('cart.index') }}" class="nav-icon-btn position-relative" aria-label="Giỏ hàng">
@@ -87,8 +87,8 @@
             </a>
             @endif
 
-            {{-- Mobile Search --}}
-            <button class="nav-icon-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchBar" aria-label="Tìm kiếm">
+            {{-- Mobile/Tablet Search --}}
+            <button class="nav-icon-btn d-xl-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchBar" aria-label="Tìm kiếm">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
 

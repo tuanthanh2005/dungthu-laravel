@@ -66,7 +66,7 @@
 
         {{-- Search Bar (desktop) --}}
         <div class="d-none d-xl-flex search-bar-wrap align-items-center ms-auto me-3" style="max-width: 250px;">
-            <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET">
+            <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET" style="border: 1.5px solid #ff5e00; background-color: #fff;">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 <input type="text" name="search" class="search-input w-100" 
                        placeholder="Tìm kiếm sản phẩm..."
@@ -152,7 +152,7 @@
     {{-- Mobile Search Bar (collapsed) --}}
     <div class="collapse w-100" id="mobileSearchBar">
         <div class="px-3 pb-2">
-            <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET">
+            <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET" style="border: 1.5px solid #ff5e00; background-color: #fff;">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
             </form>

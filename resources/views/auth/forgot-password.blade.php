@@ -24,6 +24,16 @@
         border-color: var(--primary);
         box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
     }
+    @media (max-width: 991.98px) {
+        .forgot-password-container {
+            padding: 40px 15px 40px;
+            min-height: calc(100vh - 80px);
+        }
+        .forgot-password-card {
+            padding: 30px 20px;
+            border-radius: 15px;
+        }
+    }
 </style>
 @endpush
 

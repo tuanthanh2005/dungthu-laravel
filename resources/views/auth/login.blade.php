@@ -59,8 +59,14 @@
         }
         @media (max-width: 991.98px) {
             .auth-container {
-                padding: 100px 16px 60px;
+                padding: 40px 15px 40px;
                 min-height: calc(100vh - 80px);
+            }
+            .auth-right {
+                padding: 30px 20px;
+            }
+            .auth-card {
+                border-radius: 15px;
             }
         }
     </style>

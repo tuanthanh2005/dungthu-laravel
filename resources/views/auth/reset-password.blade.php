@@ -39,6 +39,16 @@
     .password-strength.weak .password-strength-bar { width: 33%; background: #dc3545; }
     .password-strength.medium .password-strength-bar { width: 66%; background: #ffc107; }
     .password-strength.strong .password-strength-bar { width: 100%; background: #28a745; }
+    @media (max-width: 991.98px) {
+        .reset-password-container {
+            padding: 40px 15px 40px;
+            min-height: calc(100vh - 80px);
+        }
+        .reset-password-card {
+            padding: 30px 20px;
+            border-radius: 15px;
+        }
+    }
 </style>
 @endpush
 

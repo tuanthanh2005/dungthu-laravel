@@ -41,12 +41,28 @@
     .password-strength.strong .password-strength-bar { width: 100%; background: #28a745; }
     @media (max-width: 991.98px) {
         .reset-password-container {
-            padding: 40px 15px 40px;
-            min-height: calc(100vh - 80px);
+            padding: 20px 15px;
+            min-height: auto;
+            align-items: flex-start;
         }
         .reset-password-card {
-            padding: 30px 20px;
-            border-radius: 15px;
+            margin-top: 10px;
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .reset-password-card h2 {
+            font-size: 22px;
+            margin-bottom: 15px !important;
+        }
+        .btn.btn-lg {
+            padding-top: 0.6rem !important;
+            padding-bottom: 0.6rem !important;
+            font-size: 15px;
+        }
+        .form-control-lg {
+            font-size: 14px;
+            padding: 0.6rem 1rem;
         }
     }
 </style>

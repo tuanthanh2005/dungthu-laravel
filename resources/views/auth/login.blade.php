@@ -59,14 +59,30 @@
         }
         @media (max-width: 991.98px) {
             .auth-container {
-                padding: 40px 15px 40px;
-                min-height: calc(100vh - 80px);
-            }
-            .auth-right {
-                padding: 30px 20px;
+                padding: 20px 15px;
+                min-height: auto;
+                align-items: flex-start;
             }
             .auth-card {
-                border-radius: 15px;
+                margin-top: 10px;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            }
+            .auth-right {
+                padding: 25px 20px;
+            }
+            .auth-right h3 {
+                font-size: 22px;
+                margin-bottom: 20px !important;
+            }
+            .btn.py-3 {
+                padding-top: 0.6rem !important;
+                padding-bottom: 0.6rem !important;
+                font-size: 15px;
+            }
+            .form-control, .input-group-text {
+                font-size: 14px;
+                padding: 0.6rem 1rem;
             }
         }
     </style>

@@ -38,17 +38,17 @@
             @endif
             @if($menuWebdesign)
             <a href="{{ route('web-design') }}" class="nav-text-link {{ request()->routeIs('web-design') ? 'active' : '' }}">
-                Thiết kế WS
+                Thiết Kế Website
             </a>
             @endif
             @if($menuCardExchange)
             <a href="{{ route('card-exchange.index') }}" class="nav-text-link {{ request()->routeIs('card-exchange.*') ? 'active' : '' }}">
-                Đổi thẻ cào
+                Đổi Thẻ Cào
             </a>
             @endif
             @if($menuBuff)
             <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}" style="color: #ff5e00; font-weight: 700;">
-                Buff Mạng XH
+                Dịch Vụ MXH
             </a>
             @endif
             @if($menuCommunity)
@@ -60,7 +60,7 @@
                 Nhóm Zalo
             </a>
             <a href="{{ route('affiliate.login') }}" class="nav-text-link {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
-                Cộng tác viên
+                CTV
             </a>
         </div>
 

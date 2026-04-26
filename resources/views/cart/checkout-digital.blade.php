@@ -160,11 +160,38 @@
                             Sau khi thanh toán, vui lòng nhấn nút "Xác nhận đã thanh toán" bên dưới
                         </div>
 
-                        <button type="submit" form="checkout-form" class="btn btn-warning btn-lg px-5 rounded-pill shadow-lg">
+                        <button type="button" class="btn btn-warning btn-lg px-5 rounded-pill shadow-lg" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal">
                             <i class="fas fa-check-circle me-2"></i>Xác nhận đã thanh toán
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xác nhận thanh toán -->
+<div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-labelledby="confirmPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-warning text-dark border-0">
+                <h5 class="modal-title fw-bold" id="confirmPaymentModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận thanh toán
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-question-circle text-warning fa-4x mb-3"></i>
+                <h4 class="fw-bold mb-3">Bạn đã chắc chắn thanh toán chưa?</h4>
+                <p class="text-muted mb-0">Vui lòng đảm bảo bạn đã chuyển khoản thành công trước khi xác nhận. Đơn hàng ảo hoặc chưa thanh toán sẽ bị hủy tự động.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Chưa, để tôi kiểm tra lại
+                </button>
+                <button type="submit" form="checkout-form" class="btn btn-warning px-4 rounded-pill">
+                    <i class="fas fa-check me-2"></i>Có, tôi đã thanh toán
+                </button>
             </div>
         </div>
     </div>

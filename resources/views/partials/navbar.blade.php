@@ -65,11 +65,11 @@
         </div>
 
         {{-- Search Bar (desktop) --}}
-        <div class="mx-auto d-none d-lg-flex search-bar-wrap align-items-center">
+        <div class="mx-auto d-none d-lg-flex search-bar-wrap align-items-center" style="max-width: 350px;">
             <form class="search-bar-inner" action="{{ route('shop') }}" method="GET">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 <input type="text" name="search" class="search-input" 
-                       placeholder="Tìm kiếm tin tức, sản phẩm, đánh giá..."
+                       placeholder="Tìm kiếm sản phẩm, đánh giá..."
                        value="{{ request('search') }}">
             </form>
         </div>

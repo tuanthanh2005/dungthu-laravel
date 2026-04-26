@@ -57,7 +57,7 @@
             </a>
             @endif
             <a href="https://zalo.me/g/ifaku0ggmtg4xhxi7k0u" target="_blank" class="nav-text-link fw-bold" style="color: #0068ff;">
-                Nhóm Thành Viên
+                Nhóm Zalo
             </a>
             <a href="{{ route('affiliate.login') }}" class="nav-text-link {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
                 Cộng tác viên

@@ -129,6 +129,7 @@
                         @if($menuCommunity)
                             <li class="d-lg-none"><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
                         @endif
+                        <li class="d-lg-none"><a class="dropdown-item fw-bold" href="https://zalo.me/g/ifaku0ggmtg4xhxi7k0u" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Thành Viên</a></li>
                         <li class="d-lg-none"><hr class="dropdown-divider"></li>
 
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
@@ -188,12 +189,10 @@
         <span>Giỏ hàng</span>
     </a>
     @endif
-    @if($menuWebdesign)
-    <a href="{{ route('web-design') }}" class="mobile-nav-item {{ request()->routeIs('web-design') ? 'active' : '' }}">
-        <i class="fa-solid fa-palette"></i>
-        <span>Thiết kế</span>
+    <a href="https://zalo.me/g/ifaku0ggmtg4xhxi7k0u" target="_blank" class="mobile-nav-item">
+        <i class="fa-solid fa-users" style="color: #0068ff;"></i>
+        <span style="color: #0068ff; font-weight: bold;">Nhóm</span>
     </a>
-    @endif
     {{--
     <a href="{{ route('affiliate.login') }}" class="mobile-nav-item {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
         <i class="fa-solid fa-handshake"></i>

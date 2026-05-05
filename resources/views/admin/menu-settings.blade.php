@@ -398,6 +398,25 @@
                         </div>
                     </div>
                 </div>
+                
+                {{-- Cài đặt Link Zalo --}}
+                <div class="settings-header mt-5">
+                    <h2><i class="fas fa-link me-2"></i>Cài đặt Liên kết Zalo</h2>
+                    <p class="text-muted mb-0">Cập nhật link tham gia nhóm Zalo hiển thị trên Navbar và Menu di động.</p>
+                </div>
+
+                <div class="menu-item-row flex-column align-items-start mb-4">
+                    <label class="form-label fw-bold text-primary mb-2"><i class="fas fa-users"></i> Link Nhóm Zalo</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0" style="color: #0068ff;"><i class="fas fa-comments"></i></span>
+                        <input type="url" class="form-control border-start-0 ps-0" name="zalo_group_link" 
+                               value="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" 
+                               placeholder="https://zalo.me/g/...">
+                    </div>
+                    <div class="form-text mt-2">
+                        <i class="fas fa-info-circle me-1"></i> Nhập link nhóm Zalo đầy đủ (ví dụ: https://zalo.me/g/abc...).
+                    </div>
+                </div>
 
                 <div class="text-center mt-4">
                     <button type="submit" class="save-btn">

@@ -56,7 +56,7 @@
                 Cộng đồng
             </a>
             @endif
-            <a href="https://zalo.me/g/ifaku0ggmtg4xhxi7k0u" target="_blank" class="nav-text-link fw-bold" style="color: #0068ff;">
+            <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" class="nav-text-link fw-bold" style="color: #0068ff;">
                 Nhóm Zalo
             </a>
             <a href="{{ route('affiliate.login') }}" class="nav-text-link {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
@@ -129,7 +129,7 @@
                         @if($menuCommunity)
                             <li class="d-lg-none"><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
                         @endif
-                        <li class="d-lg-none"><a class="dropdown-item fw-bold" href="https://zalo.me/g/ifaku0ggmtg4xhxi7k0u" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Thành Viên</a></li>
+                        <li class="d-lg-none"><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Thành Viên</a></li>
                         <li class="d-lg-none"><hr class="dropdown-divider"></li>
 
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
@@ -189,7 +189,7 @@
         <span>Giỏ hàng</span>
     </a>
     @endif
-    <a href="https://zalo.me/g/ifaku0ggmtg4xhxi7k0u" target="_blank" class="mobile-nav-item">
+    <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" class="mobile-nav-item">
         <i class="fa-solid fa-users" style="color: #0068ff;"></i>
         <span style="color: #0068ff; font-weight: bold;">Nhóm</span>
     </a>

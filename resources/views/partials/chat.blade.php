@@ -10,8 +10,18 @@
     --chat-ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --chat-admin-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --chat-user-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --chat-support-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     --chat-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     --chat-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* User support widget */
+.chat-widget.user-support {
+    --widget-gradient: var(--chat-support-gradient);
+    --widget-color: #6366f1;
+}
+.chat-fab.user-support {
+    background: var(--chat-support-gradient);
 }
 
 /* ============================================
@@ -662,7 +672,7 @@
     flex-direction: column;
     gap: 8px;
 }
-#imagePreviewContainer, #affiliateImagePreviewContainer {
+#imagePreviewContainer, #affiliateImagePreviewContainer, #userImagePreviewContainer {
     padding: 8px;
     background: #f9fafb;
     border-radius: 12px;
@@ -760,8 +770,86 @@
 </div>
 @endif
 
-<!-- Floating Action Buttons -->
+{{-- ============================================================
+     USER SUPPORT CHAT WIDGET
+     Chỉ hiển thị cho user thường (đã đăng nhập, không phải affiliate)
+     ============================================================ --}}
+@auth
+@if(!Auth::guard('affiliate')->check())
+<div id="userChatWidget" class="chat-widget user-support">
+    <div class="chat-header">
+        <div class="chat-header-content">
+            <div class="chat-avatar">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="chat-header-text">
+                <h3>Hỗ trợ khách hàng</h3>
+                <p class="chat-status-indicator">
+                    <span class="chat-status-dot"></span>
+                    Luôn sẵn sàng giúp bạn
+                </p>
+            </div>
+        </div>
+        <button class="chat-close-btn" onclick="closeUserChat()" aria-label="Đóng">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="chat-body" id="userChatBody">
+        <div class="chat-welcome" id="userChatWelcome">
+            <i class="fas fa-comments"></i>
+            <h4>Xin chào, {{ Auth::user()->name ?? 'bạn' }}! 👋</h4>
+            <p>Chúng tôi luôn ở đây để hỗ trợ bạn.<br>Hãy gửi tin nhắn bên dưới nhé!</p>
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <form id="userChatForm" onsubmit="sendUserMessage(event)" autocomplete="off">
+            <div class="chat-input-wrapper">
+                <label for="userChatImage" class="chat-tool-btn" title="Gửi ảnh">
+                    <i class="fas fa-image"></i>
+                    <input type="file" id="userChatImage" hidden accept="image/*" onchange="previewUserImage(this)">
+                </label>
+                <div class="chat-input-container">
+                    <div id="userImagePreviewContainer" style="display: none;">
+                        <span class="preview-item">
+                            <img id="userImagePreview" src="" alt="preview">
+                            <button type="button" onclick="clearUserImagePreview()"><i class="fas fa-times"></i></button>
+                        </span>
+                    </div>
+                    <input
+                        type="text"
+                        class="chat-input"
+                        id="userChatInput"
+                        placeholder="Nhập tin nhắn..."
+                        autocomplete="off"
+                        maxlength="1000"
+                        enterkeyhint="send"
+                    >
+                </div>
+                <button class="chat-send-btn" type="submit" id="userChatSendBtn" aria-label="Gửi">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+@endauth
+
+
 <div class="chat-fab-container">
+
+    <!-- User Support Chat Button (user thường, không phải affiliate) -->
+    @auth
+    @if(!Auth::guard('affiliate')->check())
+    <button class="chat-fab user-support" onclick="toggleUserChat()" id="userChatFab" aria-label="Hỗ trợ khách hàng">
+        <i class="fas fa-comments fab-icon"></i>
+        <span class="unread-badge" id="userUnreadBadge" style="display: none;">0</span>
+        <span class="fab-tooltip">Hỗ trợ khách hàng</span>
+    </button>
+    @endif
+    @endauth
 
     <!-- Admin Chat Button (Only for Approved Affiliates) -->
     @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
@@ -772,6 +860,7 @@
     </button>
     @endif
 </div>
+
 
 <script>
 // ============================================
@@ -1068,12 +1157,26 @@ document.addEventListener('DOMContentLoaded', function() {
         refreshAffiliateUnreadCount();
     @endif
 
+    @auth
+    @if(!Auth::guard('affiliate')->check())
+        _startUserPolling();
+        _refreshUserUnreadCount();
+    @endif
+    @endauth
+
     // Close on click outside
     document.addEventListener('click', function(event) {
+        // Affiliate widget
         const affiliateWidget = document.getElementById('affiliateChatWidget');
         const affiliateBtn = document.getElementById('affiliateChatFab');
         if (affiliateChatOpen && affiliateWidget && !affiliateWidget.contains(event.target) && !affiliateBtn?.contains(event.target)) {
             closeAffiliateChat();
+        }
+        // User widget
+        const userWidget = document.getElementById('userChatWidget');
+        const userBtn = document.getElementById('userChatFab');
+        if (userChatOpen && userWidget && !userWidget.contains(event.target) && !userBtn?.contains(event.target)) {
+            closeUserChat();
         }
     });
 
@@ -1083,5 +1186,222 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
         });
     });
+});
+
+
+// ============================================
+// USER SUPPORT CHAT LOGIC
+// ============================================
+let userChatOpen = false;
+let lastUserMessageId = 0;
+let userPollingInterval = null;
+
+function toggleUserChat() {
+    const widget = document.getElementById('userChatWidget');
+    if (!widget) return;
+
+    if (userChatOpen) {
+        closeUserChat();
+    } else {
+        // Close affiliate if open
+        const affWidget = document.getElementById('affiliateChatWidget');
+        if (affWidget && affiliateChatOpen) {
+            affWidget.classList.remove('active');
+            affiliateChatOpen = false;
+        }
+        widget.classList.add('active');
+        userChatOpen = true;
+        loadUserMessages();
+        markUserAsRead();
+        const input = document.getElementById('userChatInput');
+        if (input) setTimeout(() => input.focus(), 300);
+    }
+}
+
+function closeUserChat() {
+    const widget = document.getElementById('userChatWidget');
+    if (widget) {
+        widget.classList.remove('active');
+        userChatOpen = false;
+    }
+}
+
+function loadUserMessages() {
+    const body = document.getElementById('userChatBody');
+    if (!body) return;
+
+    fetch('{{ route('chat.messages') }}')
+        .then(res => res.json())
+        .then(data => {
+            if (!Array.isArray(data) || data.length === 0) return;
+            const welcome = document.getElementById('userChatWelcome');
+            if (welcome) welcome.remove();
+            body.innerHTML = '';
+            data.forEach(msg => {
+                _appendUserMsg(msg, false);
+                lastUserMessageId = Math.max(lastUserMessageId, msg.id);
+            });
+            body.scrollTop = body.scrollHeight;
+        })
+        .catch(err => console.warn('Load user messages error:', err));
+}
+
+function sendUserMessage(event) {
+    event.preventDefault();
+    const input    = document.getElementById('userChatInput');
+    const imgInput = document.getElementById('userChatImage');
+    const sendBtn  = document.getElementById('userChatSendBtn');
+    const msg = (input.value || '').trim();
+    if (!msg && (!imgInput || !imgInput.files[0])) return;
+
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    const formData = new FormData();
+    if (msg) formData.append('message', msg);
+    if (imgInput && imgInput.files[0]) formData.append('image', imgInput.files[0]);
+
+    fetch('{{ route('chat.send') }}', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        body: formData
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.id) {
+            input.value = '';
+            clearUserImagePreview();
+            _appendUserMsg(data, false);
+            lastUserMessageId = Math.max(lastUserMessageId, data.id);
+        }
+    })
+    .catch(err => {
+        console.error('Send user message error:', err);
+    })
+    .finally(() => {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        input.focus();
+    });
+}
+
+function _appendUserMsg(msg, playSound) {
+    const body = document.getElementById('userChatBody');
+    if (!body) return;
+    if (document.getElementById('user-msg-' + msg.id)) return;
+
+    const welcome = document.getElementById('userChatWelcome');
+    if (welcome) welcome.remove();
+
+    if (playSound && msg.is_admin) {
+        try {
+            const a = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            a.volume = 0.4;
+            a.play().catch(() => {});
+        } catch(e) {}
+    }
+
+    const div = document.createElement('div');
+    div.id = 'user-msg-' + msg.id;
+    div.className = `chat-message ${msg.is_admin ? 'admin' : 'user'}`;
+
+    const date = new Date(msg.created_at);
+    const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+    let content = '';
+    if (msg.message) content += `<div class="message-content">${escapeHtml(msg.message)}</div>`;
+    if (msg.image) {
+        const src = msg.image.startsWith('http') ? msg.image : `{{ asset('') }}${msg.image}`;
+        content += `<img src="${src}" class="message-image" onclick="window.open('${src}')" loading="lazy">`;
+    }
+    div.innerHTML = `<div class="message-bubble">${content}<div class="message-time">${time}</div></div>`;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+}
+
+function _startUserPolling() {
+    userPollingInterval = setInterval(() => {
+        if (userChatOpen) {
+            _checkNewUserMessages();
+        } else {
+            _refreshUserUnreadCount();
+        }
+    }, 3500);
+}
+
+function _checkNewUserMessages() {
+    fetch(`{{ route('chat.new') }}?last_id=${lastUserMessageId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(msg => {
+                    if (msg.id > lastUserMessageId) {
+                        _appendUserMsg(msg, true);
+                        lastUserMessageId = Math.max(lastUserMessageId, msg.id);
+                    }
+                });
+                if (userChatOpen) markUserAsRead();
+            }
+        })
+        .catch(() => {});
+}
+
+function _refreshUserUnreadCount() {
+    const badge = document.getElementById('userUnreadBadge');
+    if (!badge) return;
+    fetch('{{ route('chat.unread-count') }}')
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.unread > 0) {
+                badge.textContent = data.unread;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        })
+        .catch(() => {});
+}
+
+function markUserAsRead() {
+    const badge = document.getElementById('userUnreadBadge');
+    if (badge) badge.style.display = 'none';
+    fetch('{{ route('chat.mark-read') }}', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    }).catch(() => {});
+}
+
+function previewUserImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('userImagePreview').src = e.target.result;
+            document.getElementById('userImagePreviewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function clearUserImagePreview() {
+    const input = document.getElementById('userChatImage');
+    if (input) input.value = '';
+    const container = document.getElementById('userImagePreviewContainer');
+    if (container) container.style.display = 'none';
+}
+
+// Enter key for user chat input
+document.addEventListener('DOMContentLoaded', function() {
+    const userInput = document.getElementById('userChatInput');
+    if (userInput) {
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('userChatForm')?.requestSubmit();
+            }
+        });
+    }
 });
 </script>

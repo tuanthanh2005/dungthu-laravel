@@ -312,7 +312,7 @@
                             <button class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" onclick="clearPreview()" style="width: 24px; height: 24px; padding: 0;">&times;</button>
                         </div>
                     </div>
-                    <form id="adminChatForm" onsubmit="sendAdminMessage(event)">
+                    <form id="adminChatForm">
                         <div class="input-group">
                             <label for="adminFile">
                                 <span class="btn btn-light rounded-circle me-1"><i class="fas fa-image"></i></span>
@@ -393,94 +393,100 @@ function loadMessages() {
         });
 }
 
-function sendAdminMessage(event) {
-    if (event) event.preventDefault();
-    if (!selectedId) return;
-    
-    const input = document.getElementById('adminChatInput');
-    const fileInput = document.getElementById('adminFile');
-    const message = input.value.trim();
-    
-    if (!message && !fileInput.files[0]) return;
+    document.getElementById('adminChatForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!selectedId) return;
+        
+        const input = document.getElementById('adminChatInput');
+        const fileInput = document.getElementById('adminFile');
+        const message = input.value.trim();
+        
+        if (!message && !fileInput.files[0]) return;
 
-    // Helper to send JSON (text-only)
-    function sendJson(payload) {
-        return fetch(`/admin/chat/reply/${selectedId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(async (res) => {
-            if (res.status === 403) {
-                const pin = window.prompt('Nhập mã xác nhận (3 số) để tiếp tục:');
-                if (pin === null) return null;
-                return sendJson({ ...payload, admin_pin: pin });
-            }
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.error || 'Lỗi gửi tin nhắn');
-            }
-            return res.json();
-        });
-    }
-
-    // Helper to send FormData (with images)
-    function sendFormData(formData) {
-        return fetch(`/admin/chat/reply/${selectedId}`, {
-            method: 'POST',
-            headers: { 
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: formData
-        })
-        .then(async (res) => {
-            if (res.status === 403) {
-                const pin = window.prompt('Nhập mã xác nhận (3 số) để tiếp tục:');
-                if (pin === null) return null;
-                formData.set('admin_pin', pin); // Use set instead of append to avoid duplicates on retry
-                return sendFormData(formData);
-            }
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.error || 'Lỗi gửi tin nhắn');
-            }
-            return res.json();
-        });
-    }
-
-    if (fileInput.files[0]) {
-        const formData = new FormData();
-        formData.append('message', message);
-        formData.append('type', selectedType);
-        formData.append('image', fileInput.files[0]);
-
-        sendFormData(formData)
-            .then(data => {
-                if (!data) return;
-                appendMsg(data);
-                lastMessageId = Math.max(lastMessageId, data.id);
-                input.value = '';
-                clearPreview();
-                scrollToBottom();
+        // Helper to send JSON (text-only)
+        function sendJson(payload) {
+            return fetch(`/admin/chat/reply/${selectedId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload)
             })
-            .catch(err => alert(err.message));
-    } else {
-        sendJson({ message, type: selectedType })
-            .then(data => {
-                if (!data) return;
-                appendMsg(data);
-                lastMessageId = Math.max(lastMessageId, data.id);
-                input.value = '';
-                scrollToBottom();
+            .then(async (res) => {
+                if (res.status === 403) {
+                    const pin = window.prompt('Nhập mã xác nhận (3 số) để tiếp tục:');
+                    if (pin === null) return null;
+                    return sendJson({ ...payload, admin_pin: pin });
+                }
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'Lỗi gửi tin nhắn');
+                }
+                return res.json();
+            });
+        }
+
+        // Helper to send FormData (with images)
+        function sendFormData(formData) {
+            return fetch(`/admin/chat/reply/${selectedId}`, {
+                method: 'POST',
+                headers: { 
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: formData
             })
-            .catch(err => alert(err.message));
+            .then(async (res) => {
+                if (res.status === 403) {
+                    const pin = window.prompt('Nhập mã xác nhận (3 số) để tiếp tục:');
+                    if (pin === null) return null;
+                    formData.set('admin_pin', pin); 
+                    return sendFormData(formData);
+                }
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'Lỗi gửi tin nhắn');
+                }
+                return res.json();
+            });
+        }
+
+        if (fileInput.files[0]) {
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('type', selectedType);
+            formData.append('image', fileInput.files[0]);
+
+            sendFormData(formData)
+                .then(data => {
+                    if (!data) return;
+                    appendMsg(data);
+                    lastMessageId = Math.max(lastMessageId, data.id);
+                    input.value = '';
+                    clearPreview();
+                    scrollToBottom();
+                })
+                .catch(err => alert(err.message));
+        } else {
+            sendJson({ message, type: selectedType })
+                .then(data => {
+                    if (!data) return;
+                    appendMsg(data);
+                    lastMessageId = Math.max(lastMessageId, data.id);
+                    input.value = '';
+                    scrollToBottom();
+                })
+                .catch(err => alert(err.message));
+        }
+    });
+
+    // Old function for compatibility
+    function sendAdminMessage(event) {
+        if (event) event.preventDefault();
+        return false;
     }
-}
 
 function appendMsg(msg) {
     const chatBox = document.getElementById('chatMessages');

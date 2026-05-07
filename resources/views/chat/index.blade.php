@@ -399,7 +399,7 @@
                         <button class="remove-preview" onclick="clearImagePreview()">&times;</button>
                     </div>
 
-                    <form id="chatForm" onsubmit="handleChatSubmit(event)">
+                    <form id="chatForm">
                         <div class="chat-input-wrapper">
                             <label for="chatImage" class="tool-btn" title="Gửi ảnh">
                                 <i class="fas fa-image"></i>
@@ -451,18 +451,17 @@
         imagePreview.src = '';
     }
 
-    function handleChatSubmit(e) {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+    // Use addEventListener instead of onsubmit attribute for better reliability
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         
         const message = chatInput.value.trim();
         const hasImage = chatImage.files.length > 0;
 
-        if (!message && !hasImage) return false;
+        if (!message && !hasImage) return;
 
-        // Disable button while sending
+        // Disable UI
         sendBtn.disabled = true;
         sendBtn.style.opacity = '0.7';
 
@@ -471,10 +470,6 @@
         if (hasImage) {
             formData.append('image', chatImage.files[0]);
         }
-
-        // Reset inputs immediately for responsive feel
-        chatInput.value = '';
-        clearImagePreview();
         
         fetch('{{ route('chat.send') }}', {
             method: 'POST',
@@ -484,23 +479,32 @@
             },
             body: formData
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Server returned ' + res.status);
+            return res.json();
+        })
         .then(data => {
-            if (data.id) {
+            if (data && data.id) {
+                // Only reset if successful
+                chatInput.value = '';
+                clearImagePreview();
                 appendMessage(data);
-                lastId = data.id;
+                lastId = Math.max(lastId, data.id);
             }
         })
         .catch(err => {
             console.error('Error sending message:', err);
-            // Re-fill input on error
-            chatInput.value = message;
+            alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
         })
         .finally(() => {
             sendBtn.disabled = false;
             sendBtn.style.opacity = '1';
         });
+    });
 
+    // Old function for backward compatibility if any
+    function handleChatSubmit(e) {
+        if (e) e.preventDefault();
         return false;
     }
 

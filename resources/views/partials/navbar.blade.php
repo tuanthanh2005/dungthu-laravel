@@ -64,11 +64,6 @@
                 CTV
             </a>
             @auth
-            @if($menuChat)
-            <a href="{{ route('user.orders') }}" class="nav-text-link {{ request()->routeIs('user.orders') ? 'active' : '' }}">
-                Đơn hàng
-            </a>
-            @endif
             @endauth
         </div>
 

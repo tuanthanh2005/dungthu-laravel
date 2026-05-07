@@ -399,14 +399,15 @@
                         <button class="remove-preview" onclick="clearImagePreview()">&times;</button>
                     </div>
 
-                    <form id="chatForm">
+                    <form id="chatForm" onsubmit="return false;">
+                        @csrf
                         <div class="chat-input-wrapper">
                             <label for="chatImage" class="tool-btn" title="Gửi ảnh">
                                 <i class="fas fa-image"></i>
-                                <input type="file" id="chatImage" hidden accept="image/*" onchange="previewImage(this)">
+                                <input type="file" id="chatImage" name="image" hidden accept="image/*" onchange="previewImage(this)">
                             </label>
-                            <input type="text" id="chatInput" class="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off">
-                            <button type="submit" class="send-btn" id="sendBtn">
+                            <input type="text" id="chatInput" name="message" class="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off">
+                            <button type="button" class="send-btn" id="sendBtn" onclick="handleChatSubmit()">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
@@ -420,161 +421,151 @@
 
 @push('scripts')
 <script>
-    const chatBody = document.getElementById('chatBody');
-    const chatForm = document.getElementById('chatForm');
-    const chatInput = document.getElementById('chatInput');
-    const chatImage = document.getElementById('chatImage');
-    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-    const imagePreview = document.getElementById('imagePreview');
-    const sendBtn = document.getElementById('sendBtn');
-    
-    let lastId = {{ $messages->last()->id ?? 0 }};
-    let pollingInterval = null;
-
-    // Scroll to bottom on load
-    chatBody.scrollTop = chatBody.scrollHeight;
-
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-                imagePreviewContainer.style.display = 'block';
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function clearImagePreview() {
-        chatImage.value = '';
-        imagePreviewContainer.style.display = 'none';
-        imagePreview.src = '';
-    }
-
-    // Use addEventListener instead of onsubmit attribute for better reliability
-    chatForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatBody = document.getElementById('chatBody');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatImage = document.getElementById('chatImage');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const sendBtn = document.getElementById('sendBtn');
         
-        const message = chatInput.value.trim();
-        const hasImage = chatImage.files.length > 0;
+        let lastId = {{ $messages->last()->id ?? 0 }};
+        let pollingInterval = null;
 
-        if (!message && !hasImage) return;
-
-        // Disable UI
-        sendBtn.disabled = true;
-        sendBtn.style.opacity = '0.7';
-
-        const formData = new FormData();
-        formData.append('message', message);
-        if (hasImage) {
-            formData.append('image', chatImage.files[0]);
-        }
-        
-        fetch('{{ route('chat.send') }}', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: formData
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Server returned ' + res.status);
-            return res.json();
-        })
-        .then(data => {
-            if (data && data.id) {
-                // Only reset if successful
-                chatInput.value = '';
-                clearImagePreview();
-                appendMessage(data);
-                lastId = Math.max(lastId, data.id);
-            }
-        })
-        .catch(err => {
-            console.error('Error sending message:', err);
-            alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
-        })
-        .finally(() => {
-            sendBtn.disabled = false;
-            sendBtn.style.opacity = '1';
-        });
-    });
-
-    // Old function for backward compatibility if any
-    function handleChatSubmit(e) {
-        if (e) e.preventDefault();
-        return false;
-    }
-
-    function appendMessage(msg) {
-        // Prevent duplicates
-        if (document.querySelector(`.message[data-id="${msg.id}"]`)) return;
-
-        const div = document.createElement('div');
-        div.className = `message ${msg.is_admin ? 'admin' : 'user'}`;
-        div.dataset.id = msg.id;
-
-        const date = new Date(msg.created_at);
-        const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-        
-        let contentHtml = '';
-        if (msg.message) contentHtml += `<div>${escapeHtml(msg.message)}</div>`;
-        if (msg.image) {
-            const imgSrc = msg.image.startsWith('http') ? msg.image : `{{ asset('') }}${msg.image}`;
-            contentHtml += `<img src="${imgSrc}" class="message-image" onclick="window.open(this.src)">`;
-        }
-
-        div.innerHTML = `
-            <div class="message-content">${contentHtml}</div>
-            <div class="message-time">${time}</div>
-        `;
-
-        chatBody.appendChild(div);
+        // Scroll to bottom on load
         chatBody.scrollTop = chatBody.scrollHeight;
-    }
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    function pollMessages() {
-        fetch(`{{ route('chat.new') }}?last_id=${lastId}`)
-            .then(res => res.json())
-            .then(messages => {
-                if (messages.length > 0) {
-                    messages.forEach(msg => {
-                        if (msg.id > lastId) {
-                            appendMessage(msg);
-                            lastId = Math.max(lastId, msg.id);
-                        }
-                    });
+        window.previewImage = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.style.display = 'block';
                 }
-            })
-            .catch(err => console.error('Polling error:', err));
-    }
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
 
-    // Polling every 3 seconds
-    pollingInterval = setInterval(pollMessages, 3000);
+        window.clearImagePreview = function() {
+            chatImage.value = '';
+            imagePreviewContainer.style.display = 'none';
+            imagePreview.src = '';
+        };
 
-    // Stop polling when tab inactive
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            clearInterval(pollingInterval);
-        } else {
-            pollingInterval = setInterval(pollMessages, 3000);
-            // Also mark read when returning to tab
-            fetch('{{ route('chat.mark-read') }}', { 
-                method: 'POST', 
-                headers: { 
+        window.handleChatSubmit = function() {
+            const message = chatInput.value.trim();
+            const hasImage = chatImage.files.length > 0;
+
+            if (!message && !hasImage) return;
+
+            // Disable UI
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            const formData = new FormData(chatForm);
+            
+            fetch('{{ route('chat.send') }}', {
+                method: 'POST',
+                headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json'
-                } 
+                },
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Server error: ' + res.status);
+                return res.json();
+            })
+            .then(data => {
+                if (data && data.id) {
+                    chatInput.value = '';
+                    clearImagePreview();
+                    appendMessage(data);
+                    lastId = Math.max(lastId, data.id);
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Lỗi: ' + err.message);
+            })
+            .finally(() => {
+                sendBtn.disabled = false;
+                sendBtn.style.opacity = '1';
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             });
+        };
+
+        // Handle Enter key
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleChatSubmit();
+            }
+        });
+
+        function appendMessage(msg) {
+            if (document.querySelector(`.message[data-id="${msg.id}"]`)) return;
+
+            const div = document.createElement('div');
+            div.className = `message ${msg.is_admin ? 'admin' : 'user'}`;
+            div.dataset.id = msg.id;
+
+            const date = new Date(msg.created_at);
+            const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            
+            let contentHtml = '';
+            if (msg.message) contentHtml += `<div>${escapeHtml(msg.message)}</div>`;
+            if (msg.image) {
+                const imgSrc = msg.image.startsWith('http') ? msg.image : `{{ asset('') }}${msg.image}`;
+                contentHtml += `<img src="${imgSrc}" class="message-image" onclick="window.open(this.src)">`;
+            }
+
+            div.innerHTML = `
+                <div class="message-content">${contentHtml}</div>
+                <div class="message-time">${time}</div>
+            `;
+
+            chatBody.appendChild(div);
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function pollMessages() {
+            fetch(`{{ route('chat.new') }}?last_id=${lastId}`)
+                .then(res => res.json())
+                .then(messages => {
+                    if (messages && messages.length > 0) {
+                        messages.forEach(msg => {
+                            if (msg.id > lastId) {
+                                appendMessage(msg);
+                                lastId = Math.max(lastId, msg.id);
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Poll error:', err));
+        }
+
+        pollingInterval = setInterval(pollMessages, 3000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(pollingInterval);
+            } else {
+                pollingInterval = setInterval(pollMessages, 3000);
+                fetch('{{ route('chat.mark-read') }}', { 
+                    method: 'POST', 
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } 
+                });
+            }
+        });
     });
 </script>
 @endpush

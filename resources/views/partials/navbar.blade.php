@@ -65,9 +65,8 @@
             </a>
             @auth
             @if($menuChat)
-            <a href="{{ route('chat.index') }}" class="nav-text-link {{ request()->routeIs('chat.index') ? 'active' : '' }} position-relative">
-                Chat Admin
-                <span id="navChatBadge" class="badge bg-danger rounded-pill position-absolute" style="top: -5px; right: -10px; font-size: 9px; display: none;">0</span>
+            <a href="{{ route('user.orders') }}" class="nav-text-link {{ request()->routeIs('user.orders') ? 'active' : '' }}">
+                Đơn hàng
             </a>
             @endif
             @endauth
@@ -198,26 +197,18 @@
         <span>Giỏ hàng</span>
     </a>
     @endif
+    @auth
+    @if($menuChat)
+    <a href="{{ route('user.orders') }}" class="mobile-nav-item {{ request()->routeIs('user.orders') ? 'active' : '' }}">
+        <i class="fa-solid fa-box"></i>
+        <span>Đơn hàng</span>
+    </a>
+    @endif
+    @endauth
     <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" class="mobile-nav-item">
         <i class="fa-solid fa-users" style="color: #0068ff;"></i>
         <span style="color: #0068ff; font-weight: bold;">Nhóm</span>
     </a>
-    {{--
-    <a href="{{ route('affiliate.login') }}" class="mobile-nav-item {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
-        <i class="fa-solid fa-handshake"></i>
-        <span>CTV</span>
-    </a>
-    --}}
-    @auth
-    @if($menuChat)
-    <a href="{{ route('chat.index') }}" class="mobile-nav-item {{ request()->routeIs('chat.index') ? 'active' : '' }}">
-        <i class="fa-solid fa-comments position-relative">
-            <span id="mobileChatBadge" class="badge bg-danger rounded-pill position-absolute" style="top: -5px; right: -10px; font-size: 8px; display: none;">0</span>
-        </i>
-        <span>Chat Admin</span>
-    </a>
-    @endif
-    @endauth
 </nav>
 
 <script>

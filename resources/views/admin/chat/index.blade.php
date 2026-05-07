@@ -1,29 +1,17 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Quản Lý Chat - Admin')
+@section('title', 'Quản Lý Chat')
 
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
-
-    .chat-admin-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 15px;
-    }
-
     .chat-admin-card {
         background: white;
-        border-radius: 20px;
+        border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        height: calc(100vh - 160px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        height: calc(100vh - 180px);
         display: flex;
+        margin: 20px;
     }
 
     .users-sidebar {
@@ -239,15 +227,7 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="chat-admin-container">
-        <div class="mb-4">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-light">
-                <i class="fas fa-arrow-left"></i> Quay lại Dashboard
-            </a>
-        </div>
-
-        <div class="chat-admin-card">
+<div class="chat-admin-card">
             <div class="users-sidebar">
                 <div class="users-header">
                     <h5><i class="fas fa-users"></i> Danh sách Chat</h5>
@@ -347,8 +327,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
 <script>
 let selectedId = null;

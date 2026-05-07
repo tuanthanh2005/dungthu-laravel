@@ -6,15 +6,17 @@
 <style>
     :root {
         --chat-primary: #6366f1;
+        --chat-primary-light: #818cf8;
         --chat-primary-dark: #4f46e5;
-        --chat-user-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        --chat-admin-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        --chat-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        --chat-user-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        --chat-admin-gradient: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+        --chat-bg: #f8fafc;
+        --chat-card-bg: rgba(255, 255, 255, 0.95);
     }
 
     .chat-page-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #f6f9fc 0%, #edf2f7 100%);
+        padding: 60px 0;
+        background: radial-gradient(circle at top right, #e0e7ff 0%, #f8fafc 50%, #f1f5f9 100%);
         min-height: calc(100vh - 70px);
         margin-top: 70px;
         display: flex;
@@ -22,89 +24,96 @@
     }
 
     .chat-container {
-        max-width: 900px;
+        max-width: 1000px;
         width: 100%;
         margin: 0 auto;
-        padding: 0 15px;
+        padding: 0 20px;
     }
 
     .chat-card {
-        background: white;
-        border-radius: 24px;
+        background: var(--chat-card-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 32px;
         overflow: hidden;
-        box-shadow: var(--chat-shadow);
-        height: 700px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        height: 750px;
         display: flex;
         flex-direction: column;
-        border: 1px solid rgba(0,0,0,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        position: relative;
     }
 
     .chat-header {
-        padding: 20px 30px;
+        padding: 24px 40px;
         background: white;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         display: flex;
         align-items: center;
         justify-content: space-between;
+        z-index: 10;
     }
 
     .chat-header-info {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 18px;
+    }
+
+    .admin-avatar-wrap {
+        position: relative;
     }
 
     .admin-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        border-radius: 20px;
         background: var(--chat-admin-gradient);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 24px;
-        box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+        font-size: 26px;
+        box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.4);
+        transform: rotate(-3deg);
+    }
+
+    .online-indicator {
+        position: absolute;
+        bottom: -4px;
+        right: -4px;
+        width: 16px;
+        height: 16px;
+        background: #10b981;
+        border: 3px solid white;
+        border-radius: 50%;
     }
 
     .admin-status h5 {
         margin: 0;
-        font-weight: 700;
-        color: #2d3436;
-        font-size: 1.1rem;
+        font-weight: 800;
+        color: #1e293b;
+        font-size: 1.2rem;
+        letter-spacing: -0.02em;
     }
 
-    .status-badge {
+    .status-text {
+        font-size: 13px;
+        color: #10b981;
+        font-weight: 700;
         display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 12px;
-        color: #4ade80;
-        font-weight: 600;
-    }
-
-    .status-dot {
-        width: 8px;
-        height: 8px;
-        background: #4ade80;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.5); opacity: 0.5; }
-        100% { transform: scale(1); opacity: 1; }
+        gap: 5px;
     }
 
     .chat-body {
         flex: 1;
         overflow-y: auto;
-        padding: 30px;
-        background: #f8faff;
+        padding: 40px;
+        background: rgba(248, 250, 252, 0.5);
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 24px;
+        scroll-behavior: smooth;
     }
 
     .chat-body::-webkit-scrollbar {
@@ -112,90 +121,106 @@
     }
 
     .chat-body::-webkit-scrollbar-thumb {
-        background: #e2e8f0;
+        background: #cbd5e1;
         border-radius: 10px;
     }
 
     .message {
-        max-width: 80%;
+        max-width: 75%;
         display: flex;
         flex-direction: column;
+        animation: messageFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes messageFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .message.user {
         align-self: flex-end;
+        align-items: flex-end;
     }
 
     .message.admin {
         align-self: flex-start;
+        align-items: flex-start;
     }
 
     .message-content {
-        padding: 14px 20px;
-        border-radius: 20px;
+        padding: 16px 24px;
+        border-radius: 24px;
         font-size: 15px;
-        line-height: 1.5;
+        line-height: 1.6;
         position: relative;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        font-weight: 500;
     }
 
     .message.user .message-content {
         background: var(--chat-user-gradient);
         color: white;
-        border-bottom-right-radius: 4px;
+        border-bottom-right-radius: 6px;
+        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
     }
 
     .message.admin .message-content {
         background: white;
-        color: #2d3436;
-        border-bottom-left-radius: 4px;
-        border: 1px solid #eef2f7;
+        color: #334155;
+        border-bottom-left-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, 0.03);
     }
 
     .message-image {
         max-width: 100%;
-        border-radius: 15px;
-        margin-top: 8px;
+        border-radius: 20px;
+        margin-top: 10px;
         cursor: pointer;
-        transition: transform 0.3s;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
 
     .message-image:hover {
-        transform: scale(1.02);
+        transform: scale(1.03);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.15);
     }
 
     .message-time {
         font-size: 11px;
-        color: #a0aec0;
-        margin-top: 5px;
-        font-weight: 500;
-    }
-
-    .message.user .message-time {
-        text-align: right;
+        color: #94a3b8;
+        margin-top: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .chat-footer {
-        padding: 20px 30px;
+        padding: 30px 40px;
         background: white;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .input-area-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
 
     .chat-input-wrapper {
         display: flex;
         align-items: center;
-        gap: 15px;
-        background: #f1f5f9;
-        padding: 8px 10px 8px 20px;
-        border-radius: 30px;
+        gap: 12px;
+        background: #f8fafc;
+        padding: 10px 10px 10px 24px;
+        border-radius: 24px;
         transition: all 0.3s;
-        border: 2px solid transparent;
+        border: 2px solid #f1f5f9;
     }
 
     .chat-input-wrapper:focus-within {
         background: white;
         border-color: var(--chat-primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08);
     }
 
     .chat-input {
@@ -203,92 +228,112 @@
         background: transparent;
         border: none;
         outline: none;
-        padding: 10px 0;
-        font-size: 15px;
-        color: #2d3436;
+        padding: 12px 0;
+        font-size: 16px;
+        color: #1e293b;
+        font-weight: 500;
     }
 
     .tool-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #64748b;
         cursor: pointer;
         transition: all 0.2s;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     .tool-btn:hover {
-        background: #e2e8f0;
+        background: #f1f5f9;
         color: var(--chat-primary);
+        transform: translateY(-2px);
     }
 
     .send-btn {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: var(--chat-primary);
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        background: var(--chat-user-gradient);
         color: white;
         border: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 22px;
         cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
     }
 
     .send-btn:hover {
-        transform: scale(1.1);
-        background: var(--chat-primary-dark);
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.5);
+    }
+
+    .send-btn:active {
+        transform: scale(0.95);
     }
 
     .image-preview-container {
         display: none;
-        padding: 10px;
+        padding: 15px;
         background: #f8fafc;
-        border-radius: 15px;
-        margin-bottom: 10px;
+        border-radius: 20px;
         position: relative;
+        width: fit-content;
+        border: 2px dashed #e2e8f0;
     }
 
     .preview-img {
-        height: 80px;
-        border-radius: 10px;
+        height: 100px;
+        border-radius: 12px;
         object-fit: cover;
     }
 
     .remove-preview {
         position: absolute;
-        top: 5px;
-        left: 85px;
-        background: #ef4444;
+        top: -8px;
+        right: -8px;
+        background: #f43f5e;
         color: white;
-        border: none;
+        border: 2px solid white;
         border-radius: 50%;
-        width: 22px;
-        height: 22px;
+        width: 26px;
+        height: 26px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 14px;
         cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     @media (max-width: 768px) {
         .chat-page-wrapper {
-            padding: 10px 0;
-            margin-top: 60px;
+            padding: 0;
+            margin-top: 65px;
         }
         .chat-card {
-            height: calc(100vh - 150px);
+            height: calc(100vh - 65px);
             border-radius: 0;
+            border: none;
+        }
+        .chat-header {
+            padding: 15px 20px;
+        }
+        .chat-body {
+            padding: 20px;
+        }
+        .chat-footer {
+            padding: 20px;
         }
         .message {
-            max-width: 90%;
+            max-width: 85%;
         }
     }
 </style>
@@ -297,32 +342,36 @@
 @section('content')
 <div class="chat-page-wrapper">
     <div class="chat-container">
-        <div class="chat-card" data-aos="fade-up">
+        <div class="chat-card" data-aos="zoom-in">
             <!-- Header -->
             <div class="chat-header">
                 <div class="chat-header-info">
-                    <div class="admin-avatar">
-                        <i class="fas fa-headset"></i>
+                    <div class="admin-avatar-wrap">
+                        <div class="admin-avatar">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <span class="online-indicator"></span>
                     </div>
                     <div class="admin-status">
-                        <h5>Hỗ trợ trực tuyến</h5>
-                        <div class="status-badge">
-                            <span class="status-dot"></span>
-                            Đang hoạt động
+                        <h5>DungThu Support</h5>
+                        <div class="status-text">
+                            <i class="fas fa-circle" style="font-size: 8px;"></i> Online
                         </div>
                     </div>
                 </div>
                 <div class="header-actions">
-                    <a href="{{ route('home') }}" class="btn btn-sm btn-light rounded-pill px-3">
-                        <i class="fas fa-times me-1"></i> Đóng
+                    <a href="{{ route('home') }}" class="btn btn-sm btn-light rounded-pill px-4 fw-bold">
+                        <i class="fas fa-times me-2"></i>Thoát
                     </a>
                 </div>
             </div>
 
             <!-- Body -->
             <div class="chat-body" id="chatBody">
-                <div class="text-center py-4">
-                    <p class="text-muted small">Chào mừng bạn! Admin sẽ phản hồi bạn sớm nhất có thể.</p>
+                <div class="text-center py-5">
+                    <div class="mb-3" style="font-size: 40px;">👋</div>
+                    <h5 class="fw-bold mb-1">Xin chào!</h5>
+                    <p class="text-muted small">Hãy để lại tin nhắn, Admin sẽ phản hồi bạn ngay lập tức.</p>
                 </div>
 
                 @foreach($messages as $msg)
@@ -344,23 +393,25 @@
 
             <!-- Footer -->
             <div class="chat-footer">
-                <div id="imagePreviewContainer" class="image-preview-container">
-                    <img id="imagePreview" class="preview-img">
-                    <button class="remove-preview" onclick="clearImagePreview()">&times;</button>
-                </div>
-
-                <form id="chatForm" onsubmit="sendMessage(event)">
-                    <div class="chat-input-wrapper">
-                        <label for="chatImage" class="tool-btn" title="Gửi ảnh">
-                            <i class="fas fa-image"></i>
-                            <input type="file" id="chatImage" hidden accept="image/*" onchange="previewImage(this)">
-                        </label>
-                        <input type="text" id="chatInput" class="chat-input" placeholder="Nhập nội dung tin nhắn..." autocomplete="off">
-                        <button type="submit" class="send-btn" id="sendBtn">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                <div class="input-area-container">
+                    <div id="imagePreviewContainer" class="image-preview-container">
+                        <img id="imagePreview" class="preview-img">
+                        <button class="remove-preview" onclick="clearImagePreview()">&times;</button>
                     </div>
-                </form>
+
+                    <form id="chatForm" onsubmit="handleChatSubmit(event)">
+                        <div class="chat-input-wrapper">
+                            <label for="chatImage" class="tool-btn" title="Gửi ảnh">
+                                <i class="fas fa-image"></i>
+                                <input type="file" id="chatImage" hidden accept="image/*" onchange="previewImage(this)">
+                            </label>
+                            <input type="text" id="chatInput" class="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off">
+                            <button type="submit" class="send-btn" id="sendBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -375,6 +426,7 @@
     const chatImage = document.getElementById('chatImage');
     const imagePreviewContainer = document.getElementById('imagePreviewContainer');
     const imagePreview = document.getElementById('imagePreview');
+    const sendBtn = document.getElementById('sendBtn');
     
     let lastId = {{ $messages->last()->id ?? 0 }};
     let pollingInterval = null;
@@ -399,12 +451,20 @@
         imagePreview.src = '';
     }
 
-    function sendMessage(e) {
-        e.preventDefault();
+    function handleChatSubmit(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
         const message = chatInput.value.trim();
         const hasImage = chatImage.files.length > 0;
 
-        if (!message && !hasImage) return;
+        if (!message && !hasImage) return false;
+
+        // Disable button while sending
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = '0.7';
 
         const formData = new FormData();
         formData.append('message', message);
@@ -412,6 +472,7 @@
             formData.append('image', chatImage.files[0]);
         }
 
+        // Reset inputs immediately for responsive feel
         chatInput.value = '';
         clearImagePreview();
         
@@ -430,15 +491,29 @@
                 lastId = data.id;
             }
         })
-        .catch(err => console.error('Error sending message:', err));
+        .catch(err => {
+            console.error('Error sending message:', err);
+            // Re-fill input on error
+            chatInput.value = message;
+        })
+        .finally(() => {
+            sendBtn.disabled = false;
+            sendBtn.style.opacity = '1';
+        });
+
+        return false;
     }
 
     function appendMessage(msg) {
+        // Prevent duplicates
+        if (document.querySelector(`.message[data-id="${msg.id}"]`)) return;
+
         const div = document.createElement('div');
         div.className = `message ${msg.is_admin ? 'admin' : 'user'}`;
         div.dataset.id = msg.id;
 
-        const time = new Date(msg.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        const date = new Date(msg.created_at);
+        const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
         
         let contentHtml = '';
         if (msg.message) contentHtml += `<div>${escapeHtml(msg.message)}</div>`;
@@ -470,7 +545,7 @@
                     messages.forEach(msg => {
                         if (msg.id > lastId) {
                             appendMessage(msg);
-                            lastId = msg.id;
+                            lastId = Math.max(lastId, msg.id);
                         }
                     });
                 }
@@ -488,7 +563,13 @@
         } else {
             pollingInterval = setInterval(pollMessages, 3000);
             // Also mark read when returning to tab
-            fetch('{{ route('chat.mark-read') }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+            fetch('{{ route('chat.mark-read') }}', { 
+                method: 'POST', 
+                headers: { 
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                } 
+            });
         }
     });
 </script>

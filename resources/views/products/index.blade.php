@@ -638,7 +638,9 @@
                     <div class="product-image-wrapper">
                         <div class="product-badges">
                             <span class="badge-category">{{ strtoupper($product->category) }}</span>
-                            @if($product->is_on_sale)
+                            @if($product->stock <= 0)
+                                <span class="badge bg-danger text-white px-2 py-1" style="font-size: 0.7rem; border-radius: 30px;">HẾT HÀNG</span>
+                            @elseif($product->is_on_sale)
                                 <span class="badge-sale">-{{ $product->discount_percent }}%</span>
                             @endif
                         </div>
@@ -672,12 +674,18 @@
                                 <span class="price-old">{{ $product->formatted_original_price }}</span>
                             @endif
                         </div>
+                        @if($product->stock > 0)
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0 p-0">
                             @csrf
                             <button type="submit" class="btn-add-cart" title="Thêm vào giỏ">
                                 <i class="fas fa-cart-plus"></i>
                             </button>
                         </form>
+                        @else
+                        <button type="button" class="btn-add-cart" disabled style="background: #f1f2f6; color: #b2bec3;" title="Hết hàng">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                        @endif
                     </div>
                 </div>
             </div>

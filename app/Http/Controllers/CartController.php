@@ -21,6 +21,11 @@ class CartController extends Controller
     public function add($id)
     {
         $product = Product::findOrFail($id);
+        
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        }
+        
         $cart = session()->get('cart', []);
 
         if(isset($cart[$id])) {
@@ -42,6 +47,11 @@ class CartController extends Controller
     public function buyNow($id)
     {
         $product = Product::findOrFail($id);
+        
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        }
+        
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {

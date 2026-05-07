@@ -31,7 +31,6 @@ class HomeController extends Controller
         
         // Lấy 24 sản phẩm mới nhất cho trang chủ (phần Sản Phẩm)
         $latestProducts = Product::query()
-            ->inStock()
             ->latest()
             ->take(24)
             ->get();
@@ -47,7 +46,6 @@ class HomeController extends Controller
         if ($flashSaleEnabled && now()->lt($saleEndsAt)) {
             $saleProducts = Product::query()
                 ->where('is_flash_sale', true)
-                ->inStock()
                 ->latest()
                 ->take(4)
                 ->get();

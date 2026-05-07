@@ -79,7 +79,7 @@ class Product extends Model
     // Scope để lấy sản phẩm featured
     public function scopeFeatured($query, $limit = 6)
     {
-        return $query->where('is_featured', true)->inStock()->latest()->limit($limit);
+        return $query->where('is_featured', true)->latest()->limit($limit);
     }
 
     public function getEffectivePriceAttribute()

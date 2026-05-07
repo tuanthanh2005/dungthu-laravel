@@ -1040,6 +1040,34 @@
             background: #6366f1;
             color: #fff;
         }
+        .combo-prod-card.out-of-stock {
+            opacity: 0.8;
+        }
+
+        .combo-prod-card.out-of-stock .img-wrap::after {
+            content: 'HẾT HÀNG';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(229, 57, 53, 0.9);
+            color: #fff;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            border-radius: 4px;
+            z-index: 5;
+            letter-spacing: 1px;
+            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .combo-prod-card.out-of-stock .add-cart-btn {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none !important;
+            opacity: 0.7;
+        }
     </style>
 @endpush
 
@@ -1139,7 +1167,10 @@
                             @foreach($saleProducts->take(4) as $sp)
                                 <div class="col">
                                     <div
-                                        style="background:#fff;border:1px solid #edeff1;border-radius:10px;overflow:hidden;position:relative;">
+                                        style="background:#fff;border:1px solid #edeff1;border-radius:10px;overflow:hidden;position:relative; {{ $sp->stock <= 0 ? 'opacity: 0.7;' : '' }}">
+                                        @if($sp->stock <= 0)
+                                            <div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">HẾT HÀNG</div>
+                                        @endif
                                         <img src="{{ $sp->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $sp->name }}"
                                             style="width:100%;height:120px;object-fit:cover;">
                                         <div style="padding:8px;">
@@ -1147,7 +1178,9 @@
                                                 {{ $sp->name }}</div>
                                             <div style="color:#e53935;font-weight:800;">{{ $sp->formatted_price }}</div>
                                         </div>
-                                        <a href="{{ route('product.show', $sp->slug) }}" class="stretched-link"></a>
+                                        @if($sp->stock > 0)
+                                            <a href="{{ route('product.show', $sp->slug) }}" class="stretched-link"></a>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
@@ -1164,7 +1197,7 @@
                         </div>
                         <div class="combo-product-grid">
                             @foreach($latestProducts as $cp)
-                            <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card">
+                            <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card {{ $cp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
                                     <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
                                          alt="{{ $cp->name }}" loading="lazy">
@@ -1180,6 +1213,7 @@
                                             <span class="prod-price-old">{{ $cp->formatted_original_price }}</span>
                                         @endif
                                     </div>
+                                    @if($cp->stock > 0)
                                     <form action="{{ route('cart.add', $cp->id) }}" method="POST"
                                           onclick="event.preventDefault(); this.submit();">
                                         @csrf
@@ -1187,6 +1221,11 @@
                                             <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
                                         </button>
                                     </form>
+                                    @else
+                                    <button type="button" class="add-cart-btn" disabled>
+                                        <i class="fa-solid fa-ban"></i> Hết hàng
+                                    </button>
+                                    @endif
                                 </div>
                             </a>
                             @endforeach
@@ -1260,12 +1299,21 @@
                                         style="width:100%;border-radius:8px;">
                                 </div>
                                 <div class="col-sm-8">
-                                    <div class="mb-2"><span class="tf-price">{{ $p->formatted_price }}</span></div>
-                                    <form action="{{ route('cart.add', $p->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="tf-buy-btn"><i class="fa-solid fa-cart-plus"></i> Thêm vào
-                                            giỏ</button>
-                                    </form>
+                                    <div class="mb-2">
+                                        <span class="tf-price">{{ $p->formatted_price }}</span>
+                                        @if($p->stock <= 0)
+                                            <span class="badge bg-danger ms-2">HẾT HÀNG</span>
+                                        @endif
+                                    </div>
+                                    @if($p->stock > 0)
+                                        <form action="{{ route('cart.add', $p->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="tf-buy-btn"><i class="fa-solid fa-cart-plus"></i> Thêm vào
+                                                giỏ</button>
+                                        </form>
+                                    @else
+                                        <button type="button" class="tf-buy-btn" disabled style="background: #9ca3af;"><i class="fa-solid fa-ban"></i> Hết hàng</button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -1328,14 +1376,20 @@
                                         style="width:100%;border-radius:8px;">
                                 </div>
                                 <div class="col-sm-8">
-                                    <div class="mb-2"><span class="tf-price"
-                                            style="color:#2e7d32;">{{ $p->formatted_price }}</span></div>
-                                    @if($p->isInStock())
+                                    <div class="mb-2">
+                                        <span class="tf-price" style="color:#2e7d32;">{{ $p->formatted_price }}</span>
+                                        @if($p->stock <= 0)
+                                            <span class="badge bg-danger ms-2">HẾT HÀNG</span>
+                                        @endif
+                                    </div>
+                                    @if($p->stock > 0)
                                         <form action="{{ route('cart.add', $p->id) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="tf-buy-btn green"><i class="fa-solid fa-cart-plus"></i>
                                                 Thêm vào giỏ</button>
                                         </form>
+                                    @else
+                                        <button type="button" class="tf-buy-btn" disabled style="background: #9ca3af;"><i class="fa-solid fa-ban"></i> Hết hàng</button>
                                     @endif
                                 </div>
                             </div>
@@ -1386,7 +1440,12 @@
                                         <div>
                                             <a href="{{ route('product.show', $ip->slug) }}" class="tf-title"
                                                 style="font-size:.9rem;">{{ $ip->name }}</a>
-                                            <div class="tf-price" style="font-size:1rem;">{{ $ip->formatted_price }}</div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="tf-price" style="font-size:1rem;">{{ $ip->formatted_price }}</div>
+                                                @if($ip->stock <= 0)
+                                                    <span class="badge bg-danger" style="font-size: 0.6rem;">HẾT HÀNG</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1512,7 +1571,12 @@
                                         loading="lazy">
                                     <div>
                                         <div class="name">{{ $prod->name }}</div>
-                                        <div class="price">{{ $prod->formatted_price }}</div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="price">{{ $prod->formatted_price }}</div>
+                                            @if($prod->stock <= 0)
+                                                <span class="text-danger fw-bold" style="font-size: 0.7rem;">Hết hàng</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </a>
                             @endforeach

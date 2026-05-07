@@ -22,7 +22,7 @@ class ProductController extends Controller
             ->get();
         
         // Xử lý products
-        $query = Product::inStock();
+        $query = Product::query();
         
         // Filter theo category_id nếu có
         if ($currentCategoryId != 'all') {
@@ -70,7 +70,6 @@ class ProductController extends Controller
         // Lấy sản phẩm liên quan
         $relatedProducts = Product::where('category', $product->category)
             ->where('id', '!=', $product->id)
-            ->inStock()
             ->take(4)
             ->get();
         

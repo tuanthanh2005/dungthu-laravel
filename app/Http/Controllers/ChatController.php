@@ -24,6 +24,26 @@ class ChatController extends Controller
         return response()->json($messages);
     }
 
+    // Hiển thị trang chat cho user
+    public function showChat()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+        
+        $messages = Message::where('user_id', Auth::id())
+            ->orderBy('created_at', 'asc')
+            ->get();
+            
+        // Mark as read when opening the page
+        Message::where('user_id', Auth::id())
+            ->where('is_admin', true)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return view('chat.index', compact('messages'));
+    }
+
     // Gửi tin nhắn mới
     public function store(Request $request)
     {
@@ -108,6 +128,20 @@ class ChatController extends Controller
             ->update(['is_read' => true]);
 
         return response()->json(['ok' => true]);
+    }
+
+    // Admin: Tổng số tin nhắn chưa đọc từ khách hàng
+    public function adminUnreadCount()
+    {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $count = Message::where('is_admin', false)
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json(['unread' => $count]);
     }
 
     // Admin: Xem danh sách users/affiliates có tin nhắn

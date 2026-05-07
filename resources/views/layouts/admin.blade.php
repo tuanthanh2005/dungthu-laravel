@@ -208,8 +208,46 @@
                         <i class="fas fa-money-bill"></i> Giá
                     </a>
                 </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Hệ Thống</div>
+                    <a href="{{ route('admin.chat.index') }}" class="nav-link {{ request()->routeIs('admin.chat.*') ? 'active' : '' }}">
+                        <i class="fas fa-comments"></i> Chat Khách Hàng
+                        <span id="adminChatBadge" class="badge bg-danger rounded-pill ms-auto" style="display: none;">0</span>
+                    </a>
+                    <a href="{{ route('admin.orders') }}" class="nav-link {{ request()->routeIs('admin.orders') ? 'active' : '' }}">
+                        <i class="fas fa-shopping-cart"></i> Đơn Hàng
+                    </a>
+                    <a href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i> Người Dùng
+                    </a>
+                    <a href="{{ route('admin.menu-settings') }}" class="nav-link {{ request()->routeIs('admin.menu-settings') ? 'active' : '' }}">
+                        <i class="fas fa-sliders-h"></i> Quản Lý Menu
+                    </a>
+                </div>
             </nav>
         </aside>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                function updateAdminUnread() {
+                    fetch('{{ route('admin.chat.unread-count') }}')
+                        .then(res => res.json())
+                        .then(data => {
+                            const badge = document.getElementById('adminChatBadge');
+                            if (badge) {
+                                if (data.unread > 0) {
+                                    badge.textContent = data.unread;
+                                    badge.style.display = 'inline-block';
+                                } else {
+                                    badge.style.display = 'none';
+                                }
+                            }
+                        });
+                }
+                updateAdminUnread();
+                setInterval(updateAdminUnread, 15000); // Check every 15s
+            });
+        </script>
 
         <!-- Content Area -->
         <div class="admin-content">

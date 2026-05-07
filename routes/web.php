@@ -135,6 +135,7 @@ Route::middleware('auth')->group(function () {
 
 // Chat routes (requires auth)
 Route::middleware('auth')->prefix('chat')->group(function () {
+    Route::get('/', [ChatController::class, 'showChat'])->name('chat.index');
     Route::get('/messages', [ChatController::class, 'index'])->name('chat.messages');
     Route::post('/send', [ChatController::class, 'store'])->name('chat.send');
     Route::get('/new', [ChatController::class, 'getNewMessages'])->name('chat.new');
@@ -145,6 +146,7 @@ Route::middleware('auth')->prefix('chat')->group(function () {
 // Admin Chat routes
 Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin/chat')->group(function () {
     Route::get('/', [ChatController::class, 'adminIndex'])->name('admin.chat.index');
+    Route::get('/unread-count', [ChatController::class, 'adminUnreadCount'])->name('admin.chat.unread-count');
     Route::get('/messages/{userId}', [ChatController::class, 'adminMessages'])->name('admin.chat.messages');
     Route::post('/reply/{userId}', [ChatController::class, 'adminReply'])->name('admin.chat.reply');
 });

@@ -7,6 +7,7 @@
     $menuBuff        = \App\Models\SiteSetting::getValue('menu_buff', '1') === '1';
     $menuCommunity   = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
     $menuCardExchange = \App\Models\SiteSetting::getValue('menu_card_exchange', '1') === '1';
+    $menuChat        = \App\Models\SiteSetting::getValue('menu_chat', '1') === '1';
 @endphp
 
 <nav class="navbar navbar-expand-lg navbar-techfeed sticky-top" id="mainNavbar">
@@ -62,6 +63,14 @@
             <a href="{{ route('affiliate.login') }}" class="nav-text-link {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
                 CTV
             </a>
+            @auth
+            @if($menuChat)
+            <a href="{{ route('chat.index') }}" class="nav-text-link {{ request()->routeIs('chat.index') ? 'active' : '' }} position-relative">
+                Chat Admin
+                <span id="navChatBadge" class="badge bg-danger rounded-pill position-absolute" style="top: -5px; right: -10px; font-size: 9px; display: none;">0</span>
+            </a>
+            @endif
+            @endauth
         </div>
 
         {{-- Search Bar (desktop) --}}
@@ -199,4 +208,42 @@
         <span>CTV</span>
     </a>
     --}}
+    @auth
+    @if($menuChat)
+    <a href="{{ route('chat.index') }}" class="mobile-nav-item {{ request()->routeIs('chat.index') ? 'active' : '' }}">
+        <i class="fa-solid fa-comments position-relative">
+            <span id="mobileChatBadge" class="badge bg-danger rounded-pill position-absolute" style="top: -5px; right: -10px; font-size: 8px; display: none;">0</span>
+        </i>
+        <span>Hỗ trợ</span>
+    </a>
+    @endif
+    @endauth
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateUnreadChat() {
+            fetch('{{ route('chat.unread-count') }}')
+                .then(res => res.json())
+                .then(data => {
+                    const badges = [document.getElementById('navChatBadge'), document.getElementById('mobileChatBadge')];
+                    badges.forEach(badge => {
+                        if (badge) {
+                            if (data.unread > 0) {
+                                badge.textContent = data.unread;
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    });
+                })
+                .catch(err => console.error('Chat unread count error:', err));
+        }
+
+        @auth
+            updateUnreadChat();
+            setInterval(updateUnreadChat, 10000); // Check every 10s
+        @endauth
+    });
+</script>

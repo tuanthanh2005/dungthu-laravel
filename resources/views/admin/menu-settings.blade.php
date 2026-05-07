@@ -317,6 +317,13 @@
                             'color'  => 'linear-gradient(135deg,#0ba360,#3cba92)',
                             'where'  => 'desktop',
                         ],
+                        'menu_chat' => [
+                            'label'  => 'Chat Admin',
+                            'desc'   => 'Trang chat trực tiếp với Admin',
+                            'icon'   => 'fa-comments',
+                            'color'  => 'linear-gradient(135deg,#6366f1,#a855f7)',
+                            'where'  => 'both',
+                        ],
                     ];
                 @endphp
 

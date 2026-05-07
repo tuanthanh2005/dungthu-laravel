@@ -61,10 +61,8 @@
                 Nhóm Zalo
             </a>
             <a href="{{ route('affiliate.login') }}" class="nav-text-link {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
-                CTV
+                Cộng Tác Viên
             </a>
-            @auth
-            @endauth
         </div>
 
         {{-- Search Bar (desktop) --}}

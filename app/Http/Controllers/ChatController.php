@@ -154,46 +154,61 @@ class ChatController extends Controller
             abort(403);
         }
 
+        $recentChats = collect();
+
         // Get users who chatted
-        $usersResult = Message::whereNotNull('user_id')
-            ->with('user')
-            ->select('user_id')
-            ->selectRaw('MAX(created_at) as last_message_at')
-            ->selectRaw('SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread_count')
-            ->groupBy('user_id')
-            ->orderBy('last_message_at', 'desc')
-            ->get()
-            ->map(function($item) {
-                $user = $item->user;
+        try {
+            $userMsgs = Message::whereNotNull('user_id')
+                ->select('user_id')
+                ->selectRaw('MAX(created_at) as last_message_at')
+                ->selectRaw('SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread_count')
+                ->groupBy('user_id')
+                ->get();
+
+            foreach ($userMsgs as $item) {
+                $user = User::find($item->user_id);
                 if ($user) {
-                    $user->unread_count = $item->unread_count;
-                    $user->last_message_at = $item->last_message_at;
-                    $user->type = 'user';
+                    $recentChats->push((object)[
+                        'id' => $user->id,
+                        'name' => $user->name ?? 'User',
+                        'email' => $user->email ?? '',
+                        'type' => 'user',
+                        'unread_count' => (int)($item->unread_count ?? 0),
+                        'last_message_at' => $item->last_message_at,
+                    ]);
                 }
-                return $user;
-            })->filter();
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error loading user chats: ' . $e->getMessage());
+        }
 
         // Get affiliates who chatted
-        $affiliatesResult = Message::whereNotNull('affiliate_id')
-            ->with('affiliate')
-            ->select('affiliate_id')
-            ->selectRaw('MAX(created_at) as last_message_at')
-            ->selectRaw('SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread_count')
-            ->groupBy('affiliate_id')
-            ->orderBy('last_message_at', 'desc')
-            ->get()
-            ->map(function($item) {
-                $aff = $item->affiliate;
-                if ($aff) {
-                    $aff->unread_count = $item->unread_count;
-                    $aff->last_message_at = $item->last_message_at;
-                    $aff->type = 'affiliate';
-                }
-                return $aff;
-            })->filter();
+        try {
+            $affMsgs = Message::whereNotNull('affiliate_id')
+                ->select('affiliate_id')
+                ->selectRaw('MAX(created_at) as last_message_at')
+                ->selectRaw('SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread_count')
+                ->groupBy('affiliate_id')
+                ->get();
 
-        // Merge and sort
-        $recentChats = $usersResult->concat($affiliatesResult)->sortByDesc('last_message_at');
+            foreach ($affMsgs as $item) {
+                $aff = \App\Models\Affiliate::find($item->affiliate_id);
+                if ($aff) {
+                    $recentChats->push((object)[
+                        'id' => $aff->id,
+                        'name' => $aff->name ?? 'CTV',
+                        'email' => $aff->email ?? '',
+                        'type' => 'affiliate',
+                        'unread_count' => (int)($item->unread_count ?? 0),
+                        'last_message_at' => $item->last_message_at,
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error loading affiliate chats: ' . $e->getMessage());
+        }
+
+        $recentChats = $recentChats->sortByDesc('last_message_at');
 
         $allUsers = User::where('role', '!=', 'admin')->orderBy('name')->get();
         $allAffiliates = \App\Models\Affiliate::orderBy('name')->get();

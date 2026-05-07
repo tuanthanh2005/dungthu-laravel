@@ -207,60 +207,78 @@
         </div>
         <div class="users-list">
             <div class="users-subheader">Gần đây</div>
-            @forelse($recentChats as $item)
-                <div class="user-item" data-id="{{ $item->id }}" data-type="{{ $item->type }}" 
-                     onclick="selectTarget(event, {{ $item->id }}, '{{ addslashes($item->name) }}', '{{ $item->email }}', '{{ $item->type }}')">
-                    <div class="user-avatar" style="{{ $item->type === 'affiliate' ? 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);' : '' }}">
-                        {{ strtoupper(substr($item->name, 0, 1)) }}
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name">
-                            {{ $item->name }}
-                            @if($item->type === 'affiliate')
-                                <span class="badge bg-info ms-1" style="font-size: 9px;">CTV</span>
-                            @endif
+            @if(isset($recentChats))
+                @forelse($recentChats as $item)
+                    <div class="user-item" data-id="{{ $item->id }}" data-type="{{ $item->type }}" 
+                         onclick="selectTarget(event, {{ $item->id }}, '{{ addslashes($item->name) }}', '{{ $item->email }}', '{{ $item->type }}')">
+                        <div class="user-avatar" style="{{ $item->type === 'affiliate' ? 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);' : '' }}">
+                            {{ strtoupper(substr($item->name, 0, 1)) }}
                         </div>
-                        <div class="user-email">{{ $item->email }}</div>
+                        <div class="user-info">
+                            <div class="user-name">
+                                {{ $item->name }}
+                                @if($item->type === 'affiliate')
+                                    <span class="badge bg-info ms-1" style="font-size: 9px;">CTV</span>
+                                @endif
+                            </div>
+                            <div class="user-email">{{ $item->email }}</div>
+                        </div>
+                        @if(isset($item->unread_count) && $item->unread_count > 0)
+                            <span class="badge bg-danger rounded-pill">{{ $item->unread_count }}</span>
+                        @endif
                     </div>
-                    @if(isset($item->unread_count) && $item->unread_count > 0)
-                        <span class="badge bg-danger rounded-pill">{{ $item->unread_count }}</span>
-                    @endif
-                </div>
-            @empty
-                <div class="text-center py-4 text-muted small">Chưa có tin nhắn nào</div>
-            @endforelse
+                @empty
+                    <div class="text-center py-4 text-muted small">Chưa có tin nhắn nào</div>
+                @endforelse
+            @endif
 
             <div class="users-subheader">Cộng tác viên mới</div>
-            @foreach($allAffiliates as $aff)
-                @if(!$recentChats->where('id', $aff->id)->where('type', 'affiliate')->first())
-                <div class="user-item" data-id="{{ $aff->id }}" data-type="affiliate" 
-                     onclick="selectTarget(event, {{ $aff->id }}, '{{ addslashes($aff->name) }}', '{{ $aff->email }}', 'affiliate')">
-                    <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        {{ strtoupper(substr($aff->name, 0, 1)) }}
+            @if(isset($allAffiliates))
+                @foreach($allAffiliates as $aff)
+                    @php 
+                        $exists = false;
+                        if(isset($recentChats)) {
+                            $exists = $recentChats->where('id', $aff->id)->where('type', 'affiliate')->first();
+                        }
+                    @endphp
+                    @if(!$exists)
+                    <div class="user-item" data-id="{{ $aff->id }}" data-type="affiliate" 
+                         onclick="selectTarget(event, {{ $aff->id }}, '{{ addslashes($aff->name) }}', '{{ $aff->email }}', 'affiliate')">
+                        <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            {{ strtoupper(substr($aff->name, 0, 1)) }}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ $aff->name }} <span class="badge bg-info ms-1" style="font-size: 9px;">CTV</span></div>
+                            <div class="user-email">{{ $aff->email }}</div>
+                        </div>
                     </div>
-                    <div class="user-info">
-                        <div class="user-name">{{ $aff->name }} <span class="badge bg-info ms-1" style="font-size: 9px;">CTV</span></div>
-                        <div class="user-email">{{ $aff->email }}</div>
-                    </div>
-                </div>
-                @endif
-            @endforeach
+                    @endif
+                @endforeach
+            @endif
 
             <div class="users-subheader">Người dùng mới</div>
-            @foreach($allUsers as $u)
-                @if(!$recentChats->where('id', $u->id)->where('type', 'user')->first())
-                <div class="user-item" data-id="{{ $u->id }}" data-type="user" 
-                     onclick="selectTarget(event, {{ $u->id }}, '{{ addslashes($u->name) }}', '{{ $u->email }}', 'user')">
-                    <div class="user-avatar">
-                        {{ strtoupper(substr($u->name, 0, 1)) }}
+            @if(isset($allUsers))
+                @foreach($allUsers as $u)
+                    @php 
+                        $existsUser = false;
+                        if(isset($recentChats)) {
+                            $existsUser = $recentChats->where('id', $u->id)->where('type', 'user')->first();
+                        }
+                    @endphp
+                    @if(!$existsUser)
+                    <div class="user-item" data-id="{{ $u->id }}" data-type="user" 
+                         onclick="selectTarget(event, {{ $u->id }}, '{{ addslashes($u->name) }}', '{{ $u->email }}', 'user')">
+                        <div class="user-avatar">
+                            {{ strtoupper(substr($u->name, 0, 1)) }}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ $u->name }}</div>
+                            <div class="user-email">{{ $u->email }}</div>
+                        </div>
                     </div>
-                    <div class="user-info">
-                        <div class="user-name">{{ $u->name }}</div>
-                        <div class="user-email">{{ $u->email }}</div>
-                    </div>
-                </div>
-                @endif
-            @endforeach
+                    @endif
+                @endforeach
+            @endif
         </div>
     </div>
 
@@ -350,6 +368,7 @@ function clearPreview() {
 }
 
 function loadMessages() {
+    if (!selectedId) return;
     fetch(`/admin/chat/messages/${selectedId}?type=${selectedType}`, {
         headers: { 'Accept': 'application/json' }
     })
@@ -357,7 +376,7 @@ function loadMessages() {
     .then(data => {
         const chatBox = document.getElementById('chatMessages');
         chatBox.innerHTML = '';
-        if (data.length === 0) {
+        if (!data || data.length === 0) {
             chatBox.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>Chưa có tin nhắn</p></div>';
             return;
         }
@@ -366,7 +385,8 @@ function loadMessages() {
             lastMessageId = Math.max(lastMessageId, msg.id);
         });
         scrollToBottom();
-    });
+    })
+    .catch(err => console.error('Load messages error:', err));
 }
 
 function sendAdminMessage() {
@@ -437,6 +457,7 @@ document.getElementById('adminChatInput').addEventListener('keypress', function(
 
 function appendMsg(msg) {
     const chatBox = document.getElementById('chatMessages');
+    if (!chatBox) return;
     const empty = chatBox.querySelector('.empty-state');
     if (empty) empty.remove();
     
@@ -471,15 +492,17 @@ function checkNewMessages() {
                 });
             }
         }
-    });
+    })
+    .catch(err => console.error('Check new messages error:', err));
 }
 
 function scrollToBottom() {
     const box = document.getElementById('chatMessages');
-    box.scrollTop = box.scrollHeight;
+    if (box) box.scrollTop = box.scrollHeight;
 }
 
 function escapeHtml(t) {
+    if (!t) return '';
     const m = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
     return t.replace(/[&<>"']/g, s => m[s]);
 }
@@ -492,4 +515,4 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 </script>
-@endsection
+@endpush

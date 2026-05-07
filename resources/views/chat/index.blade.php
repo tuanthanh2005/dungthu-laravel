@@ -316,24 +316,70 @@
     @media (max-width: 768px) {
         .chat-page-wrapper {
             padding: 0;
-            margin-top: 65px;
+            margin-top: 60px;
+            display: block;
+            height: calc(100vh - 60px);
+        }
+        .chat-container {
+            padding: 0;
         }
         .chat-card {
-            height: calc(100vh - 65px);
+            height: calc(100vh - 120px); /* Subtract top (60) + bottom nav (60) */
             border-radius: 0;
             border: none;
+            box-shadow: none;
         }
         .chat-header {
-            padding: 15px 20px;
+            padding: 10px 15px;
+        }
+        .chat-header-info {
+            gap: 10px;
+        }
+        .admin-avatar {
+            width: 42px;
+            height: 42px;
+            font-size: 18px;
+            border-radius: 12px;
+        }
+        .admin-status h5 {
+            font-size: 0.95rem;
         }
         .chat-body {
-            padding: 20px;
+            padding: 15px;
+            gap: 12px;
+        }
+        .message-content {
+            padding: 10px 14px;
+            font-size: 14px;
+            border-radius: 18px;
         }
         .chat-footer {
-            padding: 20px;
+            padding: 12px 15px;
+        }
+        .chat-input-wrapper {
+            padding: 5px 5px 5px 15px;
+            border-radius: 20px;
+        }
+        .chat-input {
+            font-size: 14px;
+        }
+        .tool-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+        }
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 16px;
         }
         .message {
-            max-width: 85%;
+            max-width: 90%;
+        }
+        .message-image {
+            max-width: 100%;
+            border-radius: 12px;
         }
     }
 </style>

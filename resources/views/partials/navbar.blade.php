@@ -214,7 +214,7 @@
         <i class="fa-solid fa-comments position-relative">
             <span id="mobileChatBadge" class="badge bg-danger rounded-pill position-absolute" style="top: -5px; right: -10px; font-size: 8px; display: none;">0</span>
         </i>
-        <span>Hỗ trợ</span>
+        <span>Chat Admin</span>
     </a>
     @endif
     @endauth

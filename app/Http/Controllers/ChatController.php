@@ -80,6 +80,9 @@ class ChatController extends Controller
             'is_read' => false
         ]);
 
+        // Gửi thông báo Telegram cho Admin
+        \App\Helpers\TelegramHelper::sendNewChatMessageNotification($message);
+
         return response()->json($message);
     }
 

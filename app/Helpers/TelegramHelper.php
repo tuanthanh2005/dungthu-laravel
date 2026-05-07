@@ -172,17 +172,41 @@ class TelegramHelper
     }
 
     /**
-     * Get order type label
+     * Gửi thông báo có tin nhắn chat mới từ khách hàng
      */
-    private static function getOrderTypeLabel($type)
+    public static function sendNewChatMessageNotification($message)
     {
-        $labels = [
-            'qr' => '🎫 QR Deal',
-            'document' => '📄 Tài liệu',
-            'shipping' => '🚚 Giao hàng',
-            'digital' => '💾 Digital',
-        ];
+        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
+        $chatId = '8199725778';
 
-        return $labels[$type] ?? 'Không xác định';
+        $user = $message->user;
+        $userName = $user ? $user->name : 'Khách lạ';
+        $userEmail = $user ? $user->email : 'N/A';
+
+        $text = "💬 <b>TIN NHẮN CHAT MỚI</b>\n";
+        $text .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+        $text .= "👤 <b>Người gửi:</b> " . $userName . "\n";
+        $text .= "📧 <b>Email:</b> " . $userEmail . "\n\n";
+        
+        if ($message->message) {
+            $text .= "📝 <b>Nội dung:</b>\n<i>" . $message->message . "</i>\n\n";
+        }
+        
+        if ($message->image) {
+            $text .= "🖼 <b>Có đính kèm hình ảnh</b>\n\n";
+        }
+
+        $text .= "🔗 <a href=\"" . url('/admin/chat') . "\">Trả lời ngay tại đây</a>\n";
+        $text .= "⏰ <i>" . now()->format('H:i:s d/m/Y') . "</i>";
+
+        try {
+            Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Telegram Chat Notification Error: ' . $e->getMessage());
+        }
     }
 }

@@ -463,6 +463,11 @@
         </div>
     </div>
 </div>
+
+{{-- Notification Sound --}}
+<audio id="notifSound" preload="auto">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+</audio>
 @endsection
 
 @push('scripts')
@@ -551,8 +556,17 @@
             }
         });
 
-        function appendMessage(msg) {
+        function appendMessage(msg, playSound = false) {
             if (document.querySelector(`.message[data-id="${msg.id}"]`)) return;
+
+            // Play sound if requested (and it's from admin)
+            if (playSound && msg.is_admin) {
+                const audio = document.getElementById('notifSound');
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log('Audio play blocked:', e));
+                }
+            }
 
             const div = document.createElement('div');
             div.className = `message ${msg.is_admin ? 'admin' : 'user'}`;
@@ -590,7 +604,7 @@
                     if (messages && messages.length > 0) {
                         messages.forEach(msg => {
                             if (msg.id > lastId) {
-                                appendMessage(msg);
+                                appendMessage(msg, true);
                                 lastId = Math.max(lastId, msg.id);
                             }
                         });

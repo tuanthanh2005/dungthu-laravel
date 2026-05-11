@@ -1136,13 +1136,13 @@
 
                 {{-- Sort bar --}}
                 <div class="tf-sort-bar">
-                    <button class="tf-sort-btn" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Bài Viết</button>
                     <button class="tf-sort-btn active" id="tab-ai"><i class="fa-solid fa-box-open"></i> Sản Phẩm</button>
                     @if($sb_cardexchange)
                     <a href="{{ route('card-exchange.index') }}" class="tf-sort-btn text-decoration-none">
                         <i class="fa-solid fa-credit-card"></i> Đổi Thẻ
                     </a>
                     @endif
+                    <button class="tf-sort-btn" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Bài Viết</button>
                 </div>
 
                 {{-- Flash Sale (Chỉ hiện ở tab AI/Shop) --}}

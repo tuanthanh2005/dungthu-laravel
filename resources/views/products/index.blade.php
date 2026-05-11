@@ -562,9 +562,6 @@
     <!-- Category Filter -->
     @if(isset($categories) && $categories->count() > 0)
     <div class="category-section" data-aos="fade-up" data-aos-delay="100">
-        <div class="section-heading">
-            <h4><i class="fas fa-layer-group me-2 text-primary"></i>Danh mục nổi bật</h4>
-        </div>
         <div class="d-flex flex-wrap gap-3 justify-content-center">
             <!-- All Categories -->
             <a href="{{ route('shop') }}" class="category-filter-link {{ $currentCategoryId == 'all' ? 'active' : '' }}">

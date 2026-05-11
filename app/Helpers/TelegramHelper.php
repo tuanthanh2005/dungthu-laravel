@@ -209,4 +209,19 @@ class TelegramHelper
             Log::error('Telegram Chat Notification Error: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Lấy nhãn cho loại đơn hàng
+     */
+    private static function getOrderTypeLabel($type)
+    {
+        $labels = [
+            'qr' => 'TikTok QR',
+            'document' => 'Tài liệu / Ebook',
+            'shipping' => 'Giao hàng vật lý',
+            'digital' => 'Sản phẩm số',
+        ];
+
+        return $labels[$type] ?? 'Mặc định';
+    }
 }

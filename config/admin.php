@@ -2,7 +2,7 @@
 
 return [
     // Mã xác nhận 3 số cho thao tác thêm/sửa/xóa trong trang admin
-    'action_pin' => env('ADMIN_ACTION_PIN', '2000'),
+    'action_pin' => env('ADMIN_ACTION_PIN', '999'),
 
     // Các route name được miễn nhập mã (ví dụ: cập nhật trạng thái đơn hàng)
     'pin_exempt_route_names' => [

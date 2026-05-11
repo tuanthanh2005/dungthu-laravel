@@ -34,11 +34,11 @@ class AdminController extends Controller
         $image = imagecreatefromstring(file_get_contents($file));
         $srcWidth = imagesx($image);
         $srcHeight = imagesy($image);
-
+        
         // Tính toán kích thước crop để giữ tỷ lệ 500:334
         $targetRatio = $width / $height;
         $srcRatio = $srcWidth / $srcHeight;
-
+        
         if ($srcRatio > $targetRatio) {
             // Ảnh rộng hơn, crop theo chiều ngang
             $cropHeight = $srcHeight;
@@ -52,35 +52,28 @@ class AdminController extends Controller
             $srcX = 0;
             $srcY = ($srcHeight - $cropHeight) / 2;
         }
-
+        
         // Tạo ảnh mới với kích thước chuẩn
         $newImage = imagecreatetruecolor($width, $height);
-
+        
         // Giữ trong suốt cho PNG
         imagealphablending($newImage, false);
         imagesavealpha($newImage, true);
-
+        
         // Crop và resize
         imagecopyresampled(
-            $newImage,
-            $image,
-            0,
-            0,
-            $srcX,
-            $srcY,
-            $width,
-            $height,
-            $cropWidth,
-            $cropHeight
+            $newImage, $image,
+            0, 0, $srcX, $srcY,
+            $width, $height, $cropWidth, $cropHeight
         );
-
+        
         return $newImage;
     }
-
+    
     // Lưu ảnh đã crop
     private function saveImage($image, $path, $extension)
     {
-        switch (strtolower($extension)) {
+        switch(strtolower($extension)) {
             case 'jpg':
             case 'jpeg':
                 imagejpeg($image, $path, 90);
@@ -118,18 +111,18 @@ class AdminController extends Controller
 
         // Đếm số giỏ hàng bị bỏ quên (chưa gửi reminder lần 3)
         $abandonedCartsCount = AbandonedCart::where('reminder_stage', '<', 3)->count();
-
+        
         $latestOrders = Order::with(['user', 'orderItems.product'])->latest()->take(5)->get();
-
+        
         // Tính toán doanh thu (chỉ tính các đơn hàng đã hoàn thành)
         $revenue30Days = Order::where('status', 'completed')
             ->where('updated_at', '>=', now()->subDays(30))
             ->sum('total_amount');
-
+            
         $revenue10Days = Order::where('status', 'completed')
             ->where('updated_at', '>=', now()->subDays(10))
             ->sum('total_amount');
-
+            
         $revenue5Days = Order::where('status', 'completed')
             ->where('updated_at', '>=', now()->subDays(5))
             ->sum('total_amount');
@@ -146,10 +139,10 @@ class AdminController extends Controller
         $pendingAffCount = Affiliate::where('status', 'pending')->count();
         $pendingAffInvoiceCount = AffiliateInvoice::where('status', 'pending')->count();
         $pendingAffWithdrawCount = AffiliateWithdrawal::where('status', 'pending')->count();
-
+        
         return view('admin.dashboard', compact(
-            'stats',
-            'latestOrders',
+            'stats', 
+            'latestOrders', 
             'unreadChatCount',
             'pendingOrdersCount',
             'pendingCardExchangeCount',
@@ -173,7 +166,7 @@ class AdminController extends Controller
             ->withSum('orders', 'total_amount')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-
+        
         return view('admin.users.index', compact('users'));
     }
 
@@ -205,11 +198,11 @@ class AdminController extends Controller
             try {
                 if ($cart->email) {
                     Mail::to($cart->email)->send(new AbandonedCartReminder($cart, $request->message));
-
+                    
                     // Cập nhật số lần nhắc nhở
                     $cart->increment('reminder_stage');
                     $cart->update(['last_reminder_at' => now()]);
-
+                    
                     $successCount++;
                 }
             } catch (\Exception $e) {
@@ -263,12 +256,12 @@ class AdminController extends Controller
             ->withCount('orders')
             ->withSum('orders', 'total_amount')
             ->findOrFail($id);
-
+        
         $orders = Order::where('user_id', $id)
             ->with('orderItems.product')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-
+        
         return view('admin.users.history', compact('user', 'orders'));
     }
 
@@ -288,7 +281,7 @@ class AdminController extends Controller
         }
 
         $orders = $query->latest()->paginate(15);
-
+        
         return view('admin.orders.index', compact('orders'));
     }
 
@@ -367,7 +360,7 @@ class AdminController extends Controller
         // Thông tin đơn hàng
         $message .= "📦 <b>THÔNG TIN ĐƠN HÀNG</b>\n";
         $message .= "• Mã đơn: <b>#" . $order->id . "</b>\n";
-        $message .= "• Tổng tiền: <b>" . number_format((float) $order->total_amount, 0, ',', '.') . "đ</b>\n";
+        $message .= "• Tổng tiền: <b>" . number_format((float)$order->total_amount, 0, ',', '.') . "đ</b>\n";
         $message .= "• Thời gian: <b>" . $order->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') . "</b>\n\n";
 
         // Thông tin khách hàng
@@ -398,7 +391,7 @@ class AdminController extends Controller
     public function products(Request $request)
     {
         $query = Product::query()->with('categoryRelation');
-
+        
         // Filter by category if provided
         if ($request->has('category') && $request->category !== 'all') {
             $query->where('category', $request->category);
@@ -408,7 +401,7 @@ class AdminController extends Controller
         if ($request->filled('flash_sale')) {
             $query->where('is_flash_sale', true);
         }
-
+        
         $products = $query->latest()->paginate(10);
         $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';
         return view('admin.products.index', compact('products', 'flashSaleEnabled'));
@@ -448,9 +441,9 @@ class AdminController extends Controller
         if ($category && !in_array($category, ['tech', 'ebooks', 'doc'])) {
             abort(404);
         }
-
+        
         // Lấy danh sách features theo category
-        $features = \App\Models\Feature::when($category, function ($query) use ($category) {
+        $features = \App\Models\Feature::when($category, function($query) use ($category) {
             return $query->where('category', $category);
         })->get();
 
@@ -458,7 +451,7 @@ class AdminController extends Controller
             ->where('type', $category)
             ->orderBy('name')
             ->get();
-
+        
         // Use specific view for tech, generic for others
         $viewName = $category === 'tech' ? 'admin.products.create-tech' : 'admin.products.create';
         return view($viewName, compact('category', 'features', 'categories'));
@@ -479,15 +472,15 @@ class AdminController extends Controller
         ], [
             'name.required' => 'Tên sản phẩm không được để trống',
             'description.required' => 'Mô tả không được để trống',
-            'price.required' => 'Giá không được để trống',
-            'price.numeric' => 'Giá phải là số',
-            'sale_price.numeric' => 'Giá giảm phải là số',
-            'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
-            'category_id.required' => 'Danh mục không được để trống',
-            'category_id.exists' => 'Danh mục không hợp lệ',
-            'stock.required' => 'Số lượng không được để trống',
-            'stock.integer' => 'Số lượng phải là số nguyên',
-            'image.image' => 'File phải là hình ảnh',
+              'price.required' => 'Giá không được để trống',
+              'price.numeric' => 'Giá phải là số',
+              'sale_price.numeric' => 'Giá giảm phải là số',
+              'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
+              'category_id.required' => 'Danh mục không được để trống',
+              'category_id.exists' => 'Danh mục không hợp lệ',
+              'stock.required' => 'Số lượng không được để trống',
+              'stock.integer' => 'Số lượng phải là số nguyên',
+              'image.image' => 'File phải là hình ảnh',
             'image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
             'image.max' => 'Kích thước ảnh không được vượt quá 2MB',
             'file.mimes' => 'File phải có định dạng: pdf, doc, docx, txt, zip, rar',
@@ -498,49 +491,49 @@ class AdminController extends Controller
         $categoryType = $categoryRecord->type;
 
         $slug = \Str::slug($request->name) . '-' . time();
-
+        
         $imagePath = null;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
             $fullPath = PathHelper::publicRootPath('images/products/' . $fileName);
-
+            
             // Crop ảnh về kích thước 500x334
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
-
+            
             $imagePath = '/images/products/' . $fileName;
         }
-
+        
         // Xử lý file upload cho ebooks
         $filePath = null;
         $fileType = null;
         $fileSize = null;
-
+        
         if ($request->hasFile('file') && $categoryType === 'ebooks') {
             $file = $request->file('file');
             $originalName = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . \Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $extension;
-
+            
             // Lấy size trước khi move
             $fileSize = round($file->getSize() / 1024); // Convert to KB
-
+            
             // Lưu file vào public/files
             $file->move(PathHelper::publicRootPath('files'), $fileName);
-
+            
             $filePath = $fileName;
             $fileType = $extension;
         }
-
+        
         // Xử lý specs theo category
         $specs = [];
         if ($categoryType === 'tech') {
             // Xử lý specs động từ spec_keys và spec_values
             $keys = $request->input('spec_keys', []);
             $values = $request->input('spec_values', []);
-
+            
             foreach ($keys as $index => $key) {
                 if (!empty($key) && !empty($values[$index])) {
                     $specs[$key] = $values[$index];
@@ -561,18 +554,18 @@ class AdminController extends Controller
             ];
         }
 
-        $product = Product::create([
-            'name' => $request->name,
-            'slug' => $slug,
-            'description' => $request->description,
-            'price' => $request->price,
-            'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
-            'category' => $categoryType,
-            'category_id' => $categoryRecord->id,
-            'stock' => $request->stock,
-            'image' => $imagePath ? asset($imagePath) : null,
-            'file_path' => $filePath,
-            'file_type' => $fileType,
+          $product = Product::create([
+              'name' => $request->name,
+              'slug' => $slug,
+              'description' => $request->description,
+              'price' => $request->price,
+              'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
+              'category' => $categoryType,
+              'category_id' => $categoryRecord->id,
+              'stock' => $request->stock,
+              'image' => $imagePath ? asset($imagePath) : null,
+              'file_path' => $filePath,
+              'file_type' => $fileType,
             'file_size' => $fileSize,
             'specs' => $specs,
             'delivery_type' => $request->delivery_type,
@@ -602,36 +595,36 @@ class AdminController extends Controller
             ->where('type', $product->category)
             ->orderBy('name')
             ->get();
-
+        
         // Use specific view for tech, generic for others
         $viewName = $product->category === 'tech' ? 'admin.products.edit-tech' : 'admin.products.edit';
         return view($viewName, compact('product', 'features', 'categories'));
     }
 
-    public function updateProduct(Request $request, Product $product)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'sale_price' => 'nullable|numeric|min:0|lt:price',
-            'category_id' => 'required|exists:product_categories,id',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,txt,zip,rar|max:51200',
-            'delivery_type' => 'required|in:digital,physical',
+      public function updateProduct(Request $request, Product $product)
+      {
+          $request->validate([
+              'name' => 'required|string|max:255',
+              'description' => 'required|string',
+              'price' => 'required|numeric|min:0',
+              'sale_price' => 'nullable|numeric|min:0|lt:price',
+              'category_id' => 'required|exists:product_categories,id',
+              'stock' => 'required|integer|min:0',
+              'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+              'file' => 'nullable|file|mimes:pdf,doc,docx,txt,zip,rar|max:51200',
+              'delivery_type' => 'required|in:digital,physical',
         ], [
             'name.required' => 'Tên sản phẩm không được để trống',
             'description.required' => 'Mô tả không được để trống',
-            'price.required' => 'Giá không được để trống',
-            'price.numeric' => 'Giá phải là số',
-            'sale_price.numeric' => 'Giá giảm phải là số',
-            'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
-            'category_id.required' => 'Danh mục không được để trống',
-            'category_id.exists' => 'Danh mục không hợp lệ',
-            'stock.required' => 'Số lượng không được để trống',
-            'stock.integer' => 'Số lượng phải là số nguyên',
-            'image.image' => 'File phải là hình ảnh',
+              'price.required' => 'Giá không được để trống',
+              'price.numeric' => 'Giá phải là số',
+              'sale_price.numeric' => 'Giá giảm phải là số',
+              'sale_price.lt' => 'Giá giảm phải nhỏ hơn giá gốc',
+              'category_id.required' => 'Danh mục không được để trống',
+              'category_id.exists' => 'Danh mục không hợp lệ',
+              'stock.required' => 'Số lượng không được để trống',
+              'stock.integer' => 'Số lượng phải là số nguyên',
+              'image.image' => 'File phải là hình ảnh',
             'image.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
             'image.max' => 'Kích thước ảnh không được vượt quá 2MB',
             'file.mimes' => 'File phải có định dạng: pdf, doc, docx, txt, zip, rar',
@@ -642,7 +635,7 @@ class AdminController extends Controller
         $categoryType = $categoryRecord->type;
 
         $slug = \Str::slug($request->name) . '-' . $product->id;
-
+        
         // Xử lý upload ảnh mới
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có
@@ -653,19 +646,19 @@ class AdminController extends Controller
                     unlink($fullPath);
                 }
             }
-
+            
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
             $fullPath = PathHelper::publicRootPath('images/products/' . $fileName);
-
+            
             // Crop ảnh về kích thước 500x334
             $croppedImage = $this->cropImage($file);
             $this->saveImage($croppedImage, $fullPath, $extension);
-
+            
             $product->image = asset('/images/products/' . $fileName);
         }
-
+        
         // Xử lý upload file mới cho ebooks
         if ($request->hasFile('file') && $categoryType === 'ebooks') {
             // Xóa file cũ nếu có
@@ -675,17 +668,17 @@ class AdminController extends Controller
                     unlink($oldFilePath);
                 }
             }
-
+            
             $file = $request->file('file');
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
-
+            
             // Lấy size trước khi move
             $fileSize = round($file->getSize() / 1024); // Convert to KB
-
+            
             // Lưu file vào public/files
             $file->move(PathHelper::publicRootPath('files'), $fileName);
-
+            
             $filePath = $fileName;
             $fileType = $extension;
         } else {
@@ -694,14 +687,14 @@ class AdminController extends Controller
             $fileType = $product->file_type;
             $fileSize = $product->file_size;
         }
-
+        
         // Xử lý specs theo category
         $specs = [];
         if ($categoryType === 'tech') {
             // Xử lý specs động từ spec_keys và spec_values
             $keys = $request->input('spec_keys', []);
             $values = $request->input('spec_values', []);
-
+            
             foreach ($keys as $index => $key) {
                 if (!empty($key) && !empty($values[$index])) {
                     $specs[$key] = $values[$index];
@@ -722,17 +715,17 @@ class AdminController extends Controller
             ];
         }
 
-        $product->update([
-            'name' => $request->name,
-            'slug' => $slug,
-            'description' => $request->description,
-            'price' => $request->price,
-            'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
-            'category' => $categoryType,
-            'category_id' => $categoryRecord->id,
-            'stock' => $request->stock,
-            'specs' => $specs,
-            'delivery_type' => $request->delivery_type,
+          $product->update([
+              'name' => $request->name,
+              'slug' => $slug,
+              'description' => $request->description,
+              'price' => $request->price,
+              'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
+              'category' => $categoryType,
+              'category_id' => $categoryRecord->id,
+              'stock' => $request->stock,
+              'specs' => $specs,
+              'delivery_type' => $request->delivery_type,
             'file_path' => $filePath,
             'file_type' => $fileType,
             'file_size' => $fileSize,
@@ -765,7 +758,7 @@ class AdminController extends Controller
                 unlink($fullPath);
             }
         }
-
+        
         // Xóa file nếu có
         if ($product->file_path) {
             $filePath = PathHelper::publicRootPath('files/' . $product->file_path);
@@ -773,7 +766,7 @@ class AdminController extends Controller
                 unlink($filePath);
             }
         }
-
+        
         $product->delete();
         return redirect()->route('admin.products')->with('success', 'Xóa sản phẩm thành công!');
     }
@@ -988,7 +981,7 @@ class AdminController extends Controller
         }
 
         $blogs = $query->latest()->paginate(10);
-
+        
         return view('admin.blogs.index', compact('blogs'));
     }
 
@@ -1013,7 +1006,7 @@ class AdminController extends Controller
         ]);
 
         $slug = \Str::slug($request->title) . '-' . time();
-
+        
         $imagePath = null;
         if ($request->hasFile('image')) {
             $dir = PathHelper::publicRootPath('images/blogs');
@@ -1025,11 +1018,11 @@ class AdminController extends Controller
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
             $fullPath = PathHelper::publicRootPath('images/blogs/' . $fileName);
-
+            
             // Crop ảnh về kích thước 1200x800 cho blog sắc nét
             $croppedImage = $this->cropImage($file, 1200, 800);
             $this->saveImage($croppedImage, $fullPath, $extension);
-
+            
             $imagePath = '/images/blogs/' . $fileName;
         }
 
@@ -1069,7 +1062,7 @@ class AdminController extends Controller
         ]);
 
         $slug = \Str::slug($request->title) . '-' . time();
-
+        
         $imagePath = $blog->image;
         if ($request->hasFile('image')) {
             $dir = PathHelper::publicRootPath('images/blogs');
@@ -1093,7 +1086,7 @@ class AdminController extends Controller
             // Crop ảnh về kích thước 1200x800 cho blog sắc nét
             $croppedImage = $this->cropImage($file, 1200, 800);
             $this->saveImage($croppedImage, $fullPath, $extension);
-
+            
             $imagePath = asset('/images/blogs/' . $fileName);
         }
 
@@ -1137,7 +1130,7 @@ class AdminController extends Controller
         $exchanges = \App\Models\CardExchange::with('user')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-
+        
         return view('admin.card-exchanges.index', compact('exchanges'));
     }
 
@@ -1167,7 +1160,7 @@ class AdminController extends Controller
     private function sendCardExchangeSuccessNotification($exchange)
     {
         $user = $exchange->user;
-
+        
         $message = "✅ <b>ĐỔI THẺ CÀO THÀNH CÔNG</b>\n\n";
         $message .= "👤 <b>Khách hàng:</b> {$user->name}\n";
         $message .= "📧 <b>Email:</b> {$user->email}\n\n";
@@ -1237,13 +1230,13 @@ class AdminController extends Controller
             'pin' => 'required',
         ]);
 
-        if ($request->pin === '2000') {
+        if ($request->pin === '113') {
             session(['admin_unlocked' => true]);
-
+            
             // Check for previous intended URL or dashboard
             $url = session('target_url') ?? route('admin.dashboard');
             session()->forget('target_url');
-
+            
             return redirect($url)->with('success', 'Xác thực thành công!');
         }
 

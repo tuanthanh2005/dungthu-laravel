@@ -324,6 +324,13 @@
                             'color'  => 'linear-gradient(135deg,#6366f1,#a855f7)',
                             'where'  => 'both',
                         ],
+                        'adsense_enabled' => [
+                            'label'  => 'Google AdSense',
+                            'desc'   => 'Bật/tắt toàn bộ ô quảng cáo Google AdSense',
+                            'icon'   => 'fa-rectangle-ad',
+                            'color'  => 'linear-gradient(135deg,#f59e0b,#d97706)',
+                            'where'  => 'both',
+                        ],
                     ];
                 @endphp
 

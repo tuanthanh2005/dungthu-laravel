@@ -230,6 +230,7 @@
         </div>
         
         {{-- ADSENSE PRODUCT PAGE --}}
+        @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
         <div class="row mt-4">
             <div class="col-12" data-aos="fade-up">
                 <div class="ads-wrapper" style="min-height: 120px; border: 1px dashed #ddd; background: #fff; padding: 10px;">
@@ -243,6 +244,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Tabs Section -->
         <div class="row mt-5">

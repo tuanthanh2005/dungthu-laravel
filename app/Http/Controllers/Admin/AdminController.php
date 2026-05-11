@@ -1194,6 +1194,8 @@ class AdminController extends Controller
             'menu_card_exchange',
             'menu_buff',
             'menu_community',
+            'menu_chat',
+            'adsense_enabled',
         ];
 
         foreach ($menuKeys as $key) {

@@ -1122,12 +1122,14 @@
                     @endauth
 
                     {{-- ADSENSE LEFT SIDEBAR --}}
+                    @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
                     <div class="ads-wrapper ads-sidebar-600 mt-4">
                         <ins class="adsbygoogle" style="display:block;width:100%;height:600px;"
                             data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
                             data-ad-format="vertical"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
+                    @endif
                 </div>
             </aside>
 
@@ -1350,6 +1352,7 @@
                 @endif
 
                 {{-- Mobile-only AdSense (Inline) --}}
+                @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
                 <div class="ads-wrapper ads-mobile-300 mb-3 d-block d-lg-none">
                     <ins class="adsbygoogle"
                          style="display:block;width:100%;height:300px;"
@@ -1358,6 +1361,7 @@
                          data-ad-format="rectangle"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
+                @endif
 
                 {{-- Shop Product #2 --}}
                 @if(isset($featuredProducts[1]))
@@ -1531,12 +1535,14 @@
                     </div>
 
                     {{-- AdSense 300x250 --}}
+                    @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
                     <div class="ads-wrapper ads-sidebar-260 mb-3">
                         <ins class="adsbygoogle" style="display:block;width:100%;height:260px;"
                             data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
                             data-ad-format="rectangle"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
+                    @endif
 
                     {{-- Flash Sale sidebar --}}
                     @if(isset($saleProducts) && $saleProducts->count() > 0)
@@ -1608,12 +1614,14 @@
                     @endif
 
                     {{-- AdSense 2nd --}}
+                    @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
                     <div class="ads-wrapper ads-sidebar-600 mb-3">
                         <ins class="adsbygoogle" style="display:block;width:100%;height:600px;"
                             data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
                             data-ad-format="vertical"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                     </div>
+                    @endif
 
                     {{-- Footer mini --}}
                     <div class="d-flex flex-wrap gap-2 px-1" style="font-size:.74rem;color:#787c7e;">

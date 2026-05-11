@@ -446,7 +446,7 @@
                 </div>
 
                 <!-- AdSense: In-article -->
-                <div class="my-4 d-flex justify-content-center" data-aos="fade-up">
+                <div class="ads-wrapper my-4" data-aos="fade-up">
                     <ins class="adsbygoogle"
                          style="display:block; text-align:center;"
                          data-ad-layout="in-article"
@@ -464,7 +464,7 @@
                 </div>
 
                 <!-- AdSense: Bottom Content -->
-                <div class="my-5 d-flex justify-content-center" data-aos="fade-up">
+                <div class="ads-wrapper my-5 ads-mobile-300" data-aos="fade-up">
                     <ins class="adsbygoogle"
                          style="display:block; width:100%; height:250px;"
                          data-ad-client="ca-pub-3065867660863139"

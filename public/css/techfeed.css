@@ -595,7 +595,7 @@ body {
 .btn-add-cart-feed:hover { background: #c62828; }
 
 /* ============================================
-   AD SLOT
+   AD SLOT & ADSENSE
    ============================================ */
 .ad-slot {
     background: #f8f9fa;
@@ -613,6 +613,39 @@ body {
 
 .ad-slot-infeed { height: 120px; }
 .ad-slot-sidebar { height: 280px; }
+
+.ads-wrapper {
+    display: block;
+    width: 100%;
+    margin: 20px auto;
+    text-align: center;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    clear: both;
+}
+
+.ads-wrapper ins.adsbygoogle {
+    display: block !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+}
+
+.ads-sidebar-600 { min-height: 600px; }
+.ads-sidebar-260 { min-height: 260px; }
+.ads-mobile-300 { min-height: 250px; }
+
+ins.adsbygoogle {
+    max-width: 100% !important;
+    overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+    .ads-wrapper {
+        margin: 15px auto;
+        border-radius: 8px;
+    }
+}
 
 /* ============================================
    RIGHT SIDEBAR WIDGETS

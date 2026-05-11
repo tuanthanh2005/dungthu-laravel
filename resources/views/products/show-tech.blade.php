@@ -342,6 +342,21 @@
                 </div>
             </div>
         </div>
+        
+        {{-- ADSENSE PRODUCT PAGE --}}
+        <div class="row mt-4">
+            <div class="col-12" data-aos="fade-up">
+                <div class="ads-wrapper" style="min-height: 120px; border: 1px dashed #ddd; background: #fff; padding: 10px;">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-3065867660863139"
+                         data-ad-slot="4989157975"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+        </div>
 
         <!-- Tabs Section -->
         <div class="row mt-5">

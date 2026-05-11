@@ -1122,7 +1122,7 @@
                     @endauth
 
                     {{-- ADSENSE LEFT SIDEBAR --}}
-                    <div class="tf-ad mt-4" style="height:600px;">
+                    <div class="ads-wrapper ads-sidebar-600 mt-4">
                         <ins class="adsbygoogle" style="display:block;width:100%;height:600px;"
                             data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
                             data-ad-format="vertical"></ins>
@@ -1350,7 +1350,7 @@
                 @endif
 
                 {{-- Mobile-only AdSense (Inline) --}}
-                <div class="tf-ad mb-3 d-block d-lg-none" style="min-height:250px;">
+                <div class="ads-wrapper ads-mobile-300 mb-3 d-block d-lg-none">
                     <ins class="adsbygoogle"
                          style="display:block;width:100%;height:300px;"
                          data-ad-client="ca-pub-3065867660863139"
@@ -1531,7 +1531,7 @@
                     </div>
 
                     {{-- AdSense 300x250 --}}
-                    <div class="tf-ad mb-3" style="height:260px;">
+                    <div class="ads-wrapper ads-sidebar-260 mb-3">
                         <ins class="adsbygoogle" style="display:block;width:100%;height:260px;"
                             data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
                             data-ad-format="rectangle"></ins>
@@ -1608,7 +1608,7 @@
                     @endif
 
                     {{-- AdSense 2nd --}}
-                    <div class="tf-ad mb-3" style="height:600px;">
+                    <div class="ads-wrapper ads-sidebar-600 mb-3">
                         <ins class="adsbygoogle" style="display:block;width:100%;height:600px;"
                             data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
                             data-ad-format="vertical"></ins>

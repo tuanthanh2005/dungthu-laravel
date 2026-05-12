@@ -47,7 +47,7 @@ class HomeController extends Controller
             $saleProducts = Product::query()
                 ->where('is_flash_sale', true)
                 ->latest()
-                ->take(4)
+                ->take(6)
                 ->get();
         } else {
             $saleProducts = collect();

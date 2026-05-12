@@ -331,6 +331,34 @@
                             'color'  => 'linear-gradient(135deg,#f59e0b,#d97706)',
                             'where'  => 'both',
                         ],
+                        'home_show_flash_sale' => [
+                            'label'  => 'Uu tien Flash Sale',
+                            'desc'   => 'Dua len 4 o giam gia tren trang chu',
+                            'icon'   => 'fa-bolt',
+                            'color'  => 'linear-gradient(135deg,#ff416c,#ff4b2b)',
+                            'where'  => 'both',
+                        ],
+                        'home_show_featured' => [
+                            'label'  => 'Sản phẩm nổi bật',
+                            'desc'   => 'Hiển thị trên trang chủ - Hàng đầu tiên',
+                            'icon'   => 'fa-star',
+                            'color'  => 'linear-gradient(135deg,#ffca28,#fbc02d)',
+                            'where'  => 'both',
+                        ],
+                        'home_show_exclusive' => [
+                            'label'  => 'Sản phẩm độc quyền',
+                            'desc'   => 'Hiển thị trên trang chủ - Hàng thứ 2',
+                            'icon'   => 'fa-gem',
+                            'color'  => 'linear-gradient(135deg,#8b5cf6,#ec4899)',
+                            'where'  => 'both',
+                        ],
+                        'home_show_combo_ai' => [
+                            'label'  => 'Combo AI giá rẻ',
+                            'desc'   => 'Hiển thị ở trang chủ - mục Combo AI giá rẻ',
+                            'icon'   => 'fa-robot',
+                            'color'  => 'linear-gradient(135deg,#6366f1,#a855f7)',
+                            'where'  => 'both',
+                        ],
                     ];
                 @endphp
 

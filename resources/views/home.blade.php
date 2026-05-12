@@ -31,20 +31,20 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
-            max-width: 1280px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px 12px;
         }
 
         @media(min-width:1024px) {
             .tf-layout {
-                grid-template-columns: 220px 1fr 300px;
+                grid-template-columns: 1fr 300px;
             }
         }
 
         @media(min-width:1280px) {
             .tf-layout {
-                grid-template-columns: 240px 1fr 320px;
+                grid-template-columns: 1fr 320px;
             }
         }
 
@@ -885,6 +885,12 @@
             }
         }
 
+        @media(min-width: 1200px) {
+            .combo-product-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
         /* Product card */
         .combo-prod-card {
             background: #fff;
@@ -1075,63 +1081,10 @@
     <div style="background:#dae0e6;">
         <div class="tf-layout">
 
-            {{-- ====== LEFT SIDEBAR ====== --}}
+
             @php
-                $sb_home         = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
-                $sb_blog         = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
-                $sb_community    = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
-                $sb_webdesign    = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
-                $sb_shop         = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
                 $sb_cardexchange = \App\Models\SiteSetting::getValue('menu_card_exchange', '1') === '1';
             @endphp
-            <aside class="tf-sidebar-left">
-                <div class="tf-sticky">
-                    <div class="tf-sec-label">Khám Phá</div>
-                    @if($sb_home)
-                    <a href="{{ route('home') }}" class="tf-side-link active"><i class="fa-solid fa-house"></i> Trang chủ</a>
-                    @endif
-                    @if($sb_blog)
-                    <a href="{{ route('blog.index') }}" class="tf-side-link"><i class="fa-solid fa-fire" style="color:#e53935;"></i> Blog mới</a>
-                    @endif
-                    @if($sb_community)
-                    <a href="{{ route('community.index') }}" class="tf-side-link"><i class="fa-solid fa-users"></i> Cộng đồng</a>
-                    @endif
-                    @if($sb_webdesign)
-                    <a href="{{ route('web-design') }}" class="tf-side-link"><i class="fa-solid fa-globe"></i> Thiết kế web</a>
-                    @endif
-
-                    @if($sb_shop)
-                    <div class="tf-sec-label">Cửa Hàng</div>
-                    <a href="{{ route('shop') }}" class="tf-side-link"><i class="fa-solid fa-tags" style="color:#28a745;"></i> Tất cả sản phẩm</a>
-                    @if(isset($categories))
-                        @foreach($categories->take(5) as $cat)
-                            <a href="{{ route('shop', ['category_id' => $cat->id]) }}" class="tf-side-link">
-                                <i class="fa-solid fa-box"></i> {{ $cat->name }}
-                            </a>
-                        @endforeach
-                    @endif
-                    @endif
-                    @if($sb_cardexchange)
-                    <a href="{{ route('card-exchange.index') }}" class="tf-side-link"><i class="fa-solid fa-credit-card" style="color:#f59e0b;"></i> Đổi thẻ cào</a>
-                    @endif
-
-                    @auth
-                        <div class="tf-sec-label">Tài Khoản</div>
-                        <a href="{{ route('user.account') }}" class="tf-side-link"><i class="fa-solid fa-user-circle"></i> Tài khoản</a>
-                        <a href="{{ route('user.orders') }}" class="tf-side-link"><i class="fa-solid fa-box"></i> Đơn hàng</a>
-                    @endauth
-
-                    {{-- ADSENSE LEFT SIDEBAR --}}
-                    @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-                    <div class="ads-wrapper ads-sidebar-600 mt-4">
-                        <ins class="adsbygoogle" style="display:block;width:100%;height:600px;"
-                            data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
-                            data-ad-format="vertical"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                    </div>
-                    @endif
-                </div>
-            </aside>
 
             {{-- ====== MAIN FEED ====== --}}
             <main>
@@ -1147,15 +1100,15 @@
                     <button class="tf-sort-btn" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Bài Viết</button>
                 </div>
 
-                {{-- Flash Sale (Chỉ hiện ở tab AI/Shop) --}}
-                @if(isset($saleProducts) && $saleProducts->count() > 0)
-                    <div class="tf-widget mb-3 item-shop" id="flash-sale"
+                {{-- 1. Flash Sale (Ưu tiên) --}}
+                @if(\App\Models\SiteSetting::getValue('home_show_flash_sale', '1') === '1' && isset($saleProducts) && $saleProducts->count() > 0)
+                    <div class="tf-widget mb-4 item-shop" id="flash-sale"
                         data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}" style="display:none;">
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                             <div>
                                 <span class="text-danger fw-bold"
                                     style="font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;">⚡ Flash Sale</span>
-                                <div class="fw-bold" style="font-size:1rem;">Giảm giá sốc hôm nay</div>
+                                <div class="fw-bold" style="font-size:1.1rem;">Giảm giá sốc hôm nay</div>
                             </div>
                             <div
                                 style="background:#fff;border-radius:20px;padding:6px 12px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:8px;font-size:.8rem;">
@@ -1165,8 +1118,8 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="row row-cols-2 row-cols-md-4 g-3">
-                            @foreach($saleProducts->take(4) as $sp)
+                        <div class="row row-cols-2 row-cols-md-4 row-cols-xl-6 g-3">
+                            @foreach($saleProducts->take(6) as $sp)
                                 <div class="col">
                                     <div
                                         style="background:#fff;border:1px solid #edeff1;border-radius:10px;overflow:hidden;position:relative; {{ $sp->stock <= 0 ? 'opacity: 0.7;' : '' }}">
@@ -1190,15 +1143,105 @@
                     </div>
                 @endif
 
-                {{-- ====== LATEST PRODUCTS SECTION ====== --}}
-                @if(isset($latestProducts) && $latestProducts->count() > 0)
                 <div class="combo-ai-wrapper item-shop" style="display:none;">
+                    {{-- 2. Sản Phẩm Nổi Bật (Hàng đầu tiên) --}}
+                    @if(\App\Models\SiteSetting::getValue('home_show_featured', '1') === '1' && isset($featuredProducts) && $featuredProducts->count() > 0)
                     <div class="combo-cat-section">
                         <div class="combo-cat-title" style="border-bottom:none; margin-bottom: 15px; font-size: 1.1rem; padding-bottom: 0;">
-                            <i class="fa-solid fa-box-open" style="color:#6366f1;"></i> Sản Phẩm Mới Nhất
+                            <i class="fa-solid fa-star" style="color:#ffca28;"></i> Sản Phẩm Nổi Bật
                         </div>
                         <div class="combo-product-grid">
-                            @foreach($latestProducts as $cp)
+                            @foreach($featuredProducts->take(6) as $fp)
+                            <a href="{{ route('product.show', $fp->slug) }}" class="combo-prod-card {{ $fp->stock <= 0 ? 'out-of-stock' : '' }}">
+                                <div class="img-wrap">
+                                    <img src="{{ $fp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
+                                         alt="{{ $fp->name }}" loading="lazy">
+                                    @if($fp->is_on_sale)
+                                        <span class="discount-badge">-{{ $fp->discount_percent }}%</span>
+                                    @endif
+                                    <span class="ai-label" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">Hot</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="prod-name">{{ $fp->name }}</div>
+                                    <div class="prod-price-row">
+                                        <span class="prod-price">{{ $fp->formatted_price }}</span>
+                                        @if($fp->is_on_sale)
+                                            <span class="prod-price-old">{{ $fp->formatted_original_price }}</span>
+                                        @endif
+                                    </div>
+                                    @if($fp->stock > 0)
+                                    <form action="{{ route('cart.add', $fp->id) }}" method="POST"
+                                          onclick="event.preventDefault(); this.submit();">
+                                        @csrf
+                                        <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">
+                                            <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+                                        </button>
+                                    </form>
+                                    @else
+                                    <button type="button" class="add-cart-btn" disabled>
+                                        <i class="fa-solid fa-ban"></i> Hết hàng
+                                    </button>
+                                    @endif
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- 3. Sản Phẩm Độc Quyền (Hàng thứ 2) --}}
+                    @if(\App\Models\SiteSetting::getValue('home_show_exclusive', '1') === '1' && isset($highlightProducts) && $highlightProducts->count() > 0)
+                    <div class="combo-cat-section mt-4">
+                        <div class="combo-cat-title" style="border-bottom:none; margin-bottom: 15px; font-size: 1.1rem; padding-bottom: 0;">
+                            <i class="fa-solid fa-gem" style="color:#8b5cf6;"></i> Sản Phẩm Độc Quyền
+                        </div>
+                        <div class="combo-product-grid">
+                            @foreach($highlightProducts->take(6) as $hp)
+                            <a href="{{ route('product.show', $hp->slug) }}" class="combo-prod-card {{ $hp->stock <= 0 ? 'out-of-stock' : '' }}">
+                                <div class="img-wrap">
+                                    <img src="{{ $hp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
+                                         alt="{{ $hp->name }}" loading="lazy">
+                                    @if($hp->is_on_sale)
+                                        <span class="discount-badge">-{{ $hp->discount_percent }}%</span>
+                                    @endif
+                                    <span class="ai-label" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">Vip</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="prod-name">{{ $hp->name }}</div>
+                                    <div class="prod-price-row">
+                                        <span class="prod-price">{{ $hp->formatted_price }}</span>
+                                        @if($hp->is_on_sale)
+                                            <span class="prod-price-old">{{ $hp->formatted_original_price }}</span>
+                                        @endif
+                                    </div>
+                                    @if($hp->stock > 0)
+                                    <form action="{{ route('cart.add', $hp->id) }}" method="POST"
+                                          onclick="event.preventDefault(); this.submit();">
+                                        @csrf
+                                        <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
+                                            <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+                                        </button>
+                                    </form>
+                                    @else
+                                    <button type="button" class="add-cart-btn" disabled>
+                                        <i class="fa-solid fa-ban"></i> Hết hàng
+                                    </button>
+                                    @endif
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- 4. Combo AI Giá Rẻ --}}
+                    @if(\App\Models\SiteSetting::getValue('home_show_combo_ai', '1') === '1' && isset($latestProducts) && $latestProducts->count() > 0)
+                    <div class="combo-cat-section mt-4">
+                        <div class="combo-cat-title" style="border-bottom:none; margin-bottom: 15px; font-size: 1.1rem; padding-bottom: 0;">
+                            <i class="fa-solid fa-box-open" style="color:#6366f1;"></i> Combo AI Giá Rẻ
+                        </div>
+                        <div class="combo-product-grid">
+                            @foreach($latestProducts->take(12) as $cp)
                             <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card {{ $cp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
                                     <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
@@ -1233,26 +1276,17 @@
                             @endforeach
                         </div>
                     </div>
+                    @endif
                     
                     {{-- View all --}}
-                    <div class="combo-view-all">
+                    <div class="combo-view-all mt-4">
                         <a href="{{ route('shop') }}">
                             <i class="fa-solid fa-store"></i> Xem tất cả sản phẩm
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
-                @else
-                <div class="combo-ai-wrapper item-shop" style="display:none;">
-                    <div class="combo-ai-header" style="justify-content:center;text-align:center;">
-                        <div>
-                            <div class="ai-badge"><i class="fa-solid fa-box-open"></i> Cửa Hàng</div>
-                            <h3>🤖 Chưa có sản phẩm nào</h3>
-                            <p>Các sản phẩm sẽ xuất hiện ở đây khi được thêm vào hệ thống</p>
-                        </div>
-                    </div>
-                </div>
-                @endif
+
 
                 {{-- Blog #1 --}}
                 @if(isset($latestBlogs[0]))
@@ -1284,43 +1318,7 @@
                     </article>
                 @endif
 
-                {{-- Shop Product #1 --}}
-                @if(isset($featuredProducts[0]))
-                    @php $p = $featuredProducts[0]; @endphp
-                    <article class="tf-card tf-card-shop item-shop" style="display:none;">
-                        <div class="tf-body">
-                            <div class="tf-meta">
-                                <img src="https://ui-avatars.com/api/?name=Shop&background=E53935&color=fff" alt="">
-                                <a href="{{ route('shop') }}" class="cat">Cửa Hàng</a>
-                                <span class="tf-shop-badge flash">Sản phẩm nổi bật</span>
-                            </div>
-                            <a href="{{ route('product.show', $p->slug) }}" class="tf-title">{{ $p->name }}</a>
-                            <div class="row g-3 align-items-center">
-                                <div class="col-sm-4">
-                                    <img src="{{ $p->image ?? 'https://via.placeholder.com/400' }}" alt=""
-                                        style="width:100%;border-radius:8px;">
-                                </div>
-                                <div class="col-sm-8">
-                                    <div class="mb-2">
-                                        <span class="tf-price">{{ $p->formatted_price }}</span>
-                                        @if($p->stock <= 0)
-                                            <span class="badge bg-danger ms-2">HẾT HÀNG</span>
-                                        @endif
-                                    </div>
-                                    @if($p->stock > 0)
-                                        <form action="{{ route('cart.add', $p->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="tf-buy-btn"><i class="fa-solid fa-cart-plus"></i> Thêm vào
-                                                giỏ</button>
-                                        </form>
-                                    @else
-                                        <button type="button" class="tf-buy-btn" disabled style="background: #9ca3af;"><i class="fa-solid fa-ban"></i> Hết hàng</button>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                @endif
+
 
                 {{-- Blog #2 --}}
                 @if(isset($latestBlogs[1]))
@@ -1363,43 +1361,7 @@
                 </div>
                 @endif
 
-                {{-- Shop Product #2 --}}
-                @if(isset($featuredProducts[1]))
-                    @php $p = $featuredProducts[1]; @endphp
-                    <article class="tf-card tf-card-shop item-shop" style="display:none;">
-                        <div class="tf-body">
-                            <div class="tf-meta">
-                                <img src="https://ui-avatars.com/api/?name=DT&background=2E7D32&color=fff" alt="">
-                                <a href="{{ route('shop') }}" class="cat">Sản Phẩm</a>
-                                <span class="tf-shop-badge hot">Hot pick</span>
-                            </div>
-                            <a href="{{ route('product.show', $p->slug) }}" class="tf-title">{{ $p->name }}</a>
-                            <div class="row g-3 align-items-center">
-                                <div class="col-sm-4">
-                                    <img src="{{ $p->image ?? 'https://via.placeholder.com/400' }}" alt=""
-                                        style="width:100%;border-radius:8px;">
-                                </div>
-                                <div class="col-sm-8">
-                                    <div class="mb-2">
-                                        <span class="tf-price" style="color:#2e7d32;">{{ $p->formatted_price }}</span>
-                                        @if($p->stock <= 0)
-                                            <span class="badge bg-danger ms-2">HẾT HÀNG</span>
-                                        @endif
-                                    </div>
-                                    @if($p->stock > 0)
-                                        <form action="{{ route('cart.add', $p->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="tf-buy-btn green"><i class="fa-solid fa-cart-plus"></i>
-                                                Thêm vào giỏ</button>
-                                        </form>
-                                    @else
-                                        <button type="button" class="tf-buy-btn" disabled style="background: #9ca3af;"><i class="fa-solid fa-ban"></i> Hết hàng</button>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                @endif
+
 
                 {{-- Remaining blogs loop --}}
                 @if(isset($latestBlogs))
@@ -1429,40 +1391,10 @@
                             </div>
                         </article>
 
-                        {{-- Inline small product every 2 blogs --}}
-                        @if($idx % 2 === 0 && isset($featuredProducts[$idx + 2]))
-                            @php $ip = $featuredProducts[$idx + 2]; @endphp
-                            <article class="tf-card tf-card-shop item-shop" style="display:none;">
-                                <div class="tf-body">
-                                    <div class="tf-meta">
-                                        <img src="https://ui-avatars.com/api/?name=DT&background=ff4500&color=fff" alt="">
-                                        <a href="{{ route('shop') }}" class="cat">Cửa hàng</a>
-                                    </div>
-                                    <div class="d-flex gap-3 align-items-start">
-                                        <img src="{{ $ip->image ?? 'https://via.placeholder.com/150' }}" alt=""
-                                            style="width:80px;height:60px;border-radius:8px;">
-                                        <div>
-                                            <a href="{{ route('product.show', $ip->slug) }}" class="tf-title"
-                                                style="font-size:.9rem;">{{ $ip->name }}</a>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <div class="tf-price" style="font-size:1rem;">{{ $ip->formatted_price }}</div>
-                                                @if($ip->stock <= 0)
-                                                    <span class="badge bg-danger" style="font-size: 0.6rem;">HẾT HÀNG</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </article>
-                        @endif
+
                     @endforeach
                 @endif
 
-                <div class="text-center py-3">
-                    <a href="{{ route('blog.index') }}" class="btn btn-outline-secondary rounded-pill px-5 fw-bold">
-                        <i class="fa-solid fa-chevron-down me-1"></i> Xem thêm bài viết
-                    </a>
-                </div>
 
             </main>
 

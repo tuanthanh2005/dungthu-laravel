@@ -1090,20 +1090,12 @@
             <main>
 
                 {{-- Sort bar --}}
-                <div class="tf-sort-bar">
-                    <button class="tf-sort-btn active" id="tab-ai"><i class="fa-solid fa-box-open"></i> Sản Phẩm</button>
-                    @if($sb_cardexchange)
-                    <a href="{{ route('card-exchange.index') }}" class="tf-sort-btn text-decoration-none">
-                        <i class="fa-solid fa-credit-card"></i> Đổi Thẻ
-                    </a>
-                    @endif
-                    <button class="tf-sort-btn" id="tab-latest"><i class="fa-solid fa-newspaper"></i> Bài Viết</button>
-                </div>
+
 
                 {{-- 1. Flash Sale (Ưu tiên) --}}
                 @if(\App\Models\SiteSetting::getValue('home_show_flash_sale', '1') === '1' && isset($saleProducts) && $saleProducts->count() > 0)
-                    <div class="tf-widget mb-4 item-shop" id="flash-sale"
-                        data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}" style="display:none;">
+                    <div class="tf-widget mb-4" id="flash-sale"
+                        data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}">
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                             <div>
                                 <span class="text-danger fw-bold"
@@ -1143,7 +1135,7 @@
                     </div>
                 @endif
 
-                <div class="combo-ai-wrapper item-shop" style="display:none;">
+                <div class="combo-ai-wrapper">
                     {{-- 2. Sản Phẩm Nổi Bật (Hàng đầu tiên) --}}
                     @if(\App\Models\SiteSetting::getValue('home_show_featured', '1') === '1' && isset($featuredProducts) && $featuredProducts->count() > 0)
                     <div class="combo-cat-section">
@@ -1595,39 +1587,10 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const tabLatest = document.getElementById('tab-latest');
-            const tabAi = document.getElementById('tab-ai');
-            const blogs = document.querySelectorAll('.item-blog');
-            const shops = document.querySelectorAll('.item-shop');
-
-            tabLatest?.addEventListener('click', function () {
-                document.querySelectorAll('.tf-sort-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                blogs.forEach(el => el.style.display = '');
-                shops.forEach(el => el.style.display = 'none');
+            // Tab switching logic removed as sort bar is hidden
+            document.querySelectorAll('.item-shop, .item-blog, .combo-ai-wrapper, .tf-widget').forEach(el => {
+                el.style.display = 'block';
             });
-
-            tabAi?.addEventListener('click', function () {
-                document.querySelectorAll('.tf-sort-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                blogs.forEach(el => el.style.display = 'none');
-                shops.forEach(el => {
-                    // combo-ai-wrapper dùng block, tf-widget dùng block, tf-card-shop dùng flex
-                    if (el.classList.contains('combo-ai-wrapper')) {
-                        el.style.display = 'block';
-                    } else if (el.classList.contains('tf-widget')) {
-                        el.style.display = 'block';
-                    } else {
-                        el.style.display = 'flex';
-                    }
-                });
-            });
-
-            // Set default active tab
-            // Trigger tabAi click on load to show products by default
-            if(tabAi) {
-                tabAi.click();
-            }
 
             // Copy share link
             window.copyLink = function (btn) {

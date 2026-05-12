@@ -424,6 +424,34 @@ class AdminController extends Controller
     {
         $product->is_flash_sale = !$product->is_flash_sale;
         $product->save();
+        return redirect()->back()->with('success', 'Cập nhật Flash Sale thành công!');
+    }
+
+    public function toggleProductFeatured(Product $product)
+    {
+        $product->is_featured = !$product->is_featured;
+        $product->save();
+        return redirect()->back()->with('success', 'Cập nhật Nổi bật thành công!');
+    }
+
+    public function toggleProductExclusive(Product $product)
+    {
+        $product->is_exclusive = !$product->is_exclusive;
+        $product->save();
+        return redirect()->back()->with('success', 'Cập nhật Độc quyền thành công!');
+    }
+
+    public function toggleProductComboAi(Product $product)
+    {
+        $product->is_combo_ai = !$product->is_combo_ai;
+        $product->save();
+        return redirect()->back()->with('success', 'Cập nhật Combo AI thành công!');
+    }
+
+    public function oldToggleProductFlashSale(Product $product)
+    {
+        $product->is_flash_sale = !$product->is_flash_sale;
+        $product->save();
 
         $message = $product->is_flash_sale
             ? 'ÄÃ£ báº­t Flash Sale cho sáº£n pháº©m.'

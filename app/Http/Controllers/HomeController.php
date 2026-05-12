@@ -24,13 +24,14 @@ class HomeController extends Controller
             ->get();
         
         // Lấy 4 sản phẩm featured cho trang home - Hàng 1
-        $featuredProducts = Product::featured(24)->get();
+        $featuredProducts = Product::featured(12)->get();
         
         // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
-        $highlightProducts = Product::where('is_exclusive', true)->latest()->take(8)->get();
+        $highlightProducts = Product::where('is_exclusive', true)->latest()->take(12)->get();
         
         // Lấy 24 sản phẩm mới nhất cho trang chủ (phần Sản Phẩm)
         $latestProducts = Product::query()
+            ->where('is_combo_ai', true)
             ->latest()
             ->take(24)
             ->get();

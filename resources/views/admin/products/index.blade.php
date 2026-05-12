@@ -238,6 +238,7 @@
                             <th>Giá</th>
                             <th>Flash Sale</th>
                             <th>Tồn kho</th>
+                            <th>Gán Home</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -297,6 +298,28 @@
                                 @else
                                     <span class="badge bg-danger">Hết hàng</span>
                                 @endif
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    <form action="{{ route('admin.products.toggle-featured', $product) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm w-100 {{ $product->is_featured ? 'btn-warning' : 'btn-outline-warning' }}" style="font-size: 10px; padding: 2px 5px;">
+                                            <i class="fas fa-star me-1"></i>Nổi bật
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('admin.products.toggle-exclusive', $product) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm w-100 {{ $product->is_exclusive ? 'btn-info' : 'btn-outline-info' }}" style="font-size: 10px; padding: 2px 5px;">
+                                            <i class="fas fa-gem me-1"></i>Độc quyền
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('admin.products.toggle-combo-ai', $product) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm w-100 {{ $product->is_combo_ai ? 'btn-success' : 'btn-outline-success' }}" style="font-size: 10px; padding: 2px 5px;">
+                                            <i class="fas fa-robot me-1"></i>Combo AI
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                             <td>
                                 <div class="btn-group" role="group">

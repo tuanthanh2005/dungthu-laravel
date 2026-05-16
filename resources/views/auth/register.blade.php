@@ -242,46 +242,40 @@
 
 <!-- Modals -->
 <div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content border-0" style="border-radius: 20px;">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
             <div class="modal-header border-0 p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
                 <h6 class="modal-title fw-bold">Điều Khoản Dịch Vụ</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body p-4 small">
-                <h6>1. Quy định chung</h6>
-                <p>Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý với các quy định này...</p>
+            <div class="modal-body p-4 small text-muted">
+                <p>Chào mừng bạn đến với DungThu.com. Khi đăng ký tài khoản, bạn đồng ý tuân thủ các điều khoản sau:</p>
+                <ul class="ps-3">
+                    <li>Sử dụng dịch vụ đúng mục đích, không vi phạm pháp luật.</li>
+                    <li>Bảo mật thông tin tài khoản cá nhân.</li>
+                    <li>Không chia sẻ tài khoản cho người khác.</li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="privacyRegisterModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content border-0" style="border-radius: 20px;">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
             <div class="modal-header border-0 p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
                 <h6 class="modal-title fw-bold">Chính Sách Bảo Mật</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body p-4 small">
-                <p>Chúng tôi cam kết bảo mật thông tin cá nhân của bạn...</p>
+            <div class="modal-body p-4 small text-muted">
+                <p>Chúng tôi cam kết bảo vệ dữ liệu của bạn:</p>
+                <ul class="ps-3">
+                    <li>Thông tin cá nhân chỉ được dùng để cung cấp dịch vụ.</li>
+                    <li>Không bán hoặc chia sẻ thông tin cho bên thứ ba.</li>
+                    <li>Sử dụng các biện pháp bảo mật hiện đại nhất.</li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
 @endsection
-
-                <ul class="ms-3">
-                    <li>Truy cập và xem thông tin cá nhân</li>
-                    <li>Chỉnh sửa hoặc cập nhật thông tin</li>
-                    <li>Yêu cầu xóa tài khoản</li>
-                </ul>
-
-                <div class="alert alert-info mt-4" style="border-radius: 12px;">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Cần hỗ trợ?</strong> Liên hệ email: tranthanhtuanfix@gmail.com
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

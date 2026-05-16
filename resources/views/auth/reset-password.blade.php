@@ -10,70 +10,70 @@
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 20px;
+            padding: 20px;
             font-family: 'Inter', sans-serif;
         }
 
         .auth-card {
             background: white;
-            border-radius: 30px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 900px;
+            max-width: 750px;
             display: flex;
             overflow: hidden;
-            animation: slideUp 0.6s ease-out;
+            animation: slideUp 0.5s ease-out;
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .auth-left {
             flex: 1;
-            background: #f8f9fa;
+            background: #f8faff;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px;
+            padding: 30px;
         }
 
         .avatar-circle {
-            width: 250px;
-            height: 250px;
+            width: 170px;
+            height: 170px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border: 8px solid #f1f3f5;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border: 6px solid #f1f4f9;
         }
 
         .avatar-circle i {
-            font-size: 120px;
+            font-size: 70px;
             color: #dee2e6;
         }
 
         .auth-right {
             flex: 1.2;
-            padding: 60px 50px;
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .auth-title {
-            font-size: 30px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
             color: #2d3436;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-align: center;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             position: relative;
         }
 
@@ -85,20 +85,20 @@
 
         .form-input-wrapper i {
             position: absolute;
-            left: 20px;
+            left: 18px;
             color: #adb5bd;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .auth-input {
             width: 100%;
-            padding: 14px 20px 14px 55px;
+            padding: 12px 20px 12px 50px;
             background: #f1f3f5;
             border: 2px solid transparent;
             border-radius: 50px;
             outline: none;
             transition: all 0.3s;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: #495057;
         }
@@ -106,12 +106,12 @@
         .auth-input:focus {
             background: white;
             border-color: #667eea;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.12);
         }
 
         .toggle-password {
             position: absolute;
-            right: 20px;
+            right: 18px;
             cursor: pointer;
             color: #adb5bd;
             z-index: 10;
@@ -121,8 +121,8 @@
             height: 6px;
             background: #e9ecef;
             border-radius: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
             overflow: hidden;
             width: 80%;
             margin-left: auto;
@@ -141,34 +141,34 @@
 
         .auth-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: #57b846;
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 10px;
-            box-shadow: 0 10px 20px rgba(87, 184, 70, 0.2);
+            margin-top: 5px;
+            box-shadow: 0 8px 16px rgba(87, 184, 70, 0.2);
         }
 
         .auth-btn:hover {
             background: #4cae4c;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(87, 184, 70, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 20px rgba(87, 184, 70, 0.25);
         }
 
         @media (max-width: 768px) {
             .auth-card {
                 flex-direction: column;
-                max-width: 450px;
+                max-width: 400px;
             }
-            .auth-left { padding: 40px 20px; }
-            .avatar-circle { width: 150px; height: 150px; }
-            .avatar-circle i { font-size: 70px; }
-            .auth-right { padding: 40px 30px; }
+            .auth-left { padding: 30px 20px; }
+            .avatar-circle { width: 130px; height: 130px; }
+            .avatar-circle i { font-size: 60px; }
+            .auth-right { padding: 30px 25px; }
         }
     </style>
 @endpush
@@ -188,7 +188,7 @@
             <h2 class="auth-title">Đặt Lại Mật Khẩu</h2>
 
             @if ($errors->any())
-                <div class="alert alert-danger border-0 rounded-4 mb-4 shadow-sm" role="alert">
+                <div class="alert alert-danger border-0 rounded-4 mb-3 py-2 px-3 small shadow-sm" role="alert">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     {{ $errors->first() }}
                 </div>

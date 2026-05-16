@@ -327,7 +327,7 @@ function updateUserRole(selectElement) {
     selectElement.innerHTML = '<option>Đang cập nhật...</option>';
 
     // Send AJAX request
-    fetch(`{{ route('admin.users.update-role', '') }}/${userId}`, {
+    fetch(`{{ route('admin.users.update-role', ':userId') }}`.replace(':userId', userId), {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

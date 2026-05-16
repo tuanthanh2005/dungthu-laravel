@@ -10,70 +10,70 @@
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            padding: 15px;
             font-family: 'Inter', sans-serif;
         }
 
         .login-card {
             background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 780px;
+            max-width: 650px;
             display: flex;
             overflow: hidden;
-            animation: slideUp 0.5s ease-out;
+            animation: slideUp 0.4s ease-out;
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .login-left {
-            flex: 1;
+            flex: 0.8;
             background: #f8faff;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 30px;
+            padding: 25px;
         }
 
         .avatar-circle {
-            width: 180px;
-            height: 180px;
+            width: 140px;
+            height: 140px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-            border: 6px solid #f1f4f9;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            border: 5px solid #f1f4f9;
         }
 
         .avatar-circle i {
-            font-size: 80px;
+            font-size: 60px;
             color: #dee2e6;
         }
 
         .login-right {
             flex: 1.2;
-            padding: 45px 40px;
+            padding: 35px 30px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .login-title {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 800;
             color: #2d3436;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-align: center;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 15px;
             position: relative;
         }
 
@@ -85,20 +85,20 @@
 
         .form-input-wrapper i {
             position: absolute;
-            left: 18px;
+            left: 15px;
             color: #adb5bd;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .login-input {
             width: 100%;
-            padding: 13px 20px 13px 50px;
+            padding: 11px 15px 11px 42px;
             background: #f1f3f5;
             border: 2px solid transparent;
             border-radius: 50px;
             outline: none;
             transition: all 0.3s;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: #495057;
         }
@@ -106,37 +106,37 @@
         .login-input:focus {
             background: white;
             border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.12);
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.1);
         }
 
         .login-btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: #57b846;
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 8px;
-            box-shadow: 0 8px 16px rgba(87, 184, 70, 0.2);
+            margin-top: 5px;
+            box-shadow: 0 6px 12px rgba(87, 184, 70, 0.2);
         }
 
         .login-btn:hover {
             background: #4cae4c;
             transform: translateY(-1px);
-            box-shadow: 0 12px 20px rgba(87, 184, 70, 0.25);
+            box-shadow: 0 10px 18px rgba(87, 184, 70, 0.25);
         }
 
         .forgot-link {
             display: block;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 15px;
             color: #8c98a4;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12px;
             transition: color 0.3s;
         }
 
@@ -146,19 +146,19 @@
 
         .google-login-btn {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background: white;
             color: #495057;
             border: 1.5px solid #e9ecef;
             border-radius: 50px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             text-decoration: none;
-            margin-top: 15px;
+            margin-top: 12px;
             transition: all 0.3s;
         }
 
@@ -169,8 +169,8 @@
 
         .register-text {
             text-align: center;
-            margin-top: 25px;
-            font-size: 14px;
+            margin-top: 20px;
+            font-size: 13px;
             color: #8c98a4;
         }
 
@@ -183,24 +183,24 @@
         @media (max-width: 768px) {
             .login-card {
                 flex-direction: column;
-                max-width: 400px;
+                max-width: 380px;
             }
             .login-left {
-                padding: 30px 20px;
+                padding: 25px 15px;
             }
             .avatar-circle {
-                width: 140px;
-                height: 140px;
+                width: 100px;
+                height: 100px;
             }
             .avatar-circle i {
-                font-size: 60px;
+                font-size: 45px;
             }
             .login-right {
-                padding: 30px 25px;
+                padding: 25px 20px;
             }
             .login-title {
-                font-size: 22px;
-                margin-bottom: 20px;
+                font-size: 20px;
+                margin-bottom: 15px;
             }
         }
     </style>
@@ -221,7 +221,7 @@
             <h2 class="login-title">User Login</h2>
 
             @if($errors->any())
-                <div class="alert alert-danger border-0 rounded-4 mb-3 py-2 px-3 small shadow-sm" role="alert">
+                <div class="alert alert-danger border-0 rounded-4 mb-3 py-2 px-3 small shadow-sm" role="alert" style="font-size: 11px;">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     {{ $errors->first() }}
                 </div>
@@ -244,10 +244,10 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+                <div class="d-flex justify-content-between align-items-center mb-2 px-2">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label text-muted small" for="remember" style="font-size: 12px;">
+                        <label class="form-check-label text-muted small" for="remember" style="font-size: 11px;">
                             Remember me
                         </label>
                     </div>
@@ -263,11 +263,11 @@
 
                 <div class="position-relative my-3">
                     <hr class="text-muted opacity-25">
-                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted" style="font-size: 11px;">OR</span>
+                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted" style="font-size: 10px;">OR</span>
                 </div>
 
                 <a href="{{ url('/auth/google/redirect') }}" class="google-login-btn">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="16" alt="Google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" alt="Google">
                     Login with Google
                 </a>
             </form>

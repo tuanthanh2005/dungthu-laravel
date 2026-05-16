@@ -78,19 +78,26 @@
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-danger fw-normal">(Bắt buộc nếu không có Facebook)</small>
+                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-danger fw-normal" id="zalo-label">(Bắt buộc nếu không có Facebook)</small>
                                     </label>
                                     <input type="text" class="form-control form-control-lg contact-input" name="customer_zalo" placeholder="Nhập số Zalo của bạn">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-danger fw-normal">(Bắt buộc nếu không có Zalo)</small>
+                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-danger fw-normal" id="facebook-label">(Bắt buộc nếu không có Zalo)</small>
                                     </label>
                                     <input type="url" class="form-control form-control-lg contact-input" name="customer_facebook" placeholder="Ví dụ: https://facebook.com/username">
                                 </div>
 
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="use_boxchat" id="use_boxchat" value="1">
+                                    <label class="form-check-label fw-bold text-primary" for="use_boxchat" style="cursor: pointer;">
+                                        Tôi sẽ tự liên hệ qua Boxchat (Không cần để lại Zalo/FB)
+                                    </label>
+                                </div>
+
                                 <div id="contact-error" class="alert alert-danger py-2 mb-3 d-none" style="font-size: 13px;">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>Vui lòng để lại ít nhất 1 thông tin liên hệ (Zalo hoặc Facebook) để admin có thể hỗ trợ bạn!
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Vui lòng để lại ít nhất 1 thông tin liên hệ hoặc chọn "Tự liên hệ qua Boxchat"!
                                 </div>
 
                                 <!-- Đơn hàng -->
@@ -200,20 +207,76 @@
         </div>
     </div>
 </div>
+<!-- Modal Cảnh báo Boxchat -->
+<div class="modal fade" id="boxchatWarningModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Cảnh báo Quan Trọng
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                    <i class="fas fa-comment-slash text-danger fa-4x"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Bạn chọn tự liên hệ qua Boxchat?</h4>
+                <div class="text-start alert alert-warning mb-0">
+                    <ul class="mb-0">
+                        <li>Bạn không cần để lại Zalo/Facebook cá nhân.</li>
+                        <li><strong>Bắt buộc:</strong> Bạn phải chủ động nhắn tin cho Boxchat của Admin ngay sau khi thanh toán.</li>
+                        <li><strong>Lưu ý:</strong> Nếu bạn không nhắn tin, Admin sẽ không có cách nào để gửi mã/hỗ trợ bạn. Chúng tôi sẽ không chịu trách nhiệm trong trường hợp này.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Tôi hiểu rồi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+    const useBoxchat = document.getElementById('use_boxchat');
+    const boxchatModal = new bootstrap.Modal(document.getElementById('boxchatWarningModal'));
+    const contactInputs = document.querySelectorAll('.contact-input');
+    const zaloLabel = document.getElementById('zalo-label');
+    const facebookLabel = document.getElementById('facebook-label');
+
+    useBoxchat.addEventListener('change', function() {
+        if (this.checked) {
+            boxchatModal.show();
+            contactInputs.forEach(input => {
+                input.disabled = true;
+                input.value = '';
+            });
+            zaloLabel.textContent = '(Đã tắt)';
+            facebookLabel.textContent = '(Đã tắt)';
+            zaloLabel.classList.replace('text-danger', 'text-muted');
+            facebookLabel.classList.replace('text-danger', 'text-muted');
+        } else {
+            contactInputs.forEach(input => input.disabled = false);
+            zaloLabel.textContent = '(Bắt buộc nếu không có Facebook)';
+            facebookLabel.textContent = '(Bắt buộc nếu không có Zalo)';
+            zaloLabel.classList.replace('text-muted', 'text-danger');
+            facebookLabel.classList.replace('text-muted', 'text-danger');
+        }
+    });
+
     document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        const isUsingBoxchat = document.getElementById('use_boxchat').checked;
         const zalo = document.getElementsByName('customer_zalo')[0].value.trim();
         const facebook = document.getElementsByName('customer_facebook')[0].value.trim();
         const errorDiv = document.getElementById('contact-error');
         const modal = bootstrap.Modal.getInstance(document.getElementById('confirmPaymentModal'));
 
-        if (!zalo && !facebook) {
+        if (!isUsingBoxchat && !zalo && !facebook) {
             e.preventDefault();
             errorDiv.classList.remove('d-none');
             errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Nếu đang mở modal thì đóng lại để người dùng thấy lỗi
             if (modal) {
                 modal.hide();
             }
@@ -223,7 +286,6 @@
         }
     });
 
-    // Ẩn lỗi khi người dùng bắt đầu nhập
     document.querySelectorAll('.contact-input').forEach(input => {
         input.addEventListener('input', () => {
             document.getElementById('contact-error').classList.add('d-none');

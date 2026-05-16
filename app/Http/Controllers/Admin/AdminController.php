@@ -309,6 +309,17 @@ class AdminController extends Controller
     {
         $query = Order::with(['user', 'orderItems.product']);
 
+        // Support search by ID, name, email or phone
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_email', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%");
+            });
+        }
+
         // Lọc theo loại đơn hàng
         if ($request->has('type') && $request->type !== 'all') {
             $query->byType($request->type);
@@ -319,7 +330,7 @@ class AdminController extends Controller
             $query->where('status', $request->status);
         }
 
-        $orders = $query->latest()->paginate(15);
+        $orders = $query->latest()->paginate(15)->appends($request->query());
         
         return view('admin.orders.index', compact('orders'));
     }
@@ -431,6 +442,12 @@ class AdminController extends Controller
     {
         $query = Product::query()->with('categoryRelation');
         
+        // Search support
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
         // Filter by category if provided
         if ($request->has('category') && $request->category !== 'all') {
             $query->where('category', $request->category);
@@ -441,7 +458,7 @@ class AdminController extends Controller
             $query->where('is_flash_sale', true);
         }
         
-        $products = $query->latest()->paginate(10);
+        $products = $query->latest()->paginate(10)->appends($request->query());
         $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';
         return view('admin.products.index', compact('products', 'flashSaleEnabled'));
     }
@@ -904,9 +921,17 @@ class AdminController extends Controller
     }
 
     // Product Categories Management
-    public function categories()
+    public function categories(Request $request)
     {
-        $categories = ProductCategory::withCount('products')->latest()->paginate(20);
+        $query = ProductCategory::query()->withCount('products');
+        
+        // Search support
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $categories = $query->latest()->paginate(20)->appends($request->query());
         return view('admin.categories.index', compact('categories'));
     }
 

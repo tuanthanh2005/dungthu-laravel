@@ -60,6 +60,38 @@
     .type-tech { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: #fff; }
     .type-ebooks { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #fff; }
     .type-doc { background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%); color: #fff; }
+
+    /* Compact Search Form */
+    .compact-search-form {
+        display: flex;
+        align-items: center;
+        background: #f1f2f6;
+        border-radius: 30px;
+        padding: 5px 15px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        width: 250px;
+    }
+    .compact-search-form:focus-within {
+        background: #fff;
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+        width: 320px;
+    }
+    .compact-search-input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 0.9rem;
+        color: #2d3436;
+        width: 100%;
+        font-weight: 500;
+    }
+    .compact-search-icon {
+        color: #667eea;
+        font-size: 0.85rem;
+        margin-right: 10px;
+    }
 </style>
 @endpush
 
@@ -97,10 +129,18 @@
         </nav>
 
         <div class="admin-card" data-aos="fade-up">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                <h3 class="fw-bold mb-0">
-                    <i class="fas fa-list text-primary me-2"></i>Quản lý Danh mục
-                </h3>
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <h3 class="fw-bold mb-0">
+                        <i class="fas fa-list text-primary me-2"></i>Quản lý Danh mục
+                    </h3>
+
+                    <form action="{{ route('admin.categories') }}" method="GET" class="compact-search-form">
+                        <i class="fas fa-search compact-search-icon"></i>
+                        <input type="text" name="search" class="compact-search-input" placeholder="Tìm danh mục..." value="{{ request('search') }}">
+                        <button type="submit" class="d-none"></button>
+                    </form>
+                </div>
                 <a href="{{ route('admin.categories.create') }}" class="btn btn-primary rounded-pill px-4">
                     <i class="fas fa-plus me-2"></i>Thêm danh mục
                 </a>

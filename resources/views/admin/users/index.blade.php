@@ -165,6 +165,38 @@
         opacity: 0.6;
         pointer-events: none;
     }
+
+    /* Compact Search Form */
+    .compact-search-form {
+        display: flex;
+        align-items: center;
+        background: #f1f2f6;
+        border-radius: 30px;
+        padding: 5px 15px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        width: 250px;
+    }
+    .compact-search-form:focus-within {
+        background: #fff;
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+        width: 320px;
+    }
+    .compact-search-input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 0.9rem;
+        color: #2d3436;
+        width: 100%;
+        font-weight: 500;
+    }
+    .compact-search-icon {
+        color: #667eea;
+        font-size: 0.85rem;
+        margin-right: 10px;
+    }
 </style>
 @endpush
 
@@ -192,30 +224,16 @@
 
         <!-- User Management Card -->
         <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h3 class="fw-bold mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <h3 class="fw-bold mb-0">
                         <i class="fas fa-users text-primary me-2"></i>Quản Lý Người Dùng
                     </h3>
-                    <!-- Search Bar -->
-                    <form method="GET" action="{{ route('admin.users') }}" class="d-flex gap-2">
-                        <div class="flex-grow-1" style="max-width: 300px;">
-                            <input 
-                                type="text" 
-                                name="search" 
-                                class="form-control form-control-sm" 
-                                placeholder="Tìm theo tên hoặc email..." 
-                                value="{{ request('search') }}"
-                                style="border-radius: 8px; padding: 8px 12px;">
-                        </div>
-                        <button type="submit" class="btn btn-sm btn-primary" style="border-radius: 8px;">
-                            <i class="fas fa-search me-1"></i>Tìm kiếm
-                        </button>
-                        @if(request('search'))
-                            <a href="{{ route('admin.users') }}" class="btn btn-sm btn-secondary" style="border-radius: 8px;">
-                                <i class="fas fa-times me-1"></i>Xóa
-                            </a>
-                        @endif
+                    
+                    <form action="{{ route('admin.users') }}" method="GET" class="compact-search-form">
+                        <i class="fas fa-search compact-search-icon"></i>
+                        <input type="text" name="search" class="compact-search-input" placeholder="Tìm tên hoặc email..." value="{{ request('search') }}">
+                        <button type="submit" class="d-none"></button>
                     </form>
                 </div>
                 <div class="stats-mini">

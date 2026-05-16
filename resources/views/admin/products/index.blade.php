@@ -128,6 +128,38 @@
         background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         color: white;
     }
+
+    /* Compact Search Form */
+    .compact-search-form {
+        display: flex;
+        align-items: center;
+        background: #f1f2f6;
+        border-radius: 30px;
+        padding: 5px 15px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        width: 250px;
+    }
+    .compact-search-form:focus-within {
+        background: #fff;
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+        width: 320px;
+    }
+    .compact-search-input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 0.9rem;
+        color: #2d3436;
+        width: 100%;
+        font-weight: 500;
+    }
+    .compact-search-icon {
+        color: #667eea;
+        font-size: 0.85rem;
+        margin-right: 10px;
+    }
 </style>
 @endpush
 
@@ -182,10 +214,17 @@
 
         <!-- Products Management -->
         <div class="admin-card" data-aos="fade-up">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-                <h3 class="fw-bold mb-0">
-                    <i class="fas fa-box text-primary me-3"></i>Quản lý Sản phẩm
-                </h3>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <h3 class="fw-bold mb-0">
+                        <i class="fas fa-box text-primary me-3"></i>Quản lý Sản phẩm
+                    </h3>
+                    
+                    <form action="{{ route('admin.products') }}" method="GET" class="compact-search-form">
+                        <i class="fas fa-search compact-search-icon"></i>
+                        <input type="text" name="search" class="compact-search-input" placeholder="Tìm sản phẩm..." value="{{ request('search') }}">
+                        <button type="submit" class="d-none"></button>
+                    </form>
+                </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <form action="{{ route('admin.flash-sale.toggle') }}" method="POST" class="d-inline">
                         @csrf

@@ -78,15 +78,19 @@
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-muted fw-normal">(Không bắt buộc)</small>
+                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-danger fw-normal">(Bắt buộc nếu không có Facebook)</small>
                                     </label>
-                                    <input type="text" class="form-control form-control-lg" name="customer_zalo" placeholder="Nhập số Zalo của bạn">
+                                    <input type="text" class="form-control form-control-lg contact-input" name="customer_zalo" placeholder="Nhập số Zalo của bạn">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-muted fw-normal">(Không bắt buộc)</small>
+                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-danger fw-normal">(Bắt buộc nếu không có Zalo)</small>
                                     </label>
-                                    <input type="url" class="form-control form-control-lg" name="customer_facebook" placeholder="Ví dụ: https://facebook.com/username">
+                                    <input type="url" class="form-control form-control-lg contact-input" name="customer_facebook" placeholder="Ví dụ: https://facebook.com/username">
+                                </div>
+
+                                <div id="contact-error" class="alert alert-danger py-2 mb-3 d-none" style="font-size: 13px;">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Vui lòng để lại ít nhất 1 thông tin liên hệ (Zalo hoặc Facebook) để admin có thể hỗ trợ bạn!
                                 </div>
 
                                 <!-- Đơn hàng -->
@@ -196,4 +200,35 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        const zalo = document.getElementsByName('customer_zalo')[0].value.trim();
+        const facebook = document.getElementsByName('customer_facebook')[0].value.trim();
+        const errorDiv = document.getElementById('contact-error');
+        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmPaymentModal'));
+
+        if (!zalo && !facebook) {
+            e.preventDefault();
+            errorDiv.classList.remove('d-none');
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Nếu đang mở modal thì đóng lại để người dùng thấy lỗi
+            if (modal) {
+                modal.hide();
+            }
+            return false;
+        } else {
+            errorDiv.classList.add('d-none');
+        }
+    });
+
+    // Ẩn lỗi khi người dùng bắt đầu nhập
+    document.querySelectorAll('.contact-input').forEach(input => {
+        input.addEventListener('input', () => {
+            document.getElementById('contact-error').classList.add('d-none');
+        });
+    });
+</script>
+@endpush
 @endsection

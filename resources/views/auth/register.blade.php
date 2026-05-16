@@ -3,294 +3,277 @@
 @section('title', 'Đăng Ký - DungThu.com')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <style>
-        .auth-container {
-            min-height: calc(100vh - 80px);
+        .auth-page {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 100px 20px 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            font-family: 'Inter', sans-serif;
         }
-        .auth-container > .container {
-            display: flex;
-            justify-content: center;
-        }
+
         .auth-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            overflow: hidden;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             width: 100%;
-            max-width: 960px;
-            margin: 0 auto;
+            max-width: 950px;
+            display: flex;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
         }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .auth-left {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 60px 40px;
+            flex: 1;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .avatar-circle {
+            width: 250px;
+            height: 250px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 8px solid #f1f3f5;
+        }
+
+        .avatar-circle i {
+            font-size: 120px;
+            color: #dee2e6;
+        }
+
+        .auth-right {
+            flex: 1.2;
+            padding: 60px 50px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        .auth-right {
-            padding: 60px 40px;
+
+        .auth-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 40px;
+            text-align: center;
         }
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
         }
+
+        .form-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input-wrapper i {
+            position: absolute;
+            left: 20px;
+            color: #adb5bd;
+            font-size: 18px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 20px 14px 55px;
+            background: #f1f3f5;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s;
+            font-size: 15px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .auth-input:focus {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 16px;
+            background: #57b846;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(87, 184, 70, 0.2);
+        }
+
+        .auth-btn:hover {
+            background: #4cae4c;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(87, 184, 70, 0.3);
+        }
+
+        .login-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 15px;
+            color: #6c757d;
+        }
+
+        .login-text a {
+            color: #667eea;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
         @media (max-width: 991.98px) {
-            .auth-container {
-                padding: 20px 15px;
-                min-height: auto;
-                align-items: flex-start;
-            }
             .auth-card {
-                margin-top: 10px;
-                border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                flex-direction: column;
+                max-width: 450px;
+            }
+            .auth-left {
+                padding: 40px 20px;
+            }
+            .avatar-circle {
+                width: 150px;
+                height: 150px;
+            }
+            .avatar-circle i {
+                font-size: 70px;
             }
             .auth-right {
-                padding: 25px 20px;
-            }
-            .auth-right h3 {
-                font-size: 22px;
-                margin-bottom: 20px !important;
-            }
-            .btn.py-3 {
-                padding-top: 0.6rem !important;
-                padding-bottom: 0.6rem !important;
-                font-size: 15px;
-            }
-            .form-control, .input-group-text {
-                font-size: 14px;
-                padding: 0.6rem 1rem;
+                padding: 40px 30px;
             }
         }
     </style>
 @endpush
 
 @section('content')
-<div class="auth-container">
-    <div class="container">
-        <div class="auth-card" data-aos="zoom-in">
-            <div class="row g-0">
-                <div class="col-lg-5 d-none d-lg-block">
-                    <div class="auth-left h-100">
-                        <div>
-                            <h2 class="fw-bold mb-3">Tham gia cùng chúng tôi!</h2>
-                            <p class="mb-4">Tạo tài khoản để nhận những ưu đãi độc quyền và trải nghiệm mua sắm tuyệt vời.</p>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="fas fa-gift fs-5 me-3"></i>
-                                <span>Voucher 100.000đ cho đơn đầu tiên</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="fas fa-shipping-fast fs-5 me-3"></i>
-                                <span>Miễn phí vận chuyển đơn từ 300k</span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-star fs-5 me-3"></i>
-                                <span>Tích điểm đổi quà hấp dẫn</span>
-                            </div>
-                        </div>
+<div class="auth-page">
+    <div class="auth-card">
+        <!-- Left Side: Icon -->
+        <div class="auth-left d-none d-md-flex">
+            <div class="avatar-circle">
+                <i class="fas fa-user-plus"></i>
+            </div>
+        </div>
+
+        <!-- Right Side: Form -->
+        <div class="auth-right">
+            <h2 class="auth-title">Đăng Ký</h2>
+
+            @if($errors->any())
+                <div class="alert alert-danger border-0 rounded-4 mb-4 shadow-sm" role="alert">
+                    <ul class="mb-0 list-unstyled">
+                        @foreach($errors->all() as $error)
+                        <li><i class="fas fa-exclamation-circle me-2"></i>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('register.post') }}" method="POST">
+                @csrf
+
+                <div class="form-group">
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="name" class="auth-input" placeholder="Họ và tên" value="{{ old('name') }}" required>
                     </div>
                 </div>
-                <div class="col-lg-7">
-                    <div class="auth-right">
-                        <h3 class="fw-bold mb-4">Đăng Ký Tài Khoản</h3>
-                        
-                        @if($errors->any())
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <ul class="mb-0">
-                                @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        @endif
 
-                        <form action="{{ route('register.post') }}" method="POST">
-                            @csrf
-                            
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Họ và tên</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" 
-                                           name="name" 
-                                           class="form-control @error('name') is-invalid @enderror" 
-                                           placeholder="Nguyễn Văn A"
-                                           value="{{ old('name') }}"
-                                           required>
-                                </div>
-                                @error('name')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" 
-                                           name="email" 
-                                           class="form-control @error('email') is-invalid @enderror" 
-                                           placeholder="email@example.com"
-                                           value="{{ old('email') }}"
-                                           required>
-                                </div>
-                                @error('email')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Mật khẩu</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" 
-                                           name="password" 
-                                           class="form-control @error('password') is-invalid @enderror" 
-                                           placeholder="Tối thiểu 6 ký tự"
-                                           required>
-                                </div>
-                                @error('password')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Xác nhận mật khẩu</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" 
-                                           name="password_confirmation" 
-                                           class="form-control" 
-                                           placeholder="Nhập lại mật khẩu"
-                                           required>
-                                </div>
-                            </div>
-
-                            <div class="form-check mb-4">
-                                <input class="form-check-input" type="checkbox" id="terms" required>
-                                <label class="form-check-label" for="terms">
-                                    Tôi đồng ý với <a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#termsModal">Điều khoản dịch vụ</a> 
-                                    và <a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#privacyRegisterModal">Chính sách bảo mật</a>
-                                </label>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">
-                                <i class="fas fa-user-plus me-2"></i> Đăng Ký
-                            </button>
-                        </form>
-
-                        <div class="text-center mt-4">
-                            <p class="text-muted mb-0">Đã có tài khoản? 
-                                <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none">Đăng nhập ngay</a>
-                            </p>
-                        </div>
+                <div class="form-group">
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" class="auth-input" placeholder="Email của bạn" value="{{ old('email') }}" required>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" class="auth-input" placeholder="Mật khẩu" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-shield-alt"></i>
+                        <input type="password" name="password_confirmation" class="auth-input" placeholder="Xác nhận mật khẩu" required>
+                    </div>
+                </div>
+
+                <div class="form-check mb-4 px-4">
+                    <input class="form-check-input" type="checkbox" id="terms" required>
+                    <label class="form-check-label text-muted small" for="terms">
+                        Tôi đồng ý với <a href="javascript:void(0)" class="text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#termsModal">Điều khoản</a> 
+                        và <a href="javascript:void(0)" class="text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#privacyRegisterModal">Bảo mật</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    Tạo Tài Khoản
+                </button>
+            </form>
+
+            <p class="login-text">
+                Đã có tài khoản? <a href="{{ route('login') }}">Đăng nhập ngay</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0" style="border-radius: 25px;">
+            <div class="modal-header border-0 p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 25px 25px 0 0;">
+                <h5 class="modal-title fw-bold">Điều Khoản Dịch Vụ</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <h6>1. Quy định chung</h6>
+                <p>Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý với các quy định này...</p>
+                <!-- Thêm nội dung rút gọn hoặc giữ nguyên -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal fade" id="privacyRegisterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0" style="border-radius: 25px;">
+            <div class="modal-header border-0 p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 25px 25px 0 0;">
+                <h5 class="modal-title fw-bold">Chính Sách Bảo Mật</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p>Chúng tôi cam kết bảo mật thông tin cá nhân của bạn...</p>
             </div>
         </div>
     </div>
 </div>
 @endsection
 
-@push('scripts')
-    <script>
-        AOS.init({ duration: 800, once: true });
-    </script>
-@endpush
-
-<!-- Terms Modal -->
-<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content" style="border-radius: 20px; border: none;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border: none; padding: 25px 30px;">
-                <h5 class="modal-title fw-bold" id="termsModalLabel">
-                    <i class="fas fa-file-contract me-2"></i>Điều Khoản Dịch Vụ
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
-            </div>
-            <div class="modal-body p-4" style="font-size: 15px; line-height: 1.8; color: #4a5568;">
-                <h6 class="fw-bold mb-3" style="color: #667eea;">1. Quyền và Trách Vụ Người Dùng</h6>
-                <p>Người dùng đồng ý rằng:</p>
-                <ul class="ms-3">
-                    <li>Sẽ cung cấp thông tin chính xác khi đăng ký</li>
-                    <li>Chịu trách nhiệm bảo mật tài khoản của mình</li>
-                    <li>Sẽ không sử dụng dịch vụ cho mục đích bất hợp pháp</li>
-                    <li>Sẽ tuân thủ tất cả các quy định hiện hành</li>
-                </ul>
-
-                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">2. Quyền và Trách Vụ DungThu</h6>
-                <p>DungThu.com có quyền:</p>
-                <ul class="ms-3">
-                    <li>Cung cấp các dịch vụ với chất lượng tốt nhất</li>
-                    <li>Thay đổi hoặc cập nhật dịch vụ</li>
-                    <li>Vô hiệu hóa tài khoản vi phạm điều khoản</li>
-                </ul>
-
-                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">3. Giới Hạn Trách Nhiệm</h6>
-                <p>DungThu.com không chịu trách nhiệm về:</p>
-                <ul class="ms-3">
-                    <li>Mất dữ liệu do người dùng không cập nhật backup</li>
-                    <li>Thiệt hại do sử dụng không đúng cách</li>
-                    <li>Các vấn đề liên quan đến kết nối internet</li>
-                </ul>
-
-                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">4. Thanh Toán và Hoàn Tiền</h6>
-                <ul class="ms-3">
-                    <li>Tất cả giá trị được liệt kê đã bao gồm thuế</li>
-                    <li>Chính sách hoàn tiền được áp dụng trong 7 ngày</li>
-                    <li>Hoàn tiền sẽ được xử lý trong 5-7 ngày làm việc</li>
-                </ul>
-
-                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">5. Thay Đổi Điều Khoản</h6>
-                <p>DungThu.com có quyền thay đổi điều khoản này bất kỳ lúc nào. Người dùng sẽ được thông báo về những thay đổi quan trọng.</p>
-
-                <div class="alert alert-success mt-4" style="border-radius: 12px;">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <strong>Cảm ơn</strong> vì đã đồng ý với điều khoản dịch vụ của chúng tôi!
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Privacy Register Modal -->
-<div class="modal fade" id="privacyRegisterModal" tabindex="-1" aria-labelledby="privacyRegisterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content" style="border-radius: 20px; border: none;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border: none; padding: 25px 30px;">
-                <h5 class="modal-title fw-bold" id="privacyRegisterModalLabel">
-                    <i class="fas fa-shield-alt me-2"></i>Chính Sách Bảo Mật
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
-            </div>
-            <div class="modal-body p-4" style="font-size: 15px; line-height: 1.8; color: #4a5568;">
-                <h6 class="fw-bold mb-3" style="color: #667eea;">📋 Thông Tin Chúng Tôi Thu Thập</h6>
-                <p>Chúng tôi thu thập những thông tin sau:</p>
-                <ul class="ms-3">
-                    <li>Tên, email, số điện thoại khi bạn đăng ký</li>
-                    <li>Địa chỉ giao hàng để xử lý đơn hàng</li>
-                    <li>Lịch sử mua hàng và sở thích sản phẩm</li>
-                </ul>
-
-                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">🔒 Bảo Vệ Thông Tin</h6>
-                <p>Chúng tôi sử dụng mã hóa SSL/TLS cho tất cả giao tiếp và không chia sẻ thông tin cá nhân với bên thứ ba.</p>
-
-                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">💾 Cách Sử Dụng Thông Tin</h6>
-                <ul class="ms-3">
-                    <li>Xử lý và giao hàng đơn hàng</li>
-                    <li>Gửi thông báo về tình trạng đơn hàng</li>
-                    <li>Cải thiện dịch vụ và sản phẩm</li>
-                    <li>Tuân thủ pháp luật</li>
-                </ul>
-
-                <h6 class="fw-bold mb-3 mt-4" style="color: #667eea;">👥 Quyền Của Bạn</h6>
                 <ul class="ms-3">
                     <li>Truy cập và xem thông tin cá nhân</li>
                     <li>Chỉnh sửa hoặc cập nhật thông tin</li>

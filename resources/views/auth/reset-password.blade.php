@@ -3,219 +3,269 @@
 @section('title', 'Đặt Lại Mật Khẩu - DungThu.com')
 
 @push('styles')
-<style>
-    .reset-password-container {
-        min-height: calc(100vh - 80px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 100px 20px 60px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    .reset-password-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        padding: 50px 40px;
-        width: 100%;
-        max-width: 500px;
-    }
-    .form-control:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
-    }
-    .password-strength {
-        height: 4px;
-        background: #e9ecef;
-        border-radius: 4px;
-        margin-top: 8px;
-        overflow: hidden;
-    }
-    .password-strength-bar {
-        height: 100%;
-        width: 0%;
-        transition: width 0.3s ease;
-    }
-    .password-strength.weak .password-strength-bar { width: 33%; background: #dc3545; }
-    .password-strength.medium .password-strength-bar { width: 66%; background: #ffc107; }
-    .password-strength.strong .password-strength-bar { width: 100%; background: #28a745; }
-    @media (max-width: 991.98px) {
-        .reset-password-container {
-            padding: 20px 15px;
-            min-height: auto;
-            align-items: flex-start;
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            font-family: 'Inter', sans-serif;
         }
-        .reset-password-card {
-            margin-top: 10px;
-            padding: 25px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
+        .auth-card {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
         }
-        .reset-password-card h2 {
-            font-size: 22px;
-            margin-bottom: 15px !important;
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .btn.btn-lg {
-            padding-top: 0.6rem !important;
-            padding-bottom: 0.6rem !important;
+
+        .auth-left {
+            flex: 1;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .avatar-circle {
+            width: 250px;
+            height: 250px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 8px solid #f1f3f5;
+        }
+
+        .avatar-circle i {
+            font-size: 120px;
+            color: #dee2e6;
+        }
+
+        .auth-right {
+            flex: 1.2;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input-wrapper i {
+            position: absolute;
+            left: 20px;
+            color: #adb5bd;
+            font-size: 18px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 20px 14px 55px;
+            background: #f1f3f5;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s;
             font-size: 15px;
+            font-weight: 500;
+            color: #495057;
         }
-        .form-control-lg {
-            font-size: 14px;
-            padding: 0.6rem 1rem;
+
+        .auth-input:focus {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
         }
-    }
-</style>
+
+        .toggle-password {
+            position: absolute;
+            right: 20px;
+            cursor: pointer;
+            color: #adb5bd;
+            z-index: 10;
+        }
+
+        .password-strength {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.4s ease;
+        }
+
+        .strength-weak { background: #ff4757; width: 33%; }
+        .strength-medium { background: #ffa502; width: 66%; }
+        .strength-strong { background: #2ed573; width: 100%; }
+
+        .auth-btn {
+            width: 100%;
+            padding: 16px;
+            background: #57b846;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(87, 184, 70, 0.2);
+        }
+
+        .auth-btn:hover {
+            background: #4cae4c;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(87, 184, 70, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .auth-card {
+                flex-direction: column;
+                max-width: 450px;
+            }
+            .auth-left { padding: 40px 20px; }
+            .avatar-circle { width: 150px; height: 150px; }
+            .avatar-circle i { font-size: 70px; }
+            .auth-right { padding: 40px 30px; }
+        }
+    </style>
 @endpush
 
 @section('content')
-<div class="reset-password-container">
-    <div class="reset-password-card">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold mb-2">🔑 Đặt Lại Mật Khẩu</h2>
-            <p class="text-muted">Nhập mật khẩu mới để bảo vệ tài khoản của bạn</p>
+<div class="auth-page">
+    <div class="auth-card">
+        <!-- Left Side -->
+        <div class="auth-left d-none d-md-flex">
+            <div class="avatar-circle">
+                <i class="fas fa-lock-open"></i>
+            </div>
         </div>
 
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Lỗi!</strong>
-                @foreach ($errors->all() as $error)
-                    <div>{{ $error }}</div>
-                @endforeach
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+        <!-- Right Side -->
+        <div class="auth-right">
+            <h2 class="auth-title">Đặt Lại Mật Khẩu</h2>
 
-        <form action="{{ route('password.update') }}" method="POST">
-            @csrf
-            
-            <input type="hidden" name="token" value="{{ $token }}">
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    <i class="fas fa-envelope me-2 text-primary"></i>Email
-                </label>
-                <input type="email" 
-                       class="form-control form-control-lg @error('email') is-invalid @enderror" 
-                       name="email" 
-                       value="{{ $email ?? old('email') }}"
-                       readonly>
-                @error('email')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    <i class="fas fa-lock me-2 text-primary"></i>Mật Khẩu Mới
-                </label>
-                <div class="input-group">
-                    <input type="password" 
-                           class="form-control form-control-lg @error('password') is-invalid @enderror" 
-                           id="password"
-                           name="password" 
-                           placeholder="Nhập mật khẩu mới (tối thiểu 8 ký tự)"
-                           required>
-                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                        <i class="fas fa-eye"></i>
-                    </button>
+            @if ($errors->any())
+                <div class="alert alert-danger border-0 rounded-4 mb-4 shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    {{ $errors->first() }}
                 </div>
-                <div class="password-strength weak" id="strengthMeter">
-                    <div class="password-strength-bar"></div>
+            @endif
+
+            <form action="{{ route('password.update') }}" method="POST">
+                @csrf
+                <input type="hidden" name="token" value="{{ $token }}">
+
+                <div class="form-group">
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" class="auth-input" value="{{ $email ?? old('email') }}" readonly>
+                    </div>
                 </div>
-                <small class="text-muted d-block mt-2">
-                    ✓ Mật khẩu mạnh nên có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số
-                </small>
-                @error('password')
-                    <span class="invalid-feedback d-block">{{ $message }}</span>
-                @enderror
-            </div>
 
-            <div class="mb-4">
-                <label class="form-label fw-bold">
-                    <i class="fas fa-check-circle me-2 text-primary"></i>Xác Nhận Mật Khẩu
-                </label>
-                <div class="input-group">
-                    <input type="password" 
-                           class="form-control form-control-lg @error('password_confirmation') is-invalid @enderror" 
-                           id="password_confirmation"
-                           name="password_confirmation" 
-                           placeholder="Nhập lại mật khẩu mới"
-                           required>
-                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirm">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                <div class="form-group">
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="password" class="auth-input" placeholder="Mật khẩu mới" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePass('password', this)"></i>
+                    </div>
                 </div>
-                @error('password_confirmation')
-                    <span class="invalid-feedback d-block">{{ $message }}</span>
-                @enderror
-            </div>
 
-            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill mb-3">
-                <i class="fas fa-check me-2"></i>Cập Nhật Mật Khẩu
-            </button>
+                <div class="password-strength">
+                    <div id="strengthMeter" class="password-strength-bar"></div>
+                </div>
 
-            <div class="text-center">
-                <p class="mb-0">
-                    <a href="{{ route('login') }}" class="fw-bold text-primary text-decoration-none">
-                        ← Quay lại đăng nhập
-                    </a>
-                </p>
-            </div>
-        </form>
+                <div class="form-group">
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-shield-alt"></i>
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="auth-input" placeholder="Xác nhận mật khẩu" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePass('password_confirmation', this)"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    Cập Nhật Mật Khẩu
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
-document.getElementById('togglePassword').addEventListener('click', function() {
-    const input = document.getElementById('password');
-    const icon = this.querySelector('i');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
+    function togglePass(id, icon) {
+        const input = document.getElementById(id);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
     }
-});
 
-document.getElementById('toggleConfirm').addEventListener('click', function() {
-    const input = document.getElementById('password_confirmation');
-    const icon = this.querySelector('i');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-});
-
-// Password strength meter
-document.getElementById('password').addEventListener('input', function() {
-    const password = this.value;
-    const meter = document.getElementById('strengthMeter');
-    
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[a-z]/.test(password)) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^a-zA-Z0-9]/.test(password)) strength++;
-    
-    meter.classList.remove('weak', 'medium', 'strong');
-    
-    if (strength < 2) {
-        meter.classList.add('weak');
-    } else if (strength < 4) {
-        meter.classList.add('medium');
-    } else {
-        meter.classList.add('strong');
-    }
-});
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const meter = document.getElementById('strengthMeter');
+        
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^a-zA-Z0-9]/.test(password)) strength++;
+        
+        meter.className = 'password-strength-bar';
+        if (password.length === 0) {
+            // no bar
+        } else if (strength < 2) {
+            meter.classList.add('strength-weak');
+        } else if (strength < 4) {
+            meter.classList.add('strength-medium');
+        } else {
+            meter.classList.add('strength-strong');
+        }
+    });
 </script>
 @endsection

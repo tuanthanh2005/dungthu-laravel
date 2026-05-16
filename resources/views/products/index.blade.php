@@ -116,6 +116,48 @@
             background: linear-gradient(135deg, #5f27cd, #00cec9);
         }
 
+        /* Compact Search Form */
+        .compact-search-form {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 50px;
+            padding: 4px 4px 4px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            transition: all 0.3s ease;
+        }
+        .compact-search-form:focus-within {
+            border-color: #6c5ce7;
+            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.15);
+            transform: translateY(-1px);
+        }
+        .compact-search-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.9rem;
+            width: 180px;
+            color: #2d3436;
+            padding: 5px 0;
+        }
+        .compact-search-btn {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .compact-search-btn:hover {
+            background: linear-gradient(135deg, #5f27cd, #6c5ce7);
+            transform: scale(1.1);
+        }
+
         /* Category Section */
         .category-section {
             background: #fff;
@@ -542,20 +584,10 @@
 @section('content')
 <div class="container py-2">
     <!-- Shop Hero -->
-    <div class="shop-hero" data-aos="zoom-in" data-aos-duration="1000">
+    <div class="shop-hero" data-aos="zoom-in" data-aos-duration="1000" style="padding: 3rem 2rem;">
         <div class="shop-hero-content">
             <h1 class="shop-title">Khám Phá Sản Phẩm</h1>
-            <p class="shop-subtitle">Tìm kiếm các tài nguyên kỹ thuật số, công nghệ và tài liệu chất lượng cao được tuyển chọn đặc biệt dành cho bạn.</p>
-            
-            <form action="{{ route('shop') }}" method="GET" class="search-container">
-                <input type="hidden" name="category_id" value="{{ $currentCategoryId }}">
-                <div class="search-input-group">
-                    <input type="text" class="search-input" name="search" placeholder="Nhập tên sản phẩm, tài liệu..." value="{{ $searchTerm }}">
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i> Tìm kiếm
-                    </button>
-                </div>
-            </form>
+            <p class="shop-subtitle" style="margin-bottom: 0;">Tìm kiếm các tài nguyên kỹ thuật số, công nghệ và tài liệu chất lượng cao được tuyển chọn đặc biệt dành cho bạn.</p>
         </div>
     </div>
 
@@ -608,17 +640,28 @@
 
     <!-- Results Info -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3" data-aos="fade-in">
-        <h4 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">
-            @if($searchTerm || $currentCategoryId != 'all')
-                Kết quả tìm kiếm
-                @if($currentCategoryId != 'all') 
-                    @php $selectedCategory = $categories->firstWhere('id', $currentCategoryId); @endphp
-                    @if($selectedCategory) <span class="text-primary">- {{ $selectedCategory->name }}</span> @endif
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <h4 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">
+                @if($searchTerm || $currentCategoryId != 'all')
+                    Kết quả tìm kiếm
+                    @if($currentCategoryId != 'all') 
+                        @php $selectedCategory = $categories->firstWhere('id', $currentCategoryId); @endphp
+                        @if($selectedCategory) <span class="text-primary">- {{ $selectedCategory->name }}</span> @endif
+                    @endif
+                @else
+                    Tất cả sản phẩm
                 @endif
-            @else
-                Tất cả sản phẩm
-            @endif
-        </h4>
+            </h4>
+
+            <form action="{{ route('shop') }}" method="GET" class="compact-search-form">
+                <input type="hidden" name="category_id" value="{{ $currentCategoryId }}">
+                <input type="text" name="search" class="compact-search-input" placeholder="Tìm kiếm sản phẩm..." value="{{ $searchTerm }}">
+                <button type="submit" class="compact-search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        
         <div class="d-flex align-items-center bg-white px-4 py-2 rounded-pill shadow-sm border" style="border-color: rgba(108, 92, 231, 0.2) !important;">
             <i class="fas fa-check-circle text-success me-2"></i> 
             <span class="fw-bold text-dark me-1">{{ $items->total() }}</span> sản phẩm

@@ -205,21 +205,34 @@
     <div class="container">
         <!-- Navigation -->
         <div class="admin-nav">
-            <a href="{{ route('admin.dashboard') }}">
-                <i class="fas fa-chart-line me-2"></i>Dashboard
-            </a>
-            <a href="{{ route('admin.products') }}">
-                <i class="fas fa-box me-2"></i>Sản phẩm
-            </a>
-            <a href="{{ route('admin.orders') }}">
-                <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-            </a>
-            <a href="{{ route('admin.users') }}" class="active">
-                <i class="fas fa-users me-2"></i>Người dùng
-            </a>
-            <a href="{{ route('admin.abandoned-carts') }}">
-                <i class="fas fa-shopping-basket me-2"></i>Gio bo quen
-            </a>
+            <ul class="nav nav-pills justify-content-center flex-nowrap overflow-auto pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+                <style>ul::-webkit-scrollbar { display: none; }</style>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                        <i class="fas fa-chart-line me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.products') }}">
+                        <i class="fas fa-box me-2"></i>Sản phẩm
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.orders') }}">
+                        <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ route('admin.users') }}">
+                        <i class="fas fa-users me-2"></i>Người dùng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.abandoned-carts') }}">
+                        <i class="fas fa-shopping-basket me-2"></i>Gio bo quen
+                    </a>
+                </li>
+            </ul>
         </div>
 
         <!-- User Management Card -->

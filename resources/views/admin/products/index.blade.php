@@ -168,7 +168,8 @@
     <div class="container">
         <!-- Admin Navigation -->
         <nav class="admin-nav" data-aos="fade-down">
-            <ul class="nav nav-pills justify-content-center">
+            <ul class="nav nav-pills justify-content-center flex-nowrap overflow-auto pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+                <style>ul::-webkit-scrollbar { display: none; }</style>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-home me-2"></i>Dashboard
@@ -214,6 +215,7 @@
 
         <!-- Products Management -->
         <div class="admin-card" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-3 flex-wrap">
                     <h3 class="fw-bold mb-0">
                         <i class="fas fa-box text-primary me-3"></i>Quản lý Sản phẩm
@@ -229,11 +231,11 @@
                     <form action="{{ route('admin.flash-sale.toggle') }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn {{ $flashSaleEnabled ? 'btn-outline-danger' : 'btn-outline-success' }} rounded-pill px-4">
-                            <i class="fas fa-bolt me-2"></i>{{ $flashSaleEnabled ? 'Tắt Flash Sale' : 'Bật Flash Sale' }}
+                            <i class="fas fa-bolt me-2"></i>{{ $flashSaleEnabled ? 'Tắt' : 'Bật' }} Flash Sale
                         </button>
                     </form>
                     <a href="{{ route('admin.products.create') }}" class="btn btn-primary rounded-pill px-4">
-                        <i class="fas fa-plus me-2"></i>Thêm sản phẩm
+                        <i class="fas fa-plus me-2"></i>Thêm
                     </a>
                 </div>
             </div>

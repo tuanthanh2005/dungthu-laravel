@@ -99,7 +99,8 @@
 <div class="admin-wrapper">
     <div class="container">
         <nav class="admin-nav" data-aos="fade-down">
-            <ul class="nav nav-pills justify-content-center">
+            <ul class="nav nav-pills justify-content-center flex-nowrap overflow-auto pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+                <style>ul::-webkit-scrollbar { display: none; }</style>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-home me-2"></i>Dashboard

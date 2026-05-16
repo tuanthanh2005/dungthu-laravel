@@ -175,6 +175,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // User Management
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/users/{user}/history', [AdminController::class, 'userHistory'])->name('admin.users.history');
+    Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
     
     // Product Management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');

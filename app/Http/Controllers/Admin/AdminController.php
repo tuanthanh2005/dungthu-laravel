@@ -161,11 +161,22 @@ class AdminController extends Controller
     // User Management
     public function users(Request $request)
     {
-        $users = User::where('role', 'user')
+        $query = User::where('role', 'user')
             ->withCount('orders')
-            ->withSum('orders', 'total_amount')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->withSum('orders', 'total_amount');
+        
+        // Support search by name or email
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+        
+        $users = $query->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends($request->query());
         
         return view('admin.users.index', compact('users'));
     }
@@ -264,6 +275,34 @@ class AdminController extends Controller
         
         return view('admin.users.history', compact('user', 'orders'));
     }
+
+    public function updateUserRole(Request $request, User $user)
+    {
+        $request->validate([
+            'role' => 'required|in:user,admin,moderator',
+        ], [
+            'role.required' => 'Quyền không được để trống',
+            'role.in' => 'Quyền không hợp lệ',
+        ]);
+
+        // Prevent users from removing their own admin role
+        if (auth()->id() === $user->id && $request->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể thay đổi quyền của chính mình'
+            ], 403);
+        }
+
+        $oldRole = $user->role;
+        $user->update(['role' => $request->role]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Cập nhật quyền thành công! ({$oldRole} → {$request->role})",
+            'role' => $user->role
+        ]);
+    }
+
 
     // Order Management
     public function orders(Request $request)

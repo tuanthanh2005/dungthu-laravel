@@ -116,46 +116,67 @@
             background: linear-gradient(135deg, #5f27cd, #00cec9);
         }
 
-        /* Compact Search Form */
+        /* Compact Search Form - Sleek & Modern */
         .compact-search-form {
             display: flex;
             align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
+            padding: 6px 16px;
+            border: 1px solid rgba(108, 92, 231, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 220px;
+            margin-left: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .compact-search-form:hover {
+            border-color: rgba(108, 92, 231, 0.3);
             background: #fff;
-            border-radius: 50px;
-            padding: 4px 4px 4px 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid rgba(108, 92, 231, 0.15);
-            transition: all 0.3s ease;
+            width: 260px;
         }
         .compact-search-form:focus-within {
             border-color: #6c5ce7;
-            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.15);
-            transform: translateY(-1px);
+            background: #fff;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.12);
+            width: 300px;
         }
         .compact-search-input {
             border: none;
             outline: none;
             background: transparent;
             font-size: 0.9rem;
-            width: 180px;
             color: #2d3436;
-            padding: 5px 0;
+            width: 100%;
+            font-weight: 500;
         }
-        .compact-search-btn {
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            color: white;
-            border: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .compact-search-input::placeholder {
+            color: #b2bec3;
+            font-weight: 400;
+        }
+        .compact-search-icon {
+            color: #6c5ce7;
+            font-size: 0.85rem;
+            margin-right: 10px;
             transition: all 0.3s;
         }
-        .compact-search-btn:hover {
-            background: linear-gradient(135deg, #5f27cd, #6c5ce7);
-            transform: scale(1.1);
+        .compact-search-form:focus-within .compact-search-icon {
+            transform: scale(1.2);
+            color: #5f27cd;
+        }
+
+        /* Responsive Compact Search */
+        @media (max-width: 768px) {
+            .compact-search-form {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            .compact-search-form:hover, 
+            .compact-search-form:focus-within {
+                width: 100%;
+            }
         }
 
         /* Category Section */
@@ -583,14 +604,6 @@
 
 @section('content')
 <div class="container py-2">
-    <!-- Shop Hero -->
-    <div class="shop-hero" data-aos="zoom-in" data-aos-duration="1000" style="padding: 3rem 2rem;">
-        <div class="shop-hero-content">
-            <h1 class="shop-title">Khám Phá Sản Phẩm</h1>
-            <p class="shop-subtitle" style="margin-bottom: 0;">Tìm kiếm các tài nguyên kỹ thuật số, công nghệ và tài liệu chất lượng cao được tuyển chọn đặc biệt dành cho bạn.</p>
-        </div>
-    </div>
-
     <!-- Category Filter -->
     @if(isset($categories) && $categories->count() > 0)
     <div class="category-section" data-aos="fade-up" data-aos-delay="100">
@@ -640,7 +653,7 @@
 
     <!-- Results Info -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3" data-aos="fade-in">
-        <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="d-flex align-items-center flex-wrap flex-grow-1">
             <h4 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">
                 @if($searchTerm || $currentCategoryId != 'all')
                     Kết quả tìm kiếm
@@ -655,10 +668,9 @@
 
             <form action="{{ route('shop') }}" method="GET" class="compact-search-form">
                 <input type="hidden" name="category_id" value="{{ $currentCategoryId }}">
-                <input type="text" name="search" class="compact-search-input" placeholder="Tìm kiếm sản phẩm..." value="{{ $searchTerm }}">
-                <button type="submit" class="compact-search-btn">
-                    <i class="fas fa-search"></i>
-                </button>
+                <i class="fas fa-search compact-search-icon"></i>
+                <input type="text" name="search" class="compact-search-input" placeholder="Tìm sản phẩm..." value="{{ $searchTerm }}">
+                <button type="submit" class="d-none"></button>
             </form>
         </div>
         

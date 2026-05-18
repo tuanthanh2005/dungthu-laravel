@@ -1125,6 +1125,9 @@
                                         <div style="padding:8px;">
                                             <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">
                                                 {{ $sp->name }}</div>
+                                            <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
+                                                Còn: <span class="{{ $sp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $sp->stock }}</span>
+                                            </div>
                                             <div style="color:#e53935;font-weight:800;">{{ $sp->formatted_price }}</div>
                                         </div>
                                         @if($sp->stock > 0)
@@ -1157,6 +1160,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="prod-name">{{ $fp->name }}</div>
+                                    <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
+                                        Còn: <span class="{{ $fp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $fp->stock }}</span>
+                                    </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $fp->formatted_price }}</span>
                                         @if($fp->is_on_sale)
@@ -1202,6 +1208,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="prod-name">{{ $hp->name }}</div>
+                                    <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
+                                        Còn: <span class="{{ $hp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $hp->stock }}</span>
+                                    </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $hp->formatted_price }}</span>
                                         @if($hp->is_on_sale)
@@ -1246,6 +1255,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="prod-name">{{ $cp->name }}</div>
+                                    <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
+                                        Còn: <span class="{{ $cp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $cp->stock }}</span>
+                                    </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $cp->formatted_price }}</span>
                                         @if($cp->is_on_sale)

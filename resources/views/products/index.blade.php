@@ -741,6 +741,10 @@
                         </div>
                     @endif
                     
+                    <div class="stock-display mb-2" style="font-size: 0.75rem; color: #636e72; font-weight: 600;">
+                        Còn: <span class="{{ $product->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $product->stock }}</span>
+                    </div>
+                    
                     <div class="product-footer">
                         <div class="price-wrap">
                             <span class="price-current">{{ $product->formatted_price }}</span>

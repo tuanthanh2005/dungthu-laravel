@@ -1047,7 +1047,9 @@
             color: #fff;
         }
         .combo-prod-card.out-of-stock {
-            opacity: 0.8;
+            opacity: 0.65;
+            pointer-events: none;
+            cursor: not-allowed;
         }
 
         .combo-prod-card.out-of-stock .img-wrap::after {

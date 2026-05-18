@@ -233,6 +233,11 @@
             transform: translateY(-12px);
             box-shadow: 0 25px 50px rgba(108, 92, 231, 0.12);
         }
+        .product-card-modern.out-of-stock {
+            opacity: 0.65;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
         .product-image-wrapper {
             position: relative;
             padding-top: 80%;
@@ -685,7 +690,7 @@
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 product-grid">
         @foreach($items as $product)
         <div class="col" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 8) * 50 }}">
-            <div class="product-card-modern">
+            <div class="product-card-modern {{ $product->stock <= 0 ? 'out-of-stock' : '' }}">
                 <a href="{{ route('product.show', $product->slug) }}" class="text-decoration-none d-block position-relative">
                     <div class="product-image-wrapper">
                         <div class="product-badges">

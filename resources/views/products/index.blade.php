@@ -238,6 +238,23 @@
             pointer-events: none;
             cursor: not-allowed;
         }
+        .product-card-modern.out-of-stock .product-image-wrapper::after {
+            content: 'HẾT HÀNG';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(229, 57, 53, 0.9);
+            color: #fff;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            border-radius: 4px;
+            z-index: 5;
+            letter-spacing: 1px;
+            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
         .product-image-wrapper {
             position: relative;
             padding-top: 80%;

@@ -184,6 +184,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/products/{product}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit');
     Route::put('/products/{product}', [AdminController::class, 'updateProduct'])->name('admin.products.update');
     Route::delete('/products/{product}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
+    Route::post('/products/{product}/clone', [AdminController::class, 'cloneProduct'])->name('admin.products.clone');
     Route::post('/products/{product}/flash-sale', [AdminController::class, 'toggleProductFlashSale'])->name('admin.products.toggle-flash-sale');
     Route::post('/products/{product}/featured', [AdminController::class, 'toggleProductFeatured'])->name('admin.products.toggle-featured');
     Route::post('/products/{product}/exclusive', [AdminController::class, 'toggleProductExclusive'])->name('admin.products.toggle-exclusive');

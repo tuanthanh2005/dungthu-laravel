@@ -365,16 +365,26 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <a href="{{ route('admin.products.edit', $product) }}" 
-                                       class="btn btn-sm btn-outline-primary rounded-start">
+                                       class="btn btn-sm btn-outline-primary rounded-start"
+                                       title="Chỉnh sửa">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    <form action="{{ route('admin.products.clone', $product) }}" 
+                                          method="POST" 
+                                          class="d-inline"
+                                          onsubmit="return confirm('Bạn có chắc muốn nhân bản sản phẩm này?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-0" title="Nhân bản (Clone)">
+                                            <i class="fas fa-clone"></i>
+                                        </button>
+                                    </form>
                                     <form action="{{ route('admin.products.delete', $product) }}" 
                                           method="POST" 
                                           class="d-inline"
                                           onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-end">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-end" title="Xóa">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>

@@ -855,6 +855,60 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('success', 'Xóa sản phẩm thành công!');
     }
 
+    public function cloneProduct(Product $product)
+    {
+        $clone = $product->replicate();
+        $clone->name = $product->name . ' (Copy)';
+        $clone->slug = \Str::slug($clone->name) . '-' . time();
+
+        // Xử lý nhân bản file hình ảnh để tránh chung file ảnh gốc bị xóa
+        if ($product->image) {
+            $oldImagePath = parse_url($product->image, PHP_URL_PATH);
+            $oldFullImagePath = PathHelper::publicRootPath($oldImagePath);
+            if (file_exists($oldFullImagePath)) {
+                $extension = pathinfo($oldFullImagePath, PATHINFO_EXTENSION);
+                $newImageName = time() . '_' . uniqid() . '.' . $extension;
+                $newImagePath = '/images/products/' . $newImageName;
+                $newFullImagePath = PathHelper::publicRootPath($newImagePath);
+                
+                // Copy file
+                copy($oldFullImagePath, $newFullImagePath);
+                $clone->image = asset($newImagePath);
+            }
+        }
+
+        // Xử lý nhân bản tài liệu (file download) nếu có
+        if ($product->file_path) {
+            $oldFilePath = PathHelper::publicRootPath('files/' . $product->file_path);
+            if (file_exists($oldFilePath)) {
+                $extension = pathinfo($oldFilePath, PATHINFO_EXTENSION);
+                $filenameWithoutExt = pathinfo($product->file_path, PATHINFO_FILENAME);
+                $newFileName = time() . '_' . \Str::slug($filenameWithoutExt) . '.' . $extension;
+                $newFullFilePath = PathHelper::publicRootPath('files/' . $newFileName);
+                
+                // Copy file
+                copy($oldFilePath, $newFullFilePath);
+                $clone->file_path = $newFileName;
+            }
+        }
+
+        $clone->save();
+
+        // Sync features
+        if ($product->features->count() > 0) {
+            $clone->features()->sync($product->features->pluck('id'));
+        }
+
+        // Submit to Google Indexing
+        try {
+            \App\Services\GoogleIndexingService::submitProductSafe($clone, 'product_create');
+        } catch (\Exception $e) {
+            \Log::error('Error submitting cloned product to Google Indexing: ' . $e->getMessage());
+        }
+
+        return redirect()->route('admin.products.edit', $clone)->with('success', 'Nhân bản sản phẩm thành công! Bạn đang chỉnh sửa bản sao.');
+    }
+
     // Features Management
     public function features()
     {

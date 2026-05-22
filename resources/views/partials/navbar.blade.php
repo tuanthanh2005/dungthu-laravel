@@ -175,12 +175,10 @@
         <span>Cửa hàng</span>
     </a>
     @endif
-    @if($menuBlog)
-    <a href="{{ route('blog.index') }}" class="mobile-nav-item {{ request()->routeIs('blog.*') ? 'active' : '' }}">
-        <i class="fa-solid fa-newspaper"></i>
-        <span>Blog</span>
+    <a href="https://zalo.me/0772698113" target="_blank" class="mobile-nav-item">
+        <i class="fa-solid fa-headset"></i>
+        <span>Hỗ trợ</span>
     </a>
-    @endif
     @if($menuCart)
     <a href="{{ route('cart.index') }}" class="mobile-nav-item position-relative {{ request()->routeIs('cart.*') ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>

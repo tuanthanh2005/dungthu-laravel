@@ -40,18 +40,25 @@ class HomeController extends Controller
         $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(10)->get();
         
 
-        // S?n ph?m ?ang gi?m gi? (hi?n th? 2-3 sp tr?n home)
-        // ??m ng??c ??n cu?i ng?y (het gio thi an block, khong reset gia)
+        // Sản phẩm đang giảm giá
+        // Đếm ngược đến cuối ngày. Khi đếm về 0 hoặc hết hạn thì random 6 sản phẩm.
         $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';
         $saleEndsAt = now()->endOfDay();
+        $isExpired = false;
+
         if ($flashSaleEnabled && now()->lt($saleEndsAt)) {
             $saleProducts = Product::query()
                 ->where('is_flash_sale', true)
                 ->latest()
                 ->take(6)
                 ->get();
+            if ($saleProducts->isEmpty()) {
+                $saleProducts = Product::query()->inRandomOrder()->take(6)->get();
+                $isExpired = true;
+            }
         } else {
-            $saleProducts = collect();
+            $saleProducts = Product::query()->inRandomOrder()->take(6)->get();
+            $isExpired = true;
         }
 
         $recentPurchases = Cache::remember('home.recent_purchases.v2', now()->addMinutes(5), function () {
@@ -124,7 +131,8 @@ class HomeController extends Controller
             'latestBlogs',
             'recentPurchases',
             'saleProducts',
-            'saleEndsAt'
+            'saleEndsAt',
+            'isExpired'
         ));
     }
 
@@ -147,6 +155,28 @@ class HomeController extends Controller
         $surnameInitial = mb_substr($parts[0], 0, 1);
 
         return $givenName . ' ' . $surnameInitial . '.';
+    }
+
+    public function getRandomProducts()
+    {
+        $products = Product::query()
+            ->inRandomOrder()
+            ->take(6)
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'image' => $product->image ?? 'https://via.placeholder.com/300',
+                    'stock' => $product->stock,
+                    'formatted_price' => $product->formatted_price,
+                    'formatted_original_price' => $product->formatted_original_price,
+                    'show_url' => route('product.show', $product->slug),
+                ];
+            });
+
+        return response()->json($products);
     }
 }
 

@@ -1095,24 +1095,28 @@
 
 
                 {{-- 1. Flash Sale (Ưu tiên) --}}
+                {{-- 1. Flash Sale (Ưu tiên) --}}
                 @if(\App\Models\SiteSetting::getValue('home_show_flash_sale', '1') === '1' && isset($saleProducts) && $saleProducts->count() > 0)
                     <div class="tf-widget mb-4" id="flash-sale"
-                        data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}">
+                        data-countdown-end="{{ $saleEndsAt?->getTimestamp() * 1000 }}"
+                        data-is-expired="{{ $isExpired ? '1' : '0' }}">
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                             <div>
                                 <span class="text-danger fw-bold"
                                     style="font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;">⚡ Flash Sale</span>
-                                <div class="fw-bold" style="font-size:1.1rem;">Giảm giá sốc hôm nay</div>
+                                <div class="fw-bold" id="flash-sale-title" style="font-size:1.1rem;">
+                                    {{ $isExpired ? 'Sản phẩm gợi ý cho bạn' : 'Giảm giá sốc hôm nay' }}
+                                </div>
                             </div>
-                            <div
-                                style="background:#fff;border-radius:20px;padding:6px 12px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:8px;font-size:.8rem;">
+                            <div id="flash-sale-timer-container"
+                                style="background:#fff;border-radius:20px;padding:6px 12px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:8px;font-size:.8rem; {{ $isExpired ? 'opacity: 0.6;' : '' }}">
                                 <span style="font-weight:800;">
                                     <span data-unit="hours">00</span>:<span data-unit="minutes">00</span>:<span
                                         data-unit="seconds">00</span>
                                 </span>
                             </div>
                         </div>
-                        <div class="row row-cols-2 row-cols-md-4 row-cols-xl-6 g-3">
+                        <div class="row row-cols-2 row-cols-md-4 row-cols-xl-6 g-3" id="flash-sale-products-row">
                             @foreach($saleProducts->take(6) as $sp)
                                 <div class="col">
                                     <div
@@ -1380,23 +1384,25 @@
                     {{-- Flash Sale sidebar --}}
                     @if(isset($saleProducts) && $saleProducts->count() > 0)
                         <div class="tf-widget">
-                            <div class="tf-widget-title">
-                                ⚡ Flash Sale &nbsp;
+                            <div class="tf-widget-title" id="sidebar-flash-sale-title">
+                                ⚡ {{ $isExpired ? 'Gợi Ý Cho Bạn' : 'Flash Sale' }} &nbsp;
                                 <span id="sf-timer" style="color:#e53935;font-size:.72rem;font-weight:700;"></span>
                             </div>
-                            @foreach($saleProducts->take(3) as $sp)
-                                <a href="{{ route('product.show', $sp->slug) }}" class="tf-flash-item">
-                                    <img src="{{ $sp->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $sp->name }}"
-                                        loading="lazy">
-                                    <div>
-                                        <div class="fn">{{ $sp->name }}</div>
-                                        <div class="d-flex align-items-baseline gap-2 mt-1">
-                                            <span class="fp">{{ $sp->formatted_price }}</span>
-                                            <span class="fo">{{ $sp->formatted_original_price }}</span>
+                            <div id="sidebar-flash-sale-products">
+                                @foreach($saleProducts->take(3) as $sp)
+                                    <a href="{{ route('product.show', $sp->slug) }}" class="tf-flash-item">
+                                        <img src="{{ $sp->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $sp->name }}"
+                                            loading="lazy">
+                                        <div>
+                                            <div class="fn">{{ $sp->name }}</div>
+                                            <div class="d-flex align-items-baseline gap-2 mt-1">
+                                                <span class="fp">{{ $sp->formatted_price }}</span>
+                                                <span class="fo">{{ $sp->formatted_original_price }}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                            @endforeach
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     @endif
 
@@ -1514,16 +1520,104 @@
             const fs = document.getElementById('flash-sale');
             if (fs) {
                 const end = parseInt(fs.dataset.countdownEnd || '0');
+                const isExpired = fs.dataset.isExpired === '1';
                 const pad = n => String(n).padStart(2, '0');
-                setInterval(() => {
-                    let d = Math.max(0, end - Date.now());
-                    const H = Math.floor(d / 3600000); d %= 3600000;
-                    const M = Math.floor(d / 60000);
-                    const S = Math.floor((d % 60000) / 1000);
+                
+                const updateTimers = (H, M, S) => {
+                    const timeString = `${pad(H)}:${pad(M)}:${pad(S)}`;
+                    // Main timer
                     fs.querySelector('[data-unit="hours"]').textContent = pad(H);
                     fs.querySelector('[data-unit="minutes"]').textContent = pad(M);
                     fs.querySelector('[data-unit="seconds"]').textContent = pad(S);
-                }, 1000);
+                    // Sidebar timer
+                    const sfTimer = document.getElementById('sf-timer');
+                    if (sfTimer) {
+                        sfTimer.textContent = timeString;
+                    }
+                };
+
+                if (isExpired) {
+                    updateTimers(0, 0, 0);
+                } else {
+                    const timerInterval = setInterval(() => {
+                        let d = end - Date.now();
+                        if (d <= 0) {
+                            clearInterval(timerInterval);
+                            updateTimers(0, 0, 0);
+                            
+                            // Trigger transition to random products
+                            const titleEl = document.getElementById('flash-sale-title');
+                            if (titleEl) {
+                                titleEl.textContent = 'Sản phẩm gợi ý cho bạn';
+                            }
+                            const sidebarTitleEl = document.getElementById('sidebar-flash-sale-title');
+                            if (sidebarTitleEl) {
+                                sidebarTitleEl.innerHTML = `⚡ Gợi Ý Cho Bạn &nbsp;<span id="sf-timer" style="color:#e53935;font-size:.72rem;font-weight:700;">00:00:00</span>`;
+                            }
+                            const timerContainer = document.getElementById('flash-sale-timer-container');
+                            if (timerContainer) {
+                                timerContainer.style.opacity = '0.6';
+                            }
+
+                            fetch('{{ route('products.random') }}')
+                                .then(res => res.json())
+                                .then(products => {
+                                    // Main Row
+                                    const mainRow = document.getElementById('flash-sale-products-row');
+                                    if (mainRow && products) {
+                                        mainRow.innerHTML = products.map(sp => {
+                                            const outOfStockBadge = sp.stock <= 0 ? `<div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">HẾT HÀNG</div>` : '';
+                                            const opacityStyle = sp.stock <= 0 ? 'opacity: 0.7;' : '';
+                                            const stockColorClass = sp.stock <= 0 ? 'text-danger' : 'text-success';
+                                            const linkTag = sp.stock > 0 ? `<a href="${sp.show_url}" class="stretched-link"></a>` : '';
+                                            
+                                            return `
+                                                <div class="col">
+                                                    <div style="background:#fff;border:1px solid #edeff1;border-radius:10px;overflow:hidden;position:relative; ${opacityStyle}">
+                                                        ${outOfStockBadge}
+                                                        <img src="${sp.image}" alt="${sp.name}" style="width:100%;height:120px;object-fit:cover;">
+                                                        <div style="padding:8px;">
+                                                            <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">${sp.name}</div>
+                                                            <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
+                                                                Còn: <span class="${stockColorClass}">${sp.stock}</span>
+                                                            </div>
+                                                            <div style="color:#e53935;font-weight:800;">${sp.formatted_price}</div>
+                                                        </div>
+                                                        ${linkTag}
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('');
+                                    }
+
+                                    // Sidebar
+                                    const sidebarContainer = document.getElementById('sidebar-flash-sale-products');
+                                    if (sidebarContainer && products) {
+                                        sidebarContainer.innerHTML = products.slice(0, 3).map(sp => {
+                                            return `
+                                                <a href="${sp.show_url}" class="tf-flash-item">
+                                                    <img src="${sp.image}" alt="${sp.name}" loading="lazy">
+                                                    <div>
+                                                        <div class="fn">${sp.name}</div>
+                                                        <div class="d-flex align-items-baseline gap-2 mt-1">
+                                                            <span class="fp">${sp.formatted_price}</span>
+                                                            <span class="fo">${sp.formatted_original_price}</span>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            `;
+                                        }).join('');
+                                    }
+                                })
+                                .catch(err => console.error('Error fetching random products:', err));
+                        } else {
+                            const H = Math.floor(d / 3600000); d %= 3600000;
+                            const M = Math.floor(d / 60000);
+                            const S = Math.floor((d % 60000) / 1000);
+                            updateTimers(H, M, S);
+                        }
+                    }, 1000);
+                }
             }
         });
 

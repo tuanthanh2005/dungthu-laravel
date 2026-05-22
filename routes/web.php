@@ -44,6 +44,9 @@ Route::post('/api/chatbot/feedback', [ChatbotController::class, 'feedback'])->na
 Route::get('/api/chatbot/products', [ChatbotController::class, 'getProducts'])->name('chatbot.products');
 Route::get('/api/chatbot/services', [ChatbotController::class, 'getBuffServices'])->name('chatbot.services');
 
+// Random Products for Flash Sale Fallback
+Route::get('/api/products/random', [HomeController::class, 'getRandomProducts'])->name('products.random');
+
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 

@@ -149,6 +149,7 @@
                     <img src="{{ $product->image ?? 'https://via.placeholder.com/600' }}" 
                          class="img-fluid product-detail-image w-100" 
                          alt="{{ $product->name }}">
+                    @include('products.partials.desktop_banners')
                 </div>
             </div>
             

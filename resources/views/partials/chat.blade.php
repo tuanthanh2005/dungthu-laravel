@@ -503,18 +503,25 @@
 .chat-input-wrapper {
     display: flex;
     gap: 12px;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .chat-input {
     flex: 1;
     border: 2px solid #e5e7eb;
     border-radius: 24px;
-    padding: 14px 20px;
+    padding: 12px 20px;
     font-size: 15px;
     outline: none;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     background: #f9fafb;
+    resize: none;
+    height: 48px;
+    max-height: 120px;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    font-family: inherit;
+    line-height: 20px;
 }
 
 .chat-input:focus {
@@ -625,6 +632,8 @@
     .chat-input {
         padding: 10px 14px;
         font-size: 14px;
+        height: 44px;
+        line-height: 20px;
     }
 
     .chat-send-btn {
@@ -753,13 +762,15 @@
                             <button type="button" onclick="clearAffiliateImagePreview()"><i class="fas fa-times"></i></button>
                         </span>
                     </div>
-                    <input 
-                        type="text" 
+                    <textarea 
                         class="chat-input" 
                         id="affiliateChatInput" 
                         placeholder="Nhập tin nhắn..."
                         autocomplete="off"
-                    >
+                        maxlength="1000"
+                        rows="1"
+                        style="resize: none; overflow-y: hidden;"
+                    ></textarea>
                 </div>
                 <button class="chat-send-btn" type="submit" id="affiliateChatSendBtn">
                     <i class="fas fa-paper-plane"></i>
@@ -817,15 +828,15 @@
                             <button type="button" onclick="clearUserImagePreview()"><i class="fas fa-times"></i></button>
                         </span>
                     </div>
-                    <input
-                        type="text"
+                    <textarea
                         class="chat-input"
                         id="userChatInput"
                         placeholder="Nhập tin nhắn..."
                         autocomplete="off"
                         maxlength="1000"
-                        enterkeyhint="send"
-                    >
+                        rows="1"
+                        style="resize: none; overflow-y: hidden;"
+                    ></textarea>
                 </div>
                 <button class="chat-send-btn" type="submit" id="userChatSendBtn" aria-label="Gửi">
                     <i class="fas fa-paper-plane"></i>
@@ -872,6 +883,21 @@ let lastMessageId = 0;
 let lastAffiliateMessageId = 0;
 let pollingInterval = null;
 let affiliatePollingInterval = null;
+let prevUserUnreadCount = null;
+let prevAffiliateUnreadCount = null;
+
+function autoGrowTextarea(textarea) {
+    textarea.style.height = 'auto';
+    const borderHeight = 4; // 2px border top + 2px border bottom
+    const newHeight = textarea.scrollHeight + borderHeight;
+    if (newHeight > 120) {
+        textarea.style.height = '120px';
+        textarea.style.overflowY = 'auto';
+    } else {
+        textarea.style.height = newHeight + 'px';
+        textarea.style.overflowY = 'hidden';
+    }
+}
 
 function escapeHtml(text) {
     const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
@@ -974,16 +1000,25 @@ function sendAffiliateMessage(event) {
         appendAffiliateMessage(data);
         lastAffiliateMessageId = Math.max(lastAffiliateMessageId, data.id);
         input.value = '';
+        autoGrowTextarea(input);
         if (typeof clearAffiliateImagePreview === 'function') clearAffiliateImagePreview();
     })
     .finally(() => { if (sendBtn) sendBtn.disabled = false; });
 }
 
-function appendAffiliateMessage(message) {
+function appendAffiliateMessage(message, playSound = false) {
     const body = document.getElementById('affiliateChatBody');
     if (!body) return;
 
     if (document.getElementById('aff-msg-' + message.id)) return;
+
+    if (playSound && message.is_admin) {
+        try {
+            const a = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            a.volume = 0.4;
+            a.play().catch(() => {});
+        } catch(e) {}
+    }
 
     const welcome = body.querySelector('.chat-welcome');
     if (welcome) welcome.remove();
@@ -1017,8 +1052,10 @@ function checkNewAffiliateMessages() {
         .then(data => {
             if (data.length > 0) {
                 data.forEach(msg => {
-                    appendAffiliateMessage(msg);
-                    lastAffiliateMessageId = Math.max(lastAffiliateMessageId, msg.id);
+                    if (msg.id > lastAffiliateMessageId) {
+                        appendAffiliateMessage(msg, true);
+                        lastAffiliateMessageId = Math.max(lastAffiliateMessageId, msg.id);
+                    }
                 });
                 markAffiliateAsRead();
             }
@@ -1032,15 +1069,25 @@ function refreshAffiliateUnreadCount() {
         .then(res => res.json())
         .then(data => {
             if (data.unread > 0) {
+                if (prevAffiliateUnreadCount !== null && data.unread > prevAffiliateUnreadCount) {
+                    try {
+                        const a = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                        a.volume = 0.4;
+                        a.play().catch(() => {});
+                    } catch(e) {}
+                }
+                prevAffiliateUnreadCount = data.unread;
                 badge.textContent = data.unread;
                 badge.style.display = 'flex';
             } else {
+                prevAffiliateUnreadCount = 0;
                 badge.style.display = 'none';
             }
         });
 }
 
 function markAffiliateAsRead() {
+    prevAffiliateUnreadCount = 0;
     fetch('{{ route('affiliate.chat.mark-read') }}', {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
@@ -1273,6 +1320,7 @@ function sendUserMessage(event) {
     .then(data => {
         if (data && data.id) {
             input.value = '';
+            autoGrowTextarea(input);
             clearUserImagePreview();
             _appendUserMsg(data, false);
             lastUserMessageId = Math.max(lastUserMessageId, data.id);
@@ -1356,9 +1404,18 @@ function _refreshUserUnreadCount() {
         .then(res => res.json())
         .then(data => {
             if (data && data.unread > 0) {
+                if (prevUserUnreadCount !== null && data.unread > prevUserUnreadCount) {
+                    try {
+                        const a = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                        a.volume = 0.4;
+                        a.play().catch(() => {});
+                    } catch(e) {}
+                }
+                prevUserUnreadCount = data.unread;
                 badge.textContent = data.unread;
                 badge.style.display = 'flex';
             } else {
+                prevUserUnreadCount = 0;
                 badge.style.display = 'none';
             }
         })
@@ -1368,6 +1425,7 @@ function _refreshUserUnreadCount() {
 function markUserAsRead() {
     const badge = document.getElementById('userUnreadBadge');
     if (badge) badge.style.display = 'none';
+    prevUserUnreadCount = 0;
     fetch('{{ route('chat.mark-read') }}', {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
@@ -1392,7 +1450,7 @@ function clearUserImagePreview() {
     if (container) container.style.display = 'none';
 }
 
-// Enter key for user chat input
+// Textarea setup, auto-grow, and Enter submission
 document.addEventListener('DOMContentLoaded', function() {
     const userInput = document.getElementById('userChatInput');
     if (userInput) {
@@ -1401,6 +1459,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 document.getElementById('userChatForm')?.requestSubmit();
             }
+        });
+        userInput.addEventListener('input', function() {
+            autoGrowTextarea(this);
+        });
+    }
+
+    const affiliateInput = document.getElementById('affiliateChatInput');
+    if (affiliateInput) {
+        affiliateInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('affiliateChatForm')?.requestSubmit();
+            }
+        });
+        affiliateInput.addEventListener('input', function() {
+            autoGrowTextarea(this);
         });
     }
 });

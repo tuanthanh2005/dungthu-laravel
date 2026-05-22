@@ -60,8 +60,8 @@
             <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" class="nav-text-link fw-bold" style="color: #0068ff;">
                 Nhóm Zalo
             </a>
-            <a href="{{ route('affiliate.login') }}" class="nav-text-link {{ request()->is('cong-tac-vien*') ? 'active' : '' }}">
-                Cộng Tác Viên
+            <a href="javascript:void(0)" class="nav-text-link" data-bs-toggle="modal" data-bs-target="#quickContactModal">
+                Nhắn tin & Liên hệ
             </a>
         </div>
 
@@ -229,3 +229,93 @@
         @endauth
     });
 </script>
+
+{{-- Quick Contact Modal --}}
+<div class="modal fade" id="quickContactModal" tabindex="-1" aria-labelledby="quickContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden; background: #ffffff;">
+            {{-- Header --}}
+            <div class="modal-header border-0 text-white px-4 py-3 position-relative d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%);">
+                <div>
+                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2 mb-0" id="quickContactModalLabel" style="font-size: 18px;">
+                        <i class="fa-solid fa-headset"></i>
+                        Liên hệ & Nhắn tin nhanh
+                    </h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; filter: invert(1) grayscale(1) brightness(2);"></button>
+            </div>
+            
+            {{-- Body --}}
+            <div class="modal-body p-4" style="background-color: #f8f9fa;">
+                <div class="d-flex flex-column gap-3">
+                    
+                    {{-- Item 1: Zalo Group --}}
+                    <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" 
+                       target="_blank" 
+                       class="d-flex align-items-center gap-3 p-3 text-decoration-none bg-white rounded-3 contact-modal-item"
+                       style="border: 1px solid #e5e7eb; transition: all 0.2s ease;">
+                        <div class="contact-modal-icon-wrap d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; border-radius: 12px; background: #e6f0ff; color: #0068ff; min-width: 48px; font-size: 18px;">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div class="flex-grow-1 text-start">
+                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">GROUP ZALO HỖ TRỢ</h6>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">Tham gia nhóm hỗ trợ thành viên</p>
+                        </div>
+                        <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+
+                    {{-- Item 2: Fanpage --}}
+                    <a href="https://www.facebook.com/profile.php?id=61589359706008" 
+                       target="_blank" 
+                       class="d-flex align-items-center gap-3 p-3 text-decoration-none bg-white rounded-3 contact-modal-item"
+                       style="border: 1px solid #e5e7eb; transition: all 0.2s ease;">
+                        <div class="contact-modal-icon-wrap d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; border-radius: 12px; background: #e7f3ff; color: #1877f2; min-width: 48px; font-size: 18px;">
+                            <i class="fa-brands fa-facebook"></i>
+                        </div>
+                        <div class="flex-grow-1 text-start">
+                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">FANPAGE FACEBOOK</h6>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">Gửi tin nhắn qua Fanpage chính thức</p>
+                        </div>
+                        <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+
+                    {{-- Item 3: Admin Zalo --}}
+                    <a href="https://zalo.me/0772698113" 
+                       target="_blank" 
+                       class="d-flex align-items-center gap-3 p-3 text-decoration-none bg-white rounded-3 contact-modal-item"
+                       style="border: 1px solid #e5e7eb; transition: all 0.2s ease;">
+                        <div class="contact-modal-icon-wrap d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; border-radius: 12px; background: #e8f8f5; color: #07be9e; min-width: 48px; font-size: 18px;">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                        <div class="flex-grow-1 text-start">
+                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">CHAT ZALO ADMIN</h6>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">Zalo liên hệ: 0772698113</p>
+                        </div>
+                        <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+
+                </div>
+            </div>
+            
+            {{-- Footer --}}
+            <div class="modal-footer border-0 justify-content-center py-2" style="background-color: #f1f3f5;">
+                <span class="text-muted" style="font-size: 11px; font-weight: 500;">DungThu.com hân hạnh hỗ trợ!</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .contact-modal-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+        border-color: rgba(255, 94, 0, 0.25) !important;
+        background-color: #fafbfc !important;
+    }
+    .contact-modal-item:hover .contact-modal-icon-wrap {
+        transform: scale(1.05);
+    }
+</style>

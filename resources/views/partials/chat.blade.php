@@ -783,10 +783,10 @@
                 <i class="fas fa-comments"></i>
             </div>
             <div class="chat-header-text">
-                <h3>Hỗ trợ khách hàng</h3>
+                <h3>Admin Hổ trợ</h3>
                 <p class="chat-status-indicator">
                     <span class="chat-status-dot"></span>
-                    Luôn sẵn sàng giúp bạn
+                    Admin sẽ rep tin của bạn sớm nhất
                 </p>
             </div>
         </div>

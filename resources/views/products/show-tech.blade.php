@@ -321,25 +321,34 @@
                         </div>
                     </form>
 
-                    <!-- Tech Specs -->
-                    <div class="spec-table mt-4">
-                        <h5 class="fw-bold mb-3"><i class="fas fa-cogs me-2 text-info"></i>Thông Số Kỹ Thuật</h5>
-                        @if($product->specs && count(array_filter($product->specs)) > 0)
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Specs Block -->
+        <div class="row mt-4" data-aos="fade-up">
+            <div class="col-12">
+                <div class="tech-card">
+                    <h5 class="fw-bold mb-4" style="color: #0f2027;"><i class="fas fa-cogs me-2 text-info"></i>Thông Số Kỹ Thuật</h5>
+                    @if($product->specs && count(array_filter($product->specs)) > 0)
+                        <div class="row g-3">
                             @foreach($product->specs as $key => $value)
                                 @if(!empty($value))
-                                <div class="spec-row">
-                                    <span class="text-muted">{{ ucfirst(str_replace('_', ' ', $key)) }}:</span>
-                                    <strong>{{ is_array($value) ? implode(', ', $value) : $value }}</strong>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="p-3 bg-light rounded-4 h-100 d-flex justify-content-between align-items-center">
+                                        <span class="text-muted me-2" style="font-weight: 500;">{{ ucfirst(str_replace('_', ' ', $key)) }}:</span>
+                                        <strong class="text-dark text-end" style="font-weight: 700;">{{ is_array($value) ? implode(', ', $value) : $value }}</strong>
+                                    </div>
                                 </div>
                                 @endif
                             @endforeach
-                        @else
-                            <div class="alert alert-warning">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Chưa có thông tin thông số kỹ thuật cho sản phẩm này.
-                            </div>
-                        @endif
-                    </div>
+                        </div>
+                    @else
+                        <div class="alert alert-warning mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Chưa có thông tin thông số kỹ thuật cho sản phẩm này.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -61,7 +61,7 @@
                 Nhóm Zalo
             </a>
             <a href="javascript:void(0)" class="nav-text-link" data-bs-toggle="modal" data-bs-target="#quickContactModal">
-                Nhắn tin & Liên hệ
+                Liên hệ Ngay
             </a>
         </div>
 

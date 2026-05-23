@@ -477,22 +477,36 @@
             }
         }
         
-        /* Category Filter Tweaks */
-        .category-filter-btn {
-            border-radius: 20px;
-            padding: 16px 24px;
-            border: 2px solid transparent;
-            background: #f8f9fa;
-        }
-        .category-filter-btn:hover {
-            background: #fff;
-            border-color: rgba(108, 92, 231, 0.3);
-            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.1);
-        }
-        .category-filter-btn.active {
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            border-color: transparent;
-            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.25);
+        /* Category Filter Tweaks (Desktop only) */
+        @media (min-width: 769px) {
+            .category-filter-btn {
+                border-radius: 12px;
+                padding: 10px 16px;
+                border: 2px solid transparent;
+                background: #f8f9fa;
+                gap: 6px;
+            }
+            .category-filter-btn:hover {
+                background: #fff;
+                border-color: rgba(108, 92, 231, 0.3);
+                box-shadow: 0 15px 30px rgba(108, 92, 231, 0.1);
+            }
+            .category-filter-btn.active {
+                background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+                border-color: transparent;
+                box-shadow: 0 15px 30px rgba(108, 92, 231, 0.25);
+            }
+            .category-icon-wrap {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+            }
+            .category-icon-wrap i {
+                font-size: 20px;
+            }
+            .category-name {
+                font-size: 13px;
+            }
         }
 
         /* --- MOBILE RESPONSIVE TWEAKS --- */
@@ -621,6 +635,34 @@
                 font-size: 0.9rem;
             }
         }
+
+        /* --- DESKTOP 6-COLUMN RESPONSIVE TWEAKS --- */
+        @media (min-width: 1200px) {
+            .product-content {
+                padding: 1rem;
+            }
+            .product-title {
+                font-size: 0.95rem;
+                margin-bottom: 0.5rem;
+                line-height: 1.4;
+                height: 2.8em;
+            }
+            .product-desc {
+                display: none;
+            }
+            .price-current {
+                font-size: 1.1rem;
+            }
+            .price-old {
+                font-size: 0.8rem;
+            }
+            .btn-add-cart {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                font-size: 0.95rem;
+            }
+        }
     </style>
 @endpush
 
@@ -704,7 +746,7 @@
 
     <!-- Product Grid -->
     @if($items->count() > 0)
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 product-grid">
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4 product-grid">
         @foreach($items as $product)
         <div class="col" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 8) * 50 }}">
             <div class="product-card-modern {{ $product->stock <= 0 ? 'out-of-stock' : '' }}">

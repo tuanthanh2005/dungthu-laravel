@@ -38,13 +38,15 @@
 
         @media(min-width:1024px) {
             .tf-layout {
-                grid-template-columns: 1fr 300px;
+                /* grid-template-columns: 1fr 300px; */
+                grid-template-columns: 1fr;
             }
         }
 
         @media(min-width:1280px) {
             .tf-layout {
-                grid-template-columns: 1fr 320px;
+                /* grid-template-columns: 1fr 320px; */
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1303,7 +1305,7 @@
 
             </main>
 
-            {{-- ====== RIGHT SIDEBAR ====== --}}
+            @if(false) {{-- ====== RIGHT SIDEBAR ====== --}}
             <aside class="tf-sidebar-right">
                 <div class="tf-sticky">
 
@@ -1477,6 +1479,7 @@
 
                 </div>
             </aside>
+            @endif
 
         </div>{{-- tf-layout --}}
     </div>{{-- bg wrapper --}}

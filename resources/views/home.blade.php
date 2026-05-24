@@ -319,8 +319,8 @@
 
         /* Float Positions & Animations */
         .card-chatgpt {
-            left: 5%;
-            top: 15%;
+            left: 2%;
+            top: 12%;
             z-index: 4;
             --hover-border: rgba(16, 185, 129, 0.4);
             --hover-shadow: rgba(16, 185, 129, 0.2);
@@ -331,7 +331,7 @@
         .card-chatgpt .card-price { color: #34d399; }
 
         .card-claude {
-            right: 5%;
+            right: 2%;
             top: 5%;
             z-index: 3;
             --hover-border: rgba(249, 115, 22, 0.4);
@@ -343,8 +343,8 @@
         .card-claude .card-price { color: #fb923c; }
 
         .card-vpn {
-            left: 28%;
-            bottom: 5%;
+            left: 20%;
+            bottom: 4%;
             z-index: 5;
             --hover-border: rgba(139, 92, 246, 0.4);
             --hover-shadow: rgba(139, 92, 246, 0.2);
@@ -355,9 +355,9 @@
         .card-vpn .card-price { color: #a78bfa; }
 
         .card-cursor {
-            right: 25%;
-            bottom: 12%;
-            z-index: 2;
+            right: 18%;
+            bottom: 26%;
+            z-index: 4;
             --hover-border: rgba(56, 189, 248, 0.4);
             --hover-shadow: rgba(56, 189, 248, 0.2);
             animation: float-slow 7s ease-in-out infinite alternate-reverse;
@@ -1501,6 +1501,192 @@
             transform: none !important;
             opacity: 0.7;
         }
+
+        /* Official Fanpages Section */
+        .official-fanpages-container {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .official-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .official-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .official-header-title h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .official-badge-verify {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .official-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .official-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .official-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .official-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .official-card:hover {
+            transform: translateY(-4px);
+            background: #ffffff;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Brand themes for hover glow */
+        .official-card.platform-facebook:hover {
+            border-color: #1877f2;
+            box-shadow: 0 8px 24px rgba(24, 119, 242, 0.12);
+        }
+        .official-card.platform-zalo:hover {
+            border-color: #0068ff;
+            box-shadow: 0 8px 24px rgba(0, 104, 255, 0.12);
+        }
+        .official-card.platform-telegram:hover {
+            border-color: #0088cc;
+            box-shadow: 0 8px 24px rgba(0, 136, 204, 0.12);
+        }
+        .official-card.platform-youtube:hover {
+            border-color: #ff0000;
+            box-shadow: 0 8px 24px rgba(255, 0, 0, 0.12);
+        }
+        .official-card.platform-tiktok:hover {
+            border-color: #010101;
+            box-shadow: 0 8px 24px rgba(1, 1, 1, 0.12);
+        }
+        .official-card.platform-globe:hover {
+            border-color: #10b981;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+        }
+
+        .platform-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .bg-facebook { background: #1877f2; }
+        .bg-zalo { background: #0068ff; }
+        .bg-telegram { background: #0088cc; }
+        .bg-youtube { background: #ff0000; }
+        .bg-tiktok { background: #010101; }
+        .bg-globe { background: #10b981; }
+
+        .official-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .official-card-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #111827;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .official-card-desc {
+            font-size: 0.78rem;
+            color: #6b7280;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .official-card-badge-verified {
+            color: #10b981;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .official-action-link {
+            font-size: 0.76rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+
+        .platform-facebook .official-action-link { color: #1877f2; }
+        .platform-zalo .official-action-link { color: #0068ff; }
+        .platform-telegram .official-action-link { color: #0088cc; }
+        .platform-youtube .official-action-link { color: #ff0000; }
+        .platform-tiktok .official-action-link { color: #010101; }
+        .platform-globe .official-action-link { color: #10b981; }
+
+        .official-card:hover .official-action-link {
+            text-decoration: underline;
+        }
     </style>
 @endpush
 
@@ -1658,6 +1844,76 @@
 
             {{-- ====== MAIN FEED ====== --}}
             <main>
+
+                {{-- 0. Official Fanpages Verification Section --}}
+                @php
+                    $fanpagesJson = \App\Models\SiteSetting::getValue('official_fanpages', '[]');
+                    $officialFanpages = json_decode($fanpagesJson, true) ?: [];
+                @endphp
+
+                @if(count($officialFanpages) > 0)
+                    <div class="official-fanpages-container mb-4 d-none d-lg-block">
+                        <div class="official-header">
+                            <div class="official-header-title">
+                                <i class="fa-solid fa-shield-halved text-success fs-5"></i>
+                                <h3>Kênh liên hệ & Fanpage chính thức</h3>
+                            </div>
+                            <div class="official-badge-verify">
+                                <i class="fa-solid fa-circle-check"></i> Đã xác minh
+                            </div>
+                        </div>
+                        <div class="official-grid">
+                            @foreach($officialFanpages as $fp)
+                                @php
+                                    $platform = strtolower($fp['platform'] ?? 'facebook');
+                                    $iconClass = 'fa-solid fa-globe';
+                                    $brandClass = 'bg-globe';
+                                    if ($platform === 'facebook') {
+                                        $iconClass = 'fa-brands fa-facebook-f';
+                                        $brandClass = 'bg-facebook';
+                                    } elseif ($platform === 'zalo') {
+                                        $iconClass = '';
+                                        $brandClass = 'bg-zalo';
+                                    } elseif ($platform === 'telegram') {
+                                        $iconClass = 'fa-brands fa-telegram';
+                                        $brandClass = 'bg-telegram';
+                                    } elseif ($platform === 'youtube') {
+                                        $iconClass = 'fa-brands fa-youtube';
+                                        $brandClass = 'bg-youtube';
+                                    } elseif ($platform === 'tiktok') {
+                                        $iconClass = 'fa-brands fa-tiktok';
+                                        $brandClass = 'bg-tiktok';
+                                    }
+                                @endphp
+                                <a href="{{ $fp['url'] }}" target="_blank" class="official-card platform-{{ $platform }}">
+                                    <div class="platform-icon-wrap {{ $brandClass }}">
+                                        @if($platform === 'zalo')
+                                            <span style="font-weight: 900; font-style: italic; font-size: 1.4rem;">Z</span>
+                                        @else
+                                            <i class="{{ $iconClass }}"></i>
+                                        @endif
+                                    </div>
+                                    <div class="official-card-info">
+                                        <div class="official-card-title">
+                                            {{ $fp['name'] }}
+                                            <span class="official-card-badge-verified" title="Trang chính chủ đã xác minh">
+                                                <i class="fa-solid fa-circle-check"></i>
+                                            </span>
+                                        </div>
+                                        @if(!empty($fp['desc']))
+                                            <div class="official-card-desc">{{ $fp['desc'] }}</div>
+                                        @else
+                                            <div class="official-card-desc">Kênh hỗ trợ và thông báo chính thức của công ty.</div>
+                                        @endif
+                                        <div class="official-action-link">
+                                            Truy cập ngay <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem;"></i>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Sort bar --}}
 

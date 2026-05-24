@@ -459,6 +459,61 @@
                         <i class="fas fa-info-circle me-1"></i> Nhập link nhóm Zalo đầy đủ (ví dụ: https://zalo.me/g/abc...).
                     </div>
                 </div>
+ 
+                {{-- Cài đặt Hệ thống Fanpage Chính Thức --}}
+                <div class="settings-header mt-5">
+                    <h2><i class="fas fa-shield-halved me-2" style="color: #38a169;"></i>Hệ thống Fanpage & Kênh chính chủ</h2>
+                    <p class="text-muted mb-0">Quản lý danh sách các fanpage chính thức và fanpage con để người dùng nhận biết tránh lừa đảo.</p>
+                </div>
+
+                <div class="menu-item-row flex-column align-items-stretch mb-4 p-4">
+                    <input type="hidden" name="fanpages_submitted" value="1">
+                    
+                    <label class="form-label fw-bold text-success mb-3"><i class="fas fa-list"></i> Danh sách trang chính chủ</label>
+                    <div id="fanpages-container">
+                        @php
+                            $fanpagesJson = \App\Models\SiteSetting::getValue('official_fanpages', '[]');
+                            $officialFanpages = json_decode($fanpagesJson, true) ?: [];
+                        @endphp
+                        
+                        @if(count($officialFanpages) > 0)
+                            @foreach($officialFanpages as $index => $fp)
+                                <div class="row g-2 align-items-center mb-3 fanpage-row">
+                                    <div class="col-md-2">
+                                        <select name="fanpages_platforms[]" class="form-select">
+                                            <option value="facebook" {{ ($fp['platform'] ?? 'facebook') === 'facebook' ? 'selected' : '' }}>Facebook</option>
+                                            <option value="zalo" {{ ($fp['platform'] ?? 'zalo') === 'zalo' ? 'selected' : '' }}>Zalo</option>
+                                            <option value="telegram" {{ ($fp['platform'] ?? 'telegram') === 'telegram' ? 'selected' : '' }}>Telegram</option>
+                                            <option value="youtube" {{ ($fp['platform'] ?? 'youtube') === 'youtube' ? 'selected' : '' }}>YouTube</option>
+                                            <option value="tiktok" {{ ($fp['platform'] ?? 'tiktok') === 'tiktok' ? 'selected' : '' }}>TikTok</option>
+                                            <option value="globe" {{ ($fp['platform'] ?? 'globe') === 'globe' ? 'selected' : '' }}>Website</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="fanpages_names[]" class="form-control" value="{{ $fp['name'] }}" placeholder="Tên trang (ví dụ: Fanpage CSKH)" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="url" name="fanpages_urls[]" class="form-control" value="{{ $fp['url'] }}" placeholder="https://..." required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="fanpages_descs[]" class="form-control" value="{{ $fp['desc'] ?? '' }}" placeholder="Mô tả (ví dụ: Trang chính hỗ trợ)">
+                                    </div>
+                                    <div class="col-md-1 text-center">
+                                        <button type="button" class="btn btn-danger btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="this.closest('.fanpage-row').remove()">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                    
+                    <div class="text-start mt-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="addFanpageRow()">
+                            <i class="fas fa-plus me-1"></i> Thêm trang mới
+                        </button>
+                    </div>
+                </div>
 
                 <div class="text-center mt-4">
                     <button type="submit" class="save-btn">
@@ -484,6 +539,39 @@
             statusEl.textContent = 'Tắt';
             statusEl.className = 'toggle-status status-off';
         }
+    }
+
+    function addFanpageRow() {
+        const container = document.getElementById('fanpages-container');
+        const row = document.createElement('div');
+        row.className = 'row g-2 align-items-center mb-3 fanpage-row';
+        row.innerHTML = `
+            <div class="col-md-2">
+                <select name="fanpages_platforms[]" class="form-select">
+                    <option value="facebook">Facebook</option>
+                    <option value="zalo">Zalo</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="globe">Website</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="fanpages_names[]" class="form-control" placeholder="Tên trang (ví dụ: Fanpage CSKH)" required>
+            </div>
+            <div class="col-md-3">
+                <input type="url" name="fanpages_urls[]" class="form-control" placeholder="https://..." required>
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="fanpages_descs[]" class="form-control" placeholder="Mô tả (ví dụ: Trang chính hỗ trợ)">
+            </div>
+            <div class="col-md-1 text-center">
+                <button type="button" class="btn btn-danger btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="this.closest('.fanpage-row').remove()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(row);
     }
 </script>
 @endpush

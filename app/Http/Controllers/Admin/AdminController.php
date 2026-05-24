@@ -1357,6 +1357,27 @@ class AdminController extends Controller
             }
         }
 
+        // Save official fanpages system settings
+        if ($request->has('fanpages_submitted')) {
+            $fanpages = [];
+            $names = $request->input('fanpages_names', []);
+            $urls = $request->input('fanpages_urls', []);
+            $descs = $request->input('fanpages_descs', []);
+            $platforms = $request->input('fanpages_platforms', []);
+            
+            foreach ($names as $index => $name) {
+                if (!empty($name) && !empty($urls[$index])) {
+                    $fanpages[] = [
+                        'name' => $name,
+                        'url' => $urls[$index],
+                        'desc' => $descs[$index] ?? '',
+                        'platform' => $platforms[$index] ?? 'facebook'
+                    ];
+                }
+            }
+            SiteSetting::setValue('official_fanpages', json_encode($fanpages));
+        }
+
         return redirect()->route('admin.menu-settings')
             ->with('success', 'Đã lưu cài đặt hiển thị thành công!');
     }

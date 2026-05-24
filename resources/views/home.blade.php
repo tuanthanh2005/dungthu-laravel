@@ -10,8 +10,431 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         /* =========================================================
-       TECHFEED HOME — matching test.html prototype exactly
-       ========================================================= */
+        MARQUEE ANNOUNCEMENT & HERO BANNER
+        ========================================================= */
+        
+        /* 1. Marquee Alert Bar styles */
+        .marquee-alert-bar {
+            background: linear-gradient(135deg, #ff4e00 0%, #ec9f05 100%);
+            color: #ffffff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 10px 0;
+            box-shadow: 0 4px 15px rgba(255, 78, 0, 0.15);
+            position: relative;
+            z-index: 10;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee-loop 60s linear infinite;
+        }
+        
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+        
+        .marquee-item {
+            padding: 0 3rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .marquee-icon-warning {
+            color: #ffe600;
+            font-size: 16px;
+            animation: pulse-icon 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
+        }
+
+        @keyframes marquee-loop {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        /* 2. Hero Banner styles */
+        .hero-banner-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 12px;
+        }
+
+        .hero-banner-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 24px;
+            padding: 40px 48px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+        }
+
+        /* Neon Glow Lights */
+        .hero-banner-card::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-banner-card::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Left Side Content */
+        .hero-left-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-ai-badge {
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            animation: badgeGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); border-color: rgba(99, 102, 241, 0.5); }
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.25;
+            margin-bottom: 18px;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            max-width: 580px;
+        }
+
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .hero-feature-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .hero-feature-chip i {
+            color: #38bdf8;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .hero-btn-primary {
+            background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 0.92rem;
+            padding: 12px 28px;
+            border-radius: 14px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(255, 94, 0, 0.35);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .hero-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 94, 0, 0.5);
+        }
+
+        .hero-btn-secondary {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 0.92rem;
+            padding: 12px 28px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .hero-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Right Side Showcase */
+        .hero-right-showcase {
+            position: relative;
+            height: 340px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        /* Floating AI Cards Styles */
+        .floating-cards-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-ai-card {
+            position: absolute;
+            width: 170px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            cursor: pointer;
+        }
+
+        .floating-ai-card:hover {
+            transform: scale(1.08) translateY(-10px) rotateY(-8deg) rotateX(10deg) !important;
+            border-color: var(--hover-border);
+            box-shadow: 0 20px 35px var(--hover-shadow);
+            z-index: 10 !important;
+        }
+
+        .floating-ai-card .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .floating-ai-card .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .floating-ai-card .card-status {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .floating-ai-card .card-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .floating-ai-card .card-desc {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .floating-ai-card .card-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .floating-ai-card .card-price {
+            color: #38bdf8;
+        }
+
+        /* Float Positions & Animations */
+        .card-chatgpt {
+            left: 5%;
+            top: 15%;
+            z-index: 4;
+            --hover-border: rgba(16, 185, 129, 0.4);
+            --hover-shadow: rgba(16, 185, 129, 0.2);
+            animation: float-slow 6s ease-in-out infinite alternate;
+        }
+        .card-chatgpt .card-icon { background: #10b981; }
+        .card-chatgpt .card-status { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .card-chatgpt .card-price { color: #34d399; }
+
+        .card-claude {
+            right: 5%;
+            top: 5%;
+            z-index: 3;
+            --hover-border: rgba(249, 115, 22, 0.4);
+            --hover-shadow: rgba(249, 115, 22, 0.2);
+            animation: float-medium 5s ease-in-out infinite alternate-reverse;
+        }
+        .card-claude .card-icon { background: #f97316; }
+        .card-claude .card-status { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
+        .card-claude .card-price { color: #fb923c; }
+
+        .card-midjourney {
+            left: 28%;
+            bottom: 5%;
+            z-index: 5;
+            --hover-border: rgba(139, 92, 246, 0.4);
+            --hover-shadow: rgba(139, 92, 246, 0.2);
+            animation: float-fast 4s ease-in-out infinite alternate;
+        }
+        .card-midjourney .card-icon { background: #8b5cf6; }
+        .card-midjourney .card-status { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .card-midjourney .card-price { color: #a78bfa; }
+
+        .card-cursor {
+            right: 25%;
+            bottom: 12%;
+            z-index: 2;
+            --hover-border: rgba(56, 189, 248, 0.4);
+            --hover-shadow: rgba(56, 189, 248, 0.2);
+            animation: float-slow 7s ease-in-out infinite alternate-reverse;
+        }
+        .card-cursor .card-icon { background: #0ea5e9; }
+        .card-cursor .card-status { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .card-cursor .card-price { color: #38bdf8; }
+
+        @keyframes float-slow {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-16px); }
+        }
+
+        @keyframes float-medium {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-12px); }
+        }
+
+        @keyframes float-fast {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        /* Responsive Hero Banner */
+        @media (max-width: 991px) {
+            .hero-banner-card {
+                padding: 32px;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+            .hero-right-showcase {
+                margin-top: 30px;
+                height: 280px;
+            }
+            .floating-ai-card {
+                width: 140px;
+                padding: 10px;
+            }
+            .floating-ai-card .card-desc {
+                display: none;
+            }
+            .card-chatgpt { left: 0%; top: 5%; }
+            .card-claude { right: 0%; top: 0%; }
+            .card-midjourney { left: 15%; bottom: 0%; }
+            .card-cursor { right: 15%; bottom: 5%; }
+        }
+
+        @media (max-width: 575px) {
+            .hero-banner-card {
+                padding: 24px 20px;
+                border-radius: 16px;
+            }
+            .hero-title {
+                font-size: 1.6rem;
+            }
+            .hero-desc {
+                font-size: 0.88rem;
+            }
+            .hero-actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .hero-btn-primary, .hero-btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            .hero-right-showcase {
+                display: none; /* Hide floating cards on small mobiles to save space */
+            }
+        }
+
+        /* =========================================================
+        TECHFEED HOME — matching test.html prototype exactly
+        ========================================================= */
+        
+        /* ---- Body override for this page ---- */
 
         /* ---- Body override for this page ---- */
         body {
@@ -1082,7 +1505,150 @@
 @endpush
 
 @section('content')
+    <!-- 1. Marquee Alert Bar (Looping announcement) -->
+    <div class="marquee-alert-bar">
+        <div class="marquee-track">
+            <!-- Part 1 -->
+            <div class="marquee-item">
+                <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
+                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>•</span>
+                <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
+                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+            </div>
+            <div class="marquee-item">
+                <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
+                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>•</span>
+                <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
+                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+            </div>
+            <!-- Part 2 (Duplicate for seamless loop) -->
+            <div class="marquee-item">
+                <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
+                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>•</span>
+                <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
+                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+            </div>
+            <div class="marquee-item">
+                <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
+                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>•</span>
+                <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
+                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+            </div>
+        </div>
+    </div>
+
     <div style="background:#dae0e6;">
+        <!-- 2. Hero Banner Section -->
+        <div class="hero-banner-container d-none d-lg-block">
+            <div class="hero-banner-card">
+                <div class="row align-items-center g-4">
+                    <!-- Left Column: Content & Call to Action -->
+                    <div class="col-lg-7">
+                        <div class="hero-left-content">
+                            <div class="hero-ai-badge">
+                                <i class="fa-solid fa-bolt"></i> DungThu.com AI Hub
+                            </div>
+                            <h2 class="hero-title">Khám Phá Sức Mạnh AI<br>Tối Ưu Hiệu Suất Công Việc</h2>
+                            <p class="hero-desc">
+                                Cung cấp tài khoản premium giá rẻ, phần mềm chuyên dụng và giải pháp tự động hóa giúp bạn bứt phá năng suất làm việc mỗi ngày. Nhanh chóng - Uy tín - Bảo hành trọn đời.
+                            </p>
+                            
+                            <!-- Lợi ích nổi bật -->
+                            <div class="hero-features">
+                                <div class="hero-feature-chip">
+                                    <i class="fa-solid fa-circle-check"></i> Kích hoạt tức thì
+                                </div>
+                                <div class="hero-feature-chip">
+                                    <i class="fa-solid fa-shield-halved"></i> Bảo hành uy tín
+                                </div>
+                                <div class="hero-feature-chip">
+                                    <i class="fa-solid fa-headset"></i> Hỗ trợ 24/7
+                                </div>
+                            </div>
+
+                            <!-- Các hành động -->
+                            <div class="hero-actions">
+                                <a href="{{ route('shop') }}" class="hero-btn-primary">
+                                    <i class="fa-solid fa-store"></i> Mua Tài Khoản AI
+                                </a>
+                                <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" 
+                                   target="_blank" class="hero-btn-secondary">
+                                    <i class="fa-solid fa-users"></i> Nhóm Zalo Hỗ Trợ
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: 3D Floating Showcase -->
+                    <div class="col-lg-5">
+                        <div class="hero-right-showcase">
+                            <div class="floating-cards-wrapper">
+                                <!-- Card ChatGPT -->
+                                <div class="floating-ai-card card-chatgpt" onclick="window.location.href='{{ route('shop') }}?search=ChatGPT'">
+                                    <div class="card-head">
+                                        <div class="card-icon"><i class="fa-solid fa-message"></i></div>
+                                        <div class="card-status">Hot</div>
+                                    </div>
+                                    <div class="card-name">ChatGPT Plus</div>
+                                    <div class="card-desc">Sử dụng GPT-4, DALL-E 3 & các công cụ phân tích nâng cao.</div>
+                                    <div class="card-foot">
+                                        <span class="text-muted">Giá từ</span>
+                                        <span class="card-price">60.000đ</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card Claude AI -->
+                                <div class="floating-ai-card card-claude" onclick="window.location.href='{{ route('shop') }}?search=Claude'">
+                                    <div class="card-head">
+                                        <div class="card-icon"><i class="fa-solid fa-brain"></i></div>
+                                        <div class="card-status">Vip</div>
+                                    </div>
+                                    <div class="card-name">Claude AI Pro</div>
+                                    <div class="card-desc">Sở hữu Claude 3.5 Sonnet với giới hạn chat lớn nhất.</div>
+                                    <div class="card-foot">
+                                        <span class="text-muted">Giá từ</span>
+                                        <span class="card-price">89.000đ</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card Midjourney -->
+                                <div class="floating-ai-card card-midjourney" onclick="window.location.href='{{ route('shop') }}?search=Midjourney'">
+                                    <div class="card-head">
+                                        <div class="card-icon"><i class="fa-solid fa-image"></i></div>
+                                        <div class="card-status">New</div>
+                                    </div>
+                                    <div class="card-name">Midjourney AI</div>
+                                    <div class="card-desc">Vẽ tranh nghệ thuật bằng công nghệ AI đỉnh cao nhất.</div>
+                                    <div class="card-foot">
+                                        <span class="text-muted">Giá từ</span>
+                                        <span class="card-price">120.000đ</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card Cursor Pro -->
+                                <div class="floating-ai-card card-cursor" onclick="window.location.href='{{ route('shop') }}?search=Cursor'">
+                                    <div class="card-head">
+                                        <div class="card-icon"><i class="fa-solid fa-code"></i></div>
+                                        <div class="card-status">Sale</div>
+                                    </div>
+                                    <div class="card-name">Cursor Pro</div>
+                                    <div class="card-desc">Trình soạn thảo code AI bứt phá tốc độ lập trình.</div>
+                                    <div class="card-foot">
+                                        <span class="text-muted">Giá từ</span>
+                                        <span class="card-price">150.000đ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="tf-layout">
 
 

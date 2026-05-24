@@ -208,13 +208,11 @@
             <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
                 @csrf
                 <div class="d-flex gap-3 mb-3 flex-wrap">
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 shadow" 
-                            {{ $product->stock > 0 ? '' : 'disabled' }}>
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
                         <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ
                     </button>
                     @if($product->delivery_type === 'digital')
-                    <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow"
-                            {{ $product->stock > 0 ? '' : 'disabled' }}>
+                    <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow">
                         <i class="fas fa-bolt me-2"></i> Mua ngay
                     </button>
                     @endif

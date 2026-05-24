@@ -56,4 +56,9 @@ return [
         'site_url' => rtrim(env('GOOGLE_INDEXING_SITE_URL', env('APP_URL')), '/'),
     ],
 
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN', '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI'),
+        'chat_id' => env('TELEGRAM_CHAT_ID', '8199725778'),
+    ],
+
 ];

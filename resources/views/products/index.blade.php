@@ -234,9 +234,7 @@
             box-shadow: 0 25px 50px rgba(108, 92, 231, 0.12);
         }
         .product-card-modern.out-of-stock {
-            opacity: 0.65;
-            pointer-events: none;
-            cursor: not-allowed;
+            opacity: 0.85;
         }
         .product-card-modern.out-of-stock .product-image-wrapper::after {
             content: 'HẾT HÀNG';
@@ -794,18 +792,12 @@
                                 <span class="price-old">{{ $product->formatted_original_price }}</span>
                             @endif
                         </div>
-                        @if($product->stock > 0)
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0 p-0">
                             @csrf
-                            <button type="submit" class="btn-add-cart" title="Thêm vào giỏ">
+                            <button type="submit" class="btn-add-cart" title="{{ $product->stock > 0 ? 'Thêm vào giỏ' : 'Thêm vào giỏ (Đặt trước)' }}">
                                 <i class="fas fa-cart-plus"></i>
                             </button>
                         </form>
-                        @else
-                        <button type="button" class="btn-add-cart" disabled style="background: #f1f2f6; color: #b2bec3;" title="Hết hàng">
-                            <i class="fas fa-ban"></i>
-                        </button>
-                        @endif
                     </div>
                 </div>
             </div>

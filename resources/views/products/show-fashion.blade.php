@@ -219,13 +219,11 @@
                         @csrf
                         <div class="d-flex gap-3 mb-3 flex-wrap">
                     <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
-                                    style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; border: none;"
-                                    {{ $product->stock > 0 ? '' : 'disabled' }}>
+                                    style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; border: none;">
                                 <i class="fas fa-shopping-bag me-2"></i> Thêm vào giỏ
                             </button>
                             @if($product->delivery_type === 'digital')
-                            <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow"
-                                    {{ $product->stock > 0 ? '' : 'disabled' }}>
+                            <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow">
                                 <i class="fas fa-bolt me-2"></i> Mua ngay
                             </button>
                             @endif

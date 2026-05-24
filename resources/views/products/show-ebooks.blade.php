@@ -222,8 +222,7 @@
                         <!-- Purchase Button -->
                         <form action="{{ route('cart.buy-now', $product->id) }}" method="POST" class="mt-4">
                             @csrf
-                            <button type="submit" class="btn download-btn btn-lg w-100 shadow"
-                                    {{ $product->stock > 0 ? '' : 'disabled' }}>
+                            <button type="submit" class="btn download-btn btn-lg w-100 shadow">
                                 <i class="fas fa-shopping-cart me-2"></i> Mua ngay
                             </button>
                         </form>

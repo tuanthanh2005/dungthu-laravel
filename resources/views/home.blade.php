@@ -342,7 +342,7 @@
         .card-claude .card-status { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
         .card-claude .card-price { color: #fb923c; }
 
-        .card-midjourney {
+        .card-vpn {
             left: 28%;
             bottom: 5%;
             z-index: 5;
@@ -350,9 +350,9 @@
             --hover-shadow: rgba(139, 92, 246, 0.2);
             animation: float-fast 4s ease-in-out infinite alternate;
         }
-        .card-midjourney .card-icon { background: #8b5cf6; }
-        .card-midjourney .card-status { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-        .card-midjourney .card-price { color: #a78bfa; }
+        .card-vpn .card-icon { background: #8b5cf6; }
+        .card-vpn .card-status { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .card-vpn .card-price { color: #a78bfa; }
 
         .card-cursor {
             right: 25%;
@@ -402,7 +402,7 @@
             }
             .card-chatgpt { left: 0%; top: 5%; }
             .card-claude { right: 0%; top: 0%; }
-            .card-midjourney { left: 15%; bottom: 0%; }
+            .card-vpn { left: 15%; bottom: 0%; }
             .card-cursor { right: 15%; bottom: 5%; }
         }
 
@@ -1615,17 +1615,17 @@
                                     </div>
                                 </div>
 
-                                <!-- Card Midjourney -->
-                                <div class="floating-ai-card card-midjourney" onclick="window.location.href='{{ route('shop') }}?search=Midjourney'">
+                                <!-- Card VPN -->
+                                <div class="floating-ai-card card-vpn" onclick="window.location.href='{{ route('shop') }}?search=VPN'">
                                     <div class="card-head">
-                                        <div class="card-icon"><i class="fa-solid fa-image"></i></div>
+                                        <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
                                         <div class="card-status">New</div>
                                     </div>
-                                    <div class="card-name">Midjourney AI</div>
-                                    <div class="card-desc">Vẽ tranh nghệ thuật bằng công nghệ AI đỉnh cao nhất.</div>
+                                    <div class="card-name">VPN Premium</div>
+                                    <div class="card-desc">Bảo mật thông tin, truy cập website bị chặn & tăng tốc internet.</div>
                                     <div class="card-foot">
                                         <span class="text-muted">Giá từ</span>
-                                        <span class="card-price">120.000đ</span>
+                                        <span class="card-price">20.000đ</span>
                                     </div>
                                 </div>
 

@@ -38,12 +38,20 @@
     gap: 16px;
     align-items: flex-end;
     touch-action: none; /* Critical for dragging on touch */
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (min-width: 992px) {
     .chat-fab-container {
         bottom: 24px;
     }
+}
+
+/* Hide FABs when chat widget is active to prevent overlapping */
+.chat-widget.active ~ .chat-fab-container {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(15px);
 }
 
 .chat-fab {

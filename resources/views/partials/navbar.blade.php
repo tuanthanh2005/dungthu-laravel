@@ -145,7 +145,9 @@
                     </ul>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="btn-login">Đăng Nhập</a>
+                <a href="{{ route('login') }}" class="nav-icon-btn" title="Đăng nhập" aria-label="Đăng nhập">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </a>
             @endauth
         </div>
     </div>

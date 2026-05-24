@@ -851,6 +851,21 @@
 
 <div class="chat-fab-container">
 
+    <!-- Zalo Chat Button (Always show on desktop) -->
+    <a href="https://zalo.me/0772698113" target="_blank" class="chat-fab d-none d-lg-flex" style="background: #0068ff; text-decoration: none !important;" aria-label="Chat Zalo">
+        <div class="position-relative d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            <i class="fa-solid fa-comment" style="color: #ffffff; font-size: 38px;"></i>
+            <span style="position: absolute; color: #0068ff; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-weight: 900; font-size: 19px; font-style: italic; top: 44%; left: 47%; transform: translate(-50%, -50%);">z</span>
+        </div>
+        <span class="fab-tooltip">Chat Zalo</span>
+    </a>
+
+    <!-- Telegram Chat Button (Always show on desktop) -->
+    <a href="https://t.me/specademy" target="_blank" class="chat-fab d-none d-lg-flex" style="background: #0088cc; text-decoration: none !important;" aria-label="Chat Telegram">
+        <i class="fab fa-telegram fab-icon"></i>
+        <span class="fab-tooltip">Chat Telegram</span>
+    </a>
+
     <!-- User Support Chat Button (user thường, không phải affiliate) -->
     @auth
     @if(!Auth::guard('affiliate')->check())

@@ -10,8 +10,8 @@
     $menuChat        = \App\Models\SiteSetting::getValue('menu_chat', '1') === '1';
 @endphp
 
-<nav class="navbar navbar-expand-lg navbar-techfeed sticky-top" id="mainNavbar">
-    <div class="container-fluid px-3 px-xl-5">
+<nav class="navbar navbar-expand-xl navbar-techfeed sticky-top" id="mainNavbar">
+    <div class="container-fluid px-3">
         {{-- Logo --}}
         <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
             <div class="brand-icon">
@@ -21,7 +21,7 @@
         </a>
 
         {{-- Desktop Nav Links --}}
-        <div class="d-none d-lg-flex align-items-center gap-2 mx-auto" style="font-size: 14.5px;">
+        <div class="d-none d-xl-flex align-items-center gap-2 mx-auto desktop-nav-links" style="font-size: 14.5px;">
             @if($menuHome)
             <a href="{{ route('home') }}" class="nav-text-link {{ request()->routeIs('home') ? 'active' : '' }}">
                 Trang chủ
@@ -65,6 +65,39 @@
             </a>
         </div>
 
+        {{-- Compact menu for small laptops/tablets --}}
+        <div class="dropdown d-xl-none ms-auto me-2">
+            <button class="nav-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Mở menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-techfeed">
+                @if($menuHome)
+                    <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>Trang chủ</a></li>
+                @endif
+                @if($menuShop)
+                    <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>Cửa hàng</a></li>
+                @endif
+                @if($menuBlog)
+                    <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>Blog</a></li>
+                @endif
+                @if($menuWebdesign)
+                    <li><a class="dropdown-item" href="{{ route('web-design') }}"><i class="fa-solid fa-code me-2 text-primary"></i>Thiết Kế Website</a></li>
+                @endif
+                @if($menuCardExchange)
+                    <li><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fa-solid fa-credit-card me-2 text-warning"></i>Đổi Thẻ Cào</a></li>
+                @endif
+                @if($menuBuff)
+                    <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fa-solid fa-rocket me-2"></i>Dịch Vụ MXH</a></li>
+                @endif
+                @if($menuCommunity)
+                    <li><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fa-solid fa-users me-2 text-success"></i>Cộng đồng</a></li>
+                @endif
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fa-solid fa-users me-2"></i>Nhóm Zalo</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>Liên hệ Ngay</a></li>
+            </ul>
+        </div>
+
         {{-- Search Bar (desktop) --}}
         <div class="d-none d-xl-flex search-bar-wrap align-items-center ms-auto me-3" style="max-width: 250px;">
             <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET" style="border: 1.5px solid #ff5e00; background-color: #fff;">
@@ -76,7 +109,7 @@
         </div>
 
         {{-- Right Actions --}}
-        <div class="d-flex align-items-center gap-2 gap-sm-3 ms-auto ms-xl-0">
+        <div class="d-flex align-items-center gap-2 gap-sm-3">
             {{-- Cart --}}
             @if($menuCart)
             <a href="{{ route('cart.index') }}" class="nav-icon-btn position-relative" aria-label="Giỏ hàng">
@@ -122,16 +155,16 @@
                             <li><a class="dropdown-item" href="{{ route('affiliate.login') }}"><i class="fas fa-handshake me-2"></i>Đăng ký CTV</a></li>
                         @endif
                         @if($menuCardExchange)
-                            <li class="d-lg-none"><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fas fa-exchange-alt me-2 text-warning"></i>Đổi thẻ cào</a></li>
+                            <li class="d-xl-none"><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fas fa-exchange-alt me-2 text-warning"></i>Đổi thẻ cào</a></li>
                         @endif
                         @if($menuBuff)
-                            <li class="d-lg-none"><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fas fa-rocket me-2"></i>Buff Mạng XH</a></li>
+                            <li class="d-xl-none"><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fas fa-rocket me-2"></i>Buff Mạng XH</a></li>
                         @endif
                         @if($menuCommunity)
-                            <li class="d-lg-none"><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
+                            <li class="d-xl-none"><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
                         @endif
-                        <li class="d-lg-none"><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Thành Viên</a></li>
-                        <li class="d-lg-none"><hr class="dropdown-divider"></li>
+                        <li class="d-xl-none"><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Thành Viên</a></li>
+                        <li class="d-xl-none"><hr class="dropdown-divider"></li>
 
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>

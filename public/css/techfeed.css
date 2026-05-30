@@ -56,6 +56,8 @@ body {
 
 .navbar-techfeed .container-fluid {
     height: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
 }
 
 /* Brand */
@@ -198,6 +200,35 @@ body {
 .nav-text-link.active {
     color: var(--brand);
     font-weight: 700;
+}
+
+.desktop-nav-links {
+    min-width: 0;
+}
+
+@media (min-width: 1200px) and (max-width: 1365.98px) {
+    .navbar-techfeed .container-fluid {
+        max-width: 1180px;
+    }
+
+    .navbar-techfeed .navbar-brand {
+        font-size: 1.18rem;
+    }
+
+    .desktop-nav-links {
+        gap: 4px !important;
+        font-size: 13px !important;
+    }
+
+    .nav-text-link {
+        padding: 6px 7px;
+        font-size: 0.78rem;
+    }
+
+    .search-bar-wrap {
+        max-width: 210px !important;
+        margin-right: 8px !important;
+    }
 }
 
 /* Login Button */

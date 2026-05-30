@@ -66,7 +66,7 @@
         </div>
 
         {{-- Compact menu for small laptops/tablets --}}
-        <div class="dropdown d-xl-none ms-auto me-2">
+        <div class="dropdown d-none d-lg-block d-xl-none ms-auto me-2">
             <button class="nav-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Mở menu">
                 <i class="fa-solid fa-bars"></i>
             </button>

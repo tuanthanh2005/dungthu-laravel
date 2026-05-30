@@ -207,7 +207,7 @@ class CartController extends Controller
             }
         }
 
-        $orderStatus = $hasOutOfStock ? 'pending' : 'completed';
+        $orderStatus = 'pending';
 
         DB::beginTransaction();
         try {
@@ -374,3 +374,5 @@ class CartController extends Controller
         AbandonedCart::where('user_id', auth()->id())->delete();
     }
 }
+
+

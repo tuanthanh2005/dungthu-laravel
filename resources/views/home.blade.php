@@ -71,36 +71,57 @@
         }
 
         .hero-banner-card {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background:
+                linear-gradient(118deg, rgba(56, 189, 248, 0.08) 0 1px, transparent 1px 18%, rgba(167, 139, 250, 0.1) 18% 19%, transparent 19% 100%),
+                linear-gradient(135deg, #08111f 0%, #111827 48%, #172033 100%);
+            background-size: 100% 100%, 100% 100%;
             border-radius: 24px;
             padding: 40px 48px;
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+            isolation: isolate;
+            animation: heroTechPulse 8s ease-in-out infinite;
         }
 
-        /* Neon Glow Lights */
+        /* Animated AI grid and data flow */
         .hero-banner-card::before {
             content: '';
             position: absolute;
-            top: -20%;
-            left: -10%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            inset: -2px;
+            background:
+                linear-gradient(90deg, rgba(56, 189, 248, 0.14) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(129, 140, 248, 0.12) 1px, transparent 1px),
+                radial-gradient(circle at 18% 24%, rgba(56, 189, 248, 0.2) 0 2px, transparent 3px),
+                radial-gradient(circle at 62% 34%, rgba(167, 139, 250, 0.22) 0 2px, transparent 3px),
+                radial-gradient(circle at 84% 70%, rgba(34, 211, 238, 0.18) 0 2px, transparent 3px);
+            background-size: 44px 44px, 44px 44px, 180px 130px, 210px 160px, 240px 180px;
+            opacity: 0.34;
+            transform: translate3d(0, 0, 0);
+            animation: aiGridDrift 16s linear infinite;
             pointer-events: none;
+            z-index: 0;
         }
 
         .hero-banner-card::after {
             content: '';
             position: absolute;
-            bottom: -20%;
-            right: -10%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+            inset: 0;
+            background:
+                linear-gradient(105deg, transparent 0%, transparent 43%, rgba(56, 189, 248, 0.2) 49%, rgba(129, 140, 248, 0.1) 52%, transparent 58%, transparent 100%),
+                linear-gradient(90deg, transparent 0%, rgba(34, 211, 238, 0.16) 50%, transparent 100%);
+            background-size: 260% 100%, 100% 1px;
+            background-position: 160% 0, 0 66%;
+            opacity: 0.7;
+            animation: aiScanLine 6s ease-in-out infinite;
             pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-banner-card > .row {
+            position: relative;
+            z-index: 2;
         }
 
         /* Left Side Content */
@@ -246,6 +267,24 @@
             height: 100%;
         }
 
+        .floating-cards-wrapper::before,
+        .floating-cards-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 28px 26px;
+            border: 1px solid rgba(56, 189, 248, 0.16);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: neuralOrbit 18s linear infinite;
+        }
+
+        .floating-cards-wrapper::after {
+            inset: 68px 76px;
+            border-color: rgba(167, 139, 250, 0.18);
+            animation-duration: 13s;
+            animation-direction: reverse;
+        }
+
         .floating-ai-card {
             position: absolute;
             width: 170px;
@@ -379,6 +418,34 @@
         @keyframes float-fast {
             0% { transform: translateY(0); }
             100% { transform: translateY(-8px); }
+        }
+
+        @keyframes heroTechPulse {
+            0%, 100% {
+                border-color: rgba(255, 255, 255, 0.08);
+                box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35), inset 0 0 0 1px rgba(56, 189, 248, 0.04);
+            }
+            50% {
+                border-color: rgba(56, 189, 248, 0.22);
+                box-shadow: 0 22px 46px rgba(15, 23, 42, 0.42), inset 0 0 28px rgba(56, 189, 248, 0.08);
+            }
+        }
+
+        @keyframes aiGridDrift {
+            0% { background-position: 0 0, 0 0, 0 0, 40px 20px, 80px 40px; }
+            100% { background-position: 88px 44px, 44px 88px, 180px 130px, 250px 180px, 320px 220px; }
+        }
+
+        @keyframes aiScanLine {
+            0%, 18% { background-position: 160% 0, 0 66%; opacity: 0; }
+            42%, 58% { opacity: 0.7; }
+            82%, 100% { background-position: -90% 0, 0 66%; opacity: 0; }
+        }
+
+        @keyframes neuralOrbit {
+            0% { transform: rotate(0deg) scale(0.98); opacity: 0.32; }
+            50% { opacity: 0.62; }
+            100% { transform: rotate(360deg) scale(0.98); opacity: 0.32; }
         }
 
         /* Responsive Hero Banner */

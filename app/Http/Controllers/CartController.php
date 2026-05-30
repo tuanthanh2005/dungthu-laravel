@@ -9,6 +9,8 @@ use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\TelegramHelper;
 use App\Models\AbandonedCart;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderApprovedMail;
 
 class CartController extends Controller
 {
@@ -22,9 +24,10 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($id);
         
-        if ($product->stock <= 0) {
-            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
-        }
+        // Bỏ chặn để cho phép đặt hàng khi hết kho
+        // if ($product->stock <= 0) {
+        //     return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        // }
         
         $cart = session()->get('cart', []);
 
@@ -48,9 +51,10 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($id);
         
-        if ($product->stock <= 0) {
-            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
-        }
+        // Bỏ chặn để cho phép đặt hàng khi hết kho
+        // if ($product->stock <= 0) {
+        //     return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        // }
         
         $cart = session()->get('cart', []);
 
@@ -194,6 +198,17 @@ class CartController extends Controller
             $customerAddress .= "\nFacebook: " . $request->customer_facebook;
         }
 
+        // Kiểm tra xem có sản phẩm nào thiếu kho không
+        $hasOutOfStock = false;
+        foreach($cart as $id => $details) {
+            $product = Product::find($id);
+            if(!$product || $product->stock < $details['quantity']) {
+                $hasOutOfStock = true;
+            }
+        }
+
+        $orderStatus = $hasOutOfStock ? 'pending' : 'completed';
+
         DB::beginTransaction();
         try {
             $order = Order::create([
@@ -203,6 +218,7 @@ class CartController extends Controller
                 'customer_phone' => $request->customer_phone,
                 'customer_address' => $customerAddress,
                 'total_amount' => $totalAmount,
+                'status' => $orderStatus,
             ]);
 
             foreach($cart as $id => $details) {
@@ -212,6 +228,12 @@ class CartController extends Controller
                     'quantity' => $details['quantity'],
                     'price' => $details['price'],
                 ]);
+
+                // Trừ tồn kho nếu sản phẩm còn hàng sẵn
+                $product = Product::find($id);
+                if ($product && $product->stock >= $details['quantity']) {
+                    $product->decrement('stock', $details['quantity']);
+                }
             }
 
             DB::commit();
@@ -219,12 +241,34 @@ class CartController extends Controller
             // Clear the "new user" flag after order is placed
             session()->forget('is_new_user');
             
+            // Gửi email duyệt đơn tự động nếu đơn hàng thành công (completed)
+            if ($orderStatus === 'completed') {
+                try {
+                    $email = $order->customer_email;
+                    if (!$email && $order->user_id) {
+                        $email = optional($order->user)->email;
+                    }
+                    if ($email) {
+                        $order->load('orderItems.product');
+                        Mail::to($email)->send(new OrderApprovedMail($order));
+                        \Log::info('Auto-approved order email sent to ' . $email . ' for order #' . $order->id);
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error sending auto-approved order email for order #' . $order->id . ': ' . $e->getMessage());
+                }
+            }
+            
             // Gửi thông báo Telegram cho admin
             TelegramHelper::sendNewOrderNotification($order);
             
             $this->clearAbandonedCart();
             session()->forget('cart');
-            return redirect()->route('user.orders')->with('success', 'Đặt hàng thành công! Vui lòng chờ admin xác nhận.');
+            
+            if ($orderStatus === 'completed') {
+                return redirect()->route('user.orders')->with('success', 'Đặt hàng thành công! Đơn hàng của bạn đã hoàn thành.');
+            } else {
+                return redirect()->route('user.orders')->with('success', 'Đặt hàng thành công! Vui lòng chờ admin xác nhận.');
+            }
 
         } catch (\Exception $e) {
             DB::rollback();

@@ -182,28 +182,6 @@
                     </div>
                 </div>
 
-                <!-- SEO Section -->
-                <div class="border-top pt-4 mt-4 mb-4">
-                    <h5 class="fw-bold mb-3 text-primary"><i class="fas fa-search me-2"></i>Cấu hình SEO (Tối ưu hóa tìm kiếm)</h5>
-                    
-                    <div class="mb-3">
-                        <label for="seo_title" class="form-label">Tiêu đề SEO (Title)</label>
-                        <input type="text" class="form-control" id="seo_title" name="seo_title" value="{{ old('seo_title', $blog->seo_title) }}" placeholder="Nhập tiêu đề SEO (mặc định lấy tiêu đề bài viết)...">
-                        <div class="form-text">Tiêu đề tối ưu từ 50-60 ký tự.</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="seo_description" class="form-label">Mô tả SEO (Description)</label>
-                        <textarea class="form-control" id="seo_description" name="seo_description" rows="3" placeholder="Nhập mô tả SEO (mặc định lấy mô tả ngắn)...">{{ old('seo_description', $blog->seo_description) }}</textarea>
-                        <div class="form-text">Mô tả tối ưu từ 150-160 ký tự.</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="seo_keywords" class="form-label">Từ khóa SEO (Keywords)</label>
-                        <input type="text" class="form-control" id="seo_keywords" name="seo_keywords" value="{{ old('seo_keywords', $blog->seo_keywords) }}" placeholder="Ví dụ: chatgpt, ai, bot chat (cách nhau bởi dấu phẩy)...">
-                    </div>
-                </div>
-
                 <!-- Buttons -->
                 <div class="d-flex gap-3 mt-4">
                     <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill">

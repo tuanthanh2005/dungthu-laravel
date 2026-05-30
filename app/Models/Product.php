@@ -28,6 +28,9 @@ class Product extends Model
         'is_exclusive',
         'is_combo_ai',
         'is_flash_sale',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
     ];
 
     protected $casts = [

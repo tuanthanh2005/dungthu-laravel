@@ -255,7 +255,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.menu-settings.update') }}" method="POST">
+            <form action="{{ route('admin.menu-settings.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -457,6 +457,48 @@
                     </div>
                     <div class="form-text mt-2">
                         <i class="fas fa-info-circle me-1"></i> Nhập link nhóm Zalo đầy đủ (ví dụ: https://zalo.me/g/abc...).
+                    </div>
+                </div>
+
+                {{-- Cài đặt SEO Trang chủ & Mặc định --}}
+                <div class="settings-header mt-5">
+                    <h2><i class="fas fa-search me-2" style="color: #4a5568;"></i>Cài đặt SEO Trang chủ & Mặc định</h2>
+                    <p class="text-muted mb-0">Cấu hình tiêu đề, mô tả và ảnh đại diện SEO mặc định khi chia sẻ link trang chủ hoặc link không cấu hình SEO riêng.</p>
+                </div>
+
+                <div class="menu-item-row flex-column align-items-stretch mb-4 p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark"><i class="fas fa-heading me-1 text-muted"></i> Tiêu đề SEO (Title)</label>
+                        <input type="text" class="form-control" name="seo_home_title" 
+                               value="{{ \App\Models\SiteSetting::getValue('seo_home_title', 'Dùng Thử | AI | Blog | Khám Phá') }}" 
+                               placeholder="Nhập tiêu đề SEO...">
+                        <div class="form-text">Tiêu đề tối ưu từ 50-60 ký tự. Hiển thị trên tab trình duyệt và kết quả tìm kiếm Google.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark"><i class="fas fa-align-left me-1 text-muted"></i> Mô tả SEO (Description)</label>
+                        <textarea class="form-control" name="seo_home_description" rows="3" 
+                                  placeholder="Nhập mô tả SEO...">{{ \App\Models\SiteSetting::getValue('seo_home_description', 'Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.') }}</textarea>
+                        <div class="form-text">Mô tả tối ưu từ 150-160 ký tự. Tóm tắt nội dung trang khi hiển thị trên Google.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark"><i class="fas fa-tags me-1 text-muted"></i> Từ khóa SEO (Keywords)</label>
+                        <input type="text" class="form-control" name="seo_home_keywords" 
+                               value="{{ \App\Models\SiteSetting::getValue('seo_home_keywords', 'dung thu, dungthu, dungthu.com, dung thu ai, blog cong nghe, mua sam truc tuyen, san pham so, kham pha ai') }}" 
+                               placeholder="Cách nhau bằng dấu phẩy...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark"><i class="fas fa-image me-1 text-muted"></i> Ảnh đại diện khi chia sẻ (OG Image)</label>
+                        <input type="file" class="form-control mb-2" name="seo_home_image" accept="image/*">
+                        @php $homeSeoImg = \App\Models\SiteSetting::getValue('seo_home_image'); @endphp
+                        @if($homeSeoImg)
+                            <div class="mt-2">
+                                <span class="d-block small text-muted mb-1">Ảnh hiện tại:</span>
+                                <img src="{{ asset($homeSeoImg) }}" alt="Home SEO Image" class="img-thumbnail" style="max-height: 120px;">
+                            </div>
+                        @endif
                     </div>
                 </div>
  

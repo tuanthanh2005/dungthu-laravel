@@ -21,6 +21,9 @@ class Blog extends Model
         'views',
         'is_published',
         'published_at',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
     ];
 
     protected $casts = [

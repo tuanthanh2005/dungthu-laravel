@@ -553,6 +553,9 @@ class AdminController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'delivery_type' => 'required|in:digital,physical',
             'file' => 'nullable|file|mimes:pdf,doc,docx,txt,zip,rar|max:51200', // 50MB max
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:1000',
+            'seo_keywords' => 'nullable|string|max:255',
         ], [
             'name.required' => 'Tên sản phẩm không được để trống',
             'description.required' => 'Mô tả không được để trống',
@@ -650,14 +653,17 @@ class AdminController extends Controller
               'image' => $imagePath ? asset($imagePath) : null,
               'file_path' => $filePath,
               'file_type' => $fileType,
-            'file_size' => $fileSize,
-            'specs' => $specs,
-            'delivery_type' => $request->delivery_type,
-            'is_featured' => $request->has('is_featured') ? true : false,
-            'is_exclusive' => $request->has('is_exclusive') ? true : false,
-            'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
-            'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
-        ]);
+              'file_size' => $fileSize,
+              'specs' => $specs,
+              'delivery_type' => $request->delivery_type,
+              'is_featured' => $request->has('is_featured') ? true : false,
+              'is_exclusive' => $request->has('is_exclusive') ? true : false,
+              'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
+              'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
+              'seo_title' => $request->seo_title,
+              'seo_description' => $request->seo_description,
+              'seo_keywords' => $request->seo_keywords,
+          ]);
 
         // Sync features nếu có
         if ($request->has('features')) {
@@ -697,6 +703,9 @@ class AdminController extends Controller
               'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
               'file' => 'nullable|file|mimes:pdf,doc,docx,txt,zip,rar|max:51200',
               'delivery_type' => 'required|in:digital,physical',
+              'seo_title' => 'nullable|string|max:255',
+              'seo_description' => 'nullable|string|max:1000',
+              'seo_keywords' => 'nullable|string|max:255',
         ], [
             'name.required' => 'Tên sản phẩm không được để trống',
             'description.required' => 'Mô tả không được để trống',
@@ -810,14 +819,17 @@ class AdminController extends Controller
               'stock' => $request->stock,
               'specs' => $specs,
               'delivery_type' => $request->delivery_type,
-            'file_path' => $filePath,
-            'file_type' => $fileType,
-            'file_size' => $fileSize,
-            'is_featured' => $request->has('is_featured') ? true : false,
-            'is_exclusive' => $request->has('is_exclusive') ? true : false,
-            'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
-            'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
-        ]);
+              'file_path' => $filePath,
+              'file_type' => $fileType,
+              'file_size' => $fileSize,
+              'is_featured' => $request->has('is_featured') ? true : false,
+              'is_exclusive' => $request->has('is_exclusive') ? true : false,
+              'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
+              'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
+              'seo_title' => $request->seo_title,
+              'seo_description' => $request->seo_description,
+              'seo_keywords' => $request->seo_keywords,
+          ]);
 
         // Sync features nếu có
         if ($request->has('features')) {
@@ -1003,6 +1015,9 @@ class AdminController extends Controller
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'show_on_home' => 'nullable|boolean',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:1000',
+            'seo_keywords' => 'nullable|string|max:255',
         ]);
 
         $slug = \Str::slug($request->name) . '-' . time();
@@ -1033,6 +1048,9 @@ class AdminController extends Controller
             'description' => $request->description,
             'is_active' => $request->has('is_active'),
             'show_on_home' => $request->has('show_on_home'),
+            'seo_title' => $request->seo_title,
+            'seo_description' => $request->seo_description,
+            'seo_keywords' => $request->seo_keywords,
         ]);
 
         return redirect()->route('admin.categories')->with('success', 'Thêm danh mục thành công!');
@@ -1052,6 +1070,9 @@ class AdminController extends Controller
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'show_on_home' => 'nullable|boolean',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:1000',
+            'seo_keywords' => 'nullable|string|max:255',
         ]);
 
         $slug = $category->slug;
@@ -1093,6 +1114,9 @@ class AdminController extends Controller
             'description' => $request->description,
             'is_active' => $request->has('is_active'),
             'show_on_home' => $request->has('show_on_home'),
+            'seo_title' => $request->seo_title,
+            'seo_description' => $request->seo_description,
+            'seo_keywords' => $request->seo_keywords,
         ]);
 
         return redirect()->route('admin.categories')->with('success', 'Cập nhật danh mục thành công!');
@@ -1144,6 +1168,9 @@ class AdminController extends Controller
             'content' => 'required|string',
             'category' => 'required|in:tech,lifestyle,business,other',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3072',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:1000',
+            'seo_keywords' => 'nullable|string|max:255',
         ], [
             'title.required' => 'Tiêu đề không được để trống',
             'excerpt.required' => 'Tóm tắt không được để trống',
@@ -1184,6 +1211,9 @@ class AdminController extends Controller
             'views' => 0,
             'is_published' => true,
             'published_at' => now(),
+            'seo_title' => $request->seo_title,
+            'seo_description' => $request->seo_description,
+            'seo_keywords' => $request->seo_keywords,
         ]);
 
         // Submit to Google Indexing
@@ -1205,6 +1235,9 @@ class AdminController extends Controller
             'content' => 'required|string',
             'category' => 'required|in:tech,lifestyle,business,other',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3072',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:1000',
+            'seo_keywords' => 'nullable|string|max:255',
         ]);
 
         $slug = \Str::slug($request->title) . '-' . time();
@@ -1244,6 +1277,9 @@ class AdminController extends Controller
             'category' => $request->category,
             'image' => $imagePath,
             'is_featured' => $request->has('is_featured'),
+            'seo_title' => $request->seo_title,
+            'seo_description' => $request->seo_description,
+            'seo_keywords' => $request->seo_keywords,
         ]);
 
         // Submit to Google Indexing
@@ -1355,6 +1391,27 @@ class AdminController extends Controller
             if ($request->has($key)) {
                 SiteSetting::setValue($key, $request->input($key));
             }
+        }
+
+        // Save Home/Default SEO Settings
+        $seoKeys = ['seo_home_title', 'seo_home_description', 'seo_home_keywords'];
+        foreach ($seoKeys as $key) {
+            if ($request->has($key)) {
+                SiteSetting::setValue($key, $request->input($key));
+            }
+        }
+
+        // Save Home/Default SEO Image
+        if ($request->hasFile('seo_home_image')) {
+            $dir = PathHelper::publicRootPath('images/seo');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $file = $request->file('seo_home_image');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = 'home_seo_' . time() . '.' . $extension;
+            $file->move($dir, $fileName);
+            SiteSetting::setValue('seo_home_image', 'images/seo/' . $fileName);
         }
 
         // Save official fanpages system settings

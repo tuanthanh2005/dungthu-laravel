@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Cửa Hàng - DungThu.com')
+@if(isset($category) && $category)
+    @section('title', $category->seo_title ?: $category->name . ' - Cửa Hàng | DungThu.com')
+    @section('meta_description', $category->seo_description ?: Str::limit(strip_tags($category->description), 160))
+    @section('meta_keywords', $category->seo_keywords ?: $category->name . ', cửa hàng dungthu')
+@else
+    @section('title', 'Cửa Hàng - DungThu.com')
+@endif
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -234,7 +240,9 @@
             box-shadow: 0 25px 50px rgba(108, 92, 231, 0.12);
         }
         .product-card-modern.out-of-stock {
-            opacity: 0.85;
+            opacity: 0.65;
+            pointer-events: none;
+            cursor: not-allowed;
         }
         .product-card-modern.out-of-stock .product-image-wrapper::after {
             content: 'HẾT HÀNG';
@@ -792,12 +800,18 @@
                                 <span class="price-old">{{ $product->formatted_original_price }}</span>
                             @endif
                         </div>
+                        @if($product->stock > 0)
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0 p-0">
                             @csrf
-                            <button type="submit" class="btn-add-cart" title="{{ $product->stock > 0 ? 'Thêm vào giỏ' : 'Thêm vào giỏ (Đặt trước)' }}">
+                            <button type="submit" class="btn-add-cart" title="Thêm vào giỏ">
                                 <i class="fas fa-cart-plus"></i>
                             </button>
                         </form>
+                        @else
+                        <button type="button" class="btn-add-cart" disabled style="background: #f1f2f6; color: #b2bec3;" title="Hết hàng">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                        @endif
                     </div>
                 </div>
             </div>

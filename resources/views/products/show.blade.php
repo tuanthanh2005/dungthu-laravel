@@ -3,31 +3,6 @@
 @section('title', $product->name . ' - DungThu.com')
 @section('meta_description', Str::limit(strip_tags($product->description), 160))
 @section('og_image', asset($product->image))
-@section('canonical', route('product.show', $product->slug))
-
-@push('head')
-    <script type="application/ld+json">
-        {!! json_encode([
-            '@context' => 'https://schema.org',
-            '@type' => 'Product',
-            'name' => $product->name,
-            'description' => Str::limit(strip_tags($product->description), 300),
-            'image' => asset($product->image),
-            'url' => route('product.show', $product->slug),
-            'brand' => [
-                '@type' => 'Brand',
-                'name' => 'DungThu.com',
-            ],
-            'offers' => [
-                '@type' => 'Offer',
-                'url' => route('product.show', $product->slug),
-                'priceCurrency' => 'VND',
-                'price' => (float) $product->effective_price,
-                'availability' => $product->isInStock() ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-            ],
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
-    </script>
-@endpush
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">

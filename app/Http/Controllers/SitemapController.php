@@ -71,7 +71,7 @@ class SitemapController extends Controller
         foreach ($products as $product) {
             $imageXml = '';
             if ($product->image) {
-                $imageXml = '<image:image><image:loc>' . $this->escapeXml($this->absoluteUrl($product->image)) . '</image:loc>';
+                $imageXml = '<image:image><image:loc>' . $this->escapeXml($product->image) . '</image:loc>';
                 $imageXml .= '<image:title>' . $this->escapeXml($product->name) . '</image:title>';
                 $imageXml .= '</image:image>';
             }
@@ -104,7 +104,7 @@ class SitemapController extends Controller
             $imageXml = '';
             $rawImage = $blog->image;
             if ($rawImage) {
-                $imageXml = '<image:image><image:loc>' . $this->escapeXml($this->absoluteUrl($rawImage)) . '</image:loc>';
+                $imageXml = '<image:image><image:loc>' . $this->escapeXml($rawImage) . '</image:loc>';
                 $imageXml .= '<image:title>' . $this->escapeXml($blog->title) . '</image:title>';
                 $imageXml .= '</image:image>';
             }
@@ -174,14 +174,5 @@ class SitemapController extends Controller
     private function escapeXml(string $value): string
     {
         return htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-    }
-
-    private function absoluteUrl(string $value): string
-    {
-        if (preg_match('/^(https?:)?\/\//i', $value)) {
-            return $value;
-        }
-
-        return asset(ltrim($value, '/'));
     }
 }

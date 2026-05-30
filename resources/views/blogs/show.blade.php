@@ -3,34 +3,6 @@
 @section('title', $blog->title . ' - DungThu.com')
 @section('meta_description', $blog->excerpt)
 @section('og_image', $blog->image)
-@section('canonical', route('blog.show', $blog->slug))
-
-@push('head')
-    <script type="application/ld+json">
-        {!! json_encode([
-            '@context' => 'https://schema.org',
-            '@type' => 'BlogPosting',
-            'headline' => $blog->title,
-            'description' => $blog->excerpt,
-            'image' => $blog->image,
-            'url' => route('blog.show', $blog->slug),
-            'datePublished' => optional($blog->published_at)->toIso8601String(),
-            'dateModified' => $blog->updated_at->toIso8601String(),
-            'author' => [
-                '@type' => 'Organization',
-                'name' => 'DungThu.com',
-            ],
-            'publisher' => [
-                '@type' => 'Organization',
-                'name' => 'DungThu.com',
-                'logo' => [
-                    '@type' => 'ImageObject',
-                    'url' => asset('images/dungthu-seo.png'),
-                ],
-            ],
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
-    </script>
-@endpush
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">

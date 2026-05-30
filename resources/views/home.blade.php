@@ -7,6 +7,7 @@
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": "{{ url('/') }}#website",
   "name": "Dùng Thử",
   "alternateName": "DungThu.com",
   "url": "{{ url('/') }}",
@@ -20,21 +21,21 @@
   }
 }
 </script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "{{ url('/') }}#organization",
   "name": "Dùng Thử",
   "url": "{{ url('/') }}",
   "logo": "{{ asset('images/dungthu.png') }}",
+  "email": "contact@dungthu.com",
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer support",
     "email": "contact@dungthu.com"
-  },
-  "sameAs": [
-    "https://zalo.me/g/ptarfhnomeuotiyk7cot"
-  ]
+  }
 }
 </script>
 @endsection

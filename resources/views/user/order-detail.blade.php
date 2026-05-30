@@ -128,6 +128,59 @@
         color: white;
     }
 
+    .support-icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ff4d00 0%, #ffb800 100%);
+        color: white;
+        box-shadow: 0 8px 20px rgba(255, 77, 0, 0.25);
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        vertical-align: middle;
+    }
+
+    .support-icon-btn:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(255, 77, 0, 0.32);
+    }
+
+    .support-copy-card {
+        border: 1px solid #ffe0cc;
+        background: linear-gradient(135deg, #fff7ed 0%, #fff 100%);
+    }
+
+    .support-copy-text {
+        background: white;
+        border: 1px dashed #ffb07a;
+        border-radius: 10px;
+        padding: 12px;
+        color: #4a5568;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        white-space: pre-line;
+    }
+
+    .copy-support-btn {
+        border: 0;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #ff4d00 0%, #ffb800 100%);
+        color: white;
+        font-weight: 700;
+        padding: 10px 16px;
+        width: 100%;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .copy-support-btn:hover {
+        opacity: 0.92;
+        transform: translateY(-1px);
+    }
+
     @media (max-width: 768px) {
         .order-detail-wrapper {
             padding: 80px 0 40px;
@@ -185,11 +238,25 @@
             margin-top: 5px;
             font-size: 1.5rem;
         }
+        .support-icon-btn {
+            width: 38px;
+            height: 38px;
+        }
     }
 </style>
 @endpush
 
 @section('content')
+@php
+    $supportProductNames = $order->orderItems
+        ->map(fn($item) => optional($item->product)->name)
+        ->filter()
+        ->values();
+
+    $supportCopyMessage = "Bạn hãy copy all nội dung này gửi admin để đơn hàng xử lý nhanh hơn\n"
+        . "Mã đơn hàng: #{$order->id}\n"
+        . "Tên đơn hàng: " . ($supportProductNames->isNotEmpty() ? $supportProductNames->implode(', ') : 'Không có tên sản phẩm');
+@endphp
 <div class="order-detail-wrapper">
     <div class="container">
         <div class="order-card" data-aos="fade-up">
@@ -202,6 +269,9 @@
                     <div>
                         <h3 class="fw-bold mb-2">
                             <i class="fas fa-file-invoice text-primary me-3"></i>Đơn hàng #{{ $order->id }}
+                            <a href="#order-support-copy" class="support-icon-btn ms-2" title="Hỗ trợ đơn hàng" aria-label="Hỗ trợ đơn hàng">
+                                <i class="fas fa-headset"></i>
+                            </a>
                         </h3>
                         <span class="order-type-badge type-{{ $order->order_type }}">
                             @if($order->order_type == 'qr')
@@ -335,6 +405,22 @@
                         </div>
                     </div>
 
+                    <div class="info-section support-copy-card" id="order-support-copy">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-headset text-primary me-2"></i>Hỗ trợ đơn hàng
+                        </h5>
+                        <p class="text-muted mb-3">
+                            Bạn hãy copy all nội dung này gửi admin để đơn hàng xử lý nhanh hơn
+                        </p>
+                        <div class="support-copy-text mb-3" id="support-copy-content">{{ $supportCopyMessage }}</div>
+                        <button type="button" class="copy-support-btn" id="copy-support-order">
+                            <i class="fas fa-copy me-2"></i>Copy mã đơn hàng + tên đơn hàng
+                        </button>
+                        <small class="text-success fw-bold mt-2 d-none" id="copy-support-success">
+                            <i class="fas fa-check me-1"></i>Đã copy nội dung gửi admin
+                        </small>
+                    </div>
+
                     <!-- Tracking Timeline -->
                     <div class="info-section">
                         <h5 class="fw-bold mb-3">
@@ -392,5 +478,43 @@
 @push('scripts')
 <script>
     AOS.init({ duration: 800, once: true });
+
+    const copySupportButton = document.getElementById('copy-support-order');
+    const copySupportSuccess = document.getElementById('copy-support-success');
+    const supportCopyText = @json($supportCopyMessage);
+
+    if (copySupportButton) {
+        copySupportButton.addEventListener('click', async () => {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(supportCopyText);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = supportCopyText;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    document.execCommand('copy');
+                    textarea.remove();
+                }
+
+                copySupportButton.innerHTML = '<i class="fas fa-check me-2"></i>Đã copy nội dung';
+                copySupportSuccess.classList.remove('d-none');
+
+                setTimeout(() => {
+                    copySupportButton.innerHTML = '<i class="fas fa-copy me-2"></i>Copy mã đơn hàng + tên đơn hàng';
+                    copySupportSuccess.classList.add('d-none');
+                }, 2200);
+            } catch (error) {
+                copySupportButton.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Không copy được';
+
+                setTimeout(() => {
+                    copySupportButton.innerHTML = '<i class="fas fa-copy me-2"></i>Copy mã đơn hàng + tên đơn hàng';
+                }, 2200);
+            }
+        });
+    }
 </script>
 @endpush

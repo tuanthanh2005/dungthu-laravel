@@ -177,6 +177,28 @@
                     </label>
                 </div>
 
+                <!-- SEO Section -->
+                <div class="border-top pt-4 mt-4 mb-4">
+                    <h5 class="fw-bold mb-3 text-primary"><i class="fas fa-search me-2"></i>Cấu hình SEO (Tối ưu hóa tìm kiếm)</h5>
+                    
+                    <div class="mb-3">
+                        <label for="seo_title" class="form-label">Tiêu đề SEO (Title)</label>
+                        <input type="text" class="form-control" id="seo_title" name="seo_title" value="{{ old('seo_title', $category->seo_title) }}" placeholder="Nhập tiêu đề SEO (mặc định lấy tên danh mục)...">
+                        <div class="form-text">Tiêu đề tối ưu từ 50-60 ký tự.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="seo_description" class="form-label">Mô tả SEO (Description)</label>
+                        <textarea class="form-control" id="seo_description" name="seo_description" rows="3" placeholder="Nhập mô tả SEO (mặc định lấy mô tả danh mục)...">{{ old('seo_description', $category->seo_description) }}</textarea>
+                        <div class="form-text">Mô tả tối ưu từ 150-160 ký tự.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="seo_keywords" class="form-label">Từ khóa SEO (Keywords)</label>
+                        <input type="text" class="form-control" id="seo_keywords" name="seo_keywords" value="{{ old('seo_keywords', $category->seo_keywords) }}" placeholder="Ví dụ: laptop, tai lieu hoc tap, sach hay (cách nhau bởi dấu phẩy)...">
+                    </div>
+                </div>
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-submit">
                         <i class="fas fa-save me-2"></i>Lưu thay đổi

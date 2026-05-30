@@ -58,9 +58,12 @@ class ProductController extends Controller
             });
         }
         
-        $items = $query->latest()->paginate(18)->withQueryString();
-        
-        return view('products.index', compact('items', 'categories', 'currentCategoryId', 'searchTerm'));
+        $category = null;
+        if ($currentCategoryId != 'all') {
+            $category = ProductCategory::find($currentCategoryId);
+        }
+
+        return view('products.index', compact('items', 'categories', 'currentCategoryId', 'searchTerm', 'category'));
     }
 
     public function show($slug)

@@ -1,6 +1,84 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' - DungThu.com')
+@section('title', $product->seo_title ?: $product->name . ' - DungThu.com')
+@section('meta_description', $product->seo_description ?: Str::limit(strip_tags($product->description), 160))
+@section('meta_keywords', $product->seo_keywords ?: $product->name . ', dungthu, dungthu.com')
+@section('og_image', asset($product->image))
+
+@section('schema_markup')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": "{{ route('home') }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Cửa hàng",
+      "item": "{{ route('shop') }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ $product->name }}",
+      "item": "{{ route('product.show', $product->slug) }}"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ $product->name }}",
+  "image": "{{ asset($product->image) }}",
+  "description": "{{ Str::limit(strip_tags($product->description), 250) }}",
+  "sku": "product-doc-{{ $product->id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "DungThu"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ route('product.show', $product->slug) }}",
+    "priceCurrency": "VND",
+    "price": "{{ (float)$product->effective_price }}",
+    "availability": "{{ $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+  @if(isset($totalReviews) && $totalReviews > 0)
+  ,"aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ number_format($averageRating, 1) }}",
+    "reviewCount": "{{ $totalReviews }}"
+  },
+  "review": [
+    @foreach($product->comments as $comment)
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "{{ $comment->user->name }}"
+      },
+      "datePublished": "{{ $comment->created_at->format('Y-m-d') }}",
+      "reviewBody": "{{ $comment->comment }}",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ $comment->rating }}"
+      }
+    }{{ !$loop->last ? ',' : '' }}
+    @endforeach
+  ]
+  @endif
+}
+</script>
+@endsection
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -165,12 +243,14 @@
                     <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
                         @csrf
                         <div class="d-flex gap-3 mb-3 flex-wrap">
-                            <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
-                                     style="background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%); color: white; border: none;">
+                    <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
+                                     style="background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%); color: white; border: none;"
+                                     {{ $product->stock > 0 ? '' : 'disabled' }}>
                                  <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ
                              </button>
                              @if($product->delivery_type === 'digital')
-                             <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow">
+                             <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow"
+                                     {{ $product->stock > 0 ? '' : 'disabled' }}>
                                  <i class="fas fa-bolt me-2"></i> Mua ngay
                              </button>
                              @endif

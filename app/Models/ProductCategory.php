@@ -17,6 +17,9 @@ class ProductCategory extends Model
         'description',
         'is_active',
         'show_on_home',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
     ];
 
     protected $casts = [

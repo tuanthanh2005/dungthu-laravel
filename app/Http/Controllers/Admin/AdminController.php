@@ -536,8 +536,10 @@ class AdminController extends Controller
             ->orderBy('name')
             ->get();
         
-        // Use specific view for tech, generic for others
-        $viewName = $category === 'tech' ? 'admin.products.create-tech' : 'admin.products.create';
+        // Use a tech-specific form only when that Blade file exists.
+        $viewName = $category === 'tech' && view()->exists('admin.products.create-tech')
+            ? 'admin.products.create-tech'
+            : 'admin.products.create';
         return view($viewName, compact('category', 'features', 'categories'));
     }
 
@@ -680,8 +682,10 @@ class AdminController extends Controller
             ->orderBy('name')
             ->get();
         
-        // Use specific view for tech, generic for others
-        $viewName = $product->category === 'tech' ? 'admin.products.edit-tech' : 'admin.products.edit';
+        // Use a tech-specific form only when that Blade file exists.
+        $viewName = $product->category === 'tech' && view()->exists('admin.products.edit-tech')
+            ? 'admin.products.edit-tech'
+            : 'admin.products.edit';
         return view($viewName, compact('product', 'features', 'categories'));
     }
 
@@ -1421,4 +1425,3 @@ class AdminController extends Controller
         return redirect()->route('admin.dashboard')->with('success', 'Đã khóa các khu vực bảo mật.');
     }
 }
-

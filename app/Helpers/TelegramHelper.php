@@ -12,8 +12,8 @@ class TelegramHelper
      */
     public static function sendMessage($text)
     {
-        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
-        $chatId = '8199725778';
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
 
         try {
             $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
@@ -40,8 +40,8 @@ class TelegramHelper
      */
     public static function sendNewOrderNotification($order)
     {
-        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
-        $chatId = '8199725778';
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
 
         // Tạo nội dung thông báo
         $message = self::formatOrderMessage($order);
@@ -110,7 +110,11 @@ class TelegramHelper
         $message .= "💰 <b>TỔNG TIỀN: " . number_format($order->total_amount, 0, ',', '.') . "đ</b>\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
-        $message .= "⚠️ <i>Khách hàng đã xác nhận thanh toán. Vui lòng kiểm tra và xử lý đơn hàng!</i>";
+        if ($order->status === 'completed') {
+            $message .= "✅ <i>Đơn hàng có sẵn kho đã được xử lý và hoàn thành tự động!</i>";
+        } else {
+            $message .= "⚠️ <i>Đơn hàng chưa có sẵn kho. Vui lòng kiểm tra và xử lý đơn hàng!</i>";
+        }
 
         return $message;
     }
@@ -120,8 +124,8 @@ class TelegramHelper
      */
     public static function sendBuffPaymentNotification($buffOrder)
     {
-        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
-        $chatId = '8199725778';
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
 
         try {
             $service = $buffOrder->buffService;
@@ -176,8 +180,8 @@ class TelegramHelper
      */
     public static function sendNewChatMessageNotification($message)
     {
-        $botToken = '8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI';
-        $chatId = '8199725778';
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
 
         $user = $message->user;
         $userName = $user ? $user->name : 'Khách lạ';

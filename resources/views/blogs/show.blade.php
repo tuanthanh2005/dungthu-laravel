@@ -1,66 +1,8 @@
 @extends('layouts.app')
 
-@section('title', $blog->seo_title ?: $blog->title . ' - DungThu.com')
-@section('meta_description', $blog->seo_description ?: $blog->excerpt)
-@section('meta_keywords', $blog->seo_keywords ?: $blog->category . ', blog dungthu')
+@section('title', $blog->title . ' - DungThu.com')
+@section('meta_description', $blog->excerpt)
 @section('og_image', $blog->image)
-
-@section('schema_markup')
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Trang chủ",
-      "item": "{{ route('home') }}"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Blog",
-      "item": "{{ route('blog.index') }}"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "{{ $blog->title }}",
-      "item": "{{ route('blog.show', $blog->slug) }}"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "{{ $blog->title }}",
-  "image": "{{ $blog->image }}",
-  "genre": "{{ $blog->category }}",
-  "keywords": "{{ $blog->seo_keywords ?: $blog->category }}",
-  "publisher": {
-    "@type": "Organization",
-    "name": "DungThu",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "{{ asset('images/dungthu.png') }}"
-    }
-  },
-  "url": "{{ route('blog.show', $blog->slug) }}",
-  "datePublished": "{{ $blog->created_at->toIso8601String() }}",
-  "dateCreated": "{{ $blog->created_at->toIso8601String() }}",
-  "dateModified": "{{ $blog->updated_at->toIso8601String() }}",
-  "description": "{{ Str::limit(strip_tags($blog->excerpt), 250) }}",
-  "articleBody": "{{ Str::limit(strip_tags($blog->content), 500) }}",
-  "author": {
-    "@type": "Person",
-    "name": "{{ $blog->user->name ?? 'DungThu.com' }}"
-  }
-}
-</script>
-@endsection
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">

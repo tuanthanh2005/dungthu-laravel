@@ -26,24 +26,28 @@
     <meta name="description" content="@yield('meta_description', 'Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.')">
     <meta name="keywords" content="@yield('meta_keywords', 'dung thu, dungthu, dungthu.com, dung thu ai, blog cong nghe, mua sam truc tuyen, san pham so, kham pha ai')">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="@yield('canonical', url()->current())">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="@yield('canonical', url()->current())">
     <meta property="og:title" content="@yield('title', 'Dùng Thử | AI | Blog | Khám Phá')">
     <meta property="og:description" content="@yield('meta_description', 'Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.')">
     <meta property="og:image" content="@yield('og_image', asset('images/dungthu-seo.png'))">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:url" content="@yield('canonical', url()->current())">
     <meta property="twitter:title" content="@yield('title', 'Dùng Thử | AI | Blog | Khám Phá')">
     <meta property="twitter:description" content="@yield('meta_description', 'Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.')">
     <meta property="twitter:image" content="@yield('og_image', asset('images/dungthu-seo.png'))">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/dungthu.png') }}">
+    @stack('head')
     
     <!-- Bootstrap & Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -280,5 +284,3 @@
 @stack('scripts')
 </body>
 </html>
-
-

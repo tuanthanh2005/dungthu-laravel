@@ -420,6 +420,47 @@
             margin-bottom: 1.5rem;
             display: inline-block;
         }
+
+        .seo-keyword-section {
+            background: #fff;
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.03);
+            border: 1px solid rgba(108, 92, 231, 0.08);
+        }
+        .seo-keyword-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+        .seo-keyword-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .seo-keyword-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(108, 92, 231, 0.06);
+            color: #5f27cd;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid rgba(108, 92, 231, 0.08);
+            transition: all 0.2s ease;
+        }
+        .seo-keyword-chip:hover,
+        .seo-keyword-chip.active {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(108, 92, 231, 0.18);
+        }
         
         /* Custom Pagination */
         .pagination-wrapper {
@@ -710,6 +751,22 @@
                     @endif
                 </button>
             </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    @if(!empty($keywordLinks))
+    <div class="seo-keyword-section" data-aos="fade-up" data-aos-delay="120">
+        <div class="seo-keyword-title">
+            <i class="fas fa-bolt text-warning me-2"></i>Tìm nhanh theo sản phẩm
+        </div>
+        <div class="seo-keyword-links">
+            @foreach($keywordLinks as $keywordSlug => $keyword)
+                <a href="{{ route('product.keyword', $keywordSlug) }}"
+                   class="seo-keyword-chip {{ request()->routeIs('product.keyword') && request()->route('keyword') === $keywordSlug ? 'active' : '' }}">
+                    {{ $keyword['label'] }}
+                </a>
             @endforeach
         </div>
     </div>

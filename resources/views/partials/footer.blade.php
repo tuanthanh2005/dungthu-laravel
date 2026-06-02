@@ -18,6 +18,12 @@
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Liên hệ ngay</a></li>
                     <li><a href="{{ route('shop') }}">Cửa hàng</a></li>
                     <li><a href="{{ route('blog.index') }}">Blog</a></li>
+                    <li class="mt-2"><a href="{{ route('product.keyword', 'gpt') }}">Mua tài khoản ChatGPT</a></li>
+                    <li><a href="{{ route('product.keyword', 'cursor') }}">Mua tài khoản Cursor AI Pro</a></li>
+                    <li><a href="{{ route('product.keyword', 'gemini') }}">Mua tài khoản Gemini Advanced</a></li>
+                    <li><a href="{{ route('product.keyword', 'youtube') }}">Mua YouTube Premium</a></li>
+                    <li><a href="{{ route('product.keyword', 'office') }}">Mua Office 365</a></li>
+                    <li><a href="{{ route('product.keyword', 'canva') }}">Mua Canva Pro</a></li>
                 </ul>
             </div>
             <div class="col-md-4">

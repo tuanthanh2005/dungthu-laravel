@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <style>
         .exchange-page {
-            margin-top: 80px;
+            margin-top: 50px;
         }
 
         .exchange-gradient {

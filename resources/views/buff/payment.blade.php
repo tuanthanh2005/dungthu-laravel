@@ -247,7 +247,7 @@
 
     @media (max-width: 768px) {
         .payment-container {
-            margin-top: 80px;
+            margin-top: 50px;
             padding: 1.5rem;
             margin-bottom: 2rem;
         }

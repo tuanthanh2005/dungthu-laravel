@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-<div class="container py-2" style="margin-top: 80px; max-width: 900px;">
+<div class="container py-2" style="margin-top: 50px; max-width: 900px;">
     <h2 class="fw-bold mb-4">Chỉnh sửa bài viết</h2>
 
     <form method="POST" action="{{ route('community.update', $post) }}">

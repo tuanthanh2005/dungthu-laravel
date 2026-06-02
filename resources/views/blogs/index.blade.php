@@ -87,7 +87,7 @@
 @endpush
 
 @section('content')
-<div class="container py-2" style="margin-top: 80px;">
+<div class="container py-2" style="margin-top: 50px;">
     <div class="row">
         <div class="col-12 mb-4">
             <h1 class="fw-bold">{{ $pageHeading ?? 'Blog Chia Sẻ' }}</h1>

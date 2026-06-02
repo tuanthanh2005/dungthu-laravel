@@ -327,7 +327,7 @@
 @endpush
 
 @section('content')
-<div class="container py-4" style="margin-top: 80px;">
+<div class="container py-4" style="margin-top: 50px;">
     <!-- Header -->
     <div class="cart-header" data-aos="fade-down">
         <h1>Giỏ Hàng Của Bạn</h1>

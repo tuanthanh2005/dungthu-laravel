@@ -29,7 +29,7 @@
 @endpush
 
 @section('content')
-<div class="container py-2" style="margin-top: 80px;">
+<div class="container py-2" style="margin-top: 50px;">
     <div class="row mb-4" data-aos="fade-down">
         <div class="col-12 text-center">
             <h1 class="fw-bold mb-3">Thiết kế website giá rẻ</h1>

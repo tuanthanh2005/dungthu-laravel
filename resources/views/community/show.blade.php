@@ -83,7 +83,7 @@
 @endpush
 
 @section('content')
-<div class="container py-5 community-page" style="margin-top: 80px; max-width: 980px;">
+<div class="container py-5 community-page" style="margin-top: 50px; max-width: 980px;">
     <div class="d-flex align-items-center gap-2 mb-3">
         <a href="{{ route('community.index') }}" class="text-decoration-none">
             <i class="fas fa-arrow-left"></i> Quay lại

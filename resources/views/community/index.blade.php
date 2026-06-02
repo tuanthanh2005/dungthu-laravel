@@ -119,7 +119,7 @@
 @endpush
 
 @section('content')
-<div class="container py-5 community-page" style="margin-top: 80px;">
+<div class="container py-2 community-page" style="margin-top: 50px;">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
             <h1 class="fw-bold">Cộng Đồng Chia Sẻ Miễn Phí</h1>

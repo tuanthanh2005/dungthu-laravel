@@ -181,7 +181,7 @@
 @endpush
 
 @section('content')
-<div class="container py-2" style="margin-top: 80px;">
+<div class="container py-2" style="margin-top: 50px;">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down">
         <ol class="breadcrumb">

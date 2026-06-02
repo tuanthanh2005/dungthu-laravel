@@ -97,6 +97,16 @@ class SitemapController extends Controller
         // ── Blog index ──
         $xml .= $this->buildUrl(route('blog.index'), date('Y-m-d'), 'daily', '0.8');
 
+        // ── SEO blog topic landing pages ──
+        foreach (BlogController::blogTopics() as $topic => $config) {
+            $xml .= $this->buildUrl(
+                route('blog.topic', $topic),
+                date('Y-m-d'),
+                'weekly',
+                '0.7'
+            );
+        }
+
         // ── Blog Categories ──
         foreach ($blogCategories as $category) {
             if ($category) {

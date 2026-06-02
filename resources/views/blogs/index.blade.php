@@ -1,22 +1,121 @@
 @extends('layouts.app')
 
-@section('title', 'Blog - DungThu.com')
+@section('title', $seoTitle ?? 'Blog - DungThu.com')
+@section('meta_description', $seoDescription ?? 'Cập nhật xu hướng công nghệ, AI, tài khoản số, mẹo dùng tool và hướng dẫn sử dụng sản phẩm tại DungThu.com.')
+@section('canonical', $canonical ?? route('blog.index'))
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <style>
+        .blog-topic-section {
+            background: #fff;
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.03);
+            border: 1px solid rgba(108, 92, 231, 0.08);
+        }
+        .blog-topic-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+        .blog-topic-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .blog-topic-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(108, 92, 231, 0.06);
+            color: #5f27cd;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid rgba(108, 92, 231, 0.08);
+            transition: all 0.2s ease;
+        }
+        .blog-topic-chip:hover,
+        .blog-topic-chip.active {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(108, 92, 231, 0.18);
+        }
+        .blog-topic-toggle {
+            display: none;
+            border: none;
+            background: rgba(108, 92, 231, 0.08);
+            color: #5f27cd;
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            margin: 12px auto 0;
+            transition: all 0.2s ease;
+        }
+        .blog-topic-toggle i {
+            transition: transform 0.2s ease;
+        }
+        .blog-topic-section.expanded .blog-topic-toggle i {
+            transform: rotate(180deg);
+        }
+        @media (max-width: 768px) {
+            .blog-topic-section {
+                padding: 14px 16px;
+                border-radius: 16px;
+            }
+            .blog-topic-links {
+                max-height: 138px;
+                overflow: hidden;
+                transition: max-height 0.25s ease;
+            }
+            .blog-topic-section.expanded .blog-topic-links {
+                max-height: 600px;
+            }
+            .blog-topic-toggle {
+                display: flex;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
 <div class="container py-5" style="margin-top: 80px;">
     <div class="row">
         <div class="col-12 mb-4">
-            <h1 class="fw-bold">Blog Chia Sẻ</h1>
-            <p class="text-muted">Cập nhật xu hướng công nghệ, mẹo phối đồ và hướng dẫn dùng tool.</p>
+            <h1 class="fw-bold">{{ $pageHeading ?? 'Blog Chia Sẻ' }}</h1>
+            <p class="text-muted">{{ $seoDescription ?? 'Cập nhật xu hướng công nghệ, AI, mẹo dùng tool và hướng dẫn sử dụng sản phẩm.' }}</p>
         </div>
     </div>
 
+    @if(!empty($topicLinks))
+    <div class="blog-topic-section" data-aos="fade-up" data-aos-delay="100">
+        <div class="blog-topic-title">
+            <i class="fas fa-bolt text-warning me-2"></i>Chủ đề nổi bật
+        </div>
+        <div class="blog-topic-links">
+            @foreach($topicLinks as $topicSlug => $topic)
+                <a href="{{ route('blog.topic', $topicSlug) }}"
+                   class="blog-topic-chip {{ request()->routeIs('blog.topic') && request()->route('topic') === $topicSlug ? 'active' : '' }}">
+                    {{ $topic['label'] }}
+                </a>
+            @endforeach
+        </div>
+        <button type="button" class="blog-topic-toggle" aria-label="Xem thêm chủ đề" aria-expanded="false">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </div>
+    @endif
+
     <div class="row">
-        @foreach($blogs as $blog)
+        @forelse($blogs as $blog)
         <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
             <div class="product-card">
                 <div class="card-img-wrap" style="height: 200px;">
@@ -27,7 +126,7 @@
                 </div>
                 <div class="p-3">
                     <div class="small text-muted mb-2">
-                        <i class="far fa-clock"></i> {{ $blog->formatted_date }} • 
+                        <i class="far fa-clock"></i> {{ $blog->formatted_date }} &bull;
                         <i class="far fa-eye"></i> {{ $blog->views }} lượt xem
                     </div>
                     <h5 class="fw-bold mb-2">
@@ -40,7 +139,15 @@
                 </div>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="col-12">
+            <div class="bg-white rounded-4 p-5 text-center shadow-sm">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4 class="fw-bold">Chưa có bài viết phù hợp</h4>
+                <p class="text-muted mb-0">Chủ đề này sẽ được cập nhật thêm nội dung mới.</p>
+            </div>
+        </div>
+        @endforelse
     </div>
 
     <div class="row">
@@ -54,5 +161,17 @@
 @push('scripts')
     <script>
         AOS.init({ duration: 800, once: true });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const topicSection = document.querySelector('.blog-topic-section');
+            const topicToggle = document.querySelector('.blog-topic-toggle');
+            if (topicSection && topicToggle) {
+                topicToggle.addEventListener('click', function() {
+                    const expanded = topicSection.classList.toggle('expanded');
+                    topicToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                    topicToggle.setAttribute('aria-label', expanded ? 'Thu gọn chủ đề' : 'Xem thêm chủ đề');
+                });
+            }
+        });
     </script>
 @endpush

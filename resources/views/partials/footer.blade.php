@@ -1,7 +1,7 @@
 <footer class="footer-techfeed">
     <div class="container">
         <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-lg-3 col-md-6">
                 <div class="footer-brand">
                     <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
                     DungThu.com
@@ -9,7 +9,7 @@
                 <p class="small text-muted">Nền tảng cung cấp giải pháp công nghệ, công cụ Marketing và sản phẩm số chất
                     lượng cho cộng đồng Việt Nam.</p>
             </div>
-            <div class="col-md-4">
+            <div class="col-lg-3 col-md-6">
                 <h6 class="fw-bold mb-3">Liên kết nhanh</h6>
                 <ul class="footer-links">
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">Về chúng tôi</a></li>
@@ -18,7 +18,12 @@
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Liên hệ ngay</a></li>
                     <li><a href="{{ route('shop') }}">Cửa hàng</a></li>
                     <li><a href="{{ route('blog.index') }}">Blog</a></li>
-                    <li class="mt-2"><a href="{{ route('product.keyword', 'gpt') }}">Mua tài khoản ChatGPT</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-3">Sản phẩm nổi bật</h6>
+                <ul class="footer-links">
+                    <li><a href="{{ route('product.keyword', 'gpt') }}">Mua tài khoản ChatGPT</a></li>
                     <li><a href="{{ route('product.keyword', 'cursor') }}">Mua tài khoản Cursor AI Pro</a></li>
                     <li><a href="{{ route('product.keyword', 'gemini') }}">Mua tài khoản Gemini Advanced</a></li>
                     <li><a href="{{ route('product.keyword', 'youtube') }}">Mua YouTube Premium</a></li>
@@ -26,8 +31,13 @@
                     <li><a href="{{ route('product.keyword', 'canva') }}">Mua Canva Pro</a></li>
                 </ul>
             </div>
-            <div class="col-md-4">
-                <h6 class="fw-bold mb-3">Đăng ký nhận tin</h6>
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-3">Blog & nhận tin</h6>
+                <ul class="footer-links mb-3">
+                    <li><a href="{{ route('blog.topic', 'ai') }}">Blog AI</a></li>
+                    <li><a href="{{ route('blog.topic', 'chatgpt') }}">Hướng dẫn ChatGPT</a></li>
+                    <li><a href="{{ route('blog.topic', 'cursor') }}">Hướng dẫn Cursor AI</a></li>
+                </ul>
                 <form id="newsletter-form">
                     @csrf
                     <div class="input-group mb-3">

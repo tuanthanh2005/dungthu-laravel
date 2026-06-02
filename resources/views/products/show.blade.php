@@ -340,74 +340,30 @@
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-star text-warning me-2"></i>Tính Năng Nổi Bật
                             </h4>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start mb-3">
-                                        <div class="me-3">
-                                            <i class="fas fa-check-circle text-success fs-4"></i>
+                            @if($product->features && $product->features->count() > 0)
+                                <div class="row g-3">
+                                    @foreach($product->features as $feature)
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-start mb-3">
+                                                <div class="me-3">
+                                                    <i class="{{ $feature->icon }} fs-4" style="color: {{ $feature->color }}"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold mb-1">{{ $feature->name }}</h6>
+                                                    @if($feature->description)
+                                                        <p class="text-muted mb-0">{{ $feature->description }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Thiết kế hiện đại</h6>
-                                            <p class="text-muted mb-0">Giao diện đẹp mắt, sang trọng phù hợp mọi không gian</p>
-                                        </div>
-                                    </div>
+                                    @endforeach
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start mb-3">
-                                        <div class="me-3">
-                                            <i class="fas fa-check-circle text-success fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Chất lượng cao cấp</h6>
-                                            <p class="text-muted mb-0">Sản phẩm được kiểm định chất lượng nghiêm ngặt</p>
-                                        </div>
-                                    </div>
+                            @else
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Chưa có thông tin tính năng cho sản phẩm này.
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start mb-3">
-                                        <div class="me-3">
-                                            <i class="fas fa-check-circle text-success fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Tiết kiệm năng lượng</h6>
-                                            <p class="text-muted mb-0">Công nghệ tiên tiến giúp tiết kiệm điện năng hiệu quả</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start mb-3">
-                                        <div class="me-3">
-                                            <i class="fas fa-check-circle text-success fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Dễ dàng sử dụng</h6>
-                                            <p class="text-muted mb-0">Hướng dẫn chi tiết, thao tác đơn giản</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start mb-3">
-                                        <div class="me-3">
-                                            <i class="fas fa-check-circle text-success fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">An toàn tuyệt đối</h6>
-                                            <p class="text-muted mb-0">Đạt chuẩn an toàn quốc tế, bảo vệ người dùng</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-start mb-3">
-                                        <div class="me-3">
-                                            <i class="fas fa-check-circle text-success fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Bền bỉ lâu dài</h6>
-                                            <p class="text-muted mb-0">Tuổi thọ cao, bảo hành chính hãng 12 tháng</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -454,7 +410,7 @@
                                             <div class="col-lg-6">
                                                 <div class="p-3 bg-light rounded-3 mb-3">
                                                     <i class="fas fa-info-circle text-primary me-2"></i><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                                    <p class="ms-4 mb-0 text-muted">{{ $value }}</p>
+                                                    <p class="ms-4 mb-0 text-muted">{{ is_array($value) ? implode(', ', $value) : $value }}</p>
                                                 </div>
                                             </div>
                                         @endforeach

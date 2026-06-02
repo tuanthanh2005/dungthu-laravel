@@ -65,7 +65,7 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)->with('comments')->firstOrFail();
+        $product = Product::where('slug', $slug)->with(['comments', 'features'])->firstOrFail();
         
         // Lấy sản phẩm liên quan
         $relatedProducts = Product::where('category', $product->category)
@@ -148,4 +148,3 @@ class ProductController extends Controller
         return response()->download($filePath, $product->name . '.' . $product->file_type);
     }
 }
-

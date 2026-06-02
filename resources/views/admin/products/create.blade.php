@@ -375,6 +375,66 @@
                     </div>
                 </div>
 
+                <!-- Technical Specifications -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-cogs me-2 text-primary"></i>Thông Số Kỹ Thuật
+                    </label>
+                    <div id="specRows">
+                        @php
+                            $oldSpecKeys = old('spec_keys', ['']);
+                            $oldSpecValues = old('spec_values', ['']);
+                        @endphp
+                        @foreach($oldSpecKeys as $index => $oldSpecKey)
+                            <div class="row g-2 mb-2 spec-row-input">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="spec_keys[]" value="{{ $oldSpecKey }}" placeholder="Tên thông số">
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="spec_values[]" value="{{ $oldSpecValues[$index] ?? '' }}" placeholder="Giá trị">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRow(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRow()">
+                        <i class="fas fa-plus me-1"></i>Thêm thông số
+                    </button>
+                </div>
+
+                <!-- Product Features -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-star me-2 text-warning"></i>Tính Năng
+                    </label>
+                    @if(isset($features) && $features->count() > 0)
+                        <div class="row g-2">
+                            @foreach($features as $feature)
+                                <div class="col-md-6">
+                                    <div class="form-check border rounded-3 p-3 h-100" style="padding-left: 2.5rem !important;">
+                                        <input class="form-check-input" type="checkbox" name="features[]" value="{{ $feature->id }}" id="feature_{{ $feature->id }}" {{ in_array($feature->id, old('features', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="feature_{{ $feature->id }}">
+                                            <i class="{{ $feature->icon }} me-2" style="color: {{ $feature->color }}"></i>
+                                            <strong>{{ $feature->name }}</strong>
+                                            @if($feature->description)
+                                                <small class="text-muted d-block">{{ $feature->description }}</small>
+                                            @endif
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Chưa có tính năng nào cho loại sản phẩm này.
+                        </div>
+                    @endif
+                </div>
+
                 <!-- Submit Buttons -->
                 <div class="d-flex gap-3 justify-content-end mt-5">
                     <a href="{{ route('admin.products') }}" class="btn btn-outline-secondary rounded-pill px-4">
@@ -444,6 +504,35 @@
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function addSpecRow() {
+        const wrapper = document.getElementById('specRows');
+        const row = document.createElement('div');
+        row.className = 'row g-2 mb-2 spec-row-input';
+        row.innerHTML = `
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="spec_keys[]" placeholder="Tên thông số">
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="spec_values[]" placeholder="Giá trị">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRow(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        wrapper.appendChild(row);
+    }
+
+    function removeSpecRow(button) {
+        const rows = document.querySelectorAll('.spec-row-input');
+        if (rows.length > 1) {
+            button.closest('.spec-row-input').remove();
+        } else {
+            button.closest('.spec-row-input').querySelectorAll('input').forEach(input => input.value = '');
+        }
     }
 </script>
 @endpush

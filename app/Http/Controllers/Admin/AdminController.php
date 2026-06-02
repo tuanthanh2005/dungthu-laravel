@@ -613,25 +613,24 @@ class AdminController extends Controller
             $fileType = $extension;
         }
         
-        // Xử lý specs theo category
+        // Xử lý specs động từ spec_keys và spec_values
         $specs = [];
-        if ($categoryType === 'tech') {
-            // Xử lý specs động từ spec_keys và spec_values
-            $keys = $request->input('spec_keys', []);
-            $values = $request->input('spec_values', []);
-            
-            foreach ($keys as $index => $key) {
-                if (!empty($key) && !empty($values[$index])) {
-                    $specs[$key] = $values[$index];
-                }
+        $keys = $request->input('spec_keys', []);
+        $values = $request->input('spec_values', []);
+
+        foreach ($keys as $index => $key) {
+            if (!empty($key) && !empty($values[$index])) {
+                $specs[$key] = $values[$index];
             }
-        } elseif ($categoryType === 'ebooks') {
+        }
+
+        if (empty($specs) && $categoryType === 'ebooks') {
             $specs = [
                 'pages' => $request->input('pages'),
                 'language' => $request->input('language', 'Tiếng Việt'),
                 'format' => $fileType ?? 'PDF',
             ];
-        } elseif ($categoryType === 'doc') {
+        } elseif (empty($specs) && $categoryType === 'doc') {
             $specs = [
                 'paper_type' => $request->input('paper_type'),
                 'size' => $request->input('size'),
@@ -776,25 +775,24 @@ class AdminController extends Controller
             $fileSize = $product->file_size;
         }
         
-        // Xử lý specs theo category
+        // Xử lý specs động từ spec_keys và spec_values
         $specs = [];
-        if ($categoryType === 'tech') {
-            // Xử lý specs động từ spec_keys và spec_values
-            $keys = $request->input('spec_keys', []);
-            $values = $request->input('spec_values', []);
-            
-            foreach ($keys as $index => $key) {
-                if (!empty($key) && !empty($values[$index])) {
-                    $specs[$key] = $values[$index];
-                }
+        $keys = $request->input('spec_keys', []);
+        $values = $request->input('spec_values', []);
+
+        foreach ($keys as $index => $key) {
+            if (!empty($key) && !empty($values[$index])) {
+                $specs[$key] = $values[$index];
             }
-        } elseif ($categoryType === 'ebooks') {
+        }
+
+        if (empty($specs) && $categoryType === 'ebooks') {
             $specs = [
                 'pages' => $request->input('pages'),
                 'language' => $request->input('language', 'Tiếng Việt'),
                 'format' => $request->input('format'),
             ];
-        } elseif ($categoryType === 'doc') {
+        } elseif (empty($specs) && $categoryType === 'doc') {
             $specs = [
                 'paper_type' => $request->input('paper_type'),
                 'size' => $request->input('size'),

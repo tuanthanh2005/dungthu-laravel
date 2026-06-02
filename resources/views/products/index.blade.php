@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Cửa Hàng - DungThu.com')
+@section('title', $seoTitle ?? 'Cửa Hàng - DungThu.com')
+@section('meta_description', $seoDescription ?? 'Khám phá các sản phẩm số, tài khoản AI, tài liệu và dịch vụ đang bán tại DungThu.com.')
+@section('canonical', $canonical ?? route('shop'))
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -717,7 +719,9 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3" data-aos="fade-in">
         <div class="d-flex align-items-center flex-wrap flex-grow-1">
             <h4 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">
-                @if($searchTerm || $currentCategoryId != 'all')
+                @if(!empty($pageHeading))
+                    {{ $pageHeading }}
+                @elseif($searchTerm || $currentCategoryId != 'all')
                     Kết quả tìm kiếm
                     @if($currentCategoryId != 'all') 
                         @php $selectedCategory = $categories->firstWhere('id', $currentCategoryId); @endphp
@@ -727,6 +731,9 @@
                     Tất cả sản phẩm
                 @endif
             </h4>
+            @if(!empty($isKeywordLanding) && !empty($seoDescription))
+                <p class="w-100 text-muted mb-0 mt-2" style="font-size: 0.95rem;">{{ $seoDescription }}</p>
+            @endif
 
             <form action="{{ route('shop') }}" method="GET" class="compact-search-form">
                 <input type="hidden" name="category_id" value="{{ $currentCategoryId }}">
@@ -834,4 +841,3 @@
         });
     </script>
 @endpush
-

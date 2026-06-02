@@ -52,6 +52,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 
 // Product routes
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
+Route::get('/tim-kiem/{keyword}', [ProductController::class, 'keyword'])->name('product.keyword');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::post('/product/{product}/comment', [ProductController::class, 'storeComment'])->name('product.comment')->middleware('auth');
 Route::get('/product/{id}/download', [ProductController::class, 'download'])->name('product.download')->middleware('auth');

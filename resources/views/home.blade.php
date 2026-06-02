@@ -1839,7 +1839,7 @@
                         <div class="hero-right-showcase">
                             <div class="floating-cards-wrapper">
                                 <!-- Card ChatGPT -->
-                                <div class="floating-ai-card card-chatgpt" onclick="window.location.href='{{ route('shop') }}?search=ChatGPT'">
+                                <div class="floating-ai-card card-chatgpt" onclick="window.location.href='{{ route('product.keyword', 'gpt') }}'">
                                     <div class="card-head">
                                         <div class="card-icon"><i class="fa-solid fa-message"></i></div>
                                         <div class="card-status">Hot</div>
@@ -1853,7 +1853,7 @@
                                 </div>
 
                                 <!-- Card Claude AI -->
-                                <div class="floating-ai-card card-claude" onclick="window.location.href='{{ route('shop') }}?search=Claude'">
+                                <div class="floating-ai-card card-claude" onclick="window.location.href='{{ route('product.keyword', 'claude') }}'">
                                     <div class="card-head">
                                         <div class="card-icon"><i class="fa-solid fa-brain"></i></div>
                                         <div class="card-status">Vip</div>
@@ -1867,7 +1867,7 @@
                                 </div>
 
                                 <!-- Card VPN -->
-                                <div class="floating-ai-card card-vpn" onclick="window.location.href='{{ route('shop') }}?search=VPN'">
+                                <div class="floating-ai-card card-vpn" onclick="window.location.href='{{ route('product.keyword', 'vpn') }}'">
                                     <div class="card-head">
                                         <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
                                         <div class="card-status">New</div>
@@ -1881,7 +1881,7 @@
                                 </div>
 
                                 <!-- Card Cursor Pro -->
-                                <div class="floating-ai-card card-cursor" onclick="window.location.href='{{ route('shop') }}?search=Cursor'">
+                                <div class="floating-ai-card card-cursor" onclick="window.location.href='{{ route('product.keyword', 'cursor') }}'">
                                     <div class="card-head">
                                         <div class="card-icon"><i class="fa-solid fa-code"></i></div>
                                         <div class="card-status">Sale</div>

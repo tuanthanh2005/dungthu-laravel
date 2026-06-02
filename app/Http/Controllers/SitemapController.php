@@ -51,6 +51,16 @@ class SitemapController extends Controller
         // ── Shop ──
         $xml .= $this->buildUrl(route('shop'), date('Y-m-d'), 'daily', '0.9');
 
+        // ── SEO keyword product landing pages ──
+        foreach (ProductController::seoKeywords() as $keyword => $config) {
+            $xml .= $this->buildUrl(
+                route('product.keyword', $keyword),
+                date('Y-m-d'),
+                'daily',
+                '0.85'
+            );
+        }
+
         // ── Trang tĩnh ──
         $xml .= $this->buildUrl(route('web-design'), date('Y-m-d'), 'monthly', '0.7');
         $xml .= $this->buildUrl(route('policy'), date('Y-m-d'), 'monthly', '0.5');

@@ -7,13 +7,32 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\TiktokDeal;
 use App\Helpers\PathHelper;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    private const SEO_KEYWORDS = [
+        'gpt' => ['label' => 'GPT', 'aliases' => ['gpt', 'chatgpt', 'chat gpt', 'openai']],
+        'cursor' => ['label' => 'Cursor', 'aliases' => ['cursor', 'cursor ai']],
+        'claude' => ['label' => 'Claude', 'aliases' => ['claude', 'claude ai', 'anthropic']],
+        'canva' => ['label' => 'Canva', 'aliases' => ['canva', 'canva pro']],
+        'capcut' => ['label' => 'CapCut', 'aliases' => ['capcut', 'capcut pro']],
+        'vpn' => ['label' => 'VPN', 'aliases' => ['vpn']],
+    ];
+
+    public static function seoKeywords(): array
+    {
+        return self::SEO_KEYWORDS;
+    }
+
     public function index(Request $request)
     {
         $currentCategoryId = $request->category_id ?? 'all';
         $searchTerm = $request->search ?? '';
+
+        if ($request->filled('search') && $currentCategoryId === 'all' && !$request->filled('page')) {
+            return redirect()->route('product.keyword', $this->resolveKeywordSlug($searchTerm));
+        }
         
         // Lấy danh sách categories active
         $categories = ProductCategory::where('is_active', true)
@@ -31,36 +50,115 @@ class ProductController extends Controller
         
         // Search theo tên hoặc mô tả (hỗ trợ tìm kiếm linh hoạt: "chat gpt" → "chatgpt")
         if ($searchTerm) {
-            $query->where(function($q) use ($searchTerm) {
-                // 1. Match chuỗi nguyên gốc
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('description', 'LIKE', "%{$searchTerm}%");
-
-                // 2. Match chuỗi bỏ khoảng trắng (vd: "chat gpt" → "chatgpt")
-                $noSpace = str_replace(' ', '', $searchTerm);
-                if ($noSpace !== $searchTerm) {
-                    $q->orWhere('name', 'LIKE', "%{$noSpace}%")
-                      ->orWhere('description', 'LIKE', "%{$noSpace}%");
-                }
-
-                // 3. Tách từng token, mỗi token phải match trong name hoặc description
-                $tokens = array_filter(explode(' ', trim($searchTerm)));
-                if (count($tokens) > 1) {
-                    $q->orWhere(function($sub) use ($tokens) {
-                        foreach ($tokens as $token) {
-                            $sub->where(function($t) use ($token) {
-                                $t->where('name', 'LIKE', "%{$token}%")
-                                  ->orWhere('description', 'LIKE', "%{$token}%");
-                            });
-                        }
-                    });
-                }
-            });
+            $this->applyLooseSearch($query, $searchTerm);
         }
         
         $items = $query->latest()->paginate(18)->withQueryString();
         
         return view('products.index', compact('items', 'categories', 'currentCategoryId', 'searchTerm'));
+    }
+
+    public function keyword(Request $request, string $keyword)
+    {
+        $keywordSlug = $this->resolveKeywordSlug($keyword);
+        if ($keywordSlug !== Str::slug($keyword)) {
+            return redirect()->route('product.keyword', $keywordSlug);
+        }
+
+        $keywordConfig = self::SEO_KEYWORDS[$keywordSlug] ?? null;
+        $searchTerm = $keywordConfig['label'] ?? Str::headline(str_replace('-', ' ', $keywordSlug));
+        $aliases = $keywordConfig['aliases'] ?? [str_replace('-', ' ', $keywordSlug)];
+        $currentCategoryId = 'all';
+
+        $categories = ProductCategory::where('is_active', true)
+            ->withCount('products')
+            ->orderBy('name')
+            ->get();
+
+        $query = Product::query();
+        $this->applyKeywordSearch($query, $aliases);
+
+        $items = $query->latest()->paginate(18)->withQueryString();
+        $seoTitle = "Mua tài khoản {$searchTerm} giá tốt - DungThu.com";
+        $seoDescription = "Danh sách sản phẩm {$searchTerm} đang bán tại DungThu.com: tài khoản, gói sử dụng và dịch vụ liên quan, cập nhật theo kho.";
+        $canonical = route('product.keyword', $keywordSlug);
+        $pageHeading = "Sản phẩm {$searchTerm}";
+        $isKeywordLanding = true;
+
+        return view('products.index', compact(
+            'items',
+            'categories',
+            'currentCategoryId',
+            'searchTerm',
+            'seoTitle',
+            'seoDescription',
+            'canonical',
+            'pageHeading',
+            'isKeywordLanding'
+        ));
+    }
+
+    private function applyKeywordSearch($query, array $aliases): void
+    {
+        $query->where(function($q) use ($aliases) {
+            foreach ($aliases as $alias) {
+                $q->orWhere('name', 'LIKE', '%' . $alias . '%');
+
+                $noSpace = str_replace(' ', '', $alias);
+                if ($noSpace !== $alias) {
+                    $q->orWhere('name', 'LIKE', '%' . $noSpace . '%');
+                }
+            }
+        });
+    }
+
+    private function resolveKeywordSlug(string $value): string
+    {
+        $normalized = Str::slug($value);
+        $compact = str_replace('-', '', $normalized);
+
+        foreach (self::SEO_KEYWORDS as $keyword => $config) {
+            if ($normalized === $keyword || str_contains($normalized, $keyword)) {
+                return $keyword;
+            }
+
+            foreach ($config['aliases'] as $alias) {
+                $aliasSlug = Str::slug($alias);
+                $aliasCompact = str_replace('-', '', $aliasSlug);
+
+                if ($aliasSlug && (str_contains($normalized, $aliasSlug) || str_contains($compact, $aliasCompact))) {
+                    return $keyword;
+                }
+            }
+        }
+
+        return $normalized;
+    }
+
+    private function applyLooseSearch($query, string $searchTerm): void
+    {
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('name', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+
+            $noSpace = str_replace(' ', '', $searchTerm);
+            if ($noSpace !== $searchTerm) {
+                $q->orWhere('name', 'LIKE', "%{$noSpace}%")
+                  ->orWhere('description', 'LIKE', "%{$noSpace}%");
+            }
+
+            $tokens = array_filter(explode(' ', trim($searchTerm)));
+            if (count($tokens) > 1) {
+                $q->orWhere(function($sub) use ($tokens) {
+                    foreach ($tokens as $token) {
+                        $sub->where(function($t) use ($token) {
+                            $t->where('name', 'LIKE', "%{$token}%")
+                              ->orWhere('description', 'LIKE', "%{$token}%");
+                        });
+                    }
+                });
+            }
+        });
     }
 
     public function show($slug)

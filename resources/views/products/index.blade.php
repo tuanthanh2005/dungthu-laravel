@@ -461,6 +461,25 @@
             transform: translateY(-1px);
             box-shadow: 0 8px 18px rgba(108, 92, 231, 0.18);
         }
+        .seo-keyword-toggle {
+            display: none;
+            border: none;
+            background: rgba(108, 92, 231, 0.08);
+            color: #5f27cd;
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            margin: 12px auto 0;
+            transition: all 0.2s ease;
+        }
+        .seo-keyword-toggle i {
+            transition: transform 0.2s ease;
+        }
+        .seo-keyword-section.expanded .seo-keyword-toggle i {
+            transform: rotate(180deg);
+        }
         
         /* Custom Pagination */
         .pagination-wrapper {
@@ -675,6 +694,21 @@
                 border-radius: 8px;
                 font-size: 0.9rem;
             }
+            .seo-keyword-section {
+                padding: 14px 16px;
+                border-radius: 16px;
+            }
+            .seo-keyword-links {
+                max-height: 138px;
+                overflow: hidden;
+                transition: max-height 0.25s ease;
+            }
+            .seo-keyword-section.expanded .seo-keyword-links {
+                max-height: 900px;
+            }
+            .seo-keyword-toggle {
+                display: flex;
+            }
         }
 
         /* --- DESKTOP 6-COLUMN RESPONSIVE TWEAKS --- */
@@ -769,6 +803,9 @@
                 </a>
             @endforeach
         </div>
+        <button type="button" class="seo-keyword-toggle" aria-label="Xem thêm sản phẩm" aria-expanded="false">
+            <i class="fas fa-chevron-down"></i>
+        </button>
     </div>
     @endif
 
@@ -894,6 +931,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof AOS !== 'undefined') {
                 AOS.init({ duration: 800, once: true });
+            }
+
+            const keywordSection = document.querySelector('.seo-keyword-section');
+            const keywordToggle = document.querySelector('.seo-keyword-toggle');
+            if (keywordSection && keywordToggle) {
+                keywordToggle.addEventListener('click', function() {
+                    const expanded = keywordSection.classList.toggle('expanded');
+                    keywordToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                    keywordToggle.setAttribute('aria-label', expanded ? 'Thu gọn sản phẩm' : 'Xem thêm sản phẩm');
+                });
             }
         });
     </script>

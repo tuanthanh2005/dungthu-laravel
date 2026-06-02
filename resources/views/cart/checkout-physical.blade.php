@@ -22,7 +22,7 @@
 @endpush
 
 @section('content')
-<div class="container py-5" style="margin-top: 80px;">
+<div class="container py-2" style="margin-top: 80px;">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="text-center mb-4">

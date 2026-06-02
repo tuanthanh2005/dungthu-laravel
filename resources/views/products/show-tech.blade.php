@@ -247,7 +247,7 @@
 
 @section('content')
 <div class="tech-wrapper">
-    <div class="container py-5" style="margin-top: 50px;">
+    <div class="container py-2" style="margin-top: 50px;">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down">
             <ol class="breadcrumb bg-transparent">

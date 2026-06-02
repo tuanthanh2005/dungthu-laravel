@@ -3,7 +3,7 @@
 @section('title', 'Thanh Toán - DungThu.com')
 
 @section('content')
-<div class="container py-5">
+<div class="container py-2">
     <h1 class="mb-4 fw-bold text-center">Thanh Toán</h1>
     
     <div class="row">

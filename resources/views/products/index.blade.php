@@ -185,8 +185,8 @@
         .category-section {
             background: #fff;
             border-radius: 24px;
-            padding: 2.5rem;
-            margin-bottom: 2.5rem;
+            padding: 0.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: 0 10px 40px rgba(0,0,0,0.03);
             border: 1px solid rgba(0,0,0,0.02);
         }

@@ -433,42 +433,62 @@ function generateVoucher() {
         }
     }
     
-    // AJAX request
-    fetch('{{ route('admin.coupons.generate') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ value: value })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw err; });
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Display result
-        document.getElementById('generated-voucher-code').textContent = data.coupon.code;
-        document.getElementById('generated-voucher-value').textContent = data.coupon.formatted_value;
-        document.getElementById('voucher-result-container').classList.remove('d-none');
-        
-        Swal.fire({
-            icon: 'success',
-            title: 'Đã tạo xong!',
-            text: 'Mã voucher mới: ' + data.coupon.code,
-            timer: 2000,
-            showConfirmButton: false
+    const doFetch = (pinVal = null) => {
+        const bodyObj = { value: value };
+        if (pinVal) bodyObj.admin_pin = pinVal;
+
+        // AJAX request
+        fetch('{{ route('admin.coupons.generate') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(bodyObj)
+        })
+        .then(async response => {
+            if (response.status === 403) {
+                const err = await response.json();
+                const pin = window.prompt(err.message || 'Nhập mã xác nhận (3 số) để tiếp tục:');
+                if (pin !== null) {
+                    doFetch(pin);
+                }
+                return;
+            }
+            if (!response.ok) {
+                const err = await response.json();
+                throw err;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return; // handled in 403
+            // Display result
+            document.getElementById('generated-voucher-code').textContent = data.coupon.code;
+            document.getElementById('generated-voucher-value').textContent = data.coupon.formatted_value;
+            document.getElementById('voucher-result-container').classList.remove('d-none');
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã tạo xong!',
+                text: 'Mã voucher mới: ' + data.coupon.code,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        })
+        .catch(err => {
+            if (err && err.message !== 'Bị hủy') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: err.message || 'Có lỗi xảy ra khi tạo voucher!'
+                });
+            }
         });
-    })
-    .catch(err => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: err.message || 'Có lỗi xảy ra khi tạo voucher!'
-        });
-    });
+    };
+
+    doFetch();
 }
 
 function copyGeneratedVoucher() {
@@ -507,39 +527,59 @@ function awardTickets(userId, userName, currentTickets) {
         if (result.isConfirmed) {
             const ticketChange = parseInt(result.value);
             
-            // Send AJAX post to award tickets
-            fetch(`{{ route('admin.users.award-tickets', ':userId') }}`.replace(':userId', userId), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ tickets: ticketChange })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw err; });
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Update tickets on UI
-                document.getElementById(`tickets-count-${userId}`).textContent = data.spin_tickets;
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    text: data.message,
-                    timer: 2000,
-                    showConfirmButton: false
+            const doFetch = (pinVal = null) => {
+                const bodyObj = { tickets: ticketChange };
+                if (pinVal) bodyObj.admin_pin = pinVal;
+
+                // Send AJAX post to award tickets
+                fetch(`{{ route('admin.users.award-tickets', ':userId') }}`.replace(':userId', userId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(bodyObj)
+                })
+                .then(async response => {
+                    if (response.status === 403) {
+                        const err = await response.json();
+                        const pin = window.prompt(err.message || 'Nhập mã xác nhận (3 số) để tiếp tục:');
+                        if (pin !== null) {
+                            doFetch(pin);
+                        }
+                        return;
+                    }
+                    if (!response.ok) {
+                        const err = await response.json();
+                        throw err;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data) return; // handled in 403
+                    // Update tickets on UI
+                    document.getElementById(`tickets-count-${userId}`).textContent = data.spin_tickets;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                })
+                .catch(err => {
+                    if (err && err.message !== 'Bị hủy') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: err.message || 'Có lỗi xảy ra, vui lòng thử lại sau!'
+                        });
+                    }
                 });
-            })
-            .catch(err => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi',
-                    text: err.message || 'Có lỗi xảy ra, vui lòng thử lại sau!'
-                });
-            });
+            };
+
+            doFetch();
         }
     });
 }
@@ -560,47 +600,70 @@ function updateUserRole(selectElement) {
     const originalHTML = selectElement.innerHTML;
 
     // Add loading spinner
-    const originalValue = selectElement.value;
     selectElement.innerHTML = '<option>Đang cập nhật...</option>';
 
-    // Send AJAX request
-    fetch(`{{ route('admin.users.update-role', ':userId') }}`.replace(':userId', userId), {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-        },
-        body: JSON.stringify({ role: newRole })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-    })
-    .then(data => {
-        // Update the data attribute
-        selectElement.dataset.currentRole = newRole;
+    const doFetch = (pinVal = null) => {
+        const bodyObj = { role: newRole };
+        if (pinVal) bodyObj.admin_pin = pinVal;
 
-        // Show success message
-        showNotification(data.message, 'success');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Revert the selection
-        selectElement.value = currentRole;
-        selectElement.innerHTML = originalHTML;
-        
-        let errorMessage = 'Không thể cập nhật quyền. Vui lòng thử lại!';
-        if (error.message.includes('403')) {
-            errorMessage = 'Không thể thay đổi quyền của chính mình!';
-        }
-        showNotification(errorMessage, 'error');
-    })
-    .finally(() => {
-        // Remove loading state
-        selectElement.disabled = false;
-        selectElement.classList.remove('role-update-loading');
-        selectElement.innerHTML = originalHTML;
-    });
+        // Send AJAX request
+        fetch(`{{ route('admin.users.update-role', ':userId') }}`.replace(':userId', userId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
+            body: JSON.stringify(bodyObj)
+        })
+        .then(async response => {
+            if (response.status === 403) {
+                const err = await response.json();
+                const pin = window.prompt(err.message || 'Nhập mã xác nhận (3 số) để tiếp tục:');
+                if (pin !== null) {
+                    doFetch(pin);
+                } else {
+                    // Revert selection
+                    selectElement.value = currentRole;
+                    selectElement.innerHTML = originalHTML;
+                    selectElement.disabled = false;
+                    selectElement.classList.remove('role-update-loading');
+                }
+                return;
+            }
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return; // handled in 403
+            // Update the data attribute
+            selectElement.dataset.currentRole = newRole;
+
+            // Show success message
+            showNotification(data.message, 'success');
+            
+            // Remove loading state
+            selectElement.disabled = false;
+            selectElement.classList.remove('role-update-loading');
+            selectElement.innerHTML = originalHTML;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Revert the selection
+            selectElement.value = currentRole;
+            selectElement.innerHTML = originalHTML;
+            selectElement.disabled = false;
+            selectElement.classList.remove('role-update-loading');
+            
+            let errorMessage = 'Không thể cập nhật quyền. Vui lòng thử lại!';
+            if (error.message && error.message.includes('403')) {
+                errorMessage = 'Không thể thay đổi quyền của chính mình!';
+            }
+            showNotification(errorMessage, 'error');
+        });
+    };
+
+    doFetch();
 }
 
 function showNotification(message, type = 'info') {

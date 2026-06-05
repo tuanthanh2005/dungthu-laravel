@@ -290,10 +290,20 @@
                         <i class="fas fa-users text-primary me-2"></i>Quản Lý Người Dùng
                     </h3>
                     
-                    <form action="{{ route('admin.users') }}" method="GET" class="compact-search-form">
-                        <i class="fas fa-search compact-search-icon"></i>
-                        <input type="text" name="search" class="compact-search-input" placeholder="Tìm tên hoặc email..." value="{{ request('search') }}">
-                        <button type="submit" class="d-none"></button>
+                    <form action="{{ route('admin.users') }}" method="GET" class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="compact-search-form">
+                            <i class="fas fa-search compact-search-icon"></i>
+                            <input type="text" name="search" class="compact-search-input" placeholder="Tìm tên hoặc email..." value="{{ request('search') }}">
+                        </div>
+                        
+                        <div>
+                            <select name="sort" class="form-select rounded-pill px-3" style="border: 1px solid #cbd5e0; min-width: 180px; font-size: 0.9rem; font-weight: 500; cursor: pointer; color: #4a5568; background-color: #fff; height: 38px;" onchange="this.form.submit()">
+                                <option value="newest" {{ request('sort') === 'newest' || !request('sort') ? 'selected' : '' }}>Mới nhất (Mới -> Cũ)</option>
+                                <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Cũ nhất (Cũ -> Mới)</option>
+                                <option value="most_orders" {{ request('sort') === 'most_orders' ? 'selected' : '' }}>Nhiều đơn hàng nhất</option>
+                                <option value="most_spent" {{ request('sort') === 'most_spent' ? 'selected' : '' }}>Tổng chi tiêu nhiều nhất</option>
+                            </select>
+                        </div>
                     </form>
                 </div>
                 <div class="stats-mini">

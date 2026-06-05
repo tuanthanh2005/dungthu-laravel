@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Coupon;
 use App\Models\Product;
 
+use App\Models\Order;
+
 class ExampleTest extends TestCase
 {
     use RefreshDatabase;
@@ -115,5 +117,106 @@ class ExampleTest extends TestCase
         $coupon->refresh();
         $this->assertTrue((bool)$coupon->is_used);
         $this->assertEquals($user->id, $coupon->user_id);
+    }
+
+    /**
+     * Test admin user management sorting options.
+     */
+    public function test_admin_user_sorting_options(): void
+    {
+        // Create admin
+        $admin = User::factory()->create([
+            'role' => 'admin'
+        ]);
+
+        // Create 3 users with different registration dates
+        $user1 = User::factory()->create([
+            'role' => 'user',
+            'name' => 'User One',
+            'created_at' => now()->subDays(5)
+        ]);
+
+        $user2 = User::factory()->create([
+            'role' => 'user',
+            'name' => 'User Two',
+            'created_at' => now()->subDays(2)
+        ]);
+
+        $user3 = User::factory()->create([
+            'role' => 'user',
+            'name' => 'User Three',
+            'created_at' => now()->subDays(10)
+        ]);
+
+        // Create orders to test orders sorting and spent sorting
+        // User1 has 2 orders, total = 30000
+        Order::create([
+            'user_id' => $user1->id,
+            'customer_name' => $user1->name,
+            'customer_email' => $user1->email,
+            'customer_phone' => '123',
+            'customer_address' => 'Addr',
+            'total_amount' => 10000.00
+        ]);
+        Order::create([
+            'user_id' => $user1->id,
+            'customer_name' => $user1->name,
+            'customer_email' => $user1->email,
+            'customer_phone' => '123',
+            'customer_address' => 'Addr',
+            'total_amount' => 20000.00
+        ]);
+
+        // User2 has 1 order, total = 50000
+        Order::create([
+            'user_id' => $user2->id,
+            'customer_name' => $user2->name,
+            'customer_email' => $user2->email,
+            'customer_phone' => '123',
+            'customer_address' => 'Addr',
+            'total_amount' => 50000.00
+        ]);
+
+        // User3 has 0 orders, total = 0
+
+        // 1. Test Sort: newest (Default) -> user2, user1, user3
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.users'));
+        $response->assertStatus(200);
+        $users = $response->viewData('users');
+        $this->assertEquals($user2->id, $users[0]->id);
+        $this->assertEquals($user1->id, $users[1]->id);
+        $this->assertEquals($user3->id, $users[2]->id);
+
+        // 2. Test Sort: oldest -> user3, user1, user2
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.users', ['sort' => 'oldest']));
+        $response->assertStatus(200);
+        $users = $response->viewData('users');
+        $this->assertEquals($user3->id, $users[0]->id);
+        $this->assertEquals($user1->id, $users[1]->id);
+        $this->assertEquals($user2->id, $users[2]->id);
+
+        // 3. Test Sort: most_orders -> user1 (2 orders), user2 (1 order), user3 (0 orders)
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.users', ['sort' => 'most_orders']));
+        $response->assertStatus(200);
+        $users = $response->viewData('users');
+        $this->assertEquals($user1->id, $users[0]->id);
+        $this->assertEquals($user2->id, $users[1]->id);
+        $this->assertEquals($user3->id, $users[2]->id);
+
+        // 4. Test Sort: most_spent -> user2 (50000 spent), user1 (30000 spent), user3 (0 spent)
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.users', ['sort' => 'most_spent']));
+        $response->assertStatus(200);
+        $users = $response->viewData('users');
+        $this->assertEquals($user2->id, $users[0]->id);
+        $this->assertEquals($user1->id, $users[1]->id);
+        $this->assertEquals($user3->id, $users[2]->id);
     }
 }

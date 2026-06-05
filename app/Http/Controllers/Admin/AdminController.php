@@ -174,9 +174,24 @@ class AdminController extends Controller
             });
         }
         
-        $users = $query->orderBy('created_at', 'desc')
-            ->paginate(10)
-            ->appends($request->query());
+        $sort = $request->input('sort', 'newest');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'most_orders':
+                $query->orderBy('orders_count', 'desc')->orderBy('created_at', 'desc');
+                break;
+            case 'most_spent':
+                $query->orderBy('orders_sum_total_amount', 'desc')->orderBy('created_at', 'desc');
+                break;
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+        $users = $query->paginate(10)->appends($request->query());
         
         return view('admin.users.index', compact('users'));
     }

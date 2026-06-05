@@ -151,10 +151,27 @@
                             </ul>
                             
                             <div class="border-top pt-3">
+                                <!-- Mã giảm giá -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold mb-2 small text-muted">Mã giảm giá (nếu có)</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" id="coupon_code" class="form-control" placeholder="Nhập mã giảm giá" value="{{ $couponCode ?? '' }}" {{ isset($couponCode) ? 'disabled' : '' }}>
+                                        <button class="btn btn-primary" type="button" id="apply-coupon-btn" style="{{ isset($couponCode) ? 'display:none;' : '' }}">Áp dụng</button>
+                                        <button class="btn btn-danger" type="button" id="remove-coupon-btn" style="{{ isset($couponCode) ? '' : 'display:none;' }}">Hủy</button>
+                                    </div>
+                                    <div id="coupon-feedback" class="small mt-1 d-none text-danger"></div>
+                                </div>
+
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Tạm tính:</span>
                                     <span>{{ number_format($total, 0, ',', '.') }}đ</span>
                                 </div>
+                                
+                                <div class="d-flex justify-content-between mb-2 {{ isset($discountAmount) && $discountAmount > 0 ? '' : 'd-none' }}" id="discount-row">
+                                    <span class="text-danger fw-bold">Giảm giá:</span>
+                                    <strong class="text-danger" id="discount-display">-{{ number_format($discountAmount ?? 0, 0, ',', '.') }}đ</strong>
+                                </div>
+
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Phí vận chuyển:</span>
                                     <span class="text-success fw-bold">Miễn phí</span>
@@ -162,7 +179,7 @@
                                 <hr>
                                 <div class="d-flex justify-content-between mb-3">
                                     <h5 class="mb-0">Tổng cộng:</h5>
-                                    <h5 class="mb-0 text-primary">{{ number_format($total, 0, ',', '.') }}đ</h5>
+                                    <h5 class="mb-0 text-primary" id="checkout-total-display">{{ number_format($finalTotal ?? $total, 0, ',', '.') }}đ</h5>
                                 </div>
                             </div>
                             
@@ -184,3 +201,104 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Coupon Code logic
+    const applyBtn = document.getElementById('apply-coupon-btn');
+    const removeBtn = document.getElementById('remove-coupon-btn');
+    const couponInput = document.getElementById('coupon_code');
+    const feedbackEl = document.getElementById('coupon-feedback');
+    const discountRow = document.getElementById('discount-row');
+    const discountDisplay = document.getElementById('discount-display');
+    const totalDisplay = document.getElementById('checkout-total-display');
+
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function() {
+            const code = couponInput.value.trim();
+            if (!code) {
+                showFeedback('Vui lòng nhập mã giảm giá!', 'text-danger');
+                return;
+            }
+
+            applyBtn.disabled = true;
+            applyBtn.textContent = '...';
+
+            fetch('{{ route('coupons.apply') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(err => { throw err; });
+                }
+                return res.json();
+            })
+            .then(data => {
+                showFeedback(data.message, 'text-success');
+                couponInput.disabled = true;
+                applyBtn.style.display = 'none';
+                removeBtn.style.display = 'inline-block';
+                
+                // Update pricing row
+                discountDisplay.textContent = '-' + formatNumber(data.discount_amount) + 'đ';
+                discountRow.classList.remove('d-none');
+                totalDisplay.textContent = formatNumber(data.final_total) + 'đ';
+            })
+            .catch(err => {
+                showFeedback(err.message || 'Mã giảm giá không hợp lệ!', 'text-danger');
+            })
+            .finally(() => {
+                applyBtn.disabled = false;
+                applyBtn.textContent = 'Áp dụng';
+            });
+        });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            removeBtn.disabled = true;
+            
+            fetch('{{ route('coupons.remove') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                showFeedback(data.message, 'text-muted');
+                couponInput.disabled = false;
+                couponInput.value = '';
+                applyBtn.style.display = 'inline-block';
+                removeBtn.style.display = 'none';
+                
+                // Reset pricing row
+                discountRow.classList.add('d-none');
+                totalDisplay.textContent = formatNumber(data.final_total) + 'đ';
+            })
+            .catch(err => {
+                console.error(err);
+            })
+            .finally(() => {
+                removeBtn.disabled = false;
+            });
+        });
+    }
+
+    function showFeedback(msg, className) {
+        feedbackEl.textContent = msg;
+        feedbackEl.className = 'small mt-1 ' + className;
+        feedbackEl.classList.remove('d-none');
+    }
+
+    function formatNumber(num) {
+        return num.toLocaleString('vi-VN');
+    }
+</script>
+@endpush

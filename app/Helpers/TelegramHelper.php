@@ -107,6 +107,9 @@ class TelegramHelper
 
         // Tổng tiền
         $message .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+        if (isset($order->discount_amount) && $order->discount_amount > 0) {
+            $message .= "• Giảm giá: <b>-" . number_format($order->discount_amount, 0, ',', '.') . "đ</b> (" . $order->coupon_code . ")\n";
+        }
         $message .= "💰 <b>TỔNG TIỀN: " . number_format($order->total_amount, 0, ',', '.') . "đ</b>\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
 

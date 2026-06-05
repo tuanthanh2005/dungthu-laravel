@@ -410,6 +410,9 @@ class AdminController extends Controller
         // Thông tin đơn hàng
         $message .= "📦 <b>THÔNG TIN ĐƠN HÀNG</b>\n";
         $message .= "• Mã đơn: <b>#" . $order->id . "</b>\n";
+        if (isset($order->discount_amount) && $order->discount_amount > 0) {
+            $message .= "• Giảm giá: <b>-" . number_format($order->discount_amount, 0, ',', '.') . "đ</b> (" . $order->coupon_code . ")\n";
+        }
         $message .= "• Tổng tiền: <b>" . number_format((float)$order->total_amount, 0, ',', '.') . "đ</b>\n";
         $message .= "• Thời gian: <b>" . $order->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') . "</b>\n\n";
 
@@ -1343,6 +1346,7 @@ class AdminController extends Controller
             'menu_buff',
             'menu_community',
             'menu_chat',
+            'menu_minigame',
             'adsense_enabled',
         ];
 

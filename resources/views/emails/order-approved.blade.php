@@ -289,6 +289,12 @@
                     <span class="badge-completed">✅ Đã duyệt</span>
                 </span>
             </div>
+            @if(isset($order->discount_amount) && $order->discount_amount > 0)
+            <div class="info-row">
+                <span class="info-label">Giảm giá ({{ $order->coupon_code }})</span>
+                <span class="info-value text-danger" style="color: #dc3545; font-weight: bold;">-{{ number_format($order->discount_amount, 0, ',', '.') }}đ</span>
+            </div>
+            @endif
             <div class="info-row">
                 <span class="info-label">Tổng tiền</span>
                 <span class="info-value amount">{{ number_format($order->total_amount, 0, ',', '.') }}đ</span>

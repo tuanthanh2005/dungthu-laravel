@@ -324,6 +324,13 @@
                             'color'  => 'linear-gradient(135deg,#6366f1,#a855f7)',
                             'where'  => 'both',
                         ],
+                        'menu_minigame' => [
+                            'label'  => 'Mini Game',
+                            'desc'   => 'Menu Mini Game (Vòng xoay may mắn)',
+                            'icon'   => 'fa-gamepad',
+                            'color'  => 'linear-gradient(135deg,#e11d48,#be123c)',
+                            'where'  => 'both',
+                        ],
                         'adsense_enabled' => [
                             'label'  => 'Google AdSense',
                             'desc'   => 'Bật/tắt toàn bộ ô quảng cáo Google AdSense',

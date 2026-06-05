@@ -15,11 +15,40 @@ class Order extends Model
         'total_amount',
         'status',
         'order_type',
+        'coupon_code',
+        'discount_amount',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // When order is completed on creation (if status is completed)
+        static::created(function ($order) {
+            if ($order->status === 'completed') {
+                if ($order->user_id) {
+                    $order->user()->increment('spin_tickets');
+                }
+            }
+        });
+
+        // When order status is updated to completed
+        static::updated(function ($order) {
+            if ($order->isDirty('status') && $order->status === 'completed' && $order->getOriginal('status') !== 'completed') {
+                if ($order->user_id) {
+                    $order->user()->increment('spin_tickets');
+                }
+            }
+        });
+    }
 
     // Relationship với User
     public function user()
@@ -31,6 +60,12 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    // Relationship với Coupon
+    public function coupon()
+    {
+        return $this->hasOne(Coupon::class);
     }
 
     // Tự động xác định loại đơn hàng dựa trên sản phẩm

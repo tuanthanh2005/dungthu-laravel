@@ -145,16 +145,40 @@ class CartController extends Controller
             }
         }
         
+        // Calculate total amount
+        $total = 0;
+        foreach($cart as $id => $details) {
+            $total += $details['price'] * $details['quantity'];
+        }
+
+        // Apply coupon if exists in session
+        $discountAmount = 0;
+        $couponCode = null;
+        if (session()->has('applied_coupon')) {
+            $couponId = session('applied_coupon');
+            $coupon = \App\Models\Coupon::where('id', $couponId)
+                ->where('user_id', auth()->id())
+                ->where('is_used', false)
+                ->first();
+            if ($coupon) {
+                $discountAmount = (float) $coupon->value;
+                $couponCode = $coupon->code;
+            } else {
+                session()->forget('applied_coupon');
+            }
+        }
+        $finalTotal = max(0, $total - $discountAmount);
+        
         // Chọn view thanh toán phù hợp
         if($hasDigital && $hasPhysical) {
             // Có cả 2 loại
-            return view('cart.checkout-mixed', compact('cart', 'isNewUser'));
+            return view('cart.checkout-mixed', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal'));
         } elseif($hasDigital) {
             // Chỉ sản phẩm số/dịch vụ - thanh toán QR
-            return view('cart.checkout-digital', compact('cart', 'isNewUser'));
+            return view('cart.checkout-digital', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal'));
         } else {
             // Chỉ sản phẩm vật lý - cần địa chỉ giao hàng
-            return view('cart.checkout-physical', compact('cart', 'isNewUser'));
+            return view('cart.checkout-physical', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal'));
         }
     }
 
@@ -211,14 +235,30 @@ class CartController extends Controller
 
         DB::beginTransaction();
         try {
+            // Apply coupon discount if applicable
+            $discountAmount = 0;
+            $coupon = null;
+            if (session()->has('applied_coupon')) {
+                $coupon = \App\Models\Coupon::where('id', session('applied_coupon'))
+                    ->where('user_id', auth()->id())
+                    ->where('is_used', false)
+                    ->first();
+                if ($coupon) {
+                    $discountAmount = (float) $coupon->value;
+                }
+            }
+            $finalTotal = max(0, $totalAmount - $discountAmount);
+
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'customer_name' => $request->customer_name,
                 'customer_email' => $request->customer_email,
                 'customer_phone' => $request->customer_phone,
                 'customer_address' => $customerAddress,
-                'total_amount' => $totalAmount,
+                'total_amount' => $finalTotal,
                 'status' => $orderStatus,
+                'coupon_code' => $coupon ? $coupon->code : null,
+                'discount_amount' => $discountAmount,
             ]);
 
             foreach($cart as $id => $details) {
@@ -234,6 +274,16 @@ class CartController extends Controller
                 if ($product && $product->stock >= $details['quantity']) {
                     $product->decrement('stock', $details['quantity']);
                 }
+            }
+
+            // Mark coupon as used
+            if ($coupon) {
+                $coupon->update([
+                    'is_used' => true,
+                    'used_at' => now(),
+                    'order_id' => $order->id,
+                ]);
+                session()->forget('applied_coupon');
             }
 
             DB::commit();
@@ -372,6 +422,73 @@ class CartController extends Controller
         }
 
         AbandonedCart::where('user_id', auth()->id())->delete();
+    }
+
+    /**
+     * Apply coupon code in session.
+     */
+    public function applyCoupon(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $code = trim($request->code);
+
+        $coupon = \App\Models\Coupon::where('code', $code)
+            ->where('user_id', auth()->id())
+            ->where('is_used', false)
+            ->first();
+
+        if (!$coupon) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã giảm giá không hợp lệ hoặc đã được sử dụng!'
+            ], 422);
+        }
+
+        // Calculate current total
+        $cart = session()->get('cart', []);
+        $total = 0;
+        foreach($cart as $id => $details) {
+            $total += $details['price'] * $details['quantity'];
+        }
+
+        // Put in session
+        session()->put('applied_coupon', $coupon->id);
+
+        $discountAmount = (float) $coupon->value;
+        $finalTotal = max(0, $total - $discountAmount);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Áp dụng mã giảm giá thành công!',
+            'coupon_code' => $coupon->code,
+            'discount_amount' => $discountAmount,
+            'total' => $total,
+            'final_total' => $finalTotal,
+        ]);
+    }
+
+    /**
+     * Remove coupon code from session.
+     */
+    public function removeCoupon()
+    {
+        session()->forget('applied_coupon');
+
+        $cart = session()->get('cart', []);
+        $total = 0;
+        foreach($cart as $id => $details) {
+            $total += $details['price'] * $details['quantity'];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã hủy áp dụng mã giảm giá!',
+            'total' => $total,
+            'final_total' => $total,
+        ]);
     }
 }
 

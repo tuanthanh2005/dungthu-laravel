@@ -127,6 +127,14 @@ Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.r
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
     Route::post('/checkout/place', [CartController::class, 'placeOrder'])->name('checkout.place');
+    
+    // Mini Game routes
+    Route::get('/minigame', [\App\Http\Controllers\MiniGameController::class, 'index'])->name('minigame.index');
+    Route::post('/minigame/spin', [\App\Http\Controllers\MiniGameController::class, 'spin'])->name('minigame.spin');
+    
+    // Coupon routes
+    Route::post('/api/coupons/apply', [CartController::class, 'applyCoupon'])->name('coupons.apply');
+    Route::post('/api/coupons/remove', [CartController::class, 'removeCoupon'])->name('coupons.remove');
 });
 
 // User Account routes (requires auth)

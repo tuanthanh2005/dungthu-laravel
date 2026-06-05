@@ -25,6 +25,7 @@ class User extends Authenticatable
         'role',
         'phone',
         'address',
+        'spin_tickets',
     ];
 
     /**
@@ -54,6 +55,12 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    // Relationship with coupons
+    public function coupons()
+    {
+        return $this->hasMany(Coupon::class);
     }
 
     /**

@@ -200,11 +200,7 @@
                         <i class="fas fa-bolt me-2"></i>Flash Sale
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.tiktok-deals.index') }}">
-                        <i class="fab fa-tiktok me-2"></i>Săn Sale TikTok
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.orders') }}">
                         <i class="fas fa-shopping-cart me-2"></i>Đơn hàng

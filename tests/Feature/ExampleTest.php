@@ -12,6 +12,23 @@ class ExampleTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function refreshApplication()
+    {
+        parent::refreshApplication();
+
+        \Illuminate\Support\Facades\Schema::create('products', function ($table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->string('image')->nullable();
+            $table->string('category');
+            $table->integer('stock')->default(0);
+            $table->timestamps();
+        });
+    }
+
     /**
      * A basic test example.
      */

@@ -157,7 +157,10 @@ class CartController extends Controller
         if (session()->has('applied_coupon')) {
             $couponId = session('applied_coupon');
             $coupon = \App\Models\Coupon::where('id', $couponId)
-                ->where('user_id', auth()->id())
+                ->where(function($query) {
+                    $query->where('user_id', auth()->id())
+                          ->orWhereNull('user_id');
+                })
                 ->where('is_used', false)
                 ->first();
             if ($coupon) {
@@ -240,7 +243,10 @@ class CartController extends Controller
             $coupon = null;
             if (session()->has('applied_coupon')) {
                 $coupon = \App\Models\Coupon::where('id', session('applied_coupon'))
-                    ->where('user_id', auth()->id())
+                    ->where(function($query) {
+                        $query->where('user_id', auth()->id())
+                              ->orWhereNull('user_id');
+                    })
                     ->where('is_used', false)
                     ->first();
                 if ($coupon) {
@@ -279,6 +285,7 @@ class CartController extends Controller
             // Mark coupon as used
             if ($coupon) {
                 $coupon->update([
+                    'user_id' => auth()->id(),
                     'is_used' => true,
                     'used_at' => now(),
                     'order_id' => $order->id,
@@ -436,7 +443,10 @@ class CartController extends Controller
         $code = trim($request->code);
 
         $coupon = \App\Models\Coupon::where('code', $code)
-            ->where('user_id', auth()->id())
+            ->where(function($query) {
+                $query->where('user_id', auth()->id())
+                      ->orWhereNull('user_id');
+            })
             ->where('is_used', false)
             ->first();
 

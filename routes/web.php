@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\TiktokDealController;
+// use App\Http\Controllers\Admin\TiktokDealController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CardExchangeController;
 use App\Http\Controllers\SitemapController;
@@ -189,6 +189,8 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/users/{user}/history', [AdminController::class, 'userHistory'])->name('admin.users.history');
     Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
+    Route::post('/users/{user}/award-tickets', [AdminController::class, 'awardSpinTickets'])->name('admin.users.award-tickets');
+    Route::post('/coupons/generate', [AdminController::class, 'generateCoupon'])->name('admin.coupons.generate');
     
     // Product Management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');
@@ -234,13 +236,13 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/google-indexing/status', [GoogleIndexingController::class, 'status'])->name('admin.google-indexing.status');
     
     // Tiktok Deals Management
-    Route::get('/tiktok-deals', [TiktokDealController::class, 'index'])->name('admin.tiktok-deals.index');
-    Route::get('/tiktok-deals/create', [TiktokDealController::class, 'create'])->name('admin.tiktok-deals.create');
-    Route::post('/tiktok-deals', [TiktokDealController::class, 'store'])->name('admin.tiktok-deals.store');
-    Route::get('/tiktok-deals/{tiktokDeal}/edit', [TiktokDealController::class, 'edit'])->name('admin.tiktok-deals.edit');
-    Route::put('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'update'])->name('admin.tiktok-deals.update');
-    Route::delete('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'destroy'])->name('admin.tiktok-deals.destroy');
-    Route::post('/tiktok-deals/{tiktokDeal}/toggle', [TiktokDealController::class, 'toggleActive'])->name('admin.tiktok-deals.toggle');
+    // Route::get('/tiktok-deals', [TiktokDealController::class, 'index'])->name('admin.tiktok-deals.index');
+    // Route::get('/tiktok-deals/create', [TiktokDealController::class, 'create'])->name('admin.tiktok-deals.create');
+    // Route::post('/tiktok-deals', [TiktokDealController::class, 'store'])->name('admin.tiktok-deals.store');
+    // Route::get('/tiktok-deals/{tiktokDeal}/edit', [TiktokDealController::class, 'edit'])->name('admin.tiktok-deals.edit');
+    // Route::put('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'update'])->name('admin.tiktok-deals.update');
+    // Route::delete('/tiktok-deals/{tiktokDeal}', [TiktokDealController::class, 'destroy'])->name('admin.tiktok-deals.destroy');
+    // Route::post('/tiktok-deals/{tiktokDeal}/toggle', [TiktokDealController::class, 'toggleActive'])->name('admin.tiktok-deals.toggle');
 
     // Buff Management
     Route::get('/buff-dashboard', [AdminBuffController::class, 'dashboard'])->name('admin.buff.dashboard');

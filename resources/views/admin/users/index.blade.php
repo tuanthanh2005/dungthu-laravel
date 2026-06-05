@@ -235,6 +235,53 @@
             </ul>
         </div>
 
+        <!-- Voucher Generator Card -->
+        <div class="admin-card mb-4">
+            <h4 class="fw-bold mb-4">
+                <i class="fas fa-ticket-alt text-warning me-2"></i>Tạo mã Voucher nhanh
+            </h4>
+            
+            <div class="row align-items-end g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small text-muted">Chọn mệnh giá</label>
+                    <select id="voucher-preset-select" class="form-select rounded-3" onchange="toggleCustomVoucherInput(this)">
+                        <option value="2000">2.000đ</option>
+                        <option value="5000">5.000đ</option>
+                        <option value="10000" selected>10.000đ</option>
+                        <option value="15000">15.000đ</option>
+                        <option value="25000">25.000đ</option>
+                        <option value="50000">50.000đ</option>
+                        <option value="custom">Tùy chọn khác...</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4" id="custom-voucher-value-container" style="display: none;">
+                    <label class="form-label fw-bold small text-muted">Nhập số tiền giảm (VNĐ)</label>
+                    <input type="number" id="voucher-custom-value" class="form-control rounded-3" placeholder="Ví dụ: 100000" min="1000">
+                </div>
+                
+                <div class="col-md-4">
+                    <button type="button" class="view-btn w-100 py-2 rounded-3 text-center" onclick="generateVoucher()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-magic me-2"></i>Tạo mã Voucher
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Result display -->
+            <div id="voucher-result-container" class="mt-4 p-3 bg-light rounded-3 d-none">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <span class="text-muted small d-block">Mã Voucher vừa tạo:</span>
+                        <strong class="fs-4 text-danger font-monospace" id="generated-voucher-code">ADMIN10K-XXXXXX</strong>
+                        <span class="badge bg-success ms-2" id="generated-voucher-value">10.000đ</span>
+                    </div>
+                    <button class="view-btn py-2 px-4" onclick="copyGeneratedVoucher()" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-copy me-1"></i> Sao chép mã
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- User Management Card -->
         <div class="admin-card">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
@@ -263,14 +310,15 @@
                         <thead>
                             <tr>
                                 <th style="width: 5%">#</th>
-                                <th style="width: 20%">Họ tên</th>
-                                <th style="width: 20%">Email</th>
-                                <th style="width: 12%">Số ĐT</th>
-                                <th style="width: 10%" class="text-center">Số đơn</th>
-                                <th style="width: 13%" class="text-end">Tổng chi tiêu</th>
+                                <th style="width: 18%">Họ tên</th>
+                                <th style="width: 18%">Email</th>
+                                <th style="width: 10%">Số ĐT</th>
+                                <th style="width: 8%" class="text-center">Số đơn</th>
+                                <th style="width: 10%" class="text-center">Lượt quay</th>
+                                <th style="width: 12%" class="text-end">Tổng chi tiêu</th>
                                 <th style="width: 10%">Ngày đăng ký</th>
-                                <th style="width: 10%" class="text-center">Quyền</th>
-                                <th style="width: 8%" class="text-center">Thao tác</th>
+                                <th style="width: 8%" class="text-center">Quyền</th>
+                                <th style="width: 11%" class="text-center">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -288,6 +336,11 @@
                                     <td class="text-center">
                                         <span class="badge-orders">
                                             <i class="fas fa-shopping-cart me-1"></i>{{ $user->orders_count }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary text-white px-2 py-1" id="tickets-count-{{ $user->id }}">
+                                            {{ $user->spin_tickets }}
                                         </span>
                                     </td>
                                     <td class="text-end">
@@ -312,7 +365,10 @@
                                         </select>
                                     </td>
                                     <td class="text-center">
-                                        <a href="{{ route('admin.users.history', $user->id) }}" class="view-btn" title="Xem lịch sử mua hàng">
+                                        <button onclick="awardTickets({{ $user->id }}, '{{ $user->name }}', {{ $user->spin_tickets }})" class="view-btn me-1" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 6px 12px; font-size: 0.85rem;" title="Cấp lượt quay">
+                                            <i class="fas fa-ticket-alt"></i>
+                                        </button>
+                                        <a href="{{ route('admin.users.history', $user->id) }}" class="view-btn" style="padding: 6px 12px; font-size: 0.85rem;" title="Xem lịch sử mua hàng">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -337,7 +393,147 @@
 </div>
 
 @push('scripts')
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+function toggleCustomVoucherInput(select) {
+    const container = document.getElementById('custom-voucher-value-container');
+    if (select.value === 'custom') {
+        container.style.display = 'block';
+    } else {
+        container.style.display = 'none';
+    }
+}
+
+function generateVoucher() {
+    const select = document.getElementById('voucher-preset-select');
+    let value = select.value;
+    
+    if (value === 'custom') {
+        const customInput = document.getElementById('voucher-custom-value');
+        value = customInput.value;
+        if (!value || isNaN(value) || parseInt(value) < 1000) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Vui lòng nhập mệnh giá hợp lệ (tối thiểu 1.000đ)!'
+            });
+            return;
+        }
+    }
+    
+    // AJAX request
+    fetch('{{ route('admin.coupons.generate') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ value: value })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Display result
+        document.getElementById('generated-voucher-code').textContent = data.coupon.code;
+        document.getElementById('generated-voucher-value').textContent = data.coupon.formatted_value;
+        document.getElementById('voucher-result-container').classList.remove('d-none');
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'Đã tạo xong!',
+            text: 'Mã voucher mới: ' + data.coupon.code,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    })
+    .catch(err => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: err.message || 'Có lỗi xảy ra khi tạo voucher!'
+        });
+    });
+}
+
+function copyGeneratedVoucher() {
+    const code = document.getElementById('generated-voucher-code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Đã sao chép mã voucher!',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+        });
+    }).catch(err => {
+        console.error('Không thể sao chép: ', err);
+    });
+}
+
+function awardTickets(userId, userName, currentTickets) {
+    Swal.fire({
+        title: 'Cấp lượt quay',
+        html: `Nhập số lượt quay muốn cộng thêm cho <strong>${userName}</strong> (nhập số âm để trừ):`,
+        input: 'number',
+        inputValue: 1,
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        confirmButtonColor: '#667eea',
+        inputValidator: (value) => {
+            if (value === '' || isNaN(value)) {
+                return 'Vui lòng nhập một số hợp lệ!';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const ticketChange = parseInt(result.value);
+            
+            // Send AJAX post to award tickets
+            fetch(`{{ route('admin.users.award-tickets', ':userId') }}`.replace(':userId', userId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ tickets: ticketChange })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update tickets on UI
+                document.getElementById(`tickets-count-${userId}`).textContent = data.spin_tickets;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: err.message || 'Có lỗi xảy ra, vui lòng thử lại sau!'
+                });
+            });
+        }
+    });
+}
+
 function updateUserRole(selectElement) {
     const userId = selectElement.dataset.userId;
     const newRole = selectElement.value;

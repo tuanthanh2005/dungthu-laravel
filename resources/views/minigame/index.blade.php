@@ -169,21 +169,31 @@
     }
 
     .history-table {
-        color: white;
+        color: rgba(255, 255, 255, 0.9) !important;
+        background: transparent !important;
+        width: 100%;
+        border-collapse: collapse;
     }
 
     .history-table th {
-        background: rgba(255, 255, 255, 0.05);
-        color: rgba(255, 255, 255, 0.6);
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
         padding: 15px;
         font-weight: 600;
+        white-space: nowrap;
     }
 
     .history-table td {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: transparent !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         padding: 15px;
         vertical-align: middle;
+    }
+
+    .history-table tr {
+        background: transparent !important;
     }
 
     .coupon-code-badge {
@@ -199,6 +209,7 @@
         align-items: center;
         gap: 8px;
         transition: all 0.2s ease;
+        white-space: nowrap;
     }
 
     .coupon-code-badge:hover {
@@ -211,6 +222,8 @@
         padding: 4px 10px;
         border-radius: 20px;
         font-weight: 700;
+        white-space: nowrap;
+        display: inline-block;
     }
     .badge-unused { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-used { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
@@ -221,6 +234,40 @@
         font-size: 14px;
         fill: white;
         text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* Responsive styles for history table on mobile */
+    @media (max-width: 768px) {
+        .history-card {
+            padding: 16px 12px;
+            border-radius: 16px;
+        }
+
+        .history-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 16px !important;
+        }
+
+        .history-table th, 
+        .history-table td {
+            padding: 10px 8px !important;
+            font-size: 0.8rem;
+        }
+
+        .coupon-code-badge {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            gap: 4px;
+        }
+
+        .coupon-code-badge i {
+            font-size: 0.7rem;
+        }
+
+        .badge-status {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+        }
     }
 </style>
 @endpush
@@ -336,8 +383,13 @@
                             <tbody>
                                 @forelse($coupons as $coupon)
                                 <tr>
-                                    <td>{{ $coupon->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</td>
-                                    <td class="fw-bold text-white">Thẻ giảm giá {{ number_format($coupon->value, 0, ',', '.') }}đ</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ $coupon->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y') }}</div>
+                                        <div class="small opacity-50" style="font-size: 0.75rem;">{{ $coupon->created_at->timezone('Asia/Ho_Chi_Minh')->format('H:i') }}</div>
+                                    </td>
+                                    <td class="fw-bold" style="color: rgba(255, 255, 255, 0.95);">
+                                        <span class="d-none d-sm-inline">Thẻ giảm giá </span>{{ number_format($coupon->value, 0, ',', '.') }}đ
+                                    </td>
                                     <td>
                                         <div class="coupon-code-badge" onclick="copyToClipboard('{{ $coupon->code }}')" title="Bấm để sao chép">
                                             <span>{{ $coupon->code }}</span>
@@ -422,10 +474,10 @@
             // Slice 4 (25k)
             // Slice 5 (15k)
             
-            // To make the wheel stop at the correct index at the top marker (12 o'clock / 0 degrees):
-            // We rotate by (5 * 360) (extra spins for effect) minus (prizeIndex * 60) minus 30 (center of segment)
-            const randomOffset = Math.floor(Math.random() * 24) - 12; // ±12 degrees variation
-            const targetDegree = (360 * 6) - (prizeIndex * 60) - 30 + randomOffset;
+            // To make the wheel stop at the correct index at the top marker (12 o'clock / 270 degrees in SVG coordinates):
+            // The center of Segment i is (i * 60) + 30. To align with 270 degrees, rotation is 270 - ((i * 60) + 30) = 240 - (i * 60)
+            const randomOffset = Math.floor(Math.random() * 24) - 12; // ±12 degrees variation for visual realism
+            const targetDegree = (360 * 5) + 240 - (prizeIndex * 60) + randomOffset;
             
             // Apply spin animation
             luckyWheel.style.transition = 'transform 5s cubic-bezier(0.1, 0.8, 0.15, 1)';
@@ -473,12 +525,18 @@
                 }
 
                 const now = new Date();
-                const timeStr = ('0' + now.getDate()).slice(-2) + '/' + ('0' + (now.getMonth() + 1)).slice(-2) + '/' + now.getFullYear() + ' ' + ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
+                const dateStr = ('0' + now.getDate()).slice(-2) + '/' + ('0' + (now.getMonth() + 1)).slice(-2) + '/' + now.getFullYear();
+                const timeStr = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
                 
                 const newRow = historyTable.insertRow(0);
                 newRow.innerHTML = `
-                    <td>${timeStr}</td>
-                    <td class="fw-bold text-white">Thẻ giảm giá ${prize.value.toLocaleString('vi-VN')}đ</td>
+                    <td>
+                        <div class="fw-semibold">${dateStr}</div>
+                        <div class="small opacity-50" style="font-size: 0.75rem;">${timeStr}</div>
+                    </td>
+                    <td class="fw-bold" style="color: rgba(255, 255, 255, 0.95);">
+                        <span class="d-none d-sm-inline">Thẻ giảm giá </span>${prize.value.toLocaleString('vi-VN')}đ
+                    </td>
                     <td>
                         <div class="coupon-code-badge" onclick="copyToClipboard('${prize.code}')" title="Bấm để sao chép">
                             <span>${prize.code}</span>

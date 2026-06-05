@@ -303,6 +303,73 @@ class AdminController extends Controller
         ]);
     }
 
+    /**
+     * Award (or deduct) spin tickets for a user.
+     */
+    public function awardSpinTickets(Request $request, User $user)
+    {
+        $request->validate([
+            'tickets' => 'required|integer',
+        ], [
+            'tickets.required' => 'Số vé không được để trống',
+            'tickets.integer' => 'Số vé phải là số nguyên',
+        ]);
+
+        $change = (int) $request->tickets;
+        
+        // Update user tickets (ensure it does not go below 0)
+        $newTickets = max(0, $user->spin_tickets + $change);
+        $user->update(['spin_tickets' => $newTickets]);
+
+        $msg = $change >= 0 
+            ? "Đã cấp thêm {$change} lượt quay cho {$user->name}." 
+            : "Đã trừ " . abs($change) . " lượt quay của {$user->name}.";
+
+        return response()->json([
+            'success' => true,
+            'message' => $msg . " Tổng số vé hiện tại: {$newTickets}.",
+            'spin_tickets' => $newTickets
+        ]);
+    }
+
+    /**
+     * Generate a new unassigned coupon.
+     */
+    public function generateCoupon(Request $request)
+    {
+        $request->validate([
+            'value' => 'required|numeric|min:1000',
+        ], [
+            'value.required' => 'Mệnh giá không được để trống',
+            'value.numeric' => 'Mệnh giá phải là số tiền hợp lệ',
+            'value.min' => 'Mệnh giá tối thiểu là 1.000đ',
+        ]);
+
+        $value = (float) $request->value;
+        $valStr = ($value >= 1000) ? ($value / 1000) . 'K' : $value . 'đ';
+        
+        // Generate code: ADMIN[Val]-XXXXXX
+        $code = 'ADMIN' . strtoupper($valStr) . '-' . strtoupper(\Illuminate\Support\Str::random(6));
+
+        // Create the coupon (unassigned, user_id = null)
+        $coupon = \App\Models\Coupon::create([
+            'code' => $code,
+            'value' => $value,
+            'user_id' => null,
+            'is_used' => false,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tạo mã Voucher thành công!',
+            'coupon' => [
+                'code' => $coupon->code,
+                'value' => $coupon->value,
+                'formatted_value' => number_format($coupon->value, 0, ',', '.') . 'đ',
+            ]
+        ]);
+    }
+
 
     // Order Management
     public function orders(Request $request)

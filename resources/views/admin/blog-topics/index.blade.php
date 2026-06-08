@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Quản Lý Đăng Ký Pre-order')
+@section('title', 'Quản Lý Chủ Đề Blog')
 
 @push('styles')
 <style>
@@ -44,6 +44,16 @@
     .admin-nav .nav-link.active {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
+    }
+
+    .keyword-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        margin: 2px;
+        background-color: #edf2f7;
+        color: #4a5568;
+        border-radius: 5px;
+        display: inline-block;
     }
 </style>
 @endpush
@@ -110,17 +120,17 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.preorders') }}">
+                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.preorders') }}">
                         <i class="fas fa-hourglass-half me-2"></i>Pre-orders
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link position-relative protected-link @if(request()->routeIs('admin.seo-keywords*')) active @endif" href="javascript:void(0)" data-url="{{ route('admin.seo-keywords') }}">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.seo-keywords') }}">
                         <i class="fas fa-search me-2"></i>Từ khóa SEO
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link position-relative protected-link @if(request()->routeIs('admin.blog-topics*')) active @endif" href="javascript:void(0)" data-url="{{ route('admin.blog-topics') }}">
+                    <a class="nav-link active" href="{{ route('admin.blog-topics') }}">
                         <i class="fas fa-tags me-2"></i>Chủ đề Blog
                     </a>
                 </li>
@@ -142,123 +152,107 @@
             </ul>
         </nav>
 
-        <div class="row">
-            <!-- Left Column: Keywords and Stats -->
-            <div class="col-lg-5 col-md-12">
-                <div class="admin-card" data-aos="fade-right">
-                    <h4 class="fw-bold mb-4">
-                        <i class="fas fa-chart-pie text-primary me-2"></i>Thống kê theo từ khóa
-                    </h4>
-                    
-                    @if($keywords->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
+        <div class="admin-card" data-aos="fade-up">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+                <h3 class="fw-bold mb-0">
+                    <i class="fas fa-tags text-primary me-2"></i>Quản lý Chủ đề bài viết Blog
+                </h3>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('admin.blog-topics.create') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                        <i class="fas fa-plus-circle me-2"></i>Thêm chủ đề mới
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search Form -->
+            <form action="{{ route('admin.blog-topics') }}" method="GET" class="mb-4">
+                <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                    <input type="text" name="search" class="form-control border-0 px-4 py-3" placeholder="Tìm kiếm chủ đề bằng nhãn hoặc slug..." value="{{ $search }}">
+                    <button class="btn btn-white border-0 px-4" type="submit">
+                        <i class="fas fa-search text-muted"></i>
+                    </button>
+                    @if($search)
+                        <a href="{{ route('admin.blog-topics') }}" class="btn btn-white border-0 px-3 d-flex align-items-center">
+                            <i class="fas fa-times text-danger"></i>
+                        </a>
+                    @endif
+                </div>
+            </form>
+
+            @if($topics->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 150px;">Nhãn hiển thị</th>
+                                <th style="width: 180px;">Slug / URL</th>
+                                <th>Từ khóa (Aliases)</th>
+                                <th class="text-center" style="width: 120px;">Trạng thái</th>
+                                <th class="text-end" style="width: 180px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($topics as $t)
                                 <tr>
-                                    <th>Từ khóa (Slug)</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-end">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($keywords as $k)
-                                <tr class="{{ $filterKeyword === $k->keyword ? 'table-primary' : '' }}">
                                     <td>
-                                        <strong class="text-dark">{{ Str::headline(str_replace('-', ' ', $k->keyword)) }}</strong>
-                                        <div class="text-muted" style="font-size: 0.75rem;">/go/{{ $k->keyword }}</div>
+                                        <strong class="text-dark">{{ $t->label }}</strong>
+                                    </td>
+                                    <td>
+                                        <code class="text-primary" style="font-size: 0.9rem;">/blog/chu-de/{{ $t->slug }}</code>
+                                    </td>
+                                    <td>
+                                        @if(is_array($t->aliases) && count($t->aliases) > 0)
+                                            @foreach($t->aliases as $alias)
+                                                <span class="keyword-badge">{{ $alias }}</span>
+                                            @endforeach
+                                        @else
+                                            <span class="text-muted" style="font-size: 0.85rem;">Không có</span>
+                                        @endif
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-primary rounded-pill" style="font-size: 0.85rem; padding: 6px 12px;">{{ $k->count }}</span>
+                                        @if($t->is_active)
+                                            <span class="badge bg-success rounded-pill px-3 py-2">Hoạt động</span>
+                                        @else
+                                            <span class="badge bg-secondary rounded-pill px-3 py-2">Tắt</span>
+                                        @endif
                                     </td>
                                     <td class="text-end">
-                                        <a href="{{ route('admin.preorders', ['keyword' => $k->keyword]) }}" class="btn btn-sm btn-outline-primary rounded-pill">
-                                            <i class="fas fa-eye me-1"></i>Xem chi tiết
-                                        </a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mt-3">
-                        {{ $keywords->links() }}
-                    </div>
-                    @else
-                    <div class="text-center py-4 text-muted">
-                        <i class="fas fa-folder-open fa-3x mb-3"></i>
-                        <p class="mb-0">Chưa có lượt đăng ký pre-order nào.</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Right Column: Detail List of Selected Keyword -->
-            <div class="col-lg-7 col-md-12">
-                <div class="admin-card" data-aos="fade-left">
-                    @if($filterKeyword)
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <h4 class="fw-bold mb-0">
-                                <i class="fas fa-list text-success me-2"></i>Danh sách: {{ Str::headline(str_replace('-', ' ', $filterKeyword)) }}
-                            </h4>
-                            <span class="badge bg-success">{{ $preorders->total() }} email</span>
-                        </div>
-
-                        @if($preorders->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Email</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ngày đăng ký</th>
-                                        <th class="text-end">Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($preorders as $po)
-                                    <tr>
-                                        <td>#{{ $po->id }}</td>
-                                        <td><strong>{{ $po->email }}</strong></td>
-                                        <td>
-                                            @if($po->status === 'pending')
-                                                <span class="badge bg-warning text-dark">Đang chờ</span>
-                                            @else
-                                                <span class="badge bg-success">Đã thông báo</span>
-                                            @endif
-                                        </td>
-                                        <td style="font-size: 0.8rem; color: #718096;">
-                                            {{ $po->created_at->format('d/m/Y H:i') }}
-                                        </td>
-                                        <td class="text-end">
-                                            <form action="{{ route('admin.preorders.delete', $po->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lượt đăng ký này?');">
+                                        <div class="d-inline-flex gap-2">
+                                            <a href="{{ route('admin.blog-topics.edit', $t->id) }}" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                                <i class="fas fa-edit me-1"></i>Sửa
+                                            </a>
+                                            <form action="{{ route('admin.blog-topics.delete', $t->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa chủ đề này? Hành động này không thể hoàn tác.');" class="m-0">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Xóa">
-                                                    <i class="fas fa-trash"></i> Xóa
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                                    <i class="fas fa-trash me-1"></i>Xóa
                                                 </button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="mt-3">
-                            {{ $preorders->appends(['keyword' => $filterKeyword])->links() }}
-                        </div>
-                        @else
-                        <p class="text-muted text-center py-4">Không có email nào trong danh sách này.</p>
-                        @endif
-                    @else
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-hand-pointer fa-4x mb-3 text-slate-300"></i>
-                            <h5>Xem chi tiết danh sách đăng ký</h5>
-                            <p class="mb-0">Chọn một từ khóa ở cột bên trái để hiển thị danh sách email khách hàng đã đăng ký chờ.</p>
-                        </div>
-                    @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $topics->links() }}
+                </div>
+            @else
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-search fa-3x mb-3 text-slate-300"></i>
+                    <h5>Không tìm thấy chủ đề nào</h5>
+                    <p class="mb-0">Thử tìm kiếm với cụm từ khác hoặc tạo chủ đề mới.</p>
+                </div>
+            @endif
         </div>
     </div>
 </div>

@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             BlogSeeder::class,
             SeoKeywordSeeder::class,
+            BlogTopicSeeder::class,
         ]);
     }
 }

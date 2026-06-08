@@ -1778,4 +1778,175 @@ class AdminController extends Controller
             ]);
         }
     }
+
+    /**
+     * Danh sách các chủ đề Blog
+     */
+    public function blogTopics(Request $request)
+    {
+        $search = $request->input('search');
+        $query = \App\Models\BlogTopic::query();
+
+        if ($search) {
+            $query->where('label', 'LIKE', "%{$search}%")
+                ->orWhere('slug', 'LIKE', "%{$search}%");
+        }
+
+        $topics = $query->orderBy('label')->paginate(15)->withQueryString();
+
+        return view('admin.blog-topics.index', compact('topics', 'search'));
+    }
+
+    /**
+     * Giao diện thêm chủ đề Blog mới
+     */
+    public function createBlogTopic()
+    {
+        return view('admin.blog-topics.create');
+    }
+
+    /**
+     * Lưu chủ đề Blog mới
+     */
+    public function storeBlogTopic(Request $request)
+    {
+        $request->validate([
+            'slug' => 'required|unique:blog_topics,slug|alpha_dash',
+            'label' => 'required|string|max:255',
+            'heading' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'aliases' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $aliasesStr = $request->input('aliases', '');
+        $aliasesStr = str_replace(["\r\n", "\r", "\n"], ',', $aliasesStr);
+        $aliases = array_values(array_filter(array_map('trim', explode(',', $aliasesStr))));
+
+        $topic = \App\Models\BlogTopic::create([
+            'slug' => $request->input('slug'),
+            'label' => $request->input('label'),
+            'heading' => $request->input('heading'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'aliases' => $aliases,
+            'is_active' => $request->has('is_active') ? (bool)$request->input('is_active') : true,
+        ]);
+
+        // Clear Cache
+        \Illuminate\Support\Facades\Cache::forget('blog_topics_list');
+
+        // Submit to Google Indexing
+        $this->submitBlogTopicIndexSafe($topic, 'blog_topic_create');
+
+        return redirect()->route('admin.blog-topics')->with('success', 'Thêm chủ đề Blog thành công!');
+    }
+
+    /**
+     * Giao diện chỉnh sửa chủ đề Blog
+     */
+    public function editBlogTopic($id)
+    {
+        $topic = \App\Models\BlogTopic::findOrFail($id);
+        return view('admin.blog-topics.edit', compact('topic'));
+    }
+
+    /**
+     * Cập nhật chủ đề Blog
+     */
+    public function updateBlogTopic(Request $request, $id)
+    {
+        $topic = \App\Models\BlogTopic::findOrFail($id);
+
+        $request->validate([
+            'slug' => 'required|alpha_dash|unique:blog_topics,slug,' . $topic->id,
+            'label' => 'required|string|max:255',
+            'heading' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'aliases' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $aliasesStr = $request->input('aliases', '');
+        $aliasesStr = str_replace(["\r\n", "\r", "\n"], ',', $aliasesStr);
+        $aliases = array_values(array_filter(array_map('trim', explode(',', $aliasesStr))));
+
+        $topic->update([
+            'slug' => $request->input('slug'),
+            'label' => $request->input('label'),
+            'heading' => $request->input('heading'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'aliases' => $aliases,
+            'is_active' => $request->has('is_active') ? (bool)$request->input('is_active') : false,
+        ]);
+
+        // Clear Cache
+        \Illuminate\Support\Facades\Cache::forget('blog_topics_list');
+
+        // Submit to Google Indexing
+        $this->submitBlogTopicIndexSafe($topic, 'blog_topic_update');
+
+        return redirect()->route('admin.blog-topics')->with('success', 'Cập nhật chủ đề Blog thành công!');
+    }
+
+    /**
+     * Xóa chủ đề Blog
+     */
+    public function deleteBlogTopic($id)
+    {
+        $topic = \App\Models\BlogTopic::findOrFail($id);
+
+        // Notify Google Indexing of removal
+        $this->removeBlogTopicIndexSafe($topic, 'blog_topic_delete');
+
+        $topic->delete();
+
+        // Clear Cache
+        \Illuminate\Support\Facades\Cache::forget('blog_topics_list');
+
+        return redirect()->route('admin.blog-topics')->with('success', 'Xóa chủ đề Blog thành công!');
+    }
+
+    /**
+     * Helper gửi index chủ đề Blog an toàn
+     */
+    private function submitBlogTopicIndexSafe($topic, $source)
+    {
+        if ($topic->is_active) {
+            try {
+                $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+                $url = $baseUrl . '/blog/chu-de/' . $topic->slug;
+                
+                \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', $source);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] submitBlogTopicIndexSafe failed', [
+                    'topic_id' => $topic->id,
+                    'slug' => $topic->slug,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Helper thông báo xóa index chủ đề Blog an toàn
+     */
+    private function removeBlogTopicIndexSafe($topic, $source)
+    {
+        try {
+            $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+            $url = $baseUrl . '/blog/chu-de/' . $topic->slug;
+            
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_DELETED', $source);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] removeBlogTopicIndexSafe failed', [
+                'topic_id' => $topic->id,
+                'slug' => $topic->slug,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }

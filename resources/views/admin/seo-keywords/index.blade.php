@@ -130,6 +130,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.blog-topics') }}">
+                        <i class="fas fa-tags me-2"></i>Chủ đề Blog
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.google-indexing.index') }}">
                         <i class="fab fa-google me-2"></i>Google Indexing
                     </a>

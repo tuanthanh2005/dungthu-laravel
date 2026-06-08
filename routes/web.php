@@ -308,6 +308,14 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::delete('/seo-keywords/{id}', [AdminController::class, 'deleteSeoKeyword'])->name('admin.seo-keywords.delete');
     Route::post('/seo-keywords/{id}/submit-index', [AdminController::class, 'submitKeywordIndex'])->name('admin.seo-keywords.submit-index');
 
+    // Blog Topics Management
+    Route::get('/blog-topics', [AdminController::class, 'blogTopics'])->name('admin.blog-topics');
+    Route::get('/blog-topics/create', [AdminController::class, 'createBlogTopic'])->name('admin.blog-topics.create');
+    Route::post('/blog-topics', [AdminController::class, 'storeBlogTopic'])->name('admin.blog-topics.store');
+    Route::get('/blog-topics/{id}/edit', [AdminController::class, 'editBlogTopic'])->name('admin.blog-topics.edit');
+    Route::put('/blog-topics/{id}', [AdminController::class, 'updateBlogTopic'])->name('admin.blog-topics.update');
+    Route::delete('/blog-topics/{id}', [AdminController::class, 'deleteBlogTopic'])->name('admin.blog-topics.delete');
+
     // Affiliate Management
     Route::prefix('affiliates')->group(function () {
         Route::get('/', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');

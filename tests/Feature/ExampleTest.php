@@ -456,4 +456,177 @@ class ExampleTest extends TestCase
 
         $responseDashboard->assertStatus(200);
     }
+
+    /**
+     * Test global 404 fallback redirect behavior.
+     */
+    public function test_global_404_fallback_redirects_to_homepage(): void
+    {
+        $response = $this->get('/some-non-existent-route-path-xyz');
+        
+        $response->assertStatus(302);
+        $response->assertRedirect(route('home'));
+        $response->assertSessionHas('error');
+    }
+
+    /**
+     * Test global 404 fallback for admin paths redirects to admin dashboard.
+     */
+    public function test_global_404_fallback_for_admin_redirects_to_dashboard(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get('/admin/some-non-existent-admin-route-path-xyz');
+            
+        $response->assertStatus(302);
+        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertSessionHas('error');
+    }
+
+    /**
+     * Test global 404 fallback for API paths returns JSON 404 response.
+     */
+    public function test_global_404_fallback_for_api_returns_json_404(): void
+    {
+        $response = $this->getJson('/api/some-non-existent-api-route-path-xyz');
+        
+        $response->assertStatus(404);
+        $response->assertJson(['message' => 'Not Found']);
+    }
+
+    /**
+     * Test product controller specific fallback when slug does not exist.
+     */
+    public function test_product_not_found_fallback(): void
+    {
+        // 1. If slug matches an SEO keyword (e.g. 'gpt'), should redirect to keyword page
+        $response1 = $this->get('/product/gpt-chat-ai');
+        $response1->assertStatus(302);
+        $response1->assertRedirect(route('product.keyword', 'gpt'));
+        $response1->assertSessionHas('error');
+
+        // 2. If slug does not match any keyword, should redirect to /shop search
+        $response2 = $this->get('/product/completely-random-slug-not-matching-anything');
+        $response2->assertStatus(302);
+        $response2->assertRedirect(route('shop', ['search' => 'completely random slug not matching anything']));
+        $response2->assertSessionHas('error');
+    }
+
+    /**
+     * Test blog controller specific fallback when slug does not exist.
+     */
+    public function test_blog_not_found_fallback(): void
+    {
+        // 1. If slug matches a blog topic (e.g. 'chatgpt'), should redirect to topic page
+        $response1 = $this->get('/blog/chatgpt-tips');
+        $response1->assertStatus(302);
+        $response1->assertRedirect(route('blog.topic', 'chatgpt'));
+        $response1->assertSessionHas('error');
+
+        // 2. If slug does not match any topic, should redirect to /blog index
+        $response2 = $this->get('/blog/completely-random-blog-slug-not-matching-anything');
+        $response2->assertStatus(302);
+        $response2->assertRedirect(route('blog.index'));
+        $response2->assertSessionHas('error');
+    }
+
+    /**
+     * Test Blog Topics CRUD workflow.
+     */
+    public function test_blog_topics_crud_workflow(): void
+    {
+        // 1. Create an admin user
+        $admin = User::factory()->create([
+            'role' => 'admin'
+        ]);
+
+        // 2. Access index page
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.blog-topics'));
+        $response->assertStatus(200);
+
+        // 3. Access create page
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.blog-topics.create'));
+        $response->assertStatus(200);
+
+        // 4. Submit store form
+        $topicData = [
+            'slug' => 'test-topic-ai',
+            'label' => 'Test Topic AI',
+            'heading' => 'Bài viết về Test Topic AI',
+            'title' => 'Blog Test Topic AI - DungThu.com',
+            'description' => 'Mô tả chi tiết về Test Topic AI',
+            'aliases' => "test topic, test topic ai",
+            'is_active' => '1',
+            'admin_pin' => '999',
+        ];
+
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->post(route('admin.blog-topics.store'), $topicData);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('admin.blog-topics'));
+
+        // Verify stored in DB
+        $this->assertDatabaseHas('blog_topics', [
+            'slug' => 'test-topic-ai',
+            'label' => 'Test Topic AI',
+            'is_active' => true,
+        ]);
+
+        $topic = \App\Models\BlogTopic::where('slug', 'test-topic-ai')->first();
+        $this->assertNotNull($topic);
+        $this->assertEquals(['test topic', 'test topic ai'], $topic->aliases);
+
+        // 5. Access edit page
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.blog-topics.edit', $topic->id));
+        $response->assertStatus(200);
+
+        // 6. Submit update form
+        $updateData = [
+            'slug' => 'test-topic-ai-updated',
+            'label' => 'Test Topic AI Updated',
+            'heading' => 'Bài viết về Test Topic AI Updated',
+            'title' => 'Blog Test Topic AI Updated - DungThu.com',
+            'description' => 'Mô tả chi tiết đã cập nhật',
+            'aliases' => 'test topic updated',
+            'is_active' => '0',
+            'admin_pin' => '999',
+        ];
+
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->put(route('admin.blog-topics.update', $topic->id), $updateData);
+
+        $response->assertRedirect(route('admin.blog-topics'));
+
+        // Verify updated in DB
+        $topic->refresh();
+        $this->assertEquals('test-topic-ai-updated', $topic->slug);
+        $this->assertEquals('Test Topic AI Updated', $topic->label);
+        $this->assertFalse($topic->is_active);
+        $this->assertEquals(['test topic updated'], $topic->aliases);
+
+        // 7. Delete topic
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->delete(route('admin.blog-topics.delete', $topic->id), ['admin_pin' => '999']);
+
+        $response->assertRedirect(route('admin.blog-topics'));
+
+        // Verify removed from DB
+        $this->assertDatabaseMissing('blog_topics', [
+            'id' => $topic->id
+        ]);
+    }
 }
+
+

@@ -80,15 +80,43 @@ class BlogController extends Controller
         ],
     ];
 
+    private static ?array $cachedTopics = null;
+
     public static function blogTopics(): array
     {
-        return self::BLOG_TOPICS;
+        if (self::$cachedTopics !== null) {
+            return self::$cachedTopics;
+        }
+
+        self::$cachedTopics = \Illuminate\Support\Facades\Cache::remember('blog_topics_list', now()->addDays(7), function () {
+            $dbTopics = \App\Models\BlogTopic::where('is_active', true)
+                ->get()
+                ->keyBy('slug')
+                ->map(function ($item) {
+                    return [
+                        'label' => $item->label,
+                        'heading' => $item->heading,
+                        'title' => $item->title,
+                        'description' => $item->description,
+                        'aliases' => $item->aliases ?? [],
+                    ];
+                })
+                ->toArray();
+
+            if (empty($dbTopics)) {
+                return self::BLOG_TOPICS;
+            }
+            return $dbTopics;
+        });
+
+        return self::$cachedTopics;
     }
+
 
     public function index()
     {
         $blogs = Blog::published()->orderBy('published_at', 'desc')->paginate(9);
-        $topicLinks = self::BLOG_TOPICS;
+        $topicLinks = self::blogTopics();
 
         return view('blogs.index', compact('blogs', 'topicLinks'));
     }
@@ -100,7 +128,7 @@ class BlogController extends Controller
             return redirect()->route('blog.topic', $topicSlug);
         }
 
-        $topicConfig = self::BLOG_TOPICS[$topicSlug] ?? null;
+        $topicConfig = self::blogTopics()[$topicSlug] ?? null;
         $aliases = $topicConfig['aliases'] ?? [str_replace('-', ' ', $topicSlug)];
 
         $blogs = Blog::published()
@@ -115,7 +143,7 @@ class BlogController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        $topicLinks = self::BLOG_TOPICS;
+        $topicLinks = self::blogTopics();
         $seoTitle = $topicConfig['title'] ?? 'Blog ' . Str::headline(str_replace('-', ' ', $topicSlug)) . ' - DungThu.com';
         $seoDescription = $topicConfig['description'] ?? 'Tổng hợp bài viết mới nhất tại DungThu.com.';
         $canonical = route('blog.topic', $topicSlug);
@@ -167,7 +195,7 @@ class BlogController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(9);
 
-        $topicLinks = self::BLOG_TOPICS;
+        $topicLinks = self::blogTopics();
         $seoTitle = 'Blog ' . Str::headline($category) . ' - DungThu.com';
         $seoDescription = 'Tổng hợp bài viết thuộc chuyên mục ' . Str::headline($category) . ' tại DungThu.com.';
         $canonical = route('blog.category', $category);
@@ -182,7 +210,7 @@ class BlogController extends Controller
         $compact = str_replace('-', '', $normalized);
         $matches = [];
 
-        foreach (self::BLOG_TOPICS as $topic => $config) {
+        foreach (self::blogTopics() as $topic => $config) {
             if ($normalized === $topic || str_contains($normalized, $topic)) {
                 $matches[] = [$topic, strlen($topic)];
             }

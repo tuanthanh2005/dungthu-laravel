@@ -116,6 +116,9 @@
                 <a href="{{ route('admin.blogs') }}" class="active">
                     <i class="fas fa-blog me-2"></i>Blog
                 </a>
+                <a href="{{ route('admin.blog-topics') }}">
+                    <i class="fas fa-tags me-2"></i>Chủ đề Blog
+                </a>
             </div>
 
             <div class="admin-card">

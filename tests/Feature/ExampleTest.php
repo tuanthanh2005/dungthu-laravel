@@ -377,4 +377,76 @@ class ExampleTest extends TestCase
             'id' => $keyword->id
         ]);
     }
+
+    /**
+     * Test Google Indexing bulk endpoints for products and categories.
+     */
+    public function test_google_indexing_bulk_endpoints(): void
+    {
+        // Disable Google Indexing during tests to avoid RuntimeException
+        config(['services.google_indexing.enabled' => false]);
+
+        $admin = User::factory()->create([
+            'role' => 'admin'
+        ]);
+
+        // Create a product category table dynamically if not exists
+        if (!\Illuminate\Support\Facades\Schema::hasTable('product_categories')) {
+            \Illuminate\Support\Facades\Schema::create('product_categories', function ($table) {
+                $table->id();
+                $table->string('name');
+                $table->string('slug');
+                $table->string('type');
+                $table->string('image')->nullable();
+                $table->text('description')->nullable();
+                $table->boolean('is_active')->default(true);
+                $table->boolean('show_on_home')->default(false);
+                $table->timestamps();
+            });
+        }
+
+        $category = \App\Models\ProductCategory::create([
+            'name' => 'Category One',
+            'slug' => 'category-one',
+            'type' => 'tech',
+            'is_active' => true
+        ]);
+
+        // Create a product
+        $product = Product::create([
+            'name' => 'Bulk Test Product',
+            'slug' => 'bulk-test-product',
+            'price' => 50000.00,
+            'category' => 'tech',
+            'delivery_type' => 'digital',
+            'description' => 'Test',
+            'stock' => 10
+        ]);
+
+        // 1. Submit bulk products index via AJAX
+        $responseProducts = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->postJson(route('admin.google-indexing.submit-all-products'), ['admin_pin' => '999']);
+
+        $responseProducts->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'processed' => 1,
+                'submitted' => 1,
+                'failed_count' => 0
+            ]);
+
+        // 2. Submit bulk categories index via AJAX
+        $responseCategories = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->postJson(route('admin.google-indexing.submit-all-categories'), ['admin_pin' => '999']);
+
+        $responseCategories->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'processed' => 1,
+                'submitted' => 1,
+                'failed_count' => 0
+            ]);
+    }
 }

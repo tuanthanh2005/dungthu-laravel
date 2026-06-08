@@ -155,6 +155,9 @@
                     <i class="fas fa-search-plus text-primary me-2"></i>Quản lý Từ khóa SEO tìm nhanh
                 </h3>
                 <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-success px-4 py-2 rounded-pill shadow-sm btn-submit-all-index" data-url="{{ route('admin.seo-keywords.submit-all') }}">
+                        <i class="fab fa-google me-2"></i>Gửi Index Hàng Loạt
+                    </button>
                     <a href="{{ route('admin.seo-keywords.create') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
                         <i class="fas fa-plus-circle me-2"></i>Thêm từ khóa mới
                     </a>
@@ -348,5 +351,69 @@
             });
         });
     });
+
+    // Gửi index hàng loạt từ khóa SEO
+    const btnSubmitAll = document.querySelector('.btn-submit-all-index');
+    if (btnSubmitAll) {
+        btnSubmitAll.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const button = this;
+            const originalHtml = button.innerHTML;
+            
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi INDEX HÀNG LOẠT lên Google:');
+            if (pin === null) return;
+            if (!/^\d{3}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 3 số.');
+                return;
+            }
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi hàng loạt...';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    admin_pin: pin
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: body.message || 'Gửi Index hàng loạt thành công!',
+                        confirmButtonText: 'Đồng ý'
+                    });
+                } else {
+                    let failedDetails = '';
+                    if (body.failed && body.failed.length > 0) {
+                        failedDetails = '\n\nChi tiết lỗi:\n' + body.failed.map(f => `- ${f.slug}: ${f.message}`).join('\n');
+                    }
+                    Swal.fire({
+                        icon: body.submitted > 0 ? 'warning' : 'error',
+                        title: body.submitted > 0 ? 'Hoàn thành một phần!' : 'Thất bại!',
+                        text: (body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.') + failedDetails
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            });
+        });
+    }
 </script>
 @endpush

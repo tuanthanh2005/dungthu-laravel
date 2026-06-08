@@ -1674,6 +1674,47 @@ class AdminController extends Controller
     }
 
     /**
+     * Gửi index đồng loạt cho tất cả từ khóa SEO đang hoạt động
+     */
+    public function submitAllKeywords(Request $request)
+    {
+        $keywords = \App\Models\SeoKeyword::where('is_active', true)->get();
+        
+        $processed = 0;
+        $success = 0;
+        $failed = [];
+        
+        $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+        
+        foreach ($keywords as $k) {
+            try {
+                $url = $baseUrl . '/tim-kiem/' . $k->slug;
+                \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', 'manual_bulk_keywords');
+                $success++;
+            } catch (\Throwable $e) {
+                $failed[] = [
+                    'slug' => $k->slug,
+                    'message' => $e->getMessage()
+                ];
+            }
+            $processed++;
+        }
+        
+        if ($request->ajax() || $request->expectsJson()) {
+            return response()->json([
+                'success' => count($failed) === 0,
+                'processed' => $processed,
+                'submitted' => $success,
+                'failed_count' => count($failed),
+                'failed' => $failed,
+                'message' => "Đã gửi yêu cầu Index cho {$success}/{$processed} từ khóa thành công!"
+            ]);
+        }
+        
+        return redirect()->back()->with('success', "Đã gửi yêu cầu Index cho {$success}/{$processed} từ khóa thành công!");
+    }
+
+    /**
      * Gửi index thủ công cho từ khóa SEO
      */
     public function submitKeywordIndex(Request $request, $id)

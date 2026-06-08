@@ -231,6 +231,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::delete('/blogs/{blog}', [AdminController::class, 'deleteBlog'])->name('admin.blogs.delete');
     Route::match(['get', 'post'], '/google-indexing/blogs/submit-all', [GoogleIndexingController::class, 'submitAllBlogs'])->name('admin.google-indexing.submit-all');
     Route::match(['get', 'post'], '/google-indexing/products/submit-all', [GoogleIndexingController::class, 'submitAllProducts'])->name('admin.google-indexing.submit-all-products');
+    Route::post('/google-indexing/categories/submit-all', [GoogleIndexingController::class, 'submitAllCategories'])->name('admin.google-indexing.submit-all-categories');
     Route::post('/google-indexing/submit-url', [GoogleIndexingController::class, 'submitUrl'])->name('admin.google-indexing.submit-url');
     Route::get('/google-indexing/recent', [GoogleIndexingController::class, 'recent'])->name('admin.google-indexing.recent');
     Route::get('/google-indexing/status', [GoogleIndexingController::class, 'status'])->name('admin.google-indexing.status');
@@ -298,6 +299,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
 
     // SEO Keywords Management
     Route::get('/seo-keywords', [AdminController::class, 'seoKeywords'])->name('admin.seo-keywords');
+    Route::post('/seo-keywords/submit-all', [AdminController::class, 'submitAllKeywords'])->name('admin.seo-keywords.submit-all');
     Route::get('/seo-keywords/create', [AdminController::class, 'createSeoKeyword'])->name('admin.seo-keywords.create');
     Route::post('/seo-keywords', [AdminController::class, 'storeSeoKeyword'])->name('admin.seo-keywords.store');
     Route::get('/seo-keywords/{id}/edit', [AdminController::class, 'editSeoKeyword'])->name('admin.seo-keywords.edit');

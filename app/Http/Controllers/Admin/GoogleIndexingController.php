@@ -130,6 +130,46 @@ class GoogleIndexingController extends Controller
     }
 
     /**
+     * Submit all active categories for indexing.
+     */
+    public function submitAllCategories(Request $request)
+    {
+        $query = \App\Models\ProductCategory::where('is_active', true)->orderBy('id');
+        $totalAvailable = (clone $query)->count();
+
+        $processed = 0;
+        $success = 0;
+        $failed = [];
+
+        $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+
+        foreach ($query->get() as $category) {
+            try {
+                $url = $baseUrl . '/shop?category_id=' . $category->id;
+                GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', 'manual_bulk_category');
+                $success++;
+            } catch (\Throwable $e) {
+                $failed[] = [
+                    'category_id' => $category->id,
+                    'name' => $category->name,
+                    'message' => $e->getMessage(),
+                ];
+            }
+            $processed++;
+        }
+
+        return response()->json([
+            'success' => count($failed) === 0,
+            'total_available' => $totalAvailable,
+            'processed' => $processed,
+            'submitted' => $success,
+            'failed_count' => count($failed),
+            'failed' => $failed,
+            'message' => "Đã gửi yêu cầu Index cho {$success}/{$processed} danh mục thành công!"
+        ]);
+    }
+
+    /**
      * Submit a single URL to Google Indexing.
      */
     public function submitUrl(Request $request)

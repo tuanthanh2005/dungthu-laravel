@@ -234,6 +234,9 @@
                             <i class="fas fa-bolt me-2"></i>{{ $flashSaleEnabled ? 'Tắt' : 'Bật' }} Flash Sale
                         </button>
                     </form>
+                    <button type="button" class="btn btn-success rounded-pill px-4 btn-submit-all-index" data-url="{{ route('admin.google-indexing.submit-all-products') }}">
+                        <i class="fab fa-google me-2"></i>Gửi Index Hàng Loạt
+                    </button>
                     <a href="{{ route('admin.products.create') }}" class="btn btn-primary rounded-pill px-4">
                         <i class="fas fa-plus me-2"></i>Thêm
                     </a>
@@ -369,6 +372,9 @@
                                        title="Chỉnh sửa">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    <button type="button" class="btn btn-sm btn-outline-success rounded-0 btn-submit-index" data-url="{{ route('admin.google-indexing.submit-url') }}" data-target-url="{{ url('/product/' . $product->slug) }}" title="Gửi Index Google">
+                                        <i class="fab fa-google"></i>
+                                    </button>
                                     <form action="{{ route('admin.products.clone', $product) }}" 
                                           method="POST" 
                                           class="d-inline"
@@ -417,5 +423,133 @@
 @push('scripts')
 <script>
     AOS.init({ duration: 800, once: true });
+
+    // Gửi index sản phẩm thủ công qua AJAX
+    document.querySelectorAll('.btn-submit-index').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const targetUrl = this.getAttribute('data-target-url');
+            const button = this;
+            const originalHtml = button.innerHTML;
+            
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi Index lên Google:');
+            if (pin === null) return;
+            if (!/^\d{3}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 3 số.');
+                return;
+            }
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: targetUrl,
+                    admin_pin: pin
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Gửi Index sản phẩm thành công!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.'
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            });
+        });
+    });
+
+    // Gửi index hàng loạt sản phẩm
+    const btnSubmitAll = document.querySelector('.btn-submit-all-index');
+    if (btnSubmitAll) {
+        btnSubmitAll.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const button = this;
+            const originalHtml = button.innerHTML;
+            
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi INDEX HÀNG LOẠT tất cả sản phẩm lên Google:');
+            if (pin === null) return;
+            if (!/^\d{3}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 3 số.');
+                return;
+            }
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi hàng loạt...';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    admin_pin: pin
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: body.message || 'Gửi Index hàng loạt sản phẩm thành công!',
+                        confirmButtonText: 'Đồng ý'
+                    });
+                } else {
+                    let failedDetails = '';
+                    if (body.failed && body.failed.length > 0) {
+                        failedDetails = '\n\nChi tiết lỗi:\n' + body.failed.map(f => `- ${f.slug || f.product_id}: ${f.message}`).join('\n');
+                    }
+                    Swal.fire({
+                        icon: body.submitted > 0 ? 'warning' : 'error',
+                        title: body.submitted > 0 ? 'Hoàn thành một phần!' : 'Thất bại!',
+                        text: (body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.') + failedDetails
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            });
+        });
+    }
 </script>
 @endpush

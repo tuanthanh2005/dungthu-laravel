@@ -142,9 +142,14 @@
                         <button type="submit" class="d-none"></button>
                     </form>
                 </div>
-                <a href="{{ route('admin.categories.create') }}" class="btn btn-primary rounded-pill px-4">
-                    <i class="fas fa-plus me-2"></i>Thêm danh mục
-                </a>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <button type="button" class="btn btn-success rounded-pill px-4 btn-submit-all-index" data-url="{{ route('admin.google-indexing.submit-all-categories') }}">
+                        <i class="fab fa-google me-2"></i>Gửi Index Hàng Loạt
+                    </button>
+                    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-plus me-2"></i>Thêm danh mục
+                    </a>
+                </div>
             </div>
 
             @if(session()->has('success'))
@@ -206,6 +211,9 @@
                                 <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-sm btn-outline-primary me-1">
                                     <i class="fas fa-edit"></i>
                                 </a>
+                                <button type="button" class="btn btn-sm btn-outline-success btn-submit-index me-1" data-url="{{ route('admin.google-indexing.submit-url') }}" data-target-url="{{ url('/shop?category_id=' . $category->id) }}" title="Gửi Index Google">
+                                    <i class="fab fa-google"></i>
+                                </button>
                                 <form action="{{ route('admin.categories.delete', $category) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?')">
                                     @csrf
                                     @method('DELETE')
@@ -232,5 +240,133 @@
 @push('scripts')
 <script>
     AOS.init({ duration: 800, once: true });
+
+    // Gửi index danh mục thủ công qua AJAX
+    document.querySelectorAll('.btn-submit-index').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const targetUrl = this.getAttribute('data-target-url');
+            const button = this;
+            const originalHtml = button.innerHTML;
+            
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi Index lên Google:');
+            if (pin === null) return;
+            if (!/^\d{3}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 3 số.');
+                return;
+            }
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: targetUrl,
+                    admin_pin: pin
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Gửi Index danh mục thành công!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.'
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            });
+        });
+    });
+
+    // Gửi index hàng loạt danh mục
+    const btnSubmitAll = document.querySelector('.btn-submit-all-index');
+    if (btnSubmitAll) {
+        btnSubmitAll.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const button = this;
+            const originalHtml = button.innerHTML;
+            
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi INDEX HÀNG LOẠT tất cả danh mục lên Google:');
+            if (pin === null) return;
+            if (!/^\d{3}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 3 số.');
+                return;
+            }
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi hàng loạt...';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    admin_pin: pin
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: body.message || 'Gửi Index hàng loạt danh mục thành công!',
+                        confirmButtonText: 'Đồng ý'
+                    });
+                } else {
+                    let failedDetails = '';
+                    if (body.failed && body.failed.length > 0) {
+                        failedDetails = '\n\nChi tiết lỗi:\n' + body.failed.map(f => `- ${f.name || f.category_id}: ${f.message}`).join('\n');
+                    }
+                    Swal.fire({
+                        icon: body.submitted > 0 ? 'warning' : 'error',
+                        title: body.submitted > 0 ? 'Hoàn thành một phần!' : 'Thất bại!',
+                        text: (body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.') + failedDetails
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            });
+        });
+    }
 </script>
 @endpush

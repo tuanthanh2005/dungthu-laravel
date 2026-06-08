@@ -443,7 +443,21 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)->with(['comments', 'features'])->firstOrFail();
+        $product = Product::where('slug', $slug)->with(['comments', 'features'])->first();
+        
+        if (!$product) {
+            $keywordSlug = $this->resolveKeywordSlug($slug);
+            $seoKeywords = self::seoKeywords();
+            
+            if (isset($seoKeywords[$keywordSlug])) {
+                return redirect()->route('product.keyword', $keywordSlug)
+                    ->with('error', 'Không tìm thấy sản phẩm yêu cầu. Đang chuyển hướng bạn đến mục liên quan.');
+            }
+            
+            $searchTerm = str_replace('-', ' ', $slug);
+            return redirect()->route('shop', ['search' => $searchTerm])
+                ->with('error', 'Không tìm thấy sản phẩm yêu cầu. Đây là kết quả tìm kiếm liên quan.');
+        }
         
         // Lấy sản phẩm liên quan
         $relatedProducts = Product::where('category', $product->category)

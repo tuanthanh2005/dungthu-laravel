@@ -135,7 +135,20 @@ class BlogController extends Controller
 
     public function show($slug)
     {
-        $blog = Blog::where('slug', $slug)->published()->firstOrFail();
+        $blog = Blog::where('slug', $slug)->published()->first();
+        
+        if (!$blog) {
+            $topicSlug = $this->resolveTopicSlug($slug);
+            $blogTopics = self::blogTopics();
+            
+            if (isset($blogTopics[$topicSlug])) {
+                return redirect()->route('blog.topic', $topicSlug)
+                    ->with('error', 'Không tìm thấy bài viết yêu cầu. Đang chuyển hướng bạn đến mục liên quan.');
+            }
+            
+            return redirect()->route('blog.index')
+                ->with('error', 'Không tìm thấy bài viết yêu cầu. Đây là danh sách tất cả bài viết.');
+        }
         $blog->incrementViews();
 
         $relatedBlogs = Blog::published()

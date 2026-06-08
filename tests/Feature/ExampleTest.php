@@ -219,4 +219,48 @@ class ExampleTest extends TestCase
         $this->assertEquals($user1->id, $users[1]->id);
         $this->assertEquals($user3->id, $users[2]->id);
     }
+
+    /**
+     * Test Auto-Matching Dynamic SEO Router.
+     */
+    public function test_seo_router_matching_and_preorder_workflow(): void
+    {
+        // 1. Visit non-existent AI router url
+        $response = $this->get('/go/super-coder-ai');
+        $response->assertStatus(200);
+        $response->assertViewIs('pages.seo-placeholder');
+        $response->assertSee('Super Coder Ai'); // dynamically converted title
+
+        // 2. Submit preorder form
+        $responseSub = $this->postJson('/go/super-coder-ai/subscribe', [
+            'email' => 'subscriber@example.com'
+        ]);
+
+        $responseSub->assertStatus(200)
+            ->assertJson([
+                'success' => true
+            ]);
+
+        // Verify it was stored in db
+        $this->assertDatabaseHas('pre_orders', [
+            'email' => 'subscriber@example.com',
+            'keyword' => 'super-coder-ai',
+            'status' => 'pending'
+        ]);
+
+        // 3. Create a matching product and check redirect
+        $product = Product::create([
+            'name' => 'Tài Khoản Super Coder AI Pro',
+            'slug' => 'tai-khoan-super-coder-ai-pro',
+            'price' => 120000.00,
+            'category' => 'tech',
+            'delivery_type' => 'digital',
+            'description' => 'Super Coder AI',
+            'stock' => 5
+        ]);
+
+        $responseRedirect = $this->get('/go/super-coder-ai');
+        $responseRedirect->assertRedirect(route('product.show', $product->slug));
+        $this->assertEquals(301, $responseRedirect->getStatusCode());
+    }
 }

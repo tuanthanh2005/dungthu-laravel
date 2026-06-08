@@ -292,6 +292,10 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/menu-settings', [AdminController::class, 'menuSettings'])->name('admin.menu-settings');
     Route::put('/menu-settings', [AdminController::class, 'updateMenuSettings'])->name('admin.menu-settings.update');
 
+    // Pre-orders Management
+    Route::get('/preorders', [AdminController::class, 'preorders'])->name('admin.preorders');
+    Route::delete('/preorders/{id}', [AdminController::class, 'deletePreorder'])->name('admin.preorders.delete');
+
     // Affiliate Management
     Route::prefix('affiliates')->group(function () {
         Route::get('/', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');
@@ -374,3 +378,7 @@ Route::get('/test-email', function() {
         return 'Lỗi: ' . $e->getMessage();
     }
 });
+
+// Auto-Matching Dynamic SEO Router
+Route::get('/go/{slug}', [\App\Http\Controllers\SeoRouterController::class, 'handle'])->name('seo.router');
+Route::post('/go/{slug}/subscribe', [\App\Http\Controllers\SeoRouterController::class, 'subscribe'])->name('seo.router.subscribe');

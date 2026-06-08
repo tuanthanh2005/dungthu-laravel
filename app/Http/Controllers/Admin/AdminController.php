@@ -1508,4 +1508,37 @@ class AdminController extends Controller
         session()->forget('admin_unlocked');
         return redirect()->route('admin.dashboard')->with('success', 'Đã khóa các khu vực bảo mật.');
     }
+
+    /**
+     * Xem danh sách Email đăng ký Pre-order gom nhóm theo Keyword
+     */
+    public function preorders(Request $request)
+    {
+        // Nhóm theo keyword và đếm số lượng đăng ký
+        $keywords = \App\Models\PreOrder::select('keyword', \DB::raw('count(*) as count'), \DB::raw('max(created_at) as last_activity'))
+            ->groupBy('keyword')
+            ->orderByDesc('last_activity')
+            ->paginate(15);
+
+        // Lấy chi tiết các lượt đăng ký (nếu có tham số filter theo keyword)
+        $filterKeyword = $request->input('keyword');
+        $preorders = null;
+        if ($filterKeyword) {
+            $preorders = \App\Models\PreOrder::where('keyword', $filterKeyword)
+                ->orderByDesc('created_at')
+                ->paginate(30);
+        }
+
+        return view('admin.preorders.index', compact('keywords', 'preorders', 'filterKeyword'));
+    }
+
+    /**
+     * Xóa lượt đăng ký pre-order
+     */
+    public function deletePreorder($id)
+    {
+        $preorder = \App\Models\PreOrder::findOrFail($id);
+        $preorder->delete();
+        return redirect()->back()->with('success', 'Xóa lượt đăng ký thành công!');
+    }
 }

@@ -271,6 +271,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.preorders') }}">
+                        <i class="fas fa-hourglass-half me-2"></i>Pre-orders
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.system-notifications') }}">
                         <i class="fas fa-bullhorn me-2"></i>Thông báo hệ thống
                     </a>

@@ -1587,7 +1587,7 @@ class AdminController extends Controller
         $aliasesStr = str_replace(["\r\n", "\r", "\n"], ',', $aliasesStr);
         $aliases = array_values(array_filter(array_map('trim', explode(',', $aliasesStr))));
 
-        \App\Models\SeoKeyword::create([
+        $keyword = \App\Models\SeoKeyword::create([
             'slug' => $request->input('slug'),
             'label' => $request->input('label'),
             'heading' => $request->input('heading'),
@@ -1599,6 +1599,9 @@ class AdminController extends Controller
 
         // Clear Cache
         \Illuminate\Support\Facades\Cache::forget('seo_keywords_list');
+
+        // Submit to Google Indexing
+        $this->submitKeywordIndexSafe($keyword, 'keyword_create');
 
         return redirect()->route('admin.seo-keywords')->with('success', 'Thêm từ khóa SEO thành công!');
     }
@@ -1646,6 +1649,9 @@ class AdminController extends Controller
         // Clear Cache
         \Illuminate\Support\Facades\Cache::forget('seo_keywords_list');
 
+        // Submit to Google Indexing
+        $this->submitKeywordIndexSafe($keyword, 'keyword_update');
+
         return redirect()->route('admin.seo-keywords')->with('success', 'Cập nhật từ khóa SEO thành công!');
     }
 
@@ -1655,11 +1661,80 @@ class AdminController extends Controller
     public function deleteSeoKeyword($id)
     {
         $keyword = \App\Models\SeoKeyword::findOrFail($id);
+
+        // Notify Google Indexing of removal
+        $this->removeKeywordIndexSafe($keyword, 'keyword_delete');
+
         $keyword->delete();
 
         // Clear Cache
         \Illuminate\Support\Facades\Cache::forget('seo_keywords_list');
 
         return redirect()->route('admin.seo-keywords')->with('success', 'Xóa từ khóa SEO thành công!');
+    }
+
+    /**
+     * Gửi index thủ công cho từ khóa SEO
+     */
+    public function submitKeywordIndex(Request $request, $id)
+    {
+        $keyword = \App\Models\SeoKeyword::findOrFail($id);
+        
+        try {
+            $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+            $url = $baseUrl . '/tim-kiem/' . $keyword->slug;
+            
+            $result = \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', 'manual_single_keyword');
+            
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Gửi yêu cầu Index thành công!', 'data' => $result]);
+            }
+            return redirect()->back()->with('success', 'Gửi yêu cầu Index thành công!');
+        } catch (\Throwable $e) {
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+            return redirect()->back()->with('error', 'Lỗi khi gửi yêu cầu Index: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Helper gửi index từ khóa SEO an toàn (không crash app nếu API lỗi)
+     */
+    private function submitKeywordIndexSafe($keyword, $source)
+    {
+        if ($keyword->is_active) {
+            try {
+                $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+                $url = $baseUrl . '/tim-kiem/' . $keyword->slug;
+                
+                \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', $source);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] submitKeywordIndexSafe failed', [
+                    'keyword_id' => $keyword->id,
+                    'slug' => $keyword->slug,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Helper thông báo xóa index từ khóa SEO an toàn (không crash app nếu API lỗi)
+     */
+    private function removeKeywordIndexSafe($keyword, $source)
+    {
+        try {
+            $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+            $url = $baseUrl . '/tim-kiem/' . $keyword->slug;
+            
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_DELETED', $source);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] removeKeywordIndexSafe failed', [
+                'keyword_id' => $keyword->id,
+                'slug' => $keyword->slug,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

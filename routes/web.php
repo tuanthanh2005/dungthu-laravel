@@ -303,6 +303,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/seo-keywords/{id}/edit', [AdminController::class, 'editSeoKeyword'])->name('admin.seo-keywords.edit');
     Route::put('/seo-keywords/{id}', [AdminController::class, 'updateSeoKeyword'])->name('admin.seo-keywords.update');
     Route::delete('/seo-keywords/{id}', [AdminController::class, 'deleteSeoKeyword'])->name('admin.seo-keywords.delete');
+    Route::post('/seo-keywords/{id}/submit-index', [AdminController::class, 'submitKeywordIndex'])->name('admin.seo-keywords.submit-index');
 
     // Affiliate Management
     Route::prefix('affiliates')->group(function () {

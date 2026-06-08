@@ -215,6 +215,9 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="d-inline-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 btn-submit-index" data-id="{{ $k->id }}" data-url="{{ route('admin.seo-keywords.submit-index', $k->id) }}">
+                                                <i class="fab fa-google me-1"></i>Gửi Index
+                                            </button>
                                             <a href="{{ route('admin.seo-keywords.edit', $k->id) }}" class="btn btn-sm btn-outline-info rounded-pill px-3">
                                                 <i class="fas fa-edit me-1"></i>Sửa
                                             </a>
@@ -283,5 +286,67 @@
             window.location.href = "{{ route('admin.lock') }}";
         }
     }
+
+    // Gửi index từ khóa SEO thủ công qua AJAX
+    document.querySelectorAll('.btn-submit-index').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const button = this;
+            const originalHtml = button.innerHTML;
+            
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi Index lên Google:');
+            if (pin === null) return;
+            if (!/^\d{3}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 3 số.');
+                return;
+            }
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi...';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    admin_pin: pin
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: body.message || 'Gửi Index thành công!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.'
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            });
+        });
+    });
 </script>
 @endpush

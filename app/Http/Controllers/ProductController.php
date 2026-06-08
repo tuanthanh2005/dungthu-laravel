@@ -94,6 +94,11 @@ class ProductController extends Controller
         $this->applyKeywordSearch($query, $aliases);
 
         $items = $query->latest()->paginate(18)->withQueryString();
+
+        if ($items->total() === 0) {
+            return redirect()->route('seo.router', $keywordSlug);
+        }
+
         $seoTitle = $keywordConfig['title'] ?? "Mua tài khoản {$searchTerm} giá rẻ - DungThu.com";
         $seoDescription = $keywordConfig['description'] ?? "Danh sách sản phẩm {$searchTerm} đang bán tại DungThu.com: tài khoản, gói sử dụng và dịch vụ liên quan, cập nhật theo kho.";
         $canonical = route('product.keyword', $keywordSlug);

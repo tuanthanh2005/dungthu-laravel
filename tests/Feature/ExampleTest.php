@@ -231,6 +231,10 @@ class ExampleTest extends TestCase
         $response->assertViewIs('pages.seo-placeholder');
         $response->assertSee('Super Coder Ai'); // dynamically converted title
 
+        // 1b. Visit search keyword page with 0 products -> should redirect to /go/super-coder-ai
+        $responseSearch = $this->get(route('product.keyword', 'super-coder-ai'));
+        $responseSearch->assertRedirect(route('seo.router', 'super-coder-ai'));
+
         // 2. Submit preorder form
         $responseSub = $this->postJson('/go/super-coder-ai/subscribe', [
             'email' => 'subscriber@example.com'
@@ -269,6 +273,9 @@ class ExampleTest extends TestCase
      */
     public function test_seo_keywords_crud_workflow(): void
     {
+        // Disable Google Indexing during tests to avoid RuntimeException for missing key files
+        config(['services.google_indexing.enabled' => false]);
+
         // 1. Create an admin user
         $admin = User::factory()->create([
             'role' => 'admin'
@@ -346,6 +353,17 @@ class ExampleTest extends TestCase
         $this->assertEquals('Test Keyword AI Updated', $keyword->label);
         $this->assertFalse($keyword->is_active);
         $this->assertEquals(['test key updated', 'test keyword updated'], $keyword->aliases);
+
+        // 6b. Submit manual index request via AJAX (expects JSON response)
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->postJson(route('admin.seo-keywords.submit-index', $keyword->id), ['admin_pin' => '999']);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Gửi yêu cầu Index thành công!'
+            ]);
 
         // 7. Delete keyword
         $response = $this->actingAs($admin)

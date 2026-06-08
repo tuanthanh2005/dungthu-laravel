@@ -448,5 +448,12 @@ class ExampleTest extends TestCase
                 'submitted' => 1,
                 'failed_count' => 0
             ]);
+
+        // 3. Access the google indexing dashboard page
+        $responseDashboard = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.google-indexing.index'));
+
+        $responseDashboard->assertStatus(200);
     }
 }

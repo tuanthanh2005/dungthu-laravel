@@ -126,6 +126,11 @@
                         <i class="fas fa-star me-2"></i>Tính năng
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.google-indexing.index') }}">
+                        <i class="fab fa-google me-2"></i>Google Indexing
+                    </a>
+                </li>
             </ul>
         </nav>
 

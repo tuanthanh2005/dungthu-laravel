@@ -11,6 +11,41 @@ use Illuminate\Http\Request;
 class GoogleIndexingController extends Controller
 {
     /**
+     * Show Google Indexing dashboard page.
+     */
+    public function index(Request $request)
+    {
+        $service = app(GoogleIndexingService::class);
+        $enabled = $service->isEnabled();
+        $keyFile = config('services.google_indexing.key_file', '');
+        $siteUrl = config('services.google_indexing.site_url', config('app.url'));
+
+        // Check if key file exists
+        $keyFileExists = false;
+        if ($keyFile) {
+            $resolvedPath = $keyFile;
+            if (!str_starts_with($keyFile, DIRECTORY_SEPARATOR) && !preg_match('/^[A-Za-z]:\\\\/', $keyFile)) {
+                $resolvedPath = base_path($keyFile);
+            }
+            $keyFileExists = is_file($resolvedPath);
+        }
+
+        $totalProducts = Product::count();
+        $totalBlogs = Blog::published()->count();
+        $totalSeoKeywords = \App\Models\SeoKeyword::where('is_active', true)->count();
+
+        return view('admin.google-indexing.index', compact(
+            'enabled',
+            'siteUrl',
+            'keyFile',
+            'keyFileExists',
+            'totalProducts',
+            'totalBlogs',
+            'totalSeoKeywords'
+        ));
+    }
+
+    /**
      * Show recent indexing submissions (JSON).
      */
     public function recent(Request $request)

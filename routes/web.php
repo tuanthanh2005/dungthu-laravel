@@ -235,6 +235,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::post('/google-indexing/submit-url', [GoogleIndexingController::class, 'submitUrl'])->name('admin.google-indexing.submit-url');
     Route::get('/google-indexing/recent', [GoogleIndexingController::class, 'recent'])->name('admin.google-indexing.recent');
     Route::get('/google-indexing/status', [GoogleIndexingController::class, 'status'])->name('admin.google-indexing.status');
+    Route::get('/google-indexing', [GoogleIndexingController::class, 'index'])->name('admin.google-indexing.index');
     
     // Tiktok Deals Management
     // Route::get('/tiktok-deals', [TiktokDealController::class, 'index'])->name('admin.tiktok-deals.index');

@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProductSeeder::class,
             BlogSeeder::class,
+            SeoKeywordSeeder::class,
         ]);
     }
 }

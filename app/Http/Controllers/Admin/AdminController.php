@@ -1541,4 +1541,125 @@ class AdminController extends Controller
         $preorder->delete();
         return redirect()->back()->with('success', 'Xóa lượt đăng ký thành công!');
     }
+
+    /**
+     * Danh sách các từ khóa SEO
+     */
+    public function seoKeywords(Request $request)
+    {
+        $search = $request->input('search');
+        $query = \App\Models\SeoKeyword::query();
+
+        if ($search) {
+            $query->where('label', 'LIKE', "%{$search}%")
+                ->orWhere('slug', 'LIKE', "%{$search}%");
+        }
+
+        $keywords = $query->orderBy('label')->paginate(15)->withQueryString();
+
+        return view('admin.seo-keywords.index', compact('keywords', 'search'));
+    }
+
+    /**
+     * Giao diện thêm từ khóa SEO mới
+     */
+    public function createSeoKeyword()
+    {
+        return view('admin.seo-keywords.create');
+    }
+
+    /**
+     * Lưu từ khóa SEO mới
+     */
+    public function storeSeoKeyword(Request $request)
+    {
+        $request->validate([
+            'slug' => 'required|unique:seo_keywords,slug|alpha_dash',
+            'label' => 'required|string|max:255',
+            'heading' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'aliases' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $aliasesStr = $request->input('aliases', '');
+        $aliasesStr = str_replace(["\r\n", "\r", "\n"], ',', $aliasesStr);
+        $aliases = array_values(array_filter(array_map('trim', explode(',', $aliasesStr))));
+
+        \App\Models\SeoKeyword::create([
+            'slug' => $request->input('slug'),
+            'label' => $request->input('label'),
+            'heading' => $request->input('heading'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'aliases' => $aliases,
+            'is_active' => $request->has('is_active') ? (bool)$request->input('is_active') : true,
+        ]);
+
+        // Clear Cache
+        \Illuminate\Support\Facades\Cache::forget('seo_keywords_list');
+
+        return redirect()->route('admin.seo-keywords')->with('success', 'Thêm từ khóa SEO thành công!');
+    }
+
+    /**
+     * Giao diện chỉnh sửa từ khóa SEO
+     */
+    public function editSeoKeyword($id)
+    {
+        $keyword = \App\Models\SeoKeyword::findOrFail($id);
+        return view('admin.seo-keywords.edit', compact('keyword'));
+    }
+
+    /**
+     * Cập nhật từ khóa SEO
+     */
+    public function updateSeoKeyword(Request $request, $id)
+    {
+        $keyword = \App\Models\SeoKeyword::findOrFail($id);
+
+        $request->validate([
+            'slug' => 'required|alpha_dash|unique:seo_keywords,slug,' . $keyword->id,
+            'label' => 'required|string|max:255',
+            'heading' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'aliases' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $aliasesStr = $request->input('aliases', '');
+        $aliasesStr = str_replace(["\r\n", "\r", "\n"], ',', $aliasesStr);
+        $aliases = array_values(array_filter(array_map('trim', explode(',', $aliasesStr))));
+
+        $keyword->update([
+            'slug' => $request->input('slug'),
+            'label' => $request->input('label'),
+            'heading' => $request->input('heading'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'aliases' => $aliases,
+            'is_active' => $request->has('is_active') ? (bool)$request->input('is_active') : false,
+        ]);
+
+        // Clear Cache
+        \Illuminate\Support\Facades\Cache::forget('seo_keywords_list');
+
+        return redirect()->route('admin.seo-keywords')->with('success', 'Cập nhật từ khóa SEO thành công!');
+    }
+
+    /**
+     * Xóa từ khóa SEO
+     */
+    public function deleteSeoKeyword($id)
+    {
+        $keyword = \App\Models\SeoKeyword::findOrFail($id);
+        $keyword->delete();
+
+        // Clear Cache
+        \Illuminate\Support\Facades\Cache::forget('seo_keywords_list');
+
+        return redirect()->route('admin.seo-keywords')->with('success', 'Xóa từ khóa SEO thành công!');
+    }
 }

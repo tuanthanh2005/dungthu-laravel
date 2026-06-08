@@ -263,4 +263,100 @@ class ExampleTest extends TestCase
         $responseRedirect->assertRedirect(route('product.show', $product->slug));
         $this->assertEquals(301, $responseRedirect->getStatusCode());
     }
+
+    /**
+     * Test SEO Keywords CRUD workflow.
+     */
+    public function test_seo_keywords_crud_workflow(): void
+    {
+        // 1. Create an admin user
+        $admin = User::factory()->create([
+            'role' => 'admin'
+        ]);
+
+        // 2. Access index page
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.seo-keywords'));
+        $response->assertStatus(200);
+
+        // 3. Access create page
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.seo-keywords.create'));
+        $response->assertStatus(200);
+
+        // 4. Submit store form
+        $keywordData = [
+            'slug' => 'test-keyword-ai',
+            'label' => 'Test Keyword AI',
+            'heading' => 'Mua tài khoản Test Keyword AI giá rẻ',
+            'title' => 'Mua tài khoản Test Keyword AI giá rẻ - DungThu.com',
+            'description' => 'Mô tả chi tiết về Test Keyword AI',
+            'aliases' => "test key, test keyword\ntest keyword ai",
+            'is_active' => '1',
+            'admin_pin' => '999',
+        ];
+
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->post(route('admin.seo-keywords.store'), $keywordData);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('admin.seo-keywords'));
+
+        // Verify stored in DB
+        $this->assertDatabaseHas('seo_keywords', [
+            'slug' => 'test-keyword-ai',
+            'label' => 'Test Keyword AI',
+            'is_active' => true,
+        ]);
+
+        $keyword = \App\Models\SeoKeyword::where('slug', 'test-keyword-ai')->first();
+        $this->assertNotNull($keyword);
+        $this->assertEquals(['test key', 'test keyword', 'test keyword ai'], $keyword->aliases);
+
+        // 5. Access edit page
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->get(route('admin.seo-keywords.edit', $keyword->id));
+        $response->assertStatus(200);
+
+        // 6. Submit update form
+        $updateData = [
+            'slug' => 'test-keyword-ai-updated',
+            'label' => 'Test Keyword AI Updated',
+            'heading' => 'Mua tài khoản Test Keyword AI Updated giá rẻ',
+            'title' => 'Mua tài khoản Test Keyword AI Updated giá rẻ - DungThu.com',
+            'description' => 'Mô tả chi tiết đã cập nhật',
+            'aliases' => 'test key updated, test keyword updated',
+            'is_active' => '0',
+            'admin_pin' => '999',
+        ];
+
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->put(route('admin.seo-keywords.update', $keyword->id), $updateData);
+
+        $response->assertRedirect(route('admin.seo-keywords'));
+
+        // Verify updated in DB
+        $keyword->refresh();
+        $this->assertEquals('test-keyword-ai-updated', $keyword->slug);
+        $this->assertEquals('Test Keyword AI Updated', $keyword->label);
+        $this->assertFalse($keyword->is_active);
+        $this->assertEquals(['test key updated', 'test keyword updated'], $keyword->aliases);
+
+        // 7. Delete keyword
+        $response = $this->actingAs($admin)
+            ->withSession(['admin_unlocked' => true])
+            ->delete(route('admin.seo-keywords.delete', $keyword->id), ['admin_pin' => '999']);
+
+        $response->assertRedirect(route('admin.seo-keywords'));
+
+        // Verify removed from DB
+        $this->assertDatabaseMissing('seo_keywords', [
+            'id' => $keyword->id
+        ]);
+    }
 }

@@ -296,6 +296,14 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/preorders', [AdminController::class, 'preorders'])->name('admin.preorders');
     Route::delete('/preorders/{id}', [AdminController::class, 'deletePreorder'])->name('admin.preorders.delete');
 
+    // SEO Keywords Management
+    Route::get('/seo-keywords', [AdminController::class, 'seoKeywords'])->name('admin.seo-keywords');
+    Route::get('/seo-keywords/create', [AdminController::class, 'createSeoKeyword'])->name('admin.seo-keywords.create');
+    Route::post('/seo-keywords', [AdminController::class, 'storeSeoKeyword'])->name('admin.seo-keywords.store');
+    Route::get('/seo-keywords/{id}/edit', [AdminController::class, 'editSeoKeyword'])->name('admin.seo-keywords.edit');
+    Route::put('/seo-keywords/{id}', [AdminController::class, 'updateSeoKeyword'])->name('admin.seo-keywords.update');
+    Route::delete('/seo-keywords/{id}', [AdminController::class, 'deleteSeoKeyword'])->name('admin.seo-keywords.delete');
+
     // Affiliate Management
     Route::prefix('affiliates')->group(function () {
         Route::get('/', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');

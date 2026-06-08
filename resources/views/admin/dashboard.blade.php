@@ -276,6 +276,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link position-relative protected-link @if(request()->routeIs('admin.seo-keywords*')) active @endif" href="javascript:void(0)" data-url="{{ route('admin.seo-keywords') }}">
+                        <i class="fas fa-search me-2"></i>Từ khóa SEO
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.system-notifications') }}">
                         <i class="fas fa-bullhorn me-2"></i>Thông báo hệ thống
                     </a>

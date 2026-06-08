@@ -25,6 +25,117 @@
         padding: 20px;
         margin-top: 20px;
     }
+
+    /* Premium Confirmation Modal */
+    .confirm-modal-content {
+        border-radius: 24px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        background: #ffffff;
+    }
+    .confirm-modal-header {
+        border-bottom: none;
+        padding: 20px 24px 0;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .confirm-modal-header .btn-close {
+        background-color: #f3f4f6;
+        padding: 8px;
+        border-radius: 50%;
+        font-size: 0.75rem;
+        transition: all 0.2s ease;
+        margin: 0;
+        opacity: 0.8;
+    }
+    .confirm-modal-header .btn-close:hover {
+        background-color: #e5e7eb;
+        transform: rotate(90deg);
+        opacity: 1;
+    }
+    .confirm-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 193, 7, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        border: 4px solid rgba(255, 193, 7, 0.05);
+        animation: pulse-warning 2s infinite;
+    }
+    @keyframes pulse-warning {
+        0% {
+            box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 15px rgba(255, 193, 7, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+        }
+    }
+    .confirm-icon-wrapper i {
+        font-size: 2.5rem;
+        color: #ffc107;
+    }
+    .confirm-modal-title {
+        font-size: 1.35rem;
+        font-weight: 750;
+        color: #1f2937;
+        margin-bottom: 12px;
+    }
+    .confirm-modal-text {
+        font-size: 0.92rem;
+        color: #4b5563;
+        line-height: 1.6;
+        padding: 0 15px;
+    }
+    .confirm-modal-footer {
+        border-top: none;
+        padding: 15px 24px 25px;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+    .btn-confirm-cancel {
+        background-color: #f3f4f6;
+        color: #4b5563;
+        border: none;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        flex: 1;
+        font-size: 0.9rem;
+    }
+    .btn-confirm-cancel:hover {
+        background-color: #e5e7eb;
+        color: #1f2937;
+    }
+    .btn-confirm-ok {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+        transition: all 0.2s ease;
+        flex: 1;
+        font-size: 0.9rem;
+    }
+    .btn-confirm-ok:hover {
+        background: linear-gradient(135deg, #ffb300 0%, #f57c00 100%);
+        box-shadow: 0 6px 16px rgba(255, 152, 0, 0.3);
+        transform: translateY(-1px);
+        color: white;
+    }
+    .btn-confirm-ok:active {
+        transform: translateY(1px);
+    }
 </style>
 @endpush
 
@@ -204,23 +315,22 @@
 <!-- Modal Xác nhận thanh toán -->
 <div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-labelledby="confirmPaymentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-warning text-dark border-0">
-                <h5 class="modal-title fw-bold" id="confirmPaymentModalLabel">
-                    <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận thanh toán
-                </h5>
+        <div class="modal-content confirm-modal-content">
+            <div class="confirm-modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center py-4">
-                <i class="fas fa-question-circle text-warning fa-4x mb-3"></i>
-                <h4 class="fw-bold mb-3">Bạn đã chắc chắn thanh toán chưa?</h4>
-                <p class="text-muted mb-0">Vui lòng đảm bảo bạn đã chuyển khoản thành công trước khi xác nhận. Đơn hàng ảo hoặc chưa thanh toán sẽ bị hủy tự động.</p>
+            <div class="modal-body text-center pb-2 pt-0">
+                <div class="confirm-icon-wrapper">
+                    <i class="fas fa-question"></i>
+                </div>
+                <h3 class="confirm-modal-title">Bạn đã thanh toán chưa?</h3>
+                <p class="confirm-modal-text">Vui lòng đảm bảo bạn đã chuyển khoản thành công trước khi xác nhận. Đơn hàng ảo hoặc chưa thanh toán sẽ bị hủy tự động.</p>
             </div>
-            <div class="modal-footer border-0 justify-content-center pb-4">
-                <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">
+            <div class="confirm-modal-footer">
+                <button type="button" class="btn btn-confirm-cancel" data-bs-dismiss="modal">
                     <i class="fas fa-times me-2"></i>Chưa, để tôi kiểm tra lại
                 </button>
-                <button type="submit" form="checkout-form" class="btn btn-warning px-4 rounded-pill">
+                <button type="submit" form="checkout-form" class="btn btn-confirm-ok">
                     <i class="fas fa-check me-2"></i>Có, tôi đã thanh toán
                 </button>
             </div>

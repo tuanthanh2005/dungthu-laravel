@@ -225,6 +225,41 @@ class GoogleIndexingController extends Controller
     }
 
     /**
+     * Submit Proxy and VPN pages for indexing.
+     */
+    public function submitAllProxies(Request $request)
+    {
+        $success = 0;
+        $failed = [];
+        $urls = [
+            route('vpn.tab', ['tab' => 'proxy']),
+            route('vpn.tab', ['tab' => 'vpn'])
+        ];
+
+        foreach ($urls as $url) {
+            try {
+                GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', 'manual_bulk_proxy');
+                $success++;
+            } catch (\Throwable $e) {
+                $failed[] = [
+                    'url' => $url,
+                    'message' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => count($failed) === 0,
+            'total_available' => 2,
+            'processed' => 2,
+            'submitted' => $success,
+            'failed_count' => count($failed),
+            'failed' => $failed,
+            'message' => "Đã gửi yêu cầu Index cho trang Proxy và VPN thành công!"
+        ]);
+    }
+
+    /**
      * Submit a single URL to Google Indexing.
      */
     public function submitUrl(Request $request)

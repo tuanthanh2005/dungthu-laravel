@@ -315,6 +315,20 @@
                                 </button>
                             </div>
                         </div>
+                        
+                        <!-- Bulk Proxy & VPN -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="console-card text-center d-flex flex-column justify-content-between">
+                                <div>
+                                    <i class="fas fa-network-wired fs-1 text-info mb-3"></i>
+                                    <h5>Index Trang Proxy & VPN</h5>
+                                    <p class="text-muted small">Gửi các trang đích danh sách Proxy và VPN lên Google Indexing API.</p>
+                                </div>
+                                <button type="button" class="btn btn-info text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all-proxies') }}" data-type="Proxy & VPN">
+                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

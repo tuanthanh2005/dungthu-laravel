@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Proxy;
 use Illuminate\Http\Request;
+use App\Services\GoogleIndexingService;
 
 class ProxyController extends Controller
 {
@@ -39,6 +40,12 @@ class ProxyController extends Controller
 
         Proxy::create($validated);
 
+        try {
+            GoogleIndexingService::publishUrlStatic(route('vpn.tab', 'proxy'), 'URL_UPDATED', 'proxy_create');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] proxy_create failed', ['error' => $e->getMessage()]);
+        }
+
         return redirect()->route('admin.proxies')->with('success', 'Thêm Proxy thành công!');
     }
 
@@ -67,12 +74,25 @@ class ProxyController extends Controller
 
         $proxy->update($validated);
 
+        try {
+            GoogleIndexingService::publishUrlStatic(route('vpn.tab', 'proxy'), 'URL_UPDATED', 'proxy_update');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] proxy_update failed', ['error' => $e->getMessage()]);
+        }
+
         return redirect()->route('admin.proxies')->with('success', 'Cập nhật Proxy thành công!');
     }
 
     public function destroy(Proxy $proxy)
     {
         $proxy->delete();
+
+        try {
+            GoogleIndexingService::publishUrlStatic(route('vpn.tab', 'proxy'), 'URL_UPDATED', 'proxy_delete');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] proxy_delete failed', ['error' => $e->getMessage()]);
+        }
+
         return redirect()->route('admin.proxies')->with('success', 'Đã xóa Proxy thành công!');
     }
 }

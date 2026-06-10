@@ -77,7 +77,10 @@ Route::get('/buff/server/{id}', [BuffController::class, 'getServer'])->name('buf
 Route::middleware('auth')->post('/buff/order', [BuffController::class, 'placeOrder'])->name('buff.order');
 
 // VPN & Proxy routes
-Route::get('/vpn-proxy', [\App\Http\Controllers\VpnProxyController::class, 'index'])->name('vpn.index');
+Route::get('/timkiem/{tab}', [\App\Http\Controllers\VpnProxyController::class, 'index'])->name('vpn.tab');
+Route::get('/vpn-proxy', function() {
+    return redirect()->route('vpn.tab', ['tab' => 'vpn']);
+})->name('vpn.index');
 
 // Blog routes
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
@@ -248,6 +251,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::match(['get', 'post'], '/google-indexing/blogs/submit-all', [GoogleIndexingController::class, 'submitAllBlogs'])->name('admin.google-indexing.submit-all');
     Route::match(['get', 'post'], '/google-indexing/products/submit-all', [GoogleIndexingController::class, 'submitAllProducts'])->name('admin.google-indexing.submit-all-products');
     Route::post('/google-indexing/categories/submit-all', [GoogleIndexingController::class, 'submitAllCategories'])->name('admin.google-indexing.submit-all-categories');
+    Route::post('/google-indexing/proxies/submit-all', [GoogleIndexingController::class, 'submitAllProxies'])->name('admin.google-indexing.submit-all-proxies');
     Route::post('/google-indexing/submit-url', [GoogleIndexingController::class, 'submitUrl'])->name('admin.google-indexing.submit-url');
     Route::get('/google-indexing/recent', [GoogleIndexingController::class, 'recent'])->name('admin.google-indexing.recent');
     Route::get('/google-indexing/status', [GoogleIndexingController::class, 'status'])->name('admin.google-indexing.status');

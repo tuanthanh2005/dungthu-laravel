@@ -5,27 +5,6 @@
 
 @push('styles')
 <style>
-    .vpn-hero {
-        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-        padding: 60px 0;
-        color: white;
-        text-align: center;
-        margin-bottom: 40px;
-    }
-
-    .vpn-title {
-        font-weight: 800;
-        font-size: 2.5rem;
-        margin-bottom: 15px;
-    }
-
-    .vpn-desc {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
     .product-card {
         border-radius: 15px;
         border: none;
@@ -109,108 +88,156 @@
         background: linear-gradient(to right, #00c6ff, #0072ff);
         border-radius: 2px;
     }
+
+    .custom-tabs {
+        border-bottom: 2px solid #e9ecef;
+        gap: 15px;
+    }
+
+    .custom-tabs .nav-link {
+        color: #495057;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 12px 25px;
+        transition: all 0.3s ease;
+        background: transparent;
+        border-radius: 0;
+    }
+
+    .custom-tabs .nav-link:hover {
+        color: #0072ff;
+        border-bottom-color: rgba(0, 114, 255, 0.3);
+    }
+
+    .custom-tabs .nav-link.active {
+        color: #0072ff;
+        border-bottom-color: #0072ff;
+        background: transparent;
+    }
 </style>
 @endpush
 
 @section('content')
-<div class="vpn-hero">
-    <div class="container" data-aos="fade-up">
-        <h1 class="vpn-title"><i class="fas fa-shield-alt me-2"></i>VPN & PROXY CAO CẤP</h1>
-        <p class="vpn-desc">Dịch vụ IP Private chất lượng cao, tốc độ đường truyền ổn định, hỗ trợ đa dạng nhu cầu nuôi tài khoản, làm MMO, lướt web ẩn danh.</p>
-    </div>
-</div>
+
 
 <div class="container pb-5">
-    <!-- Phần Sản phẩm VPN (Từ danh mục sản phẩm có is_vpn = 1) -->
-    @if($vpnProducts->count() > 0)
-    <div class="mb-5" data-aos="fade-up">
-        <h2 class="section-title"><i class="fas fa-network-wired me-2 text-primary"></i>Phần Mềm VPN & Tool Đổi IP</h2>
-        <div class="row g-4">
-            @foreach($vpnProducts as $product)
-                <div class="col-md-4 col-lg-3">
-                    <div class="card product-card">
-                        <a href="{{ route('product.show', $product->slug) }}">
-                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" class="product-img" alt="{{ $product->name }}">
-                        </a>
-                        <div class="card-body d-flex flex-column">
-                            <a href="{{ route('product.show', $product->slug) }}" class="text-decoration-none">
-                                <h3 class="product-title">{{ $product->name }}</h3>
+    <!-- Tab Navigation -->
+    <ul class="nav nav-pills custom-tabs mb-4 justify-content-center" id="vpnProxyTabs" data-aos="fade-up">
+        <li class="nav-item">
+            <a class="nav-link {{ $tab == 'vpn' ? 'active' : '' }}" href="{{ route('vpn.tab', ['tab' => 'vpn']) }}">
+                <i class="fas fa-network-wired me-2"></i>VPN
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ $tab == 'proxy' ? 'active' : '' }}" href="{{ route('vpn.tab', ['tab' => 'proxy']) }}">
+                <i class="fas fa-server me-2"></i>Dịch Vụ Proxy
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="vpnProxyTabsContent">
+        
+        @if($tab == 'vpn')
+        <!-- Tab 1: VPN & Tool -->
+        <div class="tab-pane fade show active" role="tabpanel">
+            @if($vpnProducts->count() > 0)
+            <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+                @foreach($vpnProducts as $product)
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card product-card">
+                            <a href="{{ route('product.show', $product->slug) }}">
+                                <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" class="product-img" alt="{{ $product->name }}">
                             </a>
-                            <div class="mt-auto pt-3 border-top">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="product-price">{{ $product->formatted_price }}</span>
-                                    @if($product->is_on_sale)
-                                        <span class="product-original-price">{{ $product->formatted_original_price }}</span>
-                                    @endif
-                                </div>
-                                <a href="{{ route('product.show', $product->slug) }}" class="btn btn-outline-primary w-100 rounded-pill">
-                                    <i class="fas fa-shopping-cart me-2"></i>Xem Chi Tiết
+                            <div class="card-body d-flex flex-column">
+                                <a href="{{ route('product.show', $product->slug) }}" class="text-decoration-none">
+                                    <h3 class="product-title">{{ $product->name }}</h3>
                                 </a>
+                                <div class="mt-auto pt-3 border-top">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="product-price">{{ $product->formatted_price }}</span>
+                                        @if($product->is_on_sale)
+                                            <span class="product-original-price">{{ $product->formatted_original_price }}</span>
+                                        @endif
+                                    </div>
+                                    <a href="{{ route('product.show', $product->slug) }}" class="btn btn-outline-primary w-100 rounded-pill">
+                                        <i class="fas fa-shopping-cart me-2"></i>Xem Chi Tiết
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+            @else
+            <div class="text-center py-5 bg-white rounded-3 shadow-sm border" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Chưa có phần mềm VPN nào được thêm...</h5>
+            </div>
+            @endif
         </div>
-    </div>
-    @endif
-
-    <!-- Phần Danh Sách Proxy -->
-    <div data-aos="fade-up" data-aos-delay="100">
-        <h2 class="section-title"><i class="fas fa-server me-2 text-info"></i>Dịch Vụ Proxy Riêng Cấp Phát (Private)</h2>
-        
-        @if($proxies->count() > 0)
-            <div class="table-responsive proxy-table">
-                <table class="table table-hover mb-0 text-center">
-                    <thead>
-                        <tr>
-                            <th class="text-start">Tên Gói Proxy</th>
-                            <th>Quốc Gia</th>
-                            <th>Giao Thức</th>
-                            <th>Thời Hạn</th>
-                            <th>Giá / Chu kỳ</th>
-                            <th>Thao Tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($proxies as $proxy)
-                        <tr>
-                            <td class="text-start fw-bold text-dark">
-                                <i class="fas fa-globe-americas text-primary me-2"></i>{{ $proxy->name }}
-                            </td>
-                            <td>
-                                <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-danger me-1"></i>{{ $proxy->location ?? 'US' }}</span>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary">{{ $proxy->protocol ?? 'HTTP/SOCKS5' }}</span>
-                            </td>
-                            <td>
-                                {{ $proxy->duration ?? '30 Ngày' }}
-                            </td>
-                            <td>
-                                <strong class="text-danger">{{ number_format($proxy->price, 0, ',', '.') }}đ</strong>
-                            </td>
-                            <td>
-                                <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-sm btn-success rounded-pill px-3">
-                                    <i class="fas fa-comment-dots me-1"></i>Mua ngay
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="mt-3 text-end text-muted small">
-                <i class="fas fa-info-circle me-1"></i> Proxy sẽ được cấp phát ngay sau khi thanh toán qua bộ phận hỗ trợ Zalo.
-            </div>
-        @else
-            <div class="text-center py-5 bg-white rounded-3 shadow-sm border">
-                <i class="fas fa-server fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Hệ thống đang cập nhật danh sách Proxy...</h5>
-                <p>Vui lòng quay lại sau hoặc liên hệ bộ phận hỗ trợ qua Zalo để mua Proxy trực tiếp.</p>
-                <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-primary rounded-pill mt-2"><i class="fas fa-comment-dots me-2"></i>Liên hệ Zalo</a>
-            </div>
         @endif
+
+        @if($tab == 'proxy')
+        <!-- Tab 2: Proxy -->
+        <div class="tab-pane fade show active" role="tabpanel">
+            @if($proxies->count() > 0)
+                <div class="table-responsive proxy-table" data-aos="fade-up" data-aos-delay="100">
+                    <table class="table table-hover mb-0 text-center">
+                        <thead>
+                            <tr>
+                                <th class="text-start">Tên Gói Proxy</th>
+                                <th>Quốc Gia</th>
+                                <th>Giao Thức</th>
+                                <th>Thời Hạn</th>
+                                <th>Giá / Chu kỳ</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($proxies as $proxy)
+                            <tr>
+                                <td class="text-start fw-bold text-dark">
+                                    <i class="fas fa-globe-americas text-primary me-2"></i>{{ $proxy->name }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-map-marker-alt text-danger me-1"></i>{{ $proxy->location ?? 'US' }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ $proxy->protocol ?? 'HTTP/SOCKS5' }}</span>
+                                </td>
+                                <td>
+                                    {{ $proxy->duration ?? '30 Ngày' }}
+                                </td>
+                                <td>
+                                    <strong class="text-danger">{{ number_format($proxy->price, 0, ',', '.') }}đ</strong>
+                                </td>
+                                <td>
+                                    <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-sm btn-success rounded-pill px-3">
+                                        <i class="fas fa-comment-dots me-1"></i>Mua ngay
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3 text-end text-muted small" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-info-circle me-1"></i> Proxy sẽ được cấp phát ngay sau khi thanh toán qua bộ phận hỗ trợ Zalo.
+                </div>
+            @else
+                <div class="text-center py-5 bg-white rounded-3 shadow-sm border" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-server fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Hệ thống đang cập nhật danh sách Proxy...</h5>
+                    <p>Vui lòng quay lại sau hoặc liên hệ bộ phận hỗ trợ qua Zalo để mua Proxy trực tiếp.</p>
+                    <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-primary rounded-pill mt-2"><i class="fas fa-comment-dots me-2"></i>Liên hệ Zalo</a>
+                </div>
+            @endif
+        </div>
+        @endif
+
     </div>
 </div>
 @endsection

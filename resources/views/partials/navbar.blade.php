@@ -33,9 +33,12 @@
                 Cửa hàng
             </a>
             @endif
-            @if($menuBlog)
-            <a href="{{ route('blog.index') }}" class="nav-text-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">
-                Blog
+            <a href="{{ route('vpn.index') }}" class="nav-text-link {{ request()->routeIs('vpn.*') ? 'active' : '' }}" style="color: #00bcd4; font-weight: 700;">
+                <i class="fa-solid fa-network-wired me-1"></i>VPN & Proxy
+            </a>
+            @if($menuBuff)
+            <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}" style="color: #ff5e00; font-weight: 700;">
+                Dịch Vụ MXH
             </a>
             @endif
             @if($menuWebdesign)
@@ -48,14 +51,11 @@
                 Đổi Thẻ Cào
             </a>
             @endif
-            @if($menuBuff)
-            <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}" style="color: #ff5e00; font-weight: 700;">
-                Dịch Vụ MXH
+            @if($menuBlog)
+            <a href="{{ route('blog.index') }}" class="nav-text-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">
+                Blog
             </a>
             @endif
-            <a href="{{ route('vpn.index') }}" class="nav-text-link {{ request()->routeIs('vpn.*') ? 'active' : '' }}" style="color: #00bcd4; font-weight: 700;">
-                <i class="fa-solid fa-network-wired me-1"></i>VPN & Proxy
-            </a>
             @if($menuCommunity)
             <a href="{{ route('community.index') }}" class="nav-text-link {{ request()->routeIs('community.*') ? 'active' : '' }}">
                 Cộng đồng
@@ -86,8 +86,9 @@
                 @if($menuShop)
                     <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>Cửa hàng</a></li>
                 @endif
-                @if($menuBlog)
-                    <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>Blog</a></li>
+                <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>VPN & Proxy</a></li>
+                @if($menuBuff)
+                    <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fa-solid fa-rocket me-2"></i>Dịch Vụ MXH</a></li>
                 @endif
                 @if($menuWebdesign)
                     <li><a class="dropdown-item" href="{{ route('web-design') }}"><i class="fa-solid fa-code me-2 text-primary"></i>Thiết Kế Website</a></li>
@@ -95,10 +96,9 @@
                 @if($menuCardExchange)
                     <li><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fa-solid fa-credit-card me-2 text-warning"></i>Đổi Thẻ Cào</a></li>
                 @endif
-                @if($menuBuff)
-                    <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fa-solid fa-rocket me-2"></i>Dịch Vụ MXH</a></li>
+                @if($menuBlog)
+                    <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>Blog</a></li>
                 @endif
-                <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>VPN & Proxy</a></li>
                 @if($menuCommunity)
                     <li><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fa-solid fa-users me-2 text-success"></i>Cộng đồng</a></li>
                 @endif

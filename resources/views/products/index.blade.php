@@ -829,12 +829,6 @@
                 <p class="w-100 text-muted mb-0 mt-2" style="font-size: 0.95rem;">{{ $seoDescription }}</p>
             @endif
 
-            <form action="{{ route('shop') }}" method="GET" class="compact-search-form">
-                <input type="hidden" name="category_id" value="{{ $currentCategoryId }}">
-                <i class="fas fa-search compact-search-icon"></i>
-                <input type="text" name="search" class="compact-search-input" placeholder="Tìm sản phẩm..." value="{{ $searchTerm }}">
-                <button type="submit" class="d-none"></button>
-            </form>
         </div>
         
         <div class="d-flex align-items-center bg-white px-4 py-2 rounded-pill shadow-sm border" style="border-color: rgba(108, 92, 231, 0.2) !important;">

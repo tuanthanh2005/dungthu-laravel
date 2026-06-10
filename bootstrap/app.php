@@ -23,8 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'affiliate.approved' => \App\Http\Middleware\AffiliateApproved::class,
         ]);
 
-        // Auto-check menu enabled status on every web request
-        $middleware->appendToGroup('web', \App\Http\Middleware\CheckMenuEnabled::class);
 
         
         // Exclude CSRF for OAuth callbacks

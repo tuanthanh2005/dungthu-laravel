@@ -1467,6 +1467,7 @@ class AdminController extends Controller
             'menu_community',
             'menu_chat',
             'menu_minigame',
+            'menu_zalo_group',
             'adsense_enabled',
         ];
 

@@ -9,6 +9,7 @@
     $menuCardExchange = \App\Models\SiteSetting::getValue('menu_card_exchange', '1') === '1';
     $menuChat        = \App\Models\SiteSetting::getValue('menu_chat', '1') === '1';
     $menuMinigame    = \App\Models\SiteSetting::getValue('menu_minigame', '1') === '1';
+    $menuZaloGroup   = \App\Models\SiteSetting::getValue('menu_zalo_group', '1') === '1';
 @endphp
 
 <nav class="navbar navbar-expand-xl navbar-techfeed sticky-top" id="mainNavbar">
@@ -66,9 +67,11 @@
                 <i class="fa-solid fa-gamepad me-1"></i>Mini Game
             </a>
             @endif
+            @if($menuZaloGroup)
             <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" class="nav-text-link fw-bold" style="color: #0068ff;">
                 Nhóm Zalo
             </a>
+            @endif
             <a href="javascript:void(0)" class="nav-text-link" data-bs-toggle="modal" data-bs-target="#quickContactModal">
                 Liên hệ Ngay
             </a>
@@ -106,7 +109,9 @@
                     <li><a class="dropdown-item fw-bold" href="{{ route('minigame.index') }}" style="color: #e11d48;"><i class="fa-solid fa-gamepad me-2"></i>Mini Game</a></li>
                 @endif
                 <li><hr class="dropdown-divider"></li>
+                @if($menuZaloGroup)
                 <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fa-solid fa-users me-2"></i>Nhóm Zalo</a></li>
+                @endif
                 <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>Liên hệ Ngay</a></li>
             </ul>
         </div>
@@ -177,7 +182,9 @@
                         @if($menuCommunity)
                             <li class="d-xl-none"><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
                         @endif
+                        @if($menuZaloGroup)
                         <li class="d-xl-none"><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Thành Viên</a></li>
+                        @endif
                         <li class="d-xl-none"><hr class="dropdown-divider"></li>
 
                         @if($menuMinigame)

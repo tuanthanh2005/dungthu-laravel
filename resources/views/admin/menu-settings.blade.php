@@ -331,6 +331,13 @@
                             'color'  => 'linear-gradient(135deg,#e11d48,#be123c)',
                             'where'  => 'both',
                         ],
+                        'menu_zalo_group' => [
+                            'label'  => 'Nhóm Zalo',
+                            'desc'   => 'Link tham gia nhóm Zalo',
+                            'icon'   => 'fa-users',
+                            'color'  => 'linear-gradient(135deg,#0068ff,#00c6ff)',
+                            'where'  => 'both',
+                        ],
                         'adsense_enabled' => [
                             'label'  => 'Google AdSense',
                             'desc'   => 'Bật/tắt toàn bộ ô quảng cáo Google AdSense',

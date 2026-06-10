@@ -261,7 +261,7 @@
 
                     <div class="row g-4">
                         <!-- Bulk Products -->
-                        <div class="col-md-4">
+                        <div class="col-md-6 col-lg-3">
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
                                     <i class="fas fa-box fs-1 text-primary mb-3"></i>
@@ -275,7 +275,7 @@
                         </div>
 
                         <!-- Bulk Categories -->
-                        <div class="col-md-4">
+                        <div class="col-md-6 col-lg-3">
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
                                     <i class="fas fa-list fs-1 text-success mb-3"></i>
@@ -289,7 +289,7 @@
                         </div>
 
                         <!-- Bulk SEO Keywords -->
-                        <div class="col-md-4">
+                        <div class="col-md-6 col-lg-3">
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
                                     <i class="fas fa-search fs-1 text-warning mb-3"></i>
@@ -297,6 +297,20 @@
                                     <p class="text-muted small">Gửi tất cả các trang đích (landing pages) từ khóa SEO đang hoạt động lên Google.</p>
                                 </div>
                                 <button type="button" class="btn btn-warning text-dark rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.seo-keywords.submit-all') }}" data-type="Từ khóa SEO">
+                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Bulk Blogs -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="console-card text-center d-flex flex-column justify-content-between">
+                                <div>
+                                    <i class="fas fa-blog fs-1 text-danger mb-3"></i>
+                                    <h5>Index Tất Cả Blog</h5>
+                                    <p class="text-muted small">Gửi toàn bộ bài viết (blog) đã xuất bản lên Google Indexing API.</p>
+                                </div>
+                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all') }}" data-type="Blog">
                                     <i class="fab fa-google me-2"></i>Bắt đầu gửi
                                 </button>
                             </div>
@@ -335,6 +349,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <div id="pagination-container"></div>
                 </div>
             </div>
         </div>
@@ -378,12 +393,17 @@
         }
     }
 
+    let allLogs = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
     // Fetch and render logs
     function fetchLogs() {
         const tableBody = document.querySelector('#table-logs tbody');
         tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Đang tải...</td></tr>';
+        document.getElementById('pagination-container').innerHTML = '';
 
-        fetch('{{ route("admin.google-indexing.recent") }}?minutes=1440', {
+        fetch('{{ route("admin.google-indexing.recent") }}?minutes=1440&limit=500', {
             headers: {
                 'Accept': 'application/json'
             }
@@ -391,41 +411,103 @@
         .then(res => res.json())
         .then(data => {
             if (data.success && data.data.length > 0) {
-                let html = '';
-                data.data.forEach(log => {
-                    let typeBadge = log.type === 'URL_UPDATED' 
-                        ? '<span class="badge bg-success">UPDATED</span>' 
-                        : '<span class="badge bg-danger">DELETED</span>';
-                    
-                    let statusBadge = '';
-                    if (log.status === 'success') {
-                        statusBadge = '<span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Thành công</span>';
-                    } else if (log.status === 'failed') {
-                        statusBadge = `<span class="text-danger fw-bold" title="${log.message || ''}"><i class="fas fa-exclamation-circle me-1"></i>Thất bại</span>`;
-                    } else {
-                        statusBadge = `<span class="text-muted fw-bold"><i class="fas fa-arrow-alt-circle-right me-1"></i>Bỏ qua (${log.status})</span>`;
-                    }
-
-                    let localTime = new Date(log.submitted_at).toLocaleString('vi-VN');
-
-                    html += `
-                        <tr>
-                            <td><code class="text-primary small">${log.url}</code></td>
-                            <td>${typeBadge}</td>
-                            <td><span class="text-secondary small">${log.source}</span></td>
-                            <td>${statusBadge}</td>
-                            <td><small class="text-muted">${localTime}</small></td>
-                        </tr>
-                    `;
-                });
-                tableBody.innerHTML = html;
+                allLogs = data.data;
+                renderLogsPage(1);
             } else {
-                tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Không có nhật ký gửi index nào trong 24h qua.</td></tr>';
+                allLogs = [];
+                renderLogsPage(1);
             }
         })
         .catch(err => {
             tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-danger">Không thể tải nhật ký. Đã xảy ra lỗi kết nối.</td></tr>';
         });
+    }
+
+    function renderLogsPage(page) {
+        const tableBody = document.querySelector('#table-logs tbody');
+        if (allLogs.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Không có nhật ký gửi index nào trong 24h qua.</td></tr>';
+            document.getElementById('pagination-container').innerHTML = '';
+            return;
+        }
+
+        const totalPages = Math.ceil(allLogs.length / itemsPerPage);
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        currentPage = page;
+
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedLogs = allLogs.slice(start, end);
+
+        let html = '';
+        paginatedLogs.forEach(log => {
+            let typeBadge = log.type === 'URL_UPDATED' 
+                ? '<span class="badge bg-success">UPDATED</span>' 
+                : '<span class="badge bg-danger">DELETED</span>';
+            
+            let statusBadge = '';
+            if (log.status === 'success') {
+                statusBadge = '<span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Thành công</span>';
+            } else if (log.status === 'failed') {
+                statusBadge = `<span class="text-danger fw-bold" title="${log.message || ''}"><i class="fas fa-exclamation-circle me-1"></i>Thất bại</span>`;
+            } else {
+                statusBadge = `<span class="text-muted fw-bold"><i class="fas fa-arrow-alt-circle-right me-1"></i>Bỏ qua (${log.status})</span>`;
+            }
+
+            let localTime = new Date(log.submitted_at).toLocaleString('vi-VN');
+
+            html += `
+                <tr>
+                    <td><code class="text-primary small">${log.url}</code></td>
+                    <td>${typeBadge}</td>
+                    <td><span class="text-secondary small">${log.source}</span></td>
+                    <td>${statusBadge}</td>
+                    <td><small class="text-muted">${localTime}</small></td>
+                </tr>
+            `;
+        });
+        tableBody.innerHTML = html;
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        if (totalPages <= 1) {
+            document.getElementById('pagination-container').innerHTML = '';
+            return;
+        }
+
+        let paginationHtml = '<ul class="pagination justify-content-center mb-0 mt-3">';
+        
+        // Prev button
+        paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="event.preventDefault(); renderLogsPage(${currentPage - 1})">Trước</a>
+        </li>`;
+
+        // Pages
+        for (let i = 1; i <= totalPages; i++) {
+            if (totalPages > 7) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="event.preventDefault(); renderLogsPage(${i})">${i}</a>
+                    </li>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            } else {
+                paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="event.preventDefault(); renderLogsPage(${i})">${i}</a>
+                </li>`;
+            }
+        }
+
+        // Next button
+        paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="event.preventDefault(); renderLogsPage(${currentPage + 1})">Sau</a>
+        </li>`;
+
+        paginationHtml += '</ul>';
+        document.getElementById('pagination-container').innerHTML = paginationHtml;
     }
 
     // Single URL submission

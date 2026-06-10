@@ -173,38 +173,18 @@
                         @else
                             <li><a class="dropdown-item" href="{{ route('affiliate.login') }}"><i class="fas fa-handshake me-2"></i>Đăng ký CTV</a></li>
                         @endif
-                        <li><hr class="dropdown-divider"></li>
-                        @if($menuHome)
-                            <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>Trang chủ</a></li>
-                        @endif
-                        @if($menuShop)
-                            <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>Cửa hàng</a></li>
-                        @endif
+                        <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>Trang chủ</a></li>
+                        <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>Cửa hàng</a></li>
                         <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>VPN & Proxy</a></li>
-                        @if($menuBuff)
-                            <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fas fa-rocket me-2"></i>Buff Mạng XH</a></li>
-                        @endif
-                        @if($menuWebdesign)
-                            <li><a class="dropdown-item" href="{{ route('web-design') }}"><i class="fa-solid fa-code me-2 text-primary"></i>Thiết Kế Website</a></li>
-                        @endif
-                        @if($menuCardExchange)
-                            <li><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fas fa-exchange-alt me-2 text-warning"></i>Đổi thẻ cào</a></li>
-                        @endif
-                        @if($menuBlog)
-                            <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>Blog</a></li>
-                        @endif
-                        @if($menuCommunity)
-                            <li><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
-                        @endif
-                        @if($menuZaloGroup)
-                            <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Zalo</a></li>
-                        @endif
+                        <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fas fa-rocket me-2"></i>Buff Mạng XH</a></li>
+                        <li><a class="dropdown-item" href="{{ route('web-design') }}"><i class="fa-solid fa-code me-2 text-primary"></i>Thiết Kế Website</a></li>
+                        <li><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fas fa-exchange-alt me-2 text-warning"></i>Đổi thẻ cào</a></li>
+                        <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>Blog</a></li>
+                        <li><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>Cộng đồng</a></li>
+                        <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>Nhóm Zalo</a></li>
                         <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>Liên hệ Ngay</a></li>
                         <li><hr class="dropdown-divider"></li>
-
-                        @if($menuMinigame)
-                            <li><a class="dropdown-item" href="{{ route('minigame.index') }}"><i class="fas fa-gamepad me-2 text-danger"></i>Vòng xoay may mắn</a></li>
-                        @endif
+                        <li><a class="dropdown-item" href="{{ route('minigame.index') }}"><i class="fas fa-gamepad me-2 text-danger"></i>Vòng xoay may mắn</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>Đơn hàng</a></li>
                         <li><hr class="dropdown-divider"></li>

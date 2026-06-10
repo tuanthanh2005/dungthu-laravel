@@ -1112,7 +1112,7 @@ class AdminController extends Controller
             $imagePath = '/images/categories/' . $fileName;
         }
 
-        ProductCategory::create([
+        $category = ProductCategory::create([
             'name' => $request->name,
             'slug' => $slug,
             'type' => $request->type,
@@ -1121,6 +1121,18 @@ class AdminController extends Controller
             'is_active' => $request->has('is_active'),
             'show_on_home' => $request->has('show_on_home'),
         ]);
+
+        // Submit to Google Indexing
+        try {
+            $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+            $url = $baseUrl . '/shop?category_id=' . $category->id;
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', 'category_create');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] category_create failed', [
+                'category_id' => $category->id,
+                'error' => $e->getMessage()
+            ]);
+        }
 
         return redirect()->route('admin.categories')->with('success', 'Thêm danh mục thành công!');
     }
@@ -1182,6 +1194,18 @@ class AdminController extends Controller
             'show_on_home' => $request->has('show_on_home'),
         ]);
 
+        // Submit to Google Indexing
+        try {
+            $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+            $url = $baseUrl . '/shop?category_id=' . $category->id;
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', 'category_update');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] category_update failed', [
+                'category_id' => $category->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+
         return redirect()->route('admin.categories')->with('success', 'Cập nhật danh mục thành công!');
     }
 
@@ -1197,6 +1221,18 @@ class AdminController extends Controller
             if (file_exists($fullPath)) {
                 unlink($fullPath);
             }
+        }
+
+        // Notify Google Indexing of removal before deleting
+        try {
+            $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
+            $url = $baseUrl . '/shop?category_id=' . $category->id;
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_DELETED', 'category_delete');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] category_delete failed', [
+                'category_id' => $category->id,
+                'error' => $e->getMessage()
+            ]);
         }
 
         $category->delete();

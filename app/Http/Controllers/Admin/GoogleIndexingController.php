@@ -71,20 +71,19 @@ class GoogleIndexingController extends Controller
     {
         $chunk = max(10, min((int) $request->query('chunk', 50), 200));
         $limit = max(0, (int) $request->query('limit', 0));
+        $latest = filter_var($request->query('latest', false), FILTER_VALIDATE_BOOLEAN);
 
-        $query = Blog::published()->orderBy('id');
+        $query = Blog::published();
         $totalAvailable = (clone $query)->count();
 
         $processed = 0;
         $success = 0;
         $failed = [];
 
-        $query->chunkById($chunk, function ($blogs) use (&$processed, &$success, &$failed, $limit) {
+        if ($latest && $limit > 0) {
+            // Fetch exactly $limit newest blogs
+            $blogs = Blog::published()->orderBy('id', 'desc')->limit($limit)->get();
             foreach ($blogs as $blog) {
-                if ($limit > 0 && $processed >= $limit) {
-                    return false;
-                }
-
                 try {
                     GoogleIndexingService::publishBlog($blog, 'URL_UPDATED', 'manual_bulk');
                     $success++;
@@ -95,12 +94,33 @@ class GoogleIndexingController extends Controller
                         'message' => $e->getMessage(),
                     ];
                 }
-
                 $processed++;
             }
+        } else {
+            $query->orderBy('id');
+            $query->chunkById($chunk, function ($blogs) use (&$processed, &$success, &$failed, $limit) {
+                foreach ($blogs as $blog) {
+                    if ($limit > 0 && $processed >= $limit) {
+                        return false;
+                    }
 
-            return null;
-        });
+                    try {
+                        GoogleIndexingService::publishBlog($blog, 'URL_UPDATED', 'manual_bulk');
+                        $success++;
+                    } catch (\Throwable $e) {
+                        $failed[] = [
+                            'blog_id' => $blog->id,
+                            'slug' => $blog->slug,
+                            'message' => $e->getMessage(),
+                        ];
+                    }
+
+                    $processed++;
+                }
+
+                return null;
+            });
+        }
 
         return response()->json([
             'success' => count($failed) === 0,

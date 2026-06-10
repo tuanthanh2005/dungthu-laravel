@@ -25,6 +25,9 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            max-height: 84px; /* Show about 2 rows */
+            overflow: hidden;
+            transition: max-height 0.3s ease;
         }
         .blog-topic-chip {
             display: inline-flex;
@@ -48,7 +51,7 @@
             box-shadow: 0 8px 18px rgba(108, 92, 231, 0.18);
         }
         .blog-topic-toggle {
-            display: none;
+            display: flex;
             border: none;
             background: rgba(108, 92, 231, 0.08);
             color: #5f27cd;
@@ -60,8 +63,14 @@
             margin: 12px auto 0;
             transition: all 0.2s ease;
         }
+        .blog-topic-toggle:hover {
+            background: rgba(108, 92, 231, 0.15);
+        }
         .blog-topic-toggle i {
             transition: transform 0.2s ease;
+        }
+        .blog-topic-section.expanded .blog-topic-links {
+            max-height: 800px;
         }
         .blog-topic-section.expanded .blog-topic-toggle i {
             transform: rotate(180deg);
@@ -70,17 +79,6 @@
             .blog-topic-section {
                 padding: 14px 16px;
                 border-radius: 16px;
-            }
-            .blog-topic-links {
-                max-height: 138px;
-                overflow: hidden;
-                transition: max-height 0.25s ease;
-            }
-            .blog-topic-section.expanded .blog-topic-links {
-                max-height: 600px;
-            }
-            .blog-topic-toggle {
-                display: flex;
             }
         }
     </style>
@@ -165,7 +163,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             const topicSection = document.querySelector('.blog-topic-section');
             const topicToggle = document.querySelector('.blog-topic-toggle');
-            if (topicSection && topicToggle) {
+            const topicLinks = document.querySelector('.blog-topic-links');
+
+            if (topicSection && topicToggle && topicLinks) {
+                // Hide toggle if content fits within 84px
+                if (topicLinks.scrollHeight <= 90) {
+                    topicToggle.style.display = 'none';
+                }
+
                 topicToggle.addEventListener('click', function() {
                     const expanded = topicSection.classList.toggle('expanded');
                     topicToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');

@@ -581,66 +581,91 @@
             const button = this;
             const originalHtml = button.innerHTML;
 
-            const pin = window.prompt(`Nhập mã xác nhận (PIN admin) để gửi INDEX HÀNG LOẠT tất cả ${type} lên Google:`);
-            if (pin === null) return;
-            if (!/^\d{3}$/.test(pin)) {
-                alert('Mã xác nhận phải đúng 3 số.');
-                return;
-            }
-
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    admin_pin: pin
-                })
-            })
-            .then(res => res.json().then(data => ({ status: res.status, body: data })))
-            .then(({ status, body }) => {
-                if (status === 200 && body.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Thành công!',
-                        text: body.message || `Gửi Index hàng loạt ${type} thành công!`,
-                        confirmButtonText: 'Đồng ý'
-                    });
-                    fetchLogs();
-                } else {
-                    let failedDetails = '';
-                    if (body.failed && body.failed.length > 0) {
-                        failedDetails = '\n\nChi tiết lỗi:\n' + body.failed.slice(0, 10).map(f => `- ${f.slug || f.name || f.product_id || f.blog_id}: ${f.message}`).join('\n');
-                        if (body.failed.length > 10) {
-                            failedDetails += `\n... và ${body.failed.length - 10} lỗi khác.`;
-                        }
-                    }
-                    Swal.fire({
-                        icon: body.submitted > 0 ? 'warning' : 'error',
-                        title: body.submitted > 0 ? 'Hoàn thành một phần!' : 'Thất bại!',
-                        text: (body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.') + failedDetails
-                    });
-                    fetchLogs();
-                }
-            })
-            .catch(err => {
+            if (type === 'Blog') {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi kết nối!',
-                    text: 'Không thể kết nối đến server.'
+                    title: 'Tùy chọn Index Blog',
+                    text: 'Bạn muốn index 50 bài viết mới nhất (khuyên dùng vì các bài cũ đã index rồi) hay toàn bộ bài viết?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonColor: '#3085d6',
+                    denyButtonColor: '#d33',
+                    confirmButtonText: '50 bài mới nhất',
+                    denyButtonText: 'Toàn bộ bài viết',
+                    cancelButtonText: 'Hủy bỏ'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        executeBulkIndex(url + '?latest=true&limit=50', '50 ' + type + ' mới nhất', button, originalHtml);
+                    } else if (result.isDenied) {
+                        executeBulkIndex(url, 'toàn bộ ' + type, button, originalHtml);
+                    }
                 });
-            })
-            .finally(() => {
-                button.disabled = false;
-                button.innerHTML = originalHtml;
-            });
+            } else {
+                executeBulkIndex(url, 'tất cả ' + type, button, originalHtml);
+            }
         });
     });
+
+    function executeBulkIndex(url, typeText, button, originalHtml) {
+        const pin = window.prompt(`Nhập mã xác nhận (PIN admin) để gửi INDEX HÀNG LOẠT ${typeText} lên Google:`);
+        if (pin === null) return;
+        if (!/^\d{3}$/.test(pin)) {
+            alert('Mã xác nhận phải đúng 3 số.');
+            return;
+        }
+
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                admin_pin: pin
+            })
+        })
+        .then(res => res.json().then(data => ({ status: res.status, body: data })))
+        .then(({ status, body }) => {
+            if (status === 200 && body.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: body.message || `Gửi Index hàng loạt ${typeText} thành công!`,
+                    confirmButtonText: 'Đồng ý'
+                });
+                fetchLogs();
+            } else {
+                let failedDetails = '';
+                if (body.failed && body.failed.length > 0) {
+                    failedDetails = '\n\nChi tiết lỗi:\n' + body.failed.slice(0, 10).map(f => `- ${f.slug || f.name || f.product_id || f.blog_id}: ${f.message}`).join('\n');
+                    if (body.failed.length > 10) {
+                        failedDetails += `\n... và ${body.failed.length - 10} lỗi khác.`;
+                    }
+                }
+                Swal.fire({
+                    icon: body.submitted > 0 ? 'warning' : 'error',
+                    title: body.submitted > 0 ? 'Hoàn thành một phần!' : 'Thất bại!',
+                    text: (body.message || 'Lỗi xảy ra từ hệ thống hoặc API đã hết hạn mức hôm nay.') + failedDetails
+                });
+                fetchLogs();
+            }
+        })
+        .catch(err => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi kết nối!',
+                text: 'Không thể kết nối đến server.'
+            });
+        })
+        .finally(() => {
+            button.disabled = false;
+            button.innerHTML = originalHtml;
+        });
+    }
 
     document.querySelector('.btn-refresh-logs').addEventListener('click', fetchLogs);
 

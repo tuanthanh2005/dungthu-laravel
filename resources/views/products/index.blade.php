@@ -439,6 +439,12 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            max-height: 85px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .seo-keyword-section.expanded .seo-keyword-links {
+            max-height: 1000px;
         }
         .seo-keyword-chip {
             display: inline-flex;
@@ -462,7 +468,7 @@
             box-shadow: 0 8px 18px rgba(108, 92, 231, 0.18);
         }
         .seo-keyword-toggle {
-            display: none;
+            display: flex;
             border: none;
             background: rgba(108, 92, 231, 0.08);
             color: #5f27cd;

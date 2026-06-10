@@ -247,6 +247,24 @@
                         </label>
                     </div>
                 </div>
+
+                <!-- Sản phẩm VPN -->
+                <div class="mb-4">
+                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               role="switch"
+                               id="is_vpn"
+                               name="is_vpn"
+                               value="1"
+                               {{ old('is_vpn', $product->is_vpn ?? false) ? 'checked' : '' }}
+                               style="width: 50px; height: 25px; cursor: pointer;">
+                        <label class="form-check-label fw-bold" for="is_vpn" style="margin-left: 10px; cursor: pointer;">
+                            <i class="fas fa-network-wired text-info me-2"></i>Sản phẩm VPN
+                            <small class="text-muted d-block">Hiển thị trong trang VPN & Proxy</small>
+                        </label>
+                    </div>
+                </div>
                 <!-- Featured Product -->
                 <div class="mb-4">
                     <div class="form-check form-switch" style="padding-left: 2.5rem;">

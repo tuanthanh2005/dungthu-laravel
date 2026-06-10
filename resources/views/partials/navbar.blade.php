@@ -53,6 +53,9 @@
                 Dịch Vụ MXH
             </a>
             @endif
+            <a href="{{ route('vpn.index') }}" class="nav-text-link {{ request()->routeIs('vpn.*') ? 'active' : '' }}" style="color: #00bcd4; font-weight: 700;">
+                <i class="fa-solid fa-network-wired me-1"></i>VPN & Proxy
+            </a>
             @if($menuCommunity)
             <a href="{{ route('community.index') }}" class="nav-text-link {{ request()->routeIs('community.*') ? 'active' : '' }}">
                 Cộng đồng
@@ -95,6 +98,7 @@
                 @if($menuBuff)
                     <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fa-solid fa-rocket me-2"></i>Dịch Vụ MXH</a></li>
                 @endif
+                <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>VPN & Proxy</a></li>
                 @if($menuCommunity)
                     <li><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fa-solid fa-users me-2 text-success"></i>Cộng đồng</a></li>
                 @endif
@@ -149,6 +153,7 @@
                         @if(Auth::user()->role === 'admin')
                             <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Admin</a></li>
                             <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>Quản lý Menu</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.proxies') }}"><i class="fas fa-network-wired me-2 text-info"></i>Quản lý Proxy</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li class="px-3 pb-1" style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;">Quản lý Buff</li>
                             <li><a class="dropdown-item" href="{{ route('admin.buff.dashboard') }}"><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>Buff Dashboard</a></li>

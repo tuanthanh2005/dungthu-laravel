@@ -743,6 +743,7 @@ class AdminController extends Controller
             'is_exclusive' => $request->has('is_exclusive') ? true : false,
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
+            'is_vpn' => $request->has('is_vpn') ? true : false,
         ]);
 
         // Sync features nếu có
@@ -904,6 +905,7 @@ class AdminController extends Controller
             'is_exclusive' => $request->has('is_exclusive') ? true : false,
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
+            'is_vpn' => $request->has('is_vpn') ? true : false,
         ]);
 
         // Sync features nếu có

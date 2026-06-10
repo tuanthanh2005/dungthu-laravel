@@ -71,6 +71,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/buff/{buffOrder}', [BuffOrderController::class, 'detail'])->name('buff.detail');
 });
 
+// Buff routes
+Route::get('/buff', [BuffController::class, 'index'])->name('buff.index');
+Route::get('/buff/server/{id}', [BuffController::class, 'getServer'])->name('buff.server');
+Route::middleware('auth')->post('/buff/order', [BuffController::class, 'placeOrder'])->name('buff.order');
+
+// VPN & Proxy routes
+Route::get('/vpn-proxy', [\App\Http\Controllers\VpnProxyController::class, 'index'])->name('vpn.index');
+
 // Blog routes
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/category/{category}', [BlogController::class, 'category'])->name('blog.category');
@@ -205,6 +213,14 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::post('/products/{product}/exclusive', [AdminController::class, 'toggleProductExclusive'])->name('admin.products.toggle-exclusive');
     Route::post('/products/{product}/combo-ai', [AdminController::class, 'toggleProductComboAi'])->name('admin.products.toggle-combo-ai');
     Route::post('/flash-sale/toggle', [AdminController::class, 'toggleFlashSaleGlobal'])->name('admin.flash-sale.toggle');
+
+    // Proxies Management
+    Route::get('/proxies', [\App\Http\Controllers\Admin\ProxyController::class, 'index'])->name('admin.proxies');
+    Route::get('/proxies/create', [\App\Http\Controllers\Admin\ProxyController::class, 'create'])->name('admin.proxies.create');
+    Route::post('/proxies', [\App\Http\Controllers\Admin\ProxyController::class, 'store'])->name('admin.proxies.store');
+    Route::get('/proxies/{proxy}/edit', [\App\Http\Controllers\Admin\ProxyController::class, 'edit'])->name('admin.proxies.edit');
+    Route::put('/proxies/{proxy}', [\App\Http\Controllers\Admin\ProxyController::class, 'update'])->name('admin.proxies.update');
+    Route::delete('/proxies/{proxy}', [\App\Http\Controllers\Admin\ProxyController::class, 'destroy'])->name('admin.proxies.destroy');
 
     // Product Categories Management
     Route::get('/categories', [AdminController::class, 'categories'])->name('admin.categories');

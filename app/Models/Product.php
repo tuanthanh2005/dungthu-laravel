@@ -28,6 +28,7 @@ class Product extends Model
         'is_exclusive',
         'is_combo_ai',
         'is_flash_sale',
+        'is_vpn',
     ];
 
     protected $casts = [

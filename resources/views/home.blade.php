@@ -67,13 +67,13 @@
         .hero-banner-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 12px;
+            padding: 10px 12px;
         }
 
         .hero-banner-card {
             background: #ffffff;
             border-radius: 24px;
-            padding: 40px 48px;
+            padding: 24px 36px;
             position: relative;
             overflow: hidden;
             border: 1px solid #e5e7eb;
@@ -113,29 +113,29 @@
             background: rgba(79, 70, 229, 0.08);
             border: 1px solid rgba(79, 70, 229, 0.2);
             color: #4f46e5;
-            padding: 6px 16px;
+            padding: 5px 12px;
             border-radius: 50px;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 2.1rem;
             font-weight: 800;
             color: #111827;
             line-height: 1.25;
-            margin-bottom: 18px;
+            margin-bottom: 10px;
             letter-spacing: -0.025em;
         }
 
         .hero-desc {
-            font-size: 1rem;
+            font-size: 0.92rem;
             color: #4b5563;
-            line-height: 1.6;
-            margin-bottom: 24px;
+            line-height: 1.5;
+            margin-bottom: 16px;
             max-width: 580px;
         }
 
@@ -143,7 +143,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 28px;
+            margin-bottom: 18px;
         }
 
         .hero-feature-chip {
@@ -153,9 +153,9 @@
             background: #f3f4f6;
             border: 1px solid #e5e7eb;
             color: #374151;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 0.82rem;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 0.78rem;
             font-weight: 600;
         }
 
@@ -173,9 +173,9 @@
             background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%);
             color: #ffffff !important;
             font-weight: 700;
-            font-size: 0.92rem;
-            padding: 12px 28px;
-            border-radius: 14px;
+            font-size: 0.88rem;
+            padding: 10px 24px;
+            border-radius: 12px;
             border: none;
             box-shadow: 0 4px 15px rgba(255, 94, 0, 0.35);
             transition: all 0.3s ease;
@@ -195,9 +195,9 @@
             border: 1px solid #d1d5db;
             color: #374151 !important;
             font-weight: 700;
-            font-size: 0.92rem;
-            padding: 12px 28px;
-            border-radius: 14px;
+            font-size: 0.88rem;
+            padding: 10px 24px;
+            border-radius: 12px;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
@@ -214,7 +214,7 @@
         /* Right Side Showcase */
         .hero-right-showcase {
             position: relative;
-            height: 340px;
+            height: 240px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -231,29 +231,16 @@
 
         .floating-cards-wrapper::before,
         .floating-cards-wrapper::after {
-            content: '';
-            position: absolute;
-            inset: 28px 26px;
-            border: 1px solid rgba(99, 102, 241, 0.12);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: neuralOrbit 18s linear infinite;
-        }
-
-        .floating-cards-wrapper::after {
-            inset: 68px 76px;
-            border-color: rgba(99, 102, 241, 0.08);
-            animation-duration: 13s;
-            animation-direction: reverse;
+            display: none;
         }
 
         .floating-ai-card {
             position: absolute;
-            width: 170px;
+            width: 140px;
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 14px;
+            border-radius: 12px;
+            padding: 10px;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -271,22 +258,22 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .floating-ai-card .card-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
+            font-size: 13px;
             color: #fff;
         }
 
         .floating-ai-card .card-status {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 800;
             padding: 2px 6px;
             border-radius: 4px;
@@ -294,23 +281,21 @@
         }
 
         .floating-ai-card .card-name {
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: #111827;
             margin-bottom: 2px;
         }
 
         .floating-ai-card .card-desc {
-            font-size: 0.68rem;
-            color: #4b5563;
-            margin-bottom: 10px;
+            display: none;
         }
 
         .floating-ai-card .card-foot {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-weight: 700;
         }
 
@@ -321,7 +306,7 @@
         /* Float Positions & Animations */
         .card-chatgpt {
             left: 2%;
-            top: 12%;
+            top: 8%;
             z-index: 4;
             --hover-border: rgba(16, 185, 129, 0.4);
             --hover-shadow: rgba(16, 185, 129, 0.2);
@@ -333,7 +318,7 @@
 
         .card-claude {
             right: 2%;
-            top: 5%;
+            top: 2%;
             z-index: 3;
             --hover-border: rgba(249, 115, 22, 0.4);
             --hover-shadow: rgba(249, 115, 22, 0.2);
@@ -345,7 +330,7 @@
 
         .card-vpn {
             left: 20%;
-            bottom: 4%;
+            bottom: 6%;
             z-index: 5;
             --hover-border: rgba(139, 92, 246, 0.4);
             --hover-shadow: rgba(139, 92, 246, 0.2);
@@ -357,7 +342,7 @@
 
         .card-cursor {
             right: 18%;
-            bottom: 26%;
+            bottom: 15%;
             z-index: 4;
             --hover-border: rgba(56, 189, 248, 0.4);
             --hover-shadow: rgba(56, 189, 248, 0.2);

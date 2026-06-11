@@ -71,52 +71,23 @@
         }
 
         .hero-banner-card {
-            background:
-                linear-gradient(118deg, rgba(56, 189, 248, 0.08) 0 1px, transparent 1px 18%, rgba(167, 139, 250, 0.1) 18% 19%, transparent 19% 100%),
-                linear-gradient(135deg, #08111f 0%, #111827 48%, #172033 100%);
-            background-size: 100% 100%, 100% 100%;
+            background: #ffffff;
             border-radius: 24px;
             padding: 40px 48px;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             isolation: isolate;
-            animation: heroTechPulse 8s ease-in-out infinite;
         }
 
-        /* Animated AI grid and data flow */
+        /* Animated AI grid and data flow - disabled for cleaner white design */
         .hero-banner-card::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background:
-                linear-gradient(90deg, rgba(56, 189, 248, 0.14) 1px, transparent 1px),
-                linear-gradient(0deg, rgba(129, 140, 248, 0.12) 1px, transparent 1px),
-                radial-gradient(circle at 18% 24%, rgba(56, 189, 248, 0.2) 0 2px, transparent 3px),
-                radial-gradient(circle at 62% 34%, rgba(167, 139, 250, 0.22) 0 2px, transparent 3px),
-                radial-gradient(circle at 84% 70%, rgba(34, 211, 238, 0.18) 0 2px, transparent 3px);
-            background-size: 44px 44px, 44px 44px, 180px 130px, 210px 160px, 240px 180px;
-            opacity: 0.34;
-            transform: translate3d(0, 0, 0);
-            animation: aiGridDrift 16s linear infinite;
-            pointer-events: none;
-            z-index: 0;
+            display: none;
         }
 
         .hero-banner-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(105deg, transparent 0%, transparent 43%, rgba(56, 189, 248, 0.2) 49%, rgba(129, 140, 248, 0.1) 52%, transparent 58%, transparent 100%),
-                linear-gradient(90deg, transparent 0%, rgba(34, 211, 238, 0.16) 50%, transparent 100%);
-            background-size: 260% 100%, 100% 1px;
-            background-position: 160% 0, 0 66%;
-            opacity: 0.7;
-            animation: aiScanLine 6s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
+            display: none;
         }
 
         .hero-banner-card > .row {
@@ -139,9 +110,9 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: #a5b4fc;
+            background: rgba(79, 70, 229, 0.08);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            color: #4f46e5;
             padding: 6px 16px;
             border-radius: 50px;
             font-size: 0.72rem;
@@ -149,29 +120,20 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 20px;
-            animation: badgeGlow 3s infinite ease-in-out;
-        }
-
-        @keyframes badgeGlow {
-            0%, 100% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.1); }
-            50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); border-color: rgba(99, 102, 241, 0.5); }
         }
 
         .hero-title {
             font-size: 2.5rem;
             font-weight: 800;
-            color: #ffffff;
+            color: #111827;
             line-height: 1.25;
             margin-bottom: 18px;
             letter-spacing: -0.025em;
-            background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .hero-desc {
             font-size: 1rem;
-            color: #94a3b8;
+            color: #4b5563;
             line-height: 1.6;
             margin-bottom: 24px;
             max-width: 580px;
@@ -188,9 +150,9 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #e2e8f0;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            color: #374151;
             padding: 6px 14px;
             border-radius: 12px;
             font-size: 0.82rem;
@@ -198,7 +160,7 @@
         }
 
         .hero-feature-chip i {
-            color: #38bdf8;
+            color: #0284c7;
         }
 
         .hero-actions {
@@ -229,9 +191,9 @@
         }
 
         .hero-btn-secondary {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #ffffff !important;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            color: #374151 !important;
             font-weight: 700;
             font-size: 0.92rem;
             padding: 12px 28px;
@@ -244,8 +206,8 @@
         }
 
         .hero-btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.3);
+            background: #f9fafb;
+            border-color: #9ca3af;
             transform: translateY(-2px);
         }
 
@@ -272,7 +234,7 @@
             content: '';
             position: absolute;
             inset: 28px 26px;
-            border: 1px solid rgba(56, 189, 248, 0.16);
+            border: 1px solid rgba(99, 102, 241, 0.12);
             border-radius: 50%;
             pointer-events: none;
             animation: neuralOrbit 18s linear infinite;
@@ -280,7 +242,7 @@
 
         .floating-cards-wrapper::after {
             inset: 68px 76px;
-            border-color: rgba(167, 139, 250, 0.18);
+            border-color: rgba(99, 102, 241, 0.08);
             animation-duration: 13s;
             animation-direction: reverse;
         }
@@ -288,12 +250,12 @@
         .floating-ai-card {
             position: absolute;
             width: 170px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e5e7eb;
             border-radius: 16px;
             padding: 14px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             cursor: pointer;
         }
@@ -334,13 +296,13 @@
         .floating-ai-card .card-name {
             font-size: 0.82rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #111827;
             margin-bottom: 2px;
         }
 
         .floating-ai-card .card-desc {
             font-size: 0.68rem;
-            color: #94a3b8;
+            color: #4b5563;
             margin-bottom: 10px;
         }
 
@@ -353,7 +315,7 @@
         }
 
         .floating-ai-card .card-price {
-            color: #38bdf8;
+            color: #0ea5e9;
         }
 
         /* Float Positions & Animations */
@@ -366,8 +328,8 @@
             animation: float-slow 6s ease-in-out infinite alternate;
         }
         .card-chatgpt .card-icon { background: #10b981; }
-        .card-chatgpt .card-status { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-        .card-chatgpt .card-price { color: #34d399; }
+        .card-chatgpt .card-status { background: rgba(16, 185, 129, 0.15); color: #059669; }
+        .card-chatgpt .card-price { color: #059669; }
 
         .card-claude {
             right: 2%;
@@ -378,8 +340,8 @@
             animation: float-medium 5s ease-in-out infinite alternate-reverse;
         }
         .card-claude .card-icon { background: #f97316; }
-        .card-claude .card-status { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
-        .card-claude .card-price { color: #fb923c; }
+        .card-claude .card-status { background: rgba(249, 115, 22, 0.15); color: #d97706; }
+        .card-claude .card-price { color: #d97706; }
 
         .card-vpn {
             left: 20%;
@@ -390,8 +352,8 @@
             animation: float-fast 4s ease-in-out infinite alternate;
         }
         .card-vpn .card-icon { background: #8b5cf6; }
-        .card-vpn .card-status { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-        .card-vpn .card-price { color: #a78bfa; }
+        .card-vpn .card-status { background: rgba(139, 92, 246, 0.15); color: #7c3aed; }
+        .card-vpn .card-price { color: #7c3aed; }
 
         .card-cursor {
             right: 18%;
@@ -402,8 +364,8 @@
             animation: float-slow 7s ease-in-out infinite alternate-reverse;
         }
         .card-cursor .card-icon { background: #0ea5e9; }
-        .card-cursor .card-status { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
-        .card-cursor .card-price { color: #38bdf8; }
+        .card-cursor .card-status { background: rgba(56, 189, 248, 0.15); color: #0284c7; }
+        .card-cursor .card-price { color: #0284c7; }
 
         @keyframes float-slow {
             0% { transform: translateY(0); }

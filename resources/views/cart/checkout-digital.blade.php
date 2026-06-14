@@ -241,10 +241,7 @@
                                     </label>
                                     <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
                                 </div>
-                                
-                                <div class="alert alert-info py-2 mb-3" style="font-size: 14px;">
-                                    <i class="fas fa-headset me-2"></i><strong>Hãy để lại thông tin, Bộ phận hỗ trợ sẽ kết nối và hỗ trợ bạn ngay !</strong>
-                                </div>
+
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">

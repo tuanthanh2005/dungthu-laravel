@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'affiliate.approved' => \App\Http\Middleware\AffiliateApproved::class,
         ]);
 
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
 
         
         // Exclude CSRF for OAuth callbacks

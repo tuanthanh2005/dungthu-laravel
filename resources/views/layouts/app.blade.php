@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
     <!-- Google AdSense -->

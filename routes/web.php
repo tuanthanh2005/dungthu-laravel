@@ -28,6 +28,13 @@ use App\Http\Controllers\Admin\AdminAffiliateController;
 use App\Http\Controllers\Affiliate\AffiliateAuthController;
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 
+Route::get('/change-language/{locale}', function ($locale) {
+    if (in_array($locale, ['vi', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+})->name('change-language');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
 Route::view('/chinh-sach', 'pages.privacy')->name('policy');

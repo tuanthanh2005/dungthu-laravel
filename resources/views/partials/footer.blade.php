@@ -6,43 +6,42 @@
                     <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
                     DungThu.com
                 </div>
-                <p class="small text-muted">Nền tảng cung cấp giải pháp công nghệ, công cụ Marketing và sản phẩm số chất
-                    lượng cho cộng đồng Việt Nam.</p>
+                <p class="small text-muted">{{ __('Nền tảng cung cấp giải pháp công nghệ, công cụ Marketing và sản phẩm số chất lượng cho cộng đồng Việt Nam.') }}</p>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-3">Liên kết nhanh</h6>
+                <h6 class="fw-bold mb-3">{{ __('Liên kết nhanh') }}</h6>
                 <ul class="footer-links">
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">Về chúng tôi</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Chính sách bảo mật</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#advertisingModal">Liên hệ quảng cáo</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Liên hệ ngay</a></li>
-                    <li><a href="{{ route('shop') }}">Cửa hàng</a></li>
-                    <li><a href="{{ route('blog.index') }}">Blog</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">{{ __('Về chúng tôi') }}</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">{{ __('Chính sách bảo mật') }}</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#advertisingModal">{{ __('Liên hệ quảng cáo') }}</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">{{ __('Liên hệ ngay') }}</a></li>
+                    <li><a href="{{ route('shop') }}">{{ __('Cửa hàng') }}</a></li>
+                    <li><a href="{{ route('blog.index') }}">{{ __('Blog') }}</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-3">Sản phẩm nổi bật</h6>
+                <h6 class="fw-bold mb-3">{{ __('Sản phẩm nổi bật') }}</h6>
                 <ul class="footer-links">
-                    <li><a href="{{ route('product.keyword', 'gpt') }}">Mua tài khoản ChatGPT</a></li>
-                    <li><a href="{{ route('product.keyword', 'cursor') }}">Mua tài khoản Cursor AI Pro</a></li>
-                    <li><a href="{{ route('product.keyword', 'gemini') }}">Mua tài khoản Gemini Advanced</a></li>
-                    <li><a href="{{ route('product.keyword', 'youtube') }}">Mua YouTube Premium</a></li>
-                    <li><a href="{{ route('product.keyword', 'office') }}">Mua Office 365</a></li>
-                    <li><a href="{{ route('product.keyword', 'canva') }}">Mua Canva Pro</a></li>
+                    <li><a href="{{ route('product.keyword', 'gpt') }}">{{ __('Mua tài khoản ChatGPT') }}</a></li>
+                    <li><a href="{{ route('product.keyword', 'cursor') }}">{{ __('Mua tài khoản Cursor AI Pro') }}</a></li>
+                    <li><a href="{{ route('product.keyword', 'gemini') }}">{{ __('Mua tài khoản Gemini Advanced') }}</a></li>
+                    <li><a href="{{ route('product.keyword', 'youtube') }}">{{ __('Mua YouTube Premium') }}</a></li>
+                    <li><a href="{{ route('product.keyword', 'office') }}">{{ __('Mua Office 365') }}</a></li>
+                    <li><a href="{{ route('product.keyword', 'canva') }}">{{ __('Mua Canva Pro') }}</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-3">Blog & nhận tin</h6>
+                <h6 class="fw-bold mb-3">{{ __('Blog & nhận tin') }}</h6>
                 <ul class="footer-links mb-3">
-                    <li><a href="{{ route('blog.topic', 'ai') }}">Blog AI</a></li>
-                    <li><a href="{{ route('blog.topic', 'chatgpt') }}">Hướng dẫn ChatGPT</a></li>
-                    <li><a href="{{ route('blog.topic', 'cursor') }}">Hướng dẫn Cursor AI</a></li>
+                    <li><a href="{{ route('blog.topic', 'ai') }}">{{ __('Blog AI') }}</a></li>
+                    <li><a href="{{ route('blog.topic', 'chatgpt') }}">{{ __('Hướng dẫn ChatGPT') }}</a></li>
+                    <li><a href="{{ route('blog.topic', 'cursor') }}">{{ __('Hướng dẫn Cursor AI') }}</a></li>
                 </ul>
                 <form id="newsletter-form">
                     @csrf
                     <div class="input-group mb-3">
-                        <input type="email" name="email" class="form-control" placeholder="Email của bạn" required>
-                        <button class="btn btn-primary" type="submit" id="subscribe-btn">Gửi</button>
+                        <input type="email" name="email" class="form-control" placeholder="{{ __('Email của bạn') }}" required>
+                        <button class="btn btn-primary" type="submit" id="subscribe-btn">{{ __('Gửi') }}</button>
                     </div>
                     <div id="newsletter-message" class="small mt-2"></div>
                 </form>

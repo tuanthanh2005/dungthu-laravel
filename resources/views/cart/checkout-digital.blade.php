@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Thanh Toán QR - DungThu.com')
+@section('title', __('Thanh Toán QR') . ' - DungThu.com')
 
 @push('styles')
 <style>
@@ -319,7 +319,7 @@
                                 <i class="fas fa-university me-1"></i> VietQR (VN)
                             </button>
                             <button type="button" class="payment-tab-btn" data-target="crypto-panel" data-method="crypto">
-                                <i class="fas fa-coins me-1"></i> Ví Crypto
+                                <i class="fas fa-coins me-1"></i> {{ __('Ví Crypto') }}
                             </button>
                             <button type="button" class="payment-tab-btn" data-target="binance-panel" data-method="binance_uid">
                                 <i class="fab fa-bitcoin me-1"></i> Binance UID
@@ -330,7 +330,7 @@
                         <div id="vietqr-panel" class="payment-tab-content active">
                             <div class="mb-3">
                                 <i class="fas fa-mobile-alt fa-3x mb-3"></i>
-                                <h3 class="fw-bold">Quét mã QR để thanh toán</h3>
+                                <h3 class="fw-bold">{{ __('Quét mã QR để thanh toán') }}</h3>
                             </div>
 
                             <div class="qr-code-box">
@@ -342,26 +342,26 @@
                             </div>
 
                             <div class="payment-info">
-                                <h5 class="fw-bold mb-3">Thông tin chuyển khoản</h5>
+                                <h5 class="fw-bold mb-3">{{ __('Thông tin chuyển khoản') }}</h5>
                                 <div class="row g-3 text-start">
                                     <div class="col-6">
-                                        <small class="opacity-75">Ngân hàng:</small>
+                                        <small class="opacity-75">{{ __('Ngân hàng:') }}</small>
                                         <div class="fw-bold">MB BANK</div>
                                     </div>
                                     <div class="col-6">
-                                        <small class="opacity-75">Số tài khoản:</small>
+                                        <small class="opacity-75">{{ __('Số tài khoản:') }}</small>
                                         <div class="fw-bold">0783704196</div>
                                     </div>
                                     <div class="col-6">
-                                        <small class="opacity-75">Chủ tài khoản:</small>
+                                        <small class="opacity-75">{{ __('Chủ tài khoản:') }}</small>
                                         <div class="fw-bold">TRAN THANH TUAN</div>
                                     </div>
                                     <div class="col-6">
-                                        <small class="opacity-75">Số tiền:</small>
+                                        <small class="opacity-75">{{ __('Số tiền:') }}</small>
                                         <div class="fw-bold text-warning" id="transfer-amount-display">{{ number_format($finalTotal ?? $total ?? 0, 0, ',', '.') }}đ</div>
                                     </div>
                                     <div class="col-12">
-                                        <small class="opacity-75">Nội dung:</small>
+                                        <small class="opacity-75">{{ __('Nội dung:') }}</small>
                                         <div class="fw-bold">AI GIA RE THUDUNG</div>
                                     </div>
                                 </div>
@@ -441,7 +441,7 @@
 
 
                         <button type="button" class="btn btn-warning btn-lg px-5 rounded-pill shadow-lg" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal">
-                            <i class="fas fa-check-circle me-2"></i>Xác nhận đã thanh toán
+                            <i class="fas fa-check-circle me-2"></i>{{ __('Xác nhận đã thanh toán') }}
                         </button>
                     </div>
                 </div>
@@ -461,15 +461,15 @@
                 <div class="confirm-icon-wrapper">
                     <i class="fas fa-question"></i>
                 </div>
-                <h3 class="confirm-modal-title">Bạn đã thanh toán chưa?</h3>
-                <p class="confirm-modal-text">Vui lòng đảm bảo bạn đã chuyển khoản thành công trước khi xác nhận. Đơn hàng ảo hoặc chưa thanh toán sẽ bị hủy tự động.</p>
+                <h3 class="confirm-modal-title">{{ __('Bạn đã thanh toán chưa?') }}</h3>
+                <p class="confirm-modal-text">{{ __('Vui lòng đảm bảo bạn đã chuyển khoản thành công trước khi xác nhận. Đơn hàng ảo hoặc chưa thanh toán sẽ bị hủy tự động.') }}</p>
             </div>
             <div class="confirm-modal-footer">
                 <button type="button" class="btn btn-confirm-cancel" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i>Chưa, để tôi kiểm tra lại
+                    <i class="fas fa-times me-2"></i>{{ __('Chưa, để tôi kiểm tra lại') }}
                 </button>
                 <button type="submit" form="checkout-form" class="btn btn-confirm-ok">
-                    <i class="fas fa-check me-2"></i>Có, tôi đã thanh toán
+                    <i class="fas fa-check me-2"></i>{{ __('Có, tôi đã thanh toán') }}
                 </button>
             </div>
         </div>
@@ -481,7 +481,7 @@
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-danger text-white border-0">
                 <h5 class="modal-title fw-bold">
-                    <i class="fas fa-exclamation-triangle me-2"></i>Cảnh báo Quan Trọng
+                    <i class="fas fa-exclamation-triangle me-2"></i>{{ __('Cảnh báo Quan Trọng') }}
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -489,17 +489,17 @@
                 <div class="mb-3">
                     <i class="fas fa-comment-slash text-danger fa-4x"></i>
                 </div>
-                <h4 class="fw-bold mb-3">Bạn chọn tự liên hệ qua Boxchat?</h4>
+                <h4 class="fw-bold mb-3">{{ __('Bạn chọn tự liên hệ qua Boxchat?') }}</h4>
                 <div class="text-start alert alert-warning mb-0">
                     <ul class="mb-0">
-                        <li>Bạn không cần để lại Zalo/Facebook cá nhân.</li>
-                        <li><strong>Bắt buộc:</strong> Bạn phải chủ động nhắn tin cho Boxchat của Admin ngay sau khi thanh toán.</li>
-                        <li><strong>Lưu ý:</strong> Nếu bạn không nhắn tin, Admin sẽ không có cách nào để gửi mã/hỗ trợ bạn. Chúng tôi sẽ không chịu trách nhiệm trong trường hợp này.</li>
+                        <li>{{ __('Bạn không cần để lại Zalo/Facebook cá nhân.') }}</li>
+                        <li><strong>{{ __('Bắt buộc:') }}</strong> {{ __('Bạn phải chủ động nhắn tin cho Boxchat của Admin ngay sau khi thanh toán.') }}</li>
+                        <li><strong>{{ __('Lưu ý:') }}</strong> {{ __('Nếu bạn không nhắn tin, Admin sẽ không có cách nào để gửi mã/hỗ trợ bạn. Chúng tôi sẽ không chịu trách nhiệm trong trường hợp này.') }}</li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer border-0 justify-content-center pb-4">
-                <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Tôi hiểu rồi</button>
+                <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">{{ __('Tôi hiểu rồi') }}</button>
             </div>
         </div>
     </div>

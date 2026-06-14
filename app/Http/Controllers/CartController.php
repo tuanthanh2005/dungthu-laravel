@@ -224,6 +224,16 @@ class CartController extends Controller
         if ($request->filled('customer_facebook')) {
             $customerAddress .= "\nFacebook: " . $request->customer_facebook;
         }
+        if ($request->filled('payment_method')) {
+            $pm = $request->payment_method;
+            if ($pm === 'crypto') {
+                $customerAddress .= "\nPhương thức thanh toán: Ví Crypto (USDT,...)";
+            } elseif ($pm === 'binance_uid') {
+                $customerAddress .= "\nPhương thức thanh toán: Binance UID";
+            } else {
+                $customerAddress .= "\nPhương thức thanh toán: Chuyển khoản VietQR";
+            }
+        }
 
         // Kiểm tra xem có sản phẩm nào thiếu kho không
         $hasOutOfStock = false;

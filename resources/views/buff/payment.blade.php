@@ -80,14 +80,19 @@
         border: 2px solid #ddd;
         border-radius: 8px;
         overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
     }
 
     .payment-option {
+        flex: 1;
+        min-width: 120px;
         padding: 1.25rem;
         border-right: 2px solid #ddd;
         cursor: pointer;
         transition: all 0.2s ease;
         position: relative;
+        text-align: center;
     }
 
     .payment-option:last-child {
@@ -96,7 +101,7 @@
 
     .payment-option.active {
         background: rgba(108, 92, 231, 0.1);
-        border-right: 3px solid #6c5ce7;
+        box-shadow: inset 0 0 0 2px #6c5ce7;
     }
 
     .payment-option input[type="radio"] {
@@ -252,8 +257,19 @@
             margin-bottom: 2rem;
         }
 
+        .payment-method-group {
+            flex-direction: column;
+        }
+
         .payment-option {
             padding: 1rem;
+            border-right: none;
+            border-bottom: 2px solid #ddd;
+            flex: 1 1 auto;
+        }
+
+        .payment-option:last-child {
+            border-bottom: none;
         }
 
         .payment-option-icon {
@@ -321,13 +337,25 @@
                             <input type="radio" name="payment_method" value="qr_code" checked>
                             <div class="payment-option-icon">📱</div>
                             <span class="payment-option-label">Quét QR Code</span>
-                            <span class="payment-option-text">Qua Momo, VietQR</span>
+                            <span class="payment-option-text">VietQR / Momo</span>
                         </label>
                         <label class="payment-option">
                             <input type="radio" name="payment_method" value="bank_transfer">
                             <div class="payment-option-icon">🏦</div>
                             <span class="payment-option-label">Chuyển Khoản</span>
-                            <span class="payment-option-text">Các ngân hàng</span>
+                            <span class="payment-option-text">MB Bank</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="crypto">
+                            <div class="payment-option-icon">🪙</div>
+                            <span class="payment-option-label">Ví Crypto</span>
+                            <span class="payment-option-text">USDT, BTC...</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="binance_uid">
+                            <div class="payment-option-icon">💳</div>
+                            <span class="payment-option-label">Binance UID</span>
+                            <span class="payment-option-text">Binance Pay</span>
                         </label>
                     </div>
                 </div>
@@ -356,13 +384,66 @@
 
                 <!-- Bank Transfer Section -->
                 <div id="bankSection" class="qr-section">
-                    <h4>🏦 Thông Tin Chuyển Khoản</h4>
+                    <h4>🏦 Hướng dẫn chuyển khoản VN</h4>
                     <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
                         <p><strong>Ngân Hàng:</strong> MB Bank (Ngân hàng Quân đội)</p>
                         <p><strong>Tên TK:</strong> TRAN THANH TUAN</p>
                         <p><strong>Số TK:</strong> 0783704196</p>
                         <p><strong>Số Tiền:</strong> {{ number_format($buffOrder->total_price, 0, ',', '.') }}đ</p>
                         <p style="margin-bottom: 0;"><strong>Nội Dung:</strong> DungThu Buff - {{ $buffOrder->order_code }}</p>
+                    </div>
+                </div>
+
+                <!-- Crypto Section -->
+                <div id="cryptoSection" class="qr-section">
+                    <h4>🪙 Ví Crypto (USDT, BTC, ETH...)</h4>
+                    <p style="color: #666; margin-bottom: 1rem;">
+                        Chuyển tiền điện tử đến địa chỉ ví bên dưới
+                    </p>
+                    <div class="qr-code">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9" alt="Crypto QR" style="max-width: 220px; width: 100%;">
+                    </div>
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
+                        <p class="mb-2"><strong>Mạng lưới:</strong> Hỗ trợ nhiều mạng lưới khác nhau (TRC20, ERC20, BEP20...)</p>
+                        <div class="mb-3">
+                            <strong>Địa chỉ ví (Wallet Address):</strong>
+                            <div class="d-flex align-items-center justify-content-between mt-1 bg-white p-2 border rounded">
+                                <code class="text-danger text-break" style="font-size: 0.9rem;">0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9</code>
+                                <button type="button" class="btn btn-sm btn-secondary ms-2 text-nowrap" onclick="copyToClipboard('0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9', this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 10px; line-height: 1.5; color: #555;">
+                            <strong>English:</strong> Please let me know which cryptocurrency and network you will use. Once the payment is sent, please contact us.<br>
+                            <strong>Tiếng Việt:</strong> Vui lòng cho biết bạn sử dụng loại tiền điện tử và mạng lưới nào. Sau khi gửi thanh toán, hãy liên hệ với chúng tôi.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Binance Pay Section -->
+                <div id="binanceSection" class="qr-section">
+                    <h4>💳 Binance Pay / UID</h4>
+                    <p style="color: #666; margin-bottom: 1rem;">
+                        Chuyển khoản nội bộ Binance Pay qua UID bên dưới
+                    </p>
+                    <div class="qr-code">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=490696268" alt="Binance Pay QR" style="max-width: 220px; width: 100%;">
+                    </div>
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
+                        <div class="mb-3">
+                            <strong>Binance UID:</strong>
+                            <div class="d-flex align-items-center justify-content-between mt-1 bg-white p-2 border rounded">
+                                <span class="text-danger fw-bold">490696268</span>
+                                <button type="button" class="btn btn-sm btn-secondary ms-2 text-nowrap" onclick="copyToClipboard('490696268', this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 10px; line-height: 1.5; color: #555;">
+                            <strong>English:</strong> Once the payment is sent, please contact us.<br>
+                            <strong>Tiếng Việt:</strong> Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.
+                        </div>
                     </div>
                 </div>
 
@@ -390,11 +471,28 @@
 
 @push('scripts')
 <script>
+// Clipboard copy function
+window.copyToClipboard = function(text, btnElement) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = btnElement.innerHTML;
+        btnElement.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btnElement.classList.replace('btn-secondary', 'btn-success');
+        setTimeout(() => {
+            btnElement.innerHTML = originalText;
+            btnElement.classList.replace('btn-success', 'btn-secondary');
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
     const paymentOptions = document.querySelectorAll('.payment-option');
     const qrSection = document.getElementById('qrSection');
     const bankSection = document.getElementById('bankSection');
+    const cryptoSection = document.getElementById('cryptoSection');
+    const binanceSection = document.getElementById('binanceSection');
     const confirmPayment = document.getElementById('confirmPayment');
 
     // Payment method toggle
@@ -406,13 +504,21 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add active class to selected
             this.closest('.payment-option').classList.add('active');
 
-            // Show/hide sections
+            // Hide all sections first
+            qrSection.classList.remove('show');
+            bankSection.classList.remove('show');
+            if (cryptoSection) cryptoSection.classList.remove('show');
+            if (binanceSection) binanceSection.classList.remove('show');
+
+            // Show selected section
             if (this.value === 'qr_code') {
                 qrSection.classList.add('show');
-                bankSection.classList.remove('show');
-            } else {
-                qrSection.classList.remove('show');
+            } else if (this.value === 'bank_transfer') {
                 bankSection.classList.add('show');
+            } else if (this.value === 'crypto') {
+                if (cryptoSection) cryptoSection.classList.add('show');
+            } else if (this.value === 'binance_uid') {
+                if (binanceSection) binanceSection.classList.add('show');
             }
         });
     });

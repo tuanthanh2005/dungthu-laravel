@@ -27,6 +27,65 @@
         padding: 20px;
         margin-bottom: 20px;
     }
+
+    /* Premium Custom Payment Tabs */
+    .payment-tabs {
+        display: flex;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 5px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .payment-tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        padding: 8px 5px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+    .payment-tab-btn:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+    }
+    .payment-tab-btn.active {
+        background: white;
+        color: #764ba2;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .payment-tab-content {
+        display: none;
+    }
+    .payment-tab-content.active {
+        display: block;
+        animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .copy-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-left: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .copy-btn:hover {
+        background: rgba(255, 255, 255, 0.35);
+    }
 </style>
 @endpush
 
@@ -53,6 +112,7 @@
                         <div class="card-body">
                             <form action="{{ route('checkout.place') }}" method="POST" id="checkout-form">
                                 @csrf
+                                <input type="hidden" name="payment_method" id="payment_method_input" value="vietqr">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
                                         <i class="fas fa-user me-2 text-primary"></i>Họ và tên
@@ -215,28 +275,102 @@
                     </div>
 
                     <!-- QR Payment -->
-                    <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                        <div class="card-body text-center p-4">
-                            <h6 class="fw-bold mb-3">Thanh toán qua QR Code</h6>
-                            <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
-                                <img src="https://img.vietqr.io/image/970422-0783704196-print2D.png?amount={{ $finalTotal ?? $total ?? 0 }}&addInfo=AI%20GIA%20RE%20THUDUNG&accountName=TRAN%20THANH%20TUAN" 
-                                     alt="QR Code" 
-                                     id="qr-code-image"
-                                     style="max-width: 200px;">
+                    <div class="card border-0 shadow-sm text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; overflow: hidden;">
+                        <div class="card-body p-4">
+                            <!-- Navigation Tabs -->
+                            <div class="payment-tabs">
+                                <button type="button" class="payment-tab-btn active" data-target="vietqr-panel" data-method="vietqr">
+                                    <i class="fas fa-university me-1"></i> VietQR
+                                </button>
+                                <button type="button" class="payment-tab-btn" data-target="crypto-panel" data-method="crypto">
+                                    <i class="fas fa-coins me-1"></i> Crypto
+                                </button>
+                                <button type="button" class="payment-tab-btn" data-target="binance-panel" data-method="binance_uid">
+                                    <i class="fab fa-bitcoin me-1"></i> Binance
+                                </button>
                             </div>
-                            <div class="text-start" style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px;">
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <small class="opacity-75">Ngân hàng:</small>
-                                        <div class="fw-bold">MB BANK</div>
+
+                            <!-- PANEL 1: VietQR -->
+                            <div id="vietqr-panel" class="payment-tab-content active">
+                                <h6 class="fw-bold mb-2">Thanh toán qua QR Code</h6>
+                                <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
+                                    <img src="https://img.vietqr.io/image/970422-0783704196-print2D.png?amount={{ $finalTotal ?? $total ?? 0 }}&addInfo=AI%20GIA%20RE%20THUDUNG&accountName=TRAN%20THANH%20TUAN" 
+                                         alt="QR Code" 
+                                         id="qr-code-image"
+                                         style="max-width: 200px;">
+                                </div>
+                                <div class="text-start" style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; font-size: 0.9rem;">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <small class="opacity-75">Ngân hàng:</small>
+                                            <div class="fw-bold">MB BANK</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="opacity-75">STK:</small>
+                                            <div class="fw-bold">0783704196</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="opacity-75">Chủ tài khoản:</small>
+                                            <div class="fw-bold">TRAN THANH TUAN</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="opacity-75">Số tiền:</small>
+                                            <div class="fw-bold text-warning" id="transfer-amount-display">{{ number_format($finalTotal ?? $total ?? 0, 0, ',', '.') }}đ</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <small class="opacity-75">Nội dung:</small>
+                                            <div class="fw-bold">AI GIA RE THUDUNG</div>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
-                                        <small class="opacity-75">STK:</small>
-                                        <div class="fw-bold">0783704196</div>
+                                </div>
+                            </div>
+
+                            <!-- PANEL 2: Crypto Wallet -->
+                            <div id="crypto-panel" class="payment-tab-content">
+                                <h6 class="fw-bold mb-2">Thanh toán qua Ví Crypto (USDT,...)</h6>
+                                <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9" 
+                                         alt="Crypto QR" 
+                                         style="max-width: 180px;">
+                                </div>
+                                <div class="text-start" style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; font-size: 0.85rem;">
+                                    <div class="mb-2">
+                                        <small class="opacity-75 d-block">Địa chỉ ví (Wallet Address):</small>
+                                        <div class="d-flex align-items-center justify-content-between mt-1" style="background: rgba(0,0,0,0.2); padding: 5px; border-radius: 5px;">
+                                            <code class="text-warning text-break" style="font-size: 0.8rem; font-family: monospace;">0xB890Ed41f9De4412c2...</code>
+                                            <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9', this)">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="col-12">
-                                        <small class="opacity-75">Số tiền:</small>
-                                        <div class="fw-bold text-warning" id="transfer-amount-display">{{ number_format($finalTotal ?? $total ?? 0, 0, ',', '.') }}đ</div>
+                                    <div style="font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px; line-height: 1.4;">
+                                        <strong>English:</strong> Please let me know cryptocurrency & network. Contact us after sending.<br>
+                                        <strong>Tiếng Việt:</strong> Vui lòng cho biết loại tiền & mạng lưới. Liên hệ sau khi thanh toán.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PANEL 3: Binance UID -->
+                            <div id="binance-panel" class="payment-tab-content">
+                                <h6 class="fw-bold mb-2">Thanh toán qua Binance Pay / UID</h6>
+                                <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=490696268" 
+                                         alt="Binance Pay QR" 
+                                         style="max-width: 180px;">
+                                </div>
+                                <div class="text-start" style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; font-size: 0.85rem;">
+                                    <div class="mb-2">
+                                        <small class="opacity-75 d-block">Binance UID:</small>
+                                        <div class="d-flex align-items-center justify-content-between mt-1" style="background: rgba(0,0,0,0.2); padding: 5px; border-radius: 5px;">
+                                            <span class="text-warning fw-bold">490696268</span>
+                                            <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('490696268', this)">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px; line-height: 1.4;">
+                                        <strong>English:</strong> Once the payment is sent, please contact us.<br>
+                                        <strong>Tiếng Việt:</strong> Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.
                                     </div>
                                 </div>
                             </div>
@@ -251,6 +385,36 @@
 
 @push('scripts')
 <script>
+    // Tab switching logic
+    document.querySelectorAll('.payment-tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.payment-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.payment-tab-content').forEach(c => c.classList.remove('active'));
+            
+            this.classList.add('active');
+            const targetId = this.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+            
+            const method = this.getAttribute('data-method');
+            document.getElementById('payment_method_input').value = method;
+        });
+    });
+
+    // Copy to clipboard utility
+    window.copyToClipboard = function(text, btnElement) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHtml = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btnElement.style.background = 'rgba(40, 167, 69, 0.8)';
+            setTimeout(() => {
+                btnElement.innerHTML = originalHtml;
+                btnElement.style.background = '';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    };
+
     // Coupon Code logic
     const applyBtn = document.getElementById('apply-coupon-btn');
     const removeBtn = document.getElementById('remove-coupon-btn');

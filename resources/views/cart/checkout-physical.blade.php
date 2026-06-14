@@ -66,9 +66,6 @@
                                     </div>
                                 </div>
                                 
-                                <div class="alert alert-info py-2 mb-3" style="font-size: 14px;">
-                                    <i class="fas fa-headset me-2"></i><strong>Hãy để lại thông tin, Bộ phận hỗ trợ sẽ kết nối và hỗ trợ bạn ngay !</strong>
-                                </div>
 
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">

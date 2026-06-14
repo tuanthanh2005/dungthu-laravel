@@ -73,7 +73,7 @@
             </a>
             @endif
             <a href="javascript:void(0)" class="nav-text-link" data-bs-toggle="modal" data-bs-target="#quickContactModal">
-                {{ __('Liên hệ Ngay') }}
+                {{ __('Liên hệ') }}
             </a>
         </div>
 
@@ -112,7 +112,7 @@
                 @if($menuZaloGroup)
                 <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fa-solid fa-users me-2"></i>{{ __('Nhóm Zalo') }}</a></li>
                 @endif
-                <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ Ngay') }}</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ') }}</a></li>
             </ul>
         </div>
 
@@ -205,7 +205,7 @@
                         <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>{{ __('Blog') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fas fa-users me-2 text-success"></i>{{ __('Cộng đồng') }}</a></li>
                         <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fas fa-users me-2"></i>{{ __('Nhóm Zalo') }}</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ Ngay') }}</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ') }}</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{{ route('minigame.index') }}"><i class="fas fa-gamepad me-2 text-danger"></i>{{ __('Vòng xoay may mắn') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>{{ __('Tài khoản') }}</a></li>

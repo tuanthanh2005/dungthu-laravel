@@ -223,7 +223,12 @@
                     <div class="order-header">
                         <div class="row align-items-center g-0">
                             <div class="col-6 col-md-3">
-                                <div class="fw-bold mb-2">Đơn hàng #{{ $order->id }}</div>
+                                <div class="fw-bold mb-2">
+                                    Đơn hàng #{{ $order->id }}
+                                    @if($order->order_code)
+                                        <span class="text-primary ms-1" style="font-size: 0.85rem; font-family: monospace;">({{ $order->order_code }})</span>
+                                    @endif
+                                </div>
                                 <small class="text-muted">
                                     <i class="fas fa-calendar me-1"></i>{{ $order->created_at->format('d/m/Y H:i') }}
                                 </small>

@@ -172,16 +172,22 @@ class CartController extends Controller
         }
         $finalTotal = max(0, $total - $discountAmount);
         
+        // Generate a unique order code in session to prevent changes on reload
+        if (!session()->has('checkout_order_code')) {
+            session()->put('checkout_order_code', 'DT-' . strtoupper(\Illuminate\Support\Str::random(8)));
+        }
+        $orderCode = session('checkout_order_code');
+        
         // Chọn view thanh toán phù hợp
         if($hasDigital && $hasPhysical) {
             // Có cả 2 loại
-            return view('cart.checkout-mixed', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal'));
+            return view('cart.checkout-mixed', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal', 'orderCode'));
         } elseif($hasDigital) {
             // Chỉ sản phẩm số/dịch vụ - thanh toán QR
-            return view('cart.checkout-digital', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal'));
+            return view('cart.checkout-digital', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal', 'orderCode'));
         } else {
             // Chỉ sản phẩm vật lý - cần địa chỉ giao hàng
-            return view('cart.checkout-physical', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal'));
+            return view('cart.checkout-physical', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal', 'orderCode'));
         }
     }
 
@@ -275,6 +281,7 @@ class CartController extends Controller
                 'status' => $orderStatus,
                 'coupon_code' => $coupon ? $coupon->code : null,
                 'discount_amount' => $discountAmount,
+                'order_code' => $request->order_code ?? session('checkout_order_code') ?? ('DT-' . strtoupper(\Illuminate\Support\Str::random(8))),
             ]);
 
             foreach($cart as $id => $details) {
@@ -307,6 +314,7 @@ class CartController extends Controller
             
             // Clear the "new user" flag after order is placed
             session()->forget('is_new_user');
+            session()->forget('checkout_order_code');
             
             // Gửi email duyệt đơn tự động nếu đơn hàng thành công (completed)
             if ($orderStatus === 'completed') {

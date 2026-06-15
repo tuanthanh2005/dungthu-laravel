@@ -113,6 +113,7 @@
                             <form action="{{ route('checkout.place') }}" method="POST" id="checkout-form">
                                 @csrf
                                 <input type="hidden" name="payment_method" id="payment_method_input" value="vietqr">
+                                <input type="hidden" name="order_code" value="{{ $orderCode }}">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
                                         <i class="fas fa-user me-2 text-primary"></i>Họ và tên
@@ -292,7 +293,7 @@
                             <div id="vietqr-panel" class="payment-tab-content active">
                                 <h6 class="fw-bold mb-2">Thanh toán qua QR Code</h6>
                                 <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
-                                    <img src="https://img.vietqr.io/image/970422-0783704196-print2D.png?amount={{ $finalTotal ?? $total ?? 0 }}&addInfo=AI%20GIA%20RE%20THUDUNG&accountName=TRAN%20THANH%20TUAN" 
+                                    <img src="https://img.vietqr.io/image/{{ config('services.vietqr.bank_code') }}-{{ config('services.vietqr.account_number') }}-print2D.png?amount={{ $finalTotal ?? $total ?? 0 }}&addInfo={{ urlencode(config('services.vietqr.add_info') . ' ' . $orderCode) }}&accountName={{ urlencode(config('services.vietqr.account_name')) }}" 
                                          alt="QR Code" 
                                          id="qr-code-image"
                                          style="max-width: 200px;">
@@ -301,15 +302,15 @@
                                     <div class="row g-2">
                                         <div class="col-6">
                                             <small class="opacity-75">Ngân hàng:</small>
-                                            <div class="fw-bold">MB BANK</div>
+                                            <div class="fw-bold">{{ config('services.vietqr.bank_name') }}</div>
                                         </div>
                                         <div class="col-6">
                                             <small class="opacity-75">STK:</small>
-                                            <div class="fw-bold">0783704196</div>
+                                            <div class="fw-bold">{{ config('services.vietqr.account_number') }}</div>
                                         </div>
                                         <div class="col-6">
                                             <small class="opacity-75">Chủ tài khoản:</small>
-                                            <div class="fw-bold">TRAN THANH TUAN</div>
+                                            <div class="fw-bold">{{ config('services.vietqr.account_name') }}</div>
                                         </div>
                                         <div class="col-6">
                                             <small class="opacity-75">Số tiền:</small>
@@ -317,7 +318,7 @@
                                         </div>
                                         <div class="col-12">
                                             <small class="opacity-75">Nội dung:</small>
-                                            <div class="fw-bold">AI GIA RE THUDUNG</div>
+                                            <div class="fw-bold">{{ config('services.vietqr.add_info') }} {{ $orderCode }}</div>
                                         </div>
                                     </div>
                                 </div>

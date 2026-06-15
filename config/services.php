@@ -61,4 +61,13 @@ return [
         'chat_id' => env('TELEGRAM_CHAT_ID', '8199725778'),
     ],
 
+    'vietqr' => [
+        'bank_code' => env('VIETQR_BANK_CODE', '970428'),
+        'bank_name' => env('VIETQR_BANK_NAME', 'Nam A Bank'),
+        'account_number' => env('VIETQR_ACCOUNT_NUMBER', 'YOUR_NAM_A_BANK_ACCOUNT_NUMBER'),
+        'account_name' => env('VIETQR_ACCOUNT_NAME', 'TRAN THANH TUAN'),
+        'add_info' => env('VIETQR_ADD_INFO', 'AI GIA RE THUDUNG'),
+    ],
+
 ];
+

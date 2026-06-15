@@ -343,7 +343,7 @@
                             <input type="radio" name="payment_method" value="bank_transfer">
                             <div class="payment-option-icon">🏦</div>
                             <span class="payment-option-label">Chuyển Khoản</span>
-                            <span class="payment-option-text">MB Bank</span>
+                            <span class="payment-option-text">{{ config('services.vietqr.bank_name') }}</span>
                         </label>
                         <label class="payment-option">
                             <input type="radio" name="payment_method" value="crypto">
@@ -386,9 +386,9 @@
                 <div id="bankSection" class="qr-section">
                     <h4>🏦 Hướng dẫn chuyển khoản VN</h4>
                     <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
-                        <p><strong>Ngân Hàng:</strong> MB Bank (Ngân hàng Quân đội)</p>
-                        <p><strong>Tên TK:</strong> TRAN THANH TUAN</p>
-                        <p><strong>Số TK:</strong> 0783704196</p>
+                        <p><strong>Ngân Hàng:</strong> {{ config('services.vietqr.bank_name') }}</p>
+                        <p><strong>Tên TK:</strong> {{ config('services.vietqr.account_name') }}</p>
+                        <p><strong>Số TK:</strong> {{ config('services.vietqr.account_number') }}</p>
                         <p><strong>Số Tiền:</strong> {{ number_format($buffOrder->total_price, 0, ',', '.') }}đ</p>
                         <p style="margin-bottom: 0;"><strong>Nội Dung:</strong> DungThu Buff - {{ $buffOrder->order_code }}</p>
                     </div>

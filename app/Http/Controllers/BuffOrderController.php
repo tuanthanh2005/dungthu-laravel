@@ -78,16 +78,17 @@ class BuffOrderController extends Controller
         }
 
         // Generate VietQR code
-        $bankCode = '970422'; // MB Bank
-        $accountNumber = '0783704196';
+        $bankCode = config('services.vietqr.bank_code', '970428');
+        $accountNumber = config('services.vietqr.account_number');
         $amount = (int) $buffOrder->total_price;
         $description = 'DungThu Buff - ' . $buffOrder->order_code;
-        $beneficiary = 'TRAN THANH TUAN';
+        $beneficiary = config('services.vietqr.account_name');
         
         // VietQR API URL
-        $qrUrl = "https://api.vietqr.io/image/{$bankCode}-{$accountNumber}-{$amount}-{$description}-{$beneficiary}.png";
+        $qrUrl = "https://api.vietqr.io/image/{$bankCode}-{$accountNumber}-{$amount}-" . rawurlencode($description) . "-" . rawurlencode($beneficiary) . ".png";
 
         return view('buff.payment', compact('buffOrder', 'qrUrl'));
+
     }
 
     public function confirmPayment(BuffOrder $buffOrder, Request $request)

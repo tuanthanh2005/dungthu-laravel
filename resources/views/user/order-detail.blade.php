@@ -254,7 +254,7 @@
         ->values();
 
     $supportCopyMessage = "Bạn hãy copy all nội dung này gửi admin để đơn hàng xử lý nhanh hơn\n"
-        . "Mã đơn hàng: #{$order->id}\n"
+        . "Mã đơn hàng: " . ($order->order_code ? $order->order_code : "#{$order->id}") . "\n"
         . "Tên đơn hàng: " . ($supportProductNames->isNotEmpty() ? $supportProductNames->implode(', ') : 'Không có tên sản phẩm');
 @endphp
 <div class="order-detail-wrapper">
@@ -268,7 +268,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h3 class="fw-bold mb-2">
-                            <i class="fas fa-file-invoice text-primary me-3"></i>Đơn hàng #{{ $order->id }}
+                            <i class="fas fa-file-invoice text-primary me-3"></i>Đơn hàng #{{ $order->id }} @if($order->order_code) <span class="text-primary" style="font-family: monospace;">({{ $order->order_code }})</span> @endif
                             <a href="#order-support-copy" class="support-icon-btn ms-2" title="Hỗ trợ đơn hàng" aria-label="Hỗ trợ đơn hàng">
                                 <i class="fas fa-headset"></i>
                             </a>
@@ -393,7 +393,7 @@
                         </h5>
                         <div class="info-row">
                             <span class="text-muted">Mã đơn:</span>
-                            <span class="fw-bold">#{{ $order->id }}</span>
+                            <span class="fw-bold">#{{ $order->id }} @if($order->order_code) <span class="text-primary" style="font-family: monospace;">({{ $order->order_code }})</span> @endif</span>
                         </div>
                         <div class="info-row">
                             <span class="text-muted">Ngày đặt:</span>

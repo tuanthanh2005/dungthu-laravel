@@ -130,22 +130,26 @@
         <div class="d-flex align-items-center gap-2 gap-sm-3">
             {{-- Language Switcher --}}
             <div class="dropdown">
-                <button class="nav-icon-btn d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="padding: 6px 12px; font-size: 14px; border-radius: 20px;">
+                <button class="nav-icon-btn d-flex align-items-center justify-content-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="padding: 6px 12px; font-size: 14px; border-radius: 20px;">
                     @if(app()->getLocale() === 'en')
-                        🇺🇸 <span class="d-none d-md-inline ms-1 fw-bold" style="font-size: 12px;">EN</span>
+                        <img src="https://flagcdn.com/w40/us.png" width="20" alt="US" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); display: inline-block;">
+                        <span class="d-none d-md-inline ms-1 fw-bold" style="font-size: 12px;">EN</span>
                     @else
-                        🇻🇳 <span class="d-none d-md-inline ms-1 fw-bold" style="font-size: 12px;">VI</span>
+                        <img src="https://flagcdn.com/w40/vn.png" width="20" alt="VN" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); display: inline-block;">
+                        <span class="d-none d-md-inline ms-1 fw-bold" style="font-size: 12px;">VI</span>
                     @endif
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 120px; border: none; border-radius: 12px;">
+                <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 140px; border: none; border-radius: 12px;">
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 13.5px;">
-                            <span>🇻🇳</span> {{ __('Tiếng Việt') }}
+                            <img src="https://flagcdn.com/w40/vn.png" width="20" alt="VN" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15);">
+                            {{ __('Tiếng Việt') }}
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 13.5px;">
-                            <span>🇺🇸</span> English
+                            <img src="https://flagcdn.com/w40/us.png" width="20" alt="US" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15);">
+                            English
                         </a>
                     </li>
                 </ul>

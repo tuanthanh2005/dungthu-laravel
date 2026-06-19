@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $seoTitle ?? 'Blog - DungThu.com')
-@section('meta_description', $seoDescription ?? 'Cập nhật xu hướng công nghệ, AI, tài khoản số, mẹo dùng tool và hướng dẫn sử dụng sản phẩm tại DungThu.com.')
+@section('meta_description', $seoDescription ?? __('Cập nhật xu hướng công nghệ, AI, tài khoản số, mẹo dùng tool và hướng dẫn sử dụng sản phẩm tại DungThu.com.'))
 @section('canonical', $canonical ?? route('blog.index'))
 
 @push('styles')
@@ -88,15 +88,15 @@
 <div class="container py-2" style="margin-top: 50px;">
     <div class="row">
         <div class="col-12 mb-4">
-            <h1 class="fw-bold">{{ $pageHeading ?? 'Blog Chia Sẻ' }}</h1>
-            <p class="text-muted">{{ $seoDescription ?? 'Cập nhật xu hướng công nghệ, AI, mẹo dùng tool và hướng dẫn sử dụng sản phẩm.' }}</p>
+            <h1 class="fw-bold">{{ $pageHeading ?? __('Blog Chia Sẻ') }}</h1>
+            <p class="text-muted">{{ $seoDescription ?? __('Cập nhật xu hướng công nghệ, AI, mẹo dùng tool và hướng dẫn sử dụng sản phẩm.') }}</p>
         </div>
     </div>
 
     @if(!empty($topicLinks))
     <div class="blog-topic-section" data-aos="fade-up" data-aos-delay="100">
         <div class="blog-topic-title">
-            <i class="fas fa-bolt text-warning me-2"></i>Chủ đề nổi bật
+            <i class="fas fa-bolt text-warning me-2"></i>{{ __('Chủ đề nổi bật') }}
         </div>
         <div class="blog-topic-links">
             @foreach($topicLinks as $topicSlug => $topic)
@@ -106,7 +106,7 @@
                 </a>
             @endforeach
         </div>
-        <button type="button" class="blog-topic-toggle" aria-label="Xem thêm chủ đề" aria-expanded="false">
+        <button type="button" class="blog-topic-toggle" aria-label="{{ __('Xem thêm chủ đề') }}" aria-expanded="false">
             <i class="fas fa-chevron-down"></i>
         </button>
     </div>
@@ -125,7 +125,7 @@
                 <div class="p-3">
                     <div class="small text-muted mb-2">
                         <i class="far fa-clock"></i> {{ $blog->formatted_date }} &bull;
-                        <i class="far fa-eye"></i> {{ $blog->views }} lượt xem
+                        <i class="far fa-eye"></i> {{ $blog->views }} {{ __('lượt xem') }}
                     </div>
                     <h5 class="fw-bold mb-2">
                         <a href="{{ route('blog.show', $blog->slug) }}" class="text-decoration-none text-dark">
@@ -133,7 +133,7 @@
                         </a>
                     </h5>
                     <p class="text-muted small mb-3">{{ Str::limit($blog->excerpt, 100) }}</p>
-                    <a href="{{ route('blog.show', $blog->slug) }}" class="btn btn-sm btn-outline-primary">Đọc thêm</a>
+                    <a href="{{ route('blog.show', $blog->slug) }}" class="btn btn-sm btn-outline-primary">{{ __('Đọc thêm') }}</a>
                 </div>
             </div>
         </div>
@@ -141,8 +141,8 @@
         <div class="col-12">
             <div class="bg-white rounded-4 p-5 text-center shadow-sm">
                 <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                <h4 class="fw-bold">Chưa có bài viết phù hợp</h4>
-                <p class="text-muted mb-0">Chủ đề này sẽ được cập nhật thêm nội dung mới.</p>
+                <h4 class="fw-bold">{{ __('Chưa có bài viết phù hợp') }}</h4>
+                <p class="text-muted mb-0">{{ __('Chủ đề này sẽ được cập nhật thêm nội dung mới.') }}</p>
             </div>
         </div>
         @endforelse
@@ -174,7 +174,7 @@
                 topicToggle.addEventListener('click', function() {
                     const expanded = topicSection.classList.toggle('expanded');
                     topicToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-                    topicToggle.setAttribute('aria-label', expanded ? 'Thu gọn chủ đề' : 'Xem thêm chủ đề');
+                    topicToggle.setAttribute('aria-label', expanded ? '{{ __('Thu gọn chủ đề') }}' : '{{ __('Xem thêm chủ đề') }}');
                 });
             }
         });

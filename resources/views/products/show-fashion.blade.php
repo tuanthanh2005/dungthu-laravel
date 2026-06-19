@@ -137,8 +137,8 @@
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down">
             <ol class="breadcrumb bg-transparent">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" style="color: #8b4513;">Trang chủ</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('shop') }}" style="color: #8b4513;">Cửa hàng</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" style="color: #8b4513;">{{ __('Trang chủ') }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('shop') }}" style="color: #8b4513;">{{ __('Cửa hàng') }}</a></li>
                 <li class="breadcrumb-item active" style="color: #ff6b6b;">{{ $product->name }}</li>
             </ol>
         </nav>
@@ -171,13 +171,13 @@
                                 </div>
                             @endif
                         </div>
-                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Miễn phí vận chuyển</small>
+                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>{{ __('Miễn phí vận chuyển') }}</small>
                     </div>
 
                     <!-- Size Selector -->
                     <div class="mb-4">
                         <label class="fw-bold mb-2" style="color: #8b4513;">
-                            <i class="fas fa-ruler me-2"></i>Chọn kích thước:
+                            <i class="fas fa-ruler me-2"></i>{{ __('Chọn kích thước:') }}
                         </label>
                         <div class="size-selector">
                             <button class="size-btn">S</button>
@@ -191,44 +191,44 @@
                     <!-- Color Selector -->
                     <div class="mb-4">
                         <label class="fw-bold mb-2" style="color: #8b4513;">
-                            <i class="fas fa-palette me-2"></i>Chọn màu sắc:
+                            <i class="fas fa-palette me-2"></i>{{ __('Chọn màu sắc:') }}
                         </label>
                         <div class="color-selector">
-                            <div class="color-option active" style="background: #000;" title="Đen"></div>
-                            <div class="color-option" style="background: #fff; border: 1px solid #ddd;" title="Trắng"></div>
-                            <div class="color-option" style="background: #ff6b6b;" title="Đỏ"></div>
-                            <div class="color-option" style="background: #4dabf7;" title="Xanh dương"></div>
-                            <div class="color-option" style="background: #ffd43b;" title="Vàng"></div>
+                            <div class="color-option active" style="background: #000;" title="{{ __('Đen') }}"></div>
+                            <div class="color-option" style="background: #fff; border: 1px solid #ddd;" title="{{ __('Trắng') }}"></div>
+                            <div class="color-option" style="background: #ff6b6b;" title="{{ __('Đỏ') }}"></div>
+                            <div class="color-option" style="background: #4dabf7;" title="{{ __('Xanh dương') }}"></div>
+                            <div class="color-option" style="background: #ffd43b;" title="{{ __('Vàng') }}"></div>
                         </div>
                     </div>
                     
                     @if($product->stock > 0)
                         <div class="d-flex align-items-center flex-wrap gap-2">
                             <div class="alert alert-success d-inline-flex align-items-center mb-0">
-                                <i class="fas fa-check-circle"></i> Còn hàng ({{ $product->stock }} sản phẩm)
+                                <i class="fas fa-check-circle"></i> {{ __('Còn hàng') }} ({{ $product->stock }} {{ __('sản phẩm') }})
                             </div>
-                            <small class="text-muted">Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat</small>
+                            <small class="text-muted">{{ __('Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat') }}</small>
                         </div>
                         @else
                         <div class="alert alert-danger d-inline-block">
-                            <i class="fas fa-times-circle"></i> Hết hàng
+                            <i class="fas fa-times-circle"></i> {{ __('Hết hàng') }}
                         </div>
                     @endif
                     
                     <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
                         @csrf
                         <div class="d-flex gap-3 mb-3 flex-wrap">
-                    <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
+                            <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
                                     style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; border: none;">
-                                <i class="fas fa-shopping-bag me-2"></i> Thêm vào giỏ
+                                <i class="fas fa-shopping-bag me-2"></i> {{ __('Thêm vào giỏ') }}
                             </button>
                             @if($product->delivery_type === 'digital')
                             <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow">
-                                <i class="fas fa-bolt me-2"></i> Mua ngay
+                                <i class="fas fa-bolt me-2"></i> {{ __('Mua ngay') }}
                             </button>
                             @endif
                             <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
-                                <i class="fas fa-arrow-left me-2"></i> Tiếp tục mua
+                                <i class="fas fa-arrow-left me-2"></i> {{ __('Tiếp tục mua') }}
                             </a>
                         </div>
                     </form>
@@ -238,15 +238,15 @@
                         <div class="fashion-badge">
                             <i class="fas fa-gem"></i>
                             <div>
-                                <strong>Chất liệu cao cấp</strong><br>
-                                <small>100% Cotton thoáng mát</small>
+                                <strong>{{ __('Chất liệu cao cấp') }}</strong><br>
+                                <small>{{ __('100% Cotton thoáng mát') }}</small>
                             </div>
                         </div>
                         <div class="fashion-badge" style="background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);">
                             <i class="fas fa-star"></i>
                             <div>
-                                <strong>Thiết kế độc quyền</strong><br>
-                                <small>Xu hướng thời trang 2026</small>
+                                <strong>{{ __('Thiết kế độc quyền') }}</strong><br>
+                                <small>{{ __('Xu hướng thời trang 2026') }}</small>
                             </div>
                         </div>
                     </div>
@@ -278,19 +278,19 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fashion-tab active" id="features-tab" data-bs-toggle="tab" 
                                 data-bs-target="#features" type="button" role="tab">
-                            <i class="fas fa-heart me-2"></i>Đặc Điểm
+                            <i class="fas fa-heart me-2"></i>{{ __('Đặc Điểm') }}
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fashion-tab" id="description-tab" data-bs-toggle="tab" 
                                 data-bs-target="#description" type="button" role="tab">
-                            <i class="fas fa-info-circle me-2"></i>Hướng Dẫn
+                            <i class="fas fa-info-circle me-2"></i>{{ __('Hướng Dẫn') }}
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fashion-tab" id="reviews-tab" data-bs-toggle="tab" 
                                 data-bs-target="#reviews" type="button" role="tab">
-                            <i class="fas fa-comments me-2"></i>Đánh Giá
+                            <i class="fas fa-comments me-2"></i>{{ __('Đánh Giá') }}
                         </button>
                     </li>
                 </ul>
@@ -300,15 +300,15 @@
                     <div class="tab-pane fade show active" id="features" role="tabpanel" data-aos="fade-up">
                         <div class="fashion-card">
                             <h4 class="fw-bold mb-4" style="color: #8b4513;">
-                                <i class="fas fa-star text-warning me-2"></i>Đặc Điểm Nổi Bật
+                                <i class="fas fa-star text-warning me-2"></i>{{ __('Đặc Điểm Nổi Bật') }}
                             </h4>
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-check-circle text-success fs-3 me-3"></i>
                                         <div>
-                                            <h6 class="fw-bold">Vải cao cấp</h6>
-                                            <p class="text-muted mb-0">100% cotton tự nhiên, thấm hút mồ hôi tốt</p>
+                                            <h6 class="fw-bold">{{ __('Vải cao cấp') }}</h6>
+                                            <p class="text-muted mb-0">{{ __('100% cotton tự nhiên, thấm hút mồ hôi tốt') }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -316,8 +316,8 @@
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-check-circle text-success fs-3 me-3"></i>
                                         <div>
-                                            <h6 class="fw-bold">Form dáng chuẩn</h6>
-                                            <p class="text-muted mb-0">Ôm vừa vặn, tôn dáng người mặc</p>
+                                            <h6 class="fw-bold">{{ __('Form dáng chuẩn') }}</h6>
+                                            <p class="text-muted mb-0">{{ __('Ôm vừa vặn, tôn dáng người mặc') }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -325,8 +325,8 @@
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-check-circle text-success fs-3 me-3"></i>
                                         <div>
-                                            <h6 class="fw-bold">Màu sắc bền đẹp</h6>
-                                            <p class="text-muted mb-0">Công nghệ nhuộm hiện đại, không phai màu</p>
+                                            <h6 class="fw-bold">{{ __('Màu sắc bền đẹp') }}</h6>
+                                            <p class="text-muted mb-0">{{ __('Công nghệ nhuộm hiện đại, không phai màu') }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -334,8 +334,8 @@
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-check-circle text-success fs-3 me-3"></i>
                                         <div>
-                                            <h6 class="fw-bold">Dễ phối đồ</h6>
-                                            <p class="text-muted mb-0">Phù hợp mọi phong cách, mọi lứa tuổi</p>
+                                            <h6 class="fw-bold">{{ __('Dễ phối đồ') }}</h6>
+                                            <p class="text-muted mb-0">{{ __('Phù hợp mọi phong cách, mọi lứa tuổi') }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -347,38 +347,38 @@
                     <div class="tab-pane fade" id="description" role="tabpanel" data-aos="fade-up">
                         <div class="fashion-card">
                             <h4 class="fw-bold mb-4" style="color: #8b4513;">
-                                <i class="fas fa-book text-danger me-2"></i>Hướng Dẫn Sử Dụng & Bảo Quản
+                                <i class="fas fa-book text-danger me-2"></i>{{ __('Hướng Dẫn Sử Dụng & Bảo Quản') }}
                             </h4>
                             <div class="text-muted mb-4 description-content" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             
                             <div class="row">
                                 <div class="col-md-6">
                                     <h6 class="fw-bold" style="color: #ff6b6b;">
-                                        <i class="fas fa-hand-sparkles me-2"></i>Hướng dẫn giặt:
+                                        <i class="fas fa-hand-sparkles me-2"></i>{{ __('Hướng dẫn giặt:') }}
                                     </h6>
                                     <ul class="text-muted">
-                                        <li>Giặt máy ở nhiệt độ tối đa 30°C</li>
-                                        <li>Không sử dụng chất tẩy mạnh</li>
-                                        <li>Giặt với màu tương tự</li>
-                                        <li>Lộn trái khi giặt</li>
+                                        <li>{{ __('Giặt máy ở nhiệt độ tối đa 30°C') }}</li>
+                                        <li>{{ __('Không sử dụng chất tẩy mạnh') }}</li>
+                                        <li>{{ __('Giặt với màu tương tự') }}</li>
+                                        <li>{{ __('Lộn trái khi giặt') }}</li>
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
                                     <h6 class="fw-bold" style="color: #ff6b6b;">
-                                        <i class="fas fa-wind me-2"></i>Hướng dẫn bảo quản:
+                                        <i class="fas fa-wind me-2"></i>{{ __('Hướng dẫn bảo quản:') }}
                                     </h6>
                                     <ul class="text-muted">
-                                        <li>Phơi nơi thoáng mát, tránh ánh nắng trực tiếp</li>
-                                        <li>Ủi ở nhiệt độ trung bình</li>
-                                        <li>Không vắt mạnh</li>
-                                        <li>Bảo quản nơi khô ráo</li>
+                                        <li>{{ __('Phơi nơi thoáng mát, tránh ánh nắng trực tiếp') }}</li>
+                                        <li>{{ __('Ủi ở nhiệt độ trung bình') }}</li>
+                                        <li>{{ __('Không vắt mạnh') }}</li>
+                                        <li>{{ __('Bảo quản nơi khô ráo') }}</li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="alert rounded-4 mt-4" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%); border: none;">
                                 <i class="fas fa-exchange-alt me-2"></i>
-                                <strong>Chính sách đổi trả:</strong> Đổi size miễn phí trong vòng 7 ngày nếu sản phẩm chưa qua sử dụng.
+                                <strong>{{ __('Chính sách đổi trả:') }}</strong> {{ __('Đổi size miễn phí trong vòng 7 ngày nếu sản phẩm chưa qua sử dụng.') }}
                             </div>
                         </div>
                     </div>

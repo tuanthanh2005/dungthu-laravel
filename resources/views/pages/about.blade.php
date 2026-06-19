@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Về Chúng Tôi')
+@section('title', __('Về Chúng Tôi'))
 
 @push('styles')
     <style>
@@ -60,69 +60,69 @@
         <div class="container">
             <div class="about-card" data-aos="fade-up">
                 <h1 class="fw-bold mb-4">
-                    <i class="fas fa-info-circle text-primary me-2"></i>Về Chúng Tôi
+                    <i class="fas fa-info-circle text-primary me-2"></i>{{ __('Về Chúng Tôi') }}
                 </h1>
 
                 <h3 class="section-title">
-                    <i class="fas fa-rocket me-2"></i>Sứ Mệnh
+                    <i class="fas fa-rocket me-2"></i>{{ __('Sứ Mệnh') }}
                 </h3>
                 <p style="font-size: 16px; line-height: 1.8; margin-bottom: 30px;">
-                    DungThu.com là nền tảng cung cấp giải pháp công nghệ, thời trang và công cụ Marketing miễn phí cho cộng
-                    đồng Việt Nam.
-                    Chúng tôi cam kết mang đến những sản phẩm chất lượng với giá cạnh tranh nhất.
+                    {{ __('DungThu.com là nền tảng cung cấp giải pháp công nghệ, thời trang và công cụ Marketing miễn phí cho cộng') }}
+                    {{ __('đồng Việt Nam.') }}
+                    {{ __('Chúng tôi cam kết mang đến những sản phẩm chất lượng với giá cạnh tranh nhất.') }}
                 </p>
 
                 <h3 class="section-title">
-                    <i class="fas fa-star me-2"></i>Lợi Ích Khi Chọn Chúng Tôi
+                    <i class="fas fa-star me-2"></i>{{ __('Lợi Ích Khi Chọn Chúng Tôi') }}
                 </h3>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="feature-item">
                             <i class="fas fa-check-circle"></i>
-                            <h5>Sản Phẩm Chất Lượng</h5>
-                            <p>Tất cả sản phẩm đều được kiểm duyệt kỹ lưỡng trước khi bán.</p>
+                            <h5>{{ __('Sản Phẩm Chất Lượng') }}</h5>
+                            <p>{{ __('Tất cả sản phẩm đều được kiểm duyệt kỹ lưỡng trước khi bán.') }}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="feature-item">
                             <i class="fas fa-check-circle"></i>
-                            <h5>Giá Cạnh Tranh</h5>
-                            <p>Mức giá tốt nhất trên thị trường với nhiều ưu đãi đặc biệt.</p>
+                            <h5>{{ __('Giá Cạnh Tranh') }}</h5>
+                            <p>{{ __('Mức giá tốt nhất trên thị trường với nhiều ưu đãi đặc biệt.') }}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="feature-item">
                             <i class="fas fa-check-circle"></i>
-                            <h5>Hỗ Trợ 24/7</h5>
-                            <p>Đội ngũ hỗ trợ khách hàng sẵn sàng giúp đỡ bạn mọi lúc.</p>
+                            <h5>{{ __('Hỗ Trợ 24/7') }}</h5>
+                            <p>{{ __('Đội ngũ hỗ trợ khách hàng sẵn sàng giúp đỡ bạn mọi lúc.') }}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="feature-item">
                             <i class="fas fa-check-circle"></i>
-                            <h5>An Toàn & Bảo Mật</h5>
-                            <p>Thông tin cá nhân của bạn được bảo vệ tối đa.</p>
+                            <h5>{{ __('An Toàn & Bảo Mật') }}</h5>
+                            <p>{{ __('Thông tin cá nhân của bạn được bảo vệ tối đa.') }}</p>
                         </div>
                     </div>
                 </div>
 
                 <h3 class="section-title mt-5">
-                    <i class="fas fa-handshake me-2"></i>Tại Sao Tin Tưởng DungThu?
+                    <i class="fas fa-handshake me-2"></i>{{ __('Tại Sao Tin Tưởng DungThu?') }}
                 </h3>
                 <ul style="font-size: 16px; line-height: 2; margin-bottom: 30px;">
-                    <li><i class="fas fa-check text-success me-2"></i><strong>Kinh Nghiệm:</strong> Nhiều năm phục vụ khách
-                        hàng</li>
-                    <li><i class="fas fa-check text-success me-2"></i><strong>Uy Tín:</strong> Hàng ngàn khách hàng hài lòng
+                    <li><i class="fas fa-check text-success me-2"></i><strong>{{ __('Kinh Nghiệm') }}:</strong> {{ __('Nhiều năm phục vụ khách') }}
+                        {{ __('hàng') }}</li>
+                    <li><i class="fas fa-check text-success me-2"></i><strong>{{ __('Uy Tín') }}:</strong> {{ __('Hàng ngàn khách hàng hài lòng') }}
                     </li>
-                    <li><i class="fas fa-check text-success me-2"></i><strong>Nhanh Chóng:</strong> Xử lý đơn hàng siêu tốc
+                    <li><i class="fas fa-check text-success me-2"></i><strong>{{ __('Nhanh Chóng') }}:</strong> {{ __('Xử lý đơn hàng siêu tốc') }}
                     </li>
-                    <li><i class="fas fa-check text-success me-2"></i><strong>Đáng Tin:</strong> Cam kết bảo vệ quyền lợi
-                        khách hàng</li>
+                    <li><i class="fas fa-check text-success me-2"></i><strong>{{ __('Đáng Tin') }}:</strong> {{ __('Cam kết bảo vệ quyền lợi') }}
+                        khách {{ __('hàng') }}</li>
                 </ul>
 
                 <div class="alert alert-primary mt-5" style="border-radius: 15px;">
                     <h5 class="fw-bold mb-3">
-                        <i class="fas fa-envelope me-2"></i>Liên Hệ Chúng Tôi
+                        <i class="fas fa-envelope me-2"></i>{{ __('Liên Hệ Chúng Tôi') }}
                     </h5>
                     <p class="mb-1">
                         <strong>Email:</strong>

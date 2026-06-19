@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dịch vụ Tăng Tương Tác - DungThu.com')
+@section('title', __('Dịch vụ Tăng Tương Tác') . ' - DungThu.com')
 
 @push('styles')
 <style>
@@ -285,16 +285,30 @@
 @endpush
 
 @section('content')
+@php
+    $locale = app()->getLocale();
+    $exchangeRate = doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000'));
+    $formatPrice = function($amount) use ($locale, $exchangeRate) {
+        if ($locale === 'en') {
+            $usd = $amount / $exchangeRate;
+            if ($usd < 0.01 && $usd > 0) {
+                return '$' . number_format($usd, 4, '.', ',');
+            }
+            return '$' . number_format($usd, 2, '.', ',');
+        }
+        return number_format($amount, 0, ',', '.') . 'đ';
+    };
+@endphp
 <main style="min-height: 80vh;">
     <section class="buff-hero">
         <div class="container">
             <div class="buff-hero-content">
-                <h1>Hệ Thống Tăng Tương Tác</h1>
-                <p>Giải pháp tối ưu giúp tăng cường sự hiện diện của bạn trên mạng xã hội một cách nhanh chóng, an toàn và hoàn toàn tự động.</p>
+                <h1>{{ __('Hệ Thống Tăng Tương Tác') }}</h1>
+                <p>{{ __('Giải pháp tối ưu giúp tăng cường sự hiện diện của bạn trên mạng xã hội một cách nhanh chóng, an toàn và hoàn toàn tự động.') }}</p>
                 
                 @auth
                 <a href="{{ route('buff.history') }}" class="history-btn">
-                    <i class="fas fa-history"></i> Lịch sử đơn hàng
+                    <i class="fas fa-history"></i> {{ __('Lịch sử đơn hàng') }}
                 </a>
                 @endauth
             </div>
@@ -325,15 +339,15 @@
                         <div class="service-card-icon">
                             <i class="{{ $service->getIcon() }}"></i>
                         </div>
-                        <h4>{{ $service->name }}</h4>
-                        <p>{{ $service->description ?? 'Dịch vụ tăng tương tác tự động tốc độ cao' }}</p>
+                        <h4>{{ __($service->name) }}</h4>
+                        <p>{{ $service->description ? __($service->description) : __('Dịch vụ tăng tương tác tự động tốc độ cao') }}</p>
                         
                         <div class="service-card-footer">
                             <div class="price-tag">
-                                <small>Chỉ từ</small>
-                                <span>{{ number_format($service->price_per_unit, 0, ',', '.') }}đ</span>
+                                <small>{{ __('Chỉ từ') }}</small>
+                                <span>{{ $formatPrice($service->price_per_unit) }}</span>
                             </div>
-                            <div class="use-btn">Sử dụng ngay</div>
+                            <div class="use-btn">{{ __('Sử dụng ngay') }}</div>
                         </div>
                     </a>
                 @endforeach
@@ -343,21 +357,21 @@
                 <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #94a3b8; font-size: 32px;">
                     <i class="fas fa-box-open"></i>
                 </div>
-                <h4 class="fw-bold text-dark">Hệ thống đang cập nhật</h4>
-                <p class="text-muted">Các dịch vụ sẽ sớm quay trở lại. Vui lòng quay lại sau!</p>
+                <h4 class="fw-bold text-dark">{{ __('Hệ thống đang cập nhật') }}</h4>
+                <p class="text-muted">{{ __('Các dịch vụ sẽ sớm quay trở lại. Vui lòng quay lại sau!') }}</p>
             </div>
         @endforelse
 
         @if($services->isNotEmpty())
         <div class="features-section">
-            <h4 class="fw-bold mb-4 text-center">Tại sao nên chọn hệ thống của chúng tôi?</h4>
+            <h4 class="fw-bold mb-4 text-center">{{ __('Tại sao nên chọn hệ thống của chúng tôi?') }}</h4>
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="feature-item">
                         <div class="feature-icon"><i class="fas fa-bolt"></i></div>
                         <div>
-                            <h5>Siêu Tốc Độ</h5>
-                            <p>Hệ thống tự động xử lý đơn hàng ngay lập tức sau khi tạo.</p>
+                            <h5>{{ __('Siêu Tốc Độ') }}</h5>
+                            <p>{{ __('Hệ thống tự động xử lý đơn hàng ngay lập tức sau khi tạo.') }}</p>
                         </div>
                     </div>
                 </div>
@@ -365,8 +379,8 @@
                     <div class="feature-item">
                         <div class="feature-icon" style="color: #3b82f6; background: #eff6ff;"><i class="fas fa-shield-alt"></i></div>
                         <div>
-                            <h5>An Toàn Tuyệt Đối</h5>
-                            <p>Không yêu cầu mật khẩu. Cam kết an toàn cho tài khoản 100%.</p>
+                            <h5>{{ __('An Toàn Tuyệt Đối') }}</h5>
+                            <p>{{ __('Không yêu cầu mật khẩu. Cam kết an toàn cho tài khoản 100%.') }}</p>
                         </div>
                     </div>
                 </div>
@@ -374,8 +388,8 @@
                     <div class="feature-item">
                         <div class="feature-icon" style="color: #eab308; background: #fefce8;"><i class="fas fa-headset"></i></div>
                         <div>
-                            <h5>Bảo Hành Dài Hạn</h5>
-                            <p>Hỗ trợ bảo hành tuột, hoàn tiền nếu lỗi. Support nhiệt tình 24/7.</p>
+                            <h5>{{ __('Bảo Hành Dài Hạn') }}</h5>
+                            <p>{{ __('Hỗ trợ bảo hành tuột, hoàn tiền nếu lỗi. Support nhiệt tình 24/7.') }}</p>
                         </div>
                     </div>
                 </div>

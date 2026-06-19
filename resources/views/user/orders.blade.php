@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Đơn hàng của tôi')
+@section('title', __('Đơn hàng của tôi'))
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -215,7 +215,7 @@
     <div class="container">
         <div class="orders-card" data-aos="fade-up">
             <h3 class="fw-bold mb-4">
-                <i class="fas fa-shopping-bag text-primary me-3"></i>Đơn hàng của tôi
+                <i class="fas fa-shopping-bag text-primary me-3"></i>{{ __('Đơn hàng của tôi') }}
             </h3>
 
             @forelse($orders as $order)
@@ -224,7 +224,7 @@
                         <div class="row align-items-center g-0">
                             <div class="col-6 col-md-3">
                                 <div class="fw-bold mb-2">
-                                    Đơn hàng #{{ $order->id }}
+                                    {{ __('Đơn hàng') }} #{{ $order->id }}
                                     @if($order->order_code)
                                         <span class="text-primary ms-1" style="font-size: 0.85rem; font-family: monospace;">({{ $order->order_code }})</span>
                                     @endif
@@ -236,13 +236,13 @@
                             <div class="col-6 col-md-3 mobile-align-right">
                                 <span class="order-type-badge type-{{ $order->order_type }}">
                                     @if($order->order_type == 'qr')
-                                        <i class="fas fa-qrcode"></i> QR Deal
+                                        <i class="fas fa-qrcode"></i> {{ __('QR Deal') }}
                                     @elseif($order->order_type == 'document')
-                                        <i class="fas fa-file-pdf"></i> Tài liệu
+                                        <i class="fas fa-file-pdf"></i> {{ __('Tài liệu') }}
                                     @elseif($order->order_type == 'shipping')
-                                        <i class="fas fa-shipping-fast"></i> Giao hàng
+                                        <i class="fas fa-shipping-fast"></i> {{ __('Giao hàng') }}
                                     @else
-                                        <i class="fas fa-download"></i> Digital
+                                        <i class="fas fa-download"></i> {{ __('Digital') }}
                                     @endif
                                 </span>
                             </div>
@@ -267,11 +267,17 @@
                                     <div style="width: 60px; height: 60px; background: #e2e8f0; border-radius: 10px; margin-right: 15px;"></div>
                                 @endif
                                 <div class="flex-grow-1 pe-2">
-                                    <div class="fw-bold">{{ $item->product->name ?? 'Sản phẩm không tồn tại' }}</div>
-                                    <small class="text-muted">Số lượng: x{{ $item->quantity }}</small>
+                                    <div class="fw-bold">{{ $item->product->name ?? __('Sản phẩm không tồn tại') }}</div>
+                                    <small class="text-muted">{{ __('Số lượng') }}: x{{ $item->quantity }}</small>
                                 </div>
                                 <div class="text-end">
-                                    <div class="fw-bold text-dark">{{ number_format($item->price, 0, ',', '.') }}đ</div>
+                                    <div class="fw-bold text-dark">
+                                        @if($order->currency === 'USD')
+                                            ${{ number_format($item->price, 2) }}
+                                        @else
+                                            {{ number_format($item->price, 0, ',', '.') }}{{ app()->getLocale() === 'en' ? ' USD' : 'đ' }}
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -280,18 +286,18 @@
                     <!-- Actions -->
                     <div class="text-end order-actions">
                         <a href="{{ route('user.orders.detail', $order) }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
-                            <i class="fas fa-eye me-2"></i>Xem chi tiết
+                            <i class="fas fa-eye me-2"></i>{{ __('Xem chi tiết') }}
                         </a>
 
                         @if($order->status == 'completed')
                             <button type="button" class="btn btn-info text-white rounded-pill px-4 ms-2 fw-bold" data-bs-toggle="modal" data-bs-target="#contactModal">
-                                <i class="fas fa-headset me-2"></i>Hỗ trợ
+                                <i class="fas fa-headset me-2"></i>{{ __('Hỗ trợ') }}
                             </button>
 
                             @foreach($order->orderItems as $item)
                                 @if($item->product && $item->product->category == 'ebooks' && $item->product->file_path)
                                     <a href="{{ route('product.download', $item->product) }}" class="btn btn-success rounded-pill px-4 ms-2 fw-bold">
-                                        <i class="fas fa-download me-2"></i>Tải file
+                                        <i class="fas fa-download me-2"></i>{{ __('Tải file') }}
                                     </a>
                                 @endif
                             @endforeach
@@ -301,10 +307,10 @@
             @empty
                 <div class="empty-state">
                     <i class="fas fa-box-open text-muted opacity-50"></i>
-                    <h5 class="fw-bold text-secondary">Chưa có đơn hàng nào</h5>
-                    <p class="text-muted mb-4">Bạn chưa thực hiện giao dịch nào trên hệ thống.</p>
+                    <h5 class="fw-bold text-secondary">{{ __('Chưa có đơn hàng nào') }}</h5>
+                    <p class="text-muted mb-4">{{ __('Bạn chưa thực hiện giao dịch nào trên hệ thống.') }}</p>
                     <a href="{{ route('shop') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                        <i class="fas fa-shopping-cart me-2"></i> Mua sắm ngay
+                        <i class="fas fa-shopping-cart me-2"></i> {{ __('Mua sắm ngay') }}
                     </a>
                 </div>
             @endforelse
@@ -318,7 +324,7 @@
 
             <!-- Card Exchange History -->
             <h3 class="fw-bold mb-4 mt-5 pt-3 border-top">
-                <i class="fas fa-exchange-alt text-success me-3"></i>Lịch sử đổi thẻ cào
+                <i class="fas fa-exchange-alt text-success me-3"></i>{{ __('Lịch sử đổi thẻ cào') }}
             </h3>
 
             @forelse($cardExchanges as $exchange)
@@ -326,14 +332,14 @@
                         <div class="order-header">
                             <div class="row align-items-center g-0">
                                 <div class="col-6 col-md-3">
-                                    <div class="fw-bold mb-1">Giao dịch #{{ $exchange->id }}</div>
+                                    <div class="fw-bold mb-1">{{ __('Giao dịch') }} #{{ $exchange->id }}</div>
                                     <small class="text-muted">
                                         <i class="fas fa-calendar me-1"></i>{{ $exchange->created_at->format('d/m/Y H:i') }}
                                     </small>
                                 </div>
                                 <div class="col-6 col-md-3 mobile-align-right">
                                     <span class="order-type-badge" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
-                                        <i class="fas fa-credit-card"></i> Đổi thẻ
+                                        <i class="fas fa-credit-card"></i> {{ __('Đổi thẻ') }}
                                     </span>
                                 </div>
                                 <div class="col-6 col-md-3 mt-md-0 mt-2">
@@ -342,9 +348,9 @@
                                         @elseif($exchange->status == 'approved') bg-success
                                         @elseif($exchange->status == 'rejected') bg-danger
                                         @endif px-3 py-1">
-                                        @if($exchange->status == 'pending') Đang xử lý
-                                        @elseif($exchange->status == 'approved') Hoàn tất
-                                        @elseif($exchange->status == 'rejected') Từ chối
+                                        @if($exchange->status == 'pending') {{ __('Đang xử lý') }}
+                                        @elseif($exchange->status == 'approved') {{ __('Hoàn tất') }}
+                                        @elseif($exchange->status == 'rejected') {{ __('Từ chối') }}
                                         @endif
                                     </span>
                                 </div>
@@ -357,19 +363,19 @@
                         <div class="mt-3 card-exchange-details">
                             <div class="row g-3">
                                 <div class="col-md-6 border-end-md">
-                                    <p class="mb-1"><i class="fas fa-sim-card me-2 text-muted"></i><strong>Loại thẻ:</strong> <span>{{ $exchange->card_type }}</span></p>
-                                    <p class="mb-1"><i class="fas fa-hashtag me-2 text-muted"></i><strong>Seri:</strong> <span>{{ $exchange->card_serial }}</span></p>
-                                    <p class="mb-1"><i class="fas fa-key me-2 text-muted"></i><strong>Mã thẻ:</strong> <span>{{ substr($exchange->card_code, 0, 4) }}****</span></p>
+                                    <p class="mb-1"><i class="fas fa-sim-card me-2 text-muted"></i><strong>{{ __('Loại thẻ:') }}</strong> <span>{{ $exchange->card_type }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-hashtag me-2 text-muted"></i><strong>{{ __('Seri:') }}</strong> <span>{{ $exchange->card_serial }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-key me-2 text-muted"></i><strong>{{ __('Mã thẻ:') }}</strong> <span>{{ substr($exchange->card_code, 0, 4) }}****</span></p>
                                 </div>
                                 <div class="col-md-6 ps-md-4">
-                                    <p class="mb-1"><i class="fas fa-university me-2 text-muted"></i><strong>Ngân hàng:</strong> <span>{{ $exchange->bank_name }}</span></p>
-                                    <p class="mb-1"><i class="fas fa-credit-card me-2 text-muted"></i><strong>STK:</strong> <span>{{ $exchange->bank_account_number }}</span></p>
-                                    <p class="mb-1"><i class="fas fa-user me-2 text-muted"></i><strong>Chủ TK:</strong> <span>{{ $exchange->bank_account_name }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-university me-2 text-muted"></i><strong>{{ __('Ngân hàng:') }}</strong> <span>{{ $exchange->bank_name }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-credit-card me-2 text-muted"></i><strong>{{ __('STK:') }}</strong> <span>{{ $exchange->bank_account_number }}</span></p>
+                                    <p class="mb-1"><i class="fas fa-user me-2 text-muted"></i><strong>{{ __('Chủ TK:') }}</strong> <span>{{ $exchange->bank_account_name }}</span></p>
                                 </div>
                             </div>
                             @if($exchange->admin_note)
                                 <div class="alert alert-info mt-3 mb-0 py-2 px-3" style="font-size: 0.9rem;">
-                                    <i class="fas fa-info-circle me-1"></i><strong>Ghi chú từ Admin:</strong> {{ $exchange->admin_note }}
+                                    <i class="fas fa-info-circle me-1"></i><strong>{{ __('Ghi chú từ Admin:') }}</strong> {{ $exchange->admin_note }}
                                 </div>
                             @endif
                         </div>
@@ -377,8 +383,8 @@
                 @empty
                     <div class="empty-state">
                         <i class="fas fa-money-check text-muted opacity-50"></i>
-                        <h6 class="fw-bold text-secondary mt-3">Chưa có lịch sử đổi thẻ</h6>
-                        <p class="text-muted mb-0" style="font-size: 0.9rem;">Bạn chưa thực hiện giao dịch đổi thẻ cào nào trên hệ thống.</p>
+                        <h6 class="fw-bold text-secondary mt-3">{{ __('Chưa có lịch sử đổi thẻ') }}</h6>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">{{ __('Bạn chưa thực hiện giao dịch đổi thẻ cào nào trên hệ thống.') }}</p>
                     </div>
                 @endforelse
 
@@ -397,16 +403,16 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title fw-bold">
-                    <i class="fas fa-headset me-2"></i>Hỗ trợ đơn hàng
+                    <i class="fas fa-headset me-2"></i>{{ __('Hỗ trợ đơn hàng') }}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
                 <div class="alert alert-warning mb-4 py-2 px-3" style="font-size: 0.9rem;">
                     <i class="fas fa-camera me-1"></i>
-                    Mẹo: Chụp màn hình đơn hàng và gửi cho admin để được hỗ trợ cấp tốc!
+                    {{ __('Mẹo: Chụp màn hình đơn hàng và gửi cho admin để được hỗ trợ cấp tốc!') }}
                 </div>
-                <p class="text-center mb-3 fw-medium">Chọn phương thức liên hệ:</p>
+                <p class="text-center mb-3 fw-medium">{{ __('Chọn phương thức liên hệ:') }}</p>
                 
                 <div class="d-flex flex-column gap-2">
                     <a href="mailto:tranthanhtuanfix@gmail.com" class="contact-option email m-0">
@@ -415,7 +421,7 @@
                                 <i class="fas fa-envelope fa-fw fs-5 m-0"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold mb-0">Email hỗ trợ</h6>
+                                <h6 class="fw-bold mb-0">{{ __('Email hỗ trợ') }}</h6>
                                 <small class="text-muted">tranthanhtuanfix@gmail.com</small>
                             </div>
                         </div>
@@ -427,8 +433,8 @@
                                 <i class="fab fa-telegram fa-fw fs-5 m-0"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold mb-0">Telegram Admin</h6>
-                                <small class="text-muted">Phản hồi 24/7</small>
+                                <h6 class="fw-bold mb-0">{{ __('Telegram Admin') }}</h6>
+                                <small class="text-muted">{{ __('Phản hồi 24/7') }}</small>
                             </div>
                         </div>
                     </a>
@@ -439,8 +445,8 @@
                                 <i class="fas fa-comments fa-fw fs-5 m-0"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold mb-0">Zalo Hỗ trợ</h6>
-                                <small class="text-muted">Phản hồi giờ hành chính</small>
+                                <h6 class="fw-bold mb-0">{{ __('Zalo Hỗ trợ') }}</h6>
+                                <small class="text-muted">{{ __('Phản hồi giờ hành chính') }}</small>
                             </div>
                         </div>
                     </a>

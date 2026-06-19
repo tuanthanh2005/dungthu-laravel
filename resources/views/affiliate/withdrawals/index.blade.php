@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Quản lý rút tiền | DungThu')
+@section('title', __('Quản lý rút tiền') . ' | DungThu')
 
 @push('styles')
 <style>
@@ -36,22 +36,22 @@
                     
                     <nav>
                         <a href="{{ route('affiliate.dashboard') }}" class="aff-nav-link">
-                            <i class="fas fa-th-large"></i> Thống kê
+                            <i class="fas fa-th-large"></i> {{ __('Thống kê') }}
                         </a>
                         <a href="{{ route('affiliate.invoices') }}" class="aff-nav-link">
-                            <i class="fas fa-file-invoice-dollar"></i> Gửi hóa đơn
+                            <i class="fas fa-file-invoice-dollar"></i> {{ __('Gửi hóa đơn') }}
                         </a>
                         <a href="{{ route('affiliate.withdrawals') }}" class="aff-nav-link active">
-                            <i class="fas fa-wallet"></i> Rút tiền
+                            <i class="fas fa-wallet"></i> {{ __('Rút tiền') }}
                         </a>
                         <a href="{{ route('affiliate.account') }}" class="aff-nav-link">
-                            <i class="fas fa-user-cog"></i> Tài khoản
+                            <i class="fas fa-user-cog"></i> {{ __('Tài khoản') }}
                         </a>
                         <hr class="my-3">
                         <form action="{{ route('affiliate.logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="aff-nav-link text-danger border-0 bg-transparent w-100 text-start">
-                                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                <i class="fas fa-sign-out-alt"></i> {{ __('Đăng xuất') }}
                             </button>
                         </form>
                     </nav>
@@ -61,35 +61,35 @@
             <div class="col-lg-9">
                 <div class="balance-info d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="small opacity-75">Số dư khả dụng hiện tại</div>
-                        <h3 class="fw-bold mb-0">{{ number_format($affiliate->balance, 0, ',', '.') }}đ</h3>
+                        <div class="small opacity-75">{{ __('Số dư khả dụng hiện tại') }}</div>
+                        <h3 class="fw-bold mb-0">{{ app()->getLocale() === 'en' ? '$' . number_format($affiliate->balance / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : number_format($affiliate->balance, 0, ',', '.') . 'đ' }}</h3>
                     </div>
                     <a href="{{ route('affiliate.withdrawals.create') }}" class="btn btn-light fw-bold" style="border-radius: 10px;">
-                        <i class="fas fa-money-bill-wave me-1"></i> Rút tiền ngay
+                        <i class="fas fa-money-bill-wave me-1"></i> {{ __('Rút tiền ngay') }}
                     </a>
                 </div>
 
                 <div class="content-card">
                     <div class="section-title">
-                        <i class="fas fa-history text-primary"></i> Lịch sử rút tiền
+                        <i class="fas fa-history text-primary"></i> {{ __('Lịch sử rút tiền') }}
                     </div>
 
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Mã yêu cầu</th>
-                                    <th>Số tiền</th>
-                                    <th>Ngân hàng</th>
-                                    <th>Trạng thái</th>
-                                    <th>Ngày tạo</th>
+                                    <th>{{ __('Mã yêu cầu') }}</th>
+                                    <th>{{ __('Số tiền') }}</th>
+                                    <th>{{ __('Ngân hàng') }}</th>
+                                    <th>{{ __('Trạng thái') }}</th>
+                                    <th>{{ __('Ngày tạo') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($withdrawals as $withdrawal)
                                 <tr>
                                     <td>#WID{{ str_pad($withdrawal->id, 5, '0', STR_PAD_LEFT) }}</td>
-                                    <td class="fw-bold text-danger">-{{ number_format($withdrawal->amount, 0, ',', '.') }}đ</td>
+                                    <td class="fw-bold text-danger">-{{ app()->getLocale() === 'en' ? '$' . number_format($withdrawal->amount / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : number_format($withdrawal->amount, 0, ',', '.') . 'đ' }}</td>
                                     <td>
                                         <div class="fw-bold" style="font-size: 13px;">{{ $withdrawal->bank_name }}</div>
                                         <div class="text-muted" style="font-size: 11px;">{{ $withdrawal->bank_account_number }} - {{ $withdrawal->bank_account_name }}</div>
@@ -108,7 +108,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">Chưa có yêu cầu rút tiền nào</td>
+                                    <td colspan="5" class="text-center py-4 text-muted">{{ __('Chưa có yêu cầu rút tiền nào') }}</td>
                                 </tr>
                                 @endforelse
                             </tbody>

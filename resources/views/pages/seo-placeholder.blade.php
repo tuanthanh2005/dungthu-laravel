@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Mua tài khoản ' . $keywordTitle . ' giá rẻ | Bản quyền chính hãng - DungThu.com')
-@section('meta_description', 'Dịch vụ cấp tài khoản ' . $keywordTitle . ' Pro giá rẻ, uy tín, bảo hành đầy đủ tại DungThu.com. Đăng ký nhận thông báo pre-order ngay hôm nay.')
+@section('title', __('Mua tài khoản :title giá rẻ | Bản quyền chính hãng - DungThu.com', ['title' => $keywordTitle]))
+@section('meta_description', __('Dịch vụ cấp tài khoản :title Pro giá rẻ, uy tín, bảo hành đầy đủ tại DungThu.com. Đăng ký nhận thông báo pre-order ngay hôm nay.', ['title' => $keywordTitle]))
 @section('meta_keywords', 'mua tai khoan ' . strtolower($keywordTitle) . ', cap tai khoan ' . strtolower($keywordTitle) . ', ' . strtolower($keywordTitle) . ' gia re, ' . strtolower($keywordTitle) . ' pro')
 
 @push('styles')
@@ -191,16 +191,16 @@
     <div class="seo-preorder-hero text-center" data-aos="fade-up">
         <div class="mb-4">
             <span class="badge bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-pill fw-bold" style="font-size: 0.8rem; background: rgba(99, 102, 241, 0.15);">
-                <i class="fa-solid fa-hourglass-half me-1"></i> Dự án / Sản phẩm sắp ra mắt
+                <i class="fa-solid fa-hourglass-half me-1"></i> {{ __('Dự án / Sản phẩm sắp ra mắt') }}
             </span>
         </div>
         
         <h1 class="display-4 fw-bold mb-3">
-            Tài Khoản <span class="text-gradient-purple">{{ $keywordTitle }} Pro</span>
+            {{ __('Tài Khoản') }} <span class="text-gradient-purple">{{ $keywordTitle }} Pro</span>
         </h1>
         
         <p class="lead mx-auto mb-5 text-slate-300" style="max-width: 700px; color: #cbd5e1; font-size: 1.1rem; line-height: 1.6;">
-            DungThu.com đang tiến hành thử nghiệm, liên hệ nhà phát hành và chuẩn bị nguồn hàng bản quyền chất lượng cao nhất cho sản phẩm <strong>{{ $keywordTitle }}</strong>. Đăng ký thông tin của bạn bên dưới để nằm trong danh sách nhận thông báo sớm nhất và nhận mã giảm giá 10% khi có hàng!
+            DungThu.com đang tiến hành thử nghiệm, liên hệ nhà phát hành và chuẩn bị nguồn hàng bản quyền chất lượng cao nhất cho sản phẩm <strong>{{ $keywordTitle }}</strong>. {{ __('Đăng ký thông tin của bạn bên dưới để nằm trong danh sách nhận thông báo sớm nhất và nhận mã giảm giá 10% khi có hàng!') }}
         </p>
 
         <!-- Subscription Form -->
@@ -208,14 +208,14 @@
             <form id="preorderForm" action="{{ route('seo.router.subscribe', $slug) }}" method="POST">
                 @csrf
                 <div class="d-flex flex-column flex-sm-row gap-2">
-                    <input type="email" name="email" class="form-control preorder-input" placeholder="Nhập địa chỉ email của bạn..." required>
+                    <input type="email" name="email" class="form-control preorder-input" placeholder="{{ __('Nhập địa chỉ email của bạn...') }}" required>
                     <button type="submit" class="btn preorder-submit-btn flex-shrink-0">
-                        <i class="fa-solid fa-bell me-1"></i> Đăng Ký Chờ
+                        <i class="fa-solid fa-bell me-1"></i> {{ __('Đăng Ký Chờ') }}
                     </button>
                 </div>
             </form>
             <div class="text-start mt-2 px-1 text-slate-400" style="font-size: 0.8rem; color: #94a3b8;">
-                <i class="fa-solid fa-lock me-1"></i> Chúng tôi cam kết bảo mật 100% email và không spam quảng cáo.
+                <i class="fa-solid fa-lock me-1"></i> {{ __('Chúng tôi cam kết bảo mật 100% email và không spam quảng cáo.') }}
             </div>
         </div>
     </div>
@@ -225,7 +225,7 @@
     <div class="my-5" data-aos="fade-up" data-aos-delay="200">
         <div class="related-title">
             <i class="fa-solid fa-fire text-danger"></i>
-            <h2>Sản phẩm AI bán chạy trong khi chờ đợi</h2>
+            <h2>{{ __('Sản phẩm AI bán chạy trong khi chờ đợi') }}</h2>
         </div>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             @foreach($popularProducts as $p)
@@ -237,7 +237,7 @@
                     <div class="ai-card-body">
                         <h3 class="ai-card-title">{{ $p->name }}</h3>
                         <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-bottom: 12px;">
-                            Còn lại: <span class="{{ $p->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $p->stock > 0 ? $p->stock . ' tài khoản' : 'Đặt trước' }}</span>
+                            {{ __('Còn lại') }}: <span class="{{ $p->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $p->stock > 0 ? $p->stock . ' ' . __('tài khoản') : __('Đặt trước') }}</span>
                         </div>
                         
                         <div class="ai-card-price-row">
@@ -248,7 +248,7 @@
                         </div>
                         
                         <a href="{{ route('product.show', $p->slug) }}" class="ai-card-btn">
-                            <i class="fa-solid fa-cart-shopping"></i> Xem Chi Tiết
+                            <i class="fa-solid fa-cart-shopping"></i> {{ __('Xem Chi Tiết') }}
                         </a>
                     </div>
                 </div>
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // Disable button and show loading state
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + @json(__('Đang xử lý...'));
             
             fetch(action, {
                 method: 'POST',
@@ -294,18 +294,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Đăng ký chờ thành công!',
+                        title: @json(__('Đăng ký chờ thành công!')),
                         text: data.message,
-                        confirmButtonText: 'Đóng',
+                        confirmButtonText: @json(__('Đóng')),
                         confirmButtonColor: '#6366f1'
                     });
                     preorderForm.reset();
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Có lỗi xảy ra',
-                        text: data.message || 'Vui lòng kiểm tra lại email.',
-                        confirmButtonText: 'Đóng',
+                        title: @json(__('Có lỗi xảy ra')),
+                        text: data.message || @json(__('Vui lòng kiểm tra lại email.')),
+                        confirmButtonText: @json(__('Đóng')),
                         confirmButtonColor: '#ef4444'
                     });
                 }
@@ -316,9 +316,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 Swal.fire({
                     icon: 'error',
-                    title: 'Lỗi kết nối',
-                    text: 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
-                    confirmButtonText: 'Đóng',
+                    title: @json(__('Lỗi kết nối')),
+                    text: @json(__('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.')),
+                    confirmButtonText: @json(__('Đóng')),
                     confirmButtonColor: '#ef4444'
                 });
                 console.error('Error:', error);

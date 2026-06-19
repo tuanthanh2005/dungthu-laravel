@@ -413,7 +413,7 @@
             <!-- Breadcrumb -->
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="fas fa-home me-1"></i>Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="fas fa-home me-1"></i>{{ __('Trang chủ') }}</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('blog.index') }}"><i class="fas fa-blog me-1"></i>Blog</a></li>
                     <li class="breadcrumb-item active">{{ Str::limit($blog->title, 50) }}</li>
                 </ol>
@@ -424,7 +424,7 @@
                 <div class="custom-lang-selector" style="background:#fff; border:1px solid #e2e8f0; border-radius:30px; padding:8px 16px; display:inline-flex; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,0.05); transition:all 0.3s;">
                     <i class="fas fa-language text-primary fs-4 me-2"></i>
                     <select id="custom-lang-select" style="border:none; outline:none; background:transparent; font-weight:600; font-size: 15px; color:#4a5568; cursor:pointer;" onchange="doGTranslate(this.value)">
-                        <option value="vi">🇻🇳 Tiếng Việt</option>
+                        <option value="vi">🇻🇳 {{ __('Tiếng Việt') }}</option>
                         <option value="en">🇺🇸 English</option>
                         <option value="zh-CN">🇨🇳 中文 (Chinese)</option>
                         <option value="ko">🇰🇷 한국어 (Korean)</option>
@@ -450,11 +450,11 @@
                     </div>
                     <div class="blog-meta-item">
                         <i class="far fa-eye"></i>
-                        <span>{{ number_format($blog->views) }} lượt xem</span>
+                        <span>{{ number_format($blog->views) }} {{ __('lượt xem') }}</span>
                     </div>
                     <div class="blog-meta-item">
                         <i class="far fa-clock"></i>
-                        <span>5 phút đọc</span>
+                        <span>{{ __('5 phút đọc') }}</span>
                     </div>
                 </div>
 
@@ -514,38 +514,38 @@
                     </div>
                     <div>
                         <div class="fw-bold mb-1" style="font-size: 18px;">DungThu.com</div>
-                        <p class="text-muted mb-0">Chia sẻ kiến thức công nghệ và các công cụ hữu ích cho cộng đồng</p>
+                        <p class="text-muted mb-0">{{ __('Chia sẻ kiến thức công nghệ và các công cụ hữu ích cho cộng đồng') }}</p>
                     </div>
                 </div>
 
                 <!-- Share Section -->
                 <div class="share-section" data-aos="fade-up">
                     <h5 class="fw-bold mb-4">
-                        <i class="fas fa-share-alt text-primary me-2"></i>Chia sẻ bài viết này
+                        <i class="fas fa-share-alt text-primary me-2"></i>{{ __('Chia sẻ bài viết này') }}
                     </h5>
                     <div>
                         <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('blog.show', $blog->slug)) }}" 
                            target="_blank" 
                            class="share-btn facebook"
-                           title="Chia sẻ trên Facebook">
+                           title="{{ __('Chia sẻ trên Facebook') }}">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                         <a href="https://twitter.com/intent/tweet?url={{ urlencode(route('blog.show', $blog->slug)) }}&text={{ urlencode($blog->title) }}" 
                            target="_blank" 
                            class="share-btn twitter"
-                           title="Chia sẻ trên Twitter">
+                           title="{{ __('Chia sẻ trên Twitter') }}">
                             <i class="fab fa-twitter"></i>
                         </a>
                         <a href="https://www.pinterest.com/pin/create/button/?url={{ urlencode(route('blog.show', $blog->slug)) }}&description={{ urlencode($blog->title) }}" 
                            target="_blank" 
                            class="share-btn pinterest"
-                           title="Chia sẻ trên Pinterest">
+                           title="{{ __('Chia sẻ trên Pinterest') }}">
                             <i class="fab fa-pinterest"></i>
                         </a>
                         <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('blog.show', $blog->slug)) }}&title={{ urlencode($blog->title) }}" 
                            target="_blank" 
                            class="share-btn linkedin"
-                           title="Chia sẻ trên LinkedIn">
+                           title="{{ __('Chia sẻ trên LinkedIn') }}">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                     </div>
@@ -556,7 +556,7 @@
             @if($relatedBlogs->count() > 0)
             <div class="related-posts-section" data-aos="fade-up">
                 <h3 class="fw-bold">
-                    <i class="fas fa-newspaper text-primary me-2"></i>Bài viết liên quan
+                    <i class="fas fa-newspaper text-primary me-2"></i>{{ __('Bài viết liên quan') }}
                 </h3>
                 <div class="row g-4">
                     @foreach($relatedBlogs as $related)
@@ -577,7 +577,7 @@
                                             <i class="far fa-calendar me-1"></i>{{ $related->formatted_date }}
                                         </small>
                                         <small class="text-primary fw-bold">
-                                            Đọc thêm <i class="fas fa-arrow-right ms-1"></i>
+                                            {{ __('Đọc thêm') }} <i class="fas fa-arrow-right ms-1"></i>
                                         </small>
                                     </div>
                                 </div>

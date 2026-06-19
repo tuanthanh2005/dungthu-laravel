@@ -58,13 +58,13 @@ class BuffOrder extends Model
     public function getStatusText(): string
     {
         return match($this->status) {
-            'pending' => '⏳ Chờ thanh toán',
-            'paid' => '✅ Đã thanh toán',
-            'processing' => '⚙️ Đang buff',
-            'completed' => '🎉 Hoàn thành',
-            'cancelled' => '❌ Đã hủy',
-            'refunded' => '💰 Hoàn tiền',
-            default => 'Không xác định'
+            'pending' => '⏳ ' . __('Chờ thanh toán'),
+            'paid' => '✅ ' . __('Đã thanh toán'),
+            'processing' => '⚙️ ' . __('Đang buff'),
+            'completed' => '🎉 ' . __('Hoàn thành'),
+            'cancelled' => '❌ ' . __('Đã hủy'),
+            'refunded' => '💰 ' . __('Hoàn tiền'),
+            default => __('Không xác định')
         };
     }
 

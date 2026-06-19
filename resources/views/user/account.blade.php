@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tài khoản của tôi')
+@section('title', __('Tài khoản của tôi'))
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -90,7 +90,7 @@
     <div class="container">
         <div class="account-card" data-aos="fade-up">
             <h3 class="fw-bold mb-4">
-                <i class="fas fa-user-circle text-primary me-3"></i>Tài khoản của tôi
+                <i class="fas fa-user-circle text-primary me-3"></i>{{ __('Tài khoản của tôi') }}
             </h3>
 
             <!-- Success Message -->
@@ -104,7 +104,7 @@
             <!-- Error Messages -->
             @if($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Có lỗi xảy ra!</h6>
+                    <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>{{ __(__('Có lỗi xảy ra!')) }}</h6>
                     <ul class="mb-0">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -118,12 +118,12 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" data-bs-toggle="tab" href="#profile">
-                        <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                        <i class="fas fa-user me-2"></i>{{ __('Thông tin cá nhân') }}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="tab" href="#password">
-                        <i class="fas fa-lock me-2"></i>Đổi mật khẩu
+                        <i class="fas fa-lock me-2"></i>{{ __('Đổi mật khẩu') }}
                     </a>
                 </li>
             </ul>
@@ -138,7 +138,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label">
-                                    <i class="fas fa-user text-primary me-2"></i>Họ và tên <span class="text-danger">*</span>
+                                    <i class="fas fa-user text-primary me-2"></i>{{ __('Họ và tên') }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control" id="name" name="name" 
                                        value="{{ old('name', $user->name) }}" required>
@@ -154,7 +154,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="phone" class="form-label">
-                                    <i class="fas fa-phone text-primary me-2"></i>Số điện thoại
+                                    <i class="fas fa-phone text-primary me-2"></i>{{ __('Số điện thoại') }}
                                 </label>
                                 <input type="text" class="form-control" id="phone" name="phone" 
                                        value="{{ old('phone', $user->phone) }}">
@@ -162,7 +162,7 @@
 
                             <div class="col-md-12 mb-3">
                                 <label for="address" class="form-label">
-                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>Địa chỉ
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>{{ __('Địa chỉ') }}
                                 </label>
                                 <textarea class="form-control" id="address" name="address" rows="3">{{ old('address', $user->address) }}</textarea>
                             </div>
@@ -170,7 +170,7 @@
 
                         <div class="text-end">
                             <button type="submit" class="btn btn-save">
-                                <i class="fas fa-save me-2"></i>Lưu thay đổi
+                                <i class="fas fa-save me-2"></i>{{ __('Lưu thay đổi') }}
                             </button>
                         </div>
                     </form>
@@ -180,7 +180,7 @@
                 <div class="tab-pane fade" id="password">
                     <div class="info-box">
                         <i class="fas fa-info-circle text-primary me-2"></i>
-                        Mật khẩu phải có ít nhất 8 ký tự để đảm bảo bảo mật
+                        {{ __('Mật khẩu phải có ít nhất 8 ký tự để đảm bảo bảo mật') }}
                     </div>
 
                     <form action="{{ route('user.password.update') }}" method="POST">
@@ -190,7 +190,7 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="current_password" class="form-label">
-                                    <i class="fas fa-key text-primary me-2"></i>Mật khẩu hiện tại <span class="text-danger">*</span>
+                                    <i class="fas fa-key text-primary me-2"></i>{{ __('Mật khẩu hiện tại') }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="password" class="form-control" id="current_password" 
                                        name="current_password" required>
@@ -198,7 +198,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="password" class="form-label">
-                                    <i class="fas fa-lock text-primary me-2"></i>Mật khẩu mới <span class="text-danger">*</span>
+                                    <i class="fas fa-lock text-primary me-2"></i>{{ __('Mật khẩu mới') }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="password" class="form-control" id="password" 
                                        name="password" required>
@@ -206,7 +206,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="password_confirmation" class="form-label">
-                                    <i class="fas fa-lock text-primary me-2"></i>Xác nhận mật khẩu mới <span class="text-danger">*</span>
+                                    <i class="fas fa-lock text-primary me-2"></i>{{ __('Xác nhận mật khẩu mới') }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="password" class="form-control" id="password_confirmation" 
                                        name="password_confirmation" required>
@@ -215,7 +215,7 @@
 
                         <div class="text-end">
                             <button type="submit" class="btn btn-save">
-                                <i class="fas fa-key me-2"></i>Đổi mật khẩu
+                                <i class="fas fa-key me-2"></i>{{ __('Đổi mật khẩu') }}
                             </button>
                         </div>
                     </form>

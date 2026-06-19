@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Thanh Toán & Giao Hàng - DungThu.com')
+@section('title', __('Thanh Toán & Giao Hàng') . ' - DungThu.com')
+
+@php
+    $formatPrice = function($amount) {
+        if (app()->getLocale() === 'en') {
+            return '$' . number_format($amount, 2);
+        }
+        return number_format($amount, 0, ',', '.') . 'đ';
+    };
+@endphp
 
 @push('styles')
 <style>
@@ -27,9 +36,9 @@
         <div class="col-md-10">
             <div class="text-center mb-4">
                 <h1 class="fw-bold">
-                    <i class="fas fa-shipping-fast text-success me-2"></i>Thanh Toán & Giao Hàng
+                    <i class="fas fa-shipping-fast text-success me-2"></i>{{ __('Thanh Toán & Giao Hàng') }}
                 </h1>
-                <p class="text-muted">Vui lòng điền đầy đủ thông tin để nhận hàng</p>
+                <p class="text-muted">{{ __('Vui lòng điền đầy đủ thông tin để nhận hàng') }}</p>
             </div>
 
             <div class="row g-4">
@@ -38,7 +47,7 @@
                     <div class="card border-0 shadow-sm shipping-card">
                         <div class="card-header bg-white py-3">
                             <h5 class="mb-0 fw-bold">
-                                <i class="fas fa-map-marker-alt text-success me-2"></i>Thông tin giao hàng
+                                <i class="fas fa-map-marker-alt text-success me-2"></i>{{ __('Thông tin giao hàng') }}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -46,7 +55,7 @@
                                 @csrf
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">
-                                        <i class="fas fa-user me-2 text-primary"></i>Họ và tên người nhận
+                                        <i class="fas fa-user me-2 text-primary"></i>{{ __('Họ và tên người nhận') }}
                                     </label>
                                     <input type="text" class="form-control form-control-lg" name="customer_name" required>
                                 </div>
@@ -54,13 +63,13 @@
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
-                                            <i class="fas fa-envelope me-2 text-primary"></i>Email
+                                            <i class="fas fa-envelope me-2 text-primary"></i>{{ __('Email') }}
                                         </label>
                                         <input type="email" class="form-control form-control-lg" name="customer_email" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
-                                            <i class="fas fa-phone me-2 text-primary"></i>Số điện thoại
+                                            <i class="fas fa-phone me-2 text-primary"></i>{{ __('Số điện thoại') }}
                                         </label>
                                         <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
                                     </div>
@@ -70,30 +79,30 @@
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
-                                            <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="fw-normal text-muted">(Không bắt buộc)</small>
+                                            <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="fw-normal text-muted">({{ __('Không bắt buộc') }})</small>
                                         </label>
-                                        <input type="text" class="form-control form-control-lg" name="customer_zalo" placeholder="Nhập số Zalo của bạn">
+                                        <input type="text" class="form-control form-control-lg" name="customer_zalo" placeholder="{{ __('Nhập số Zalo của bạn') }}">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
-                                            <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="fw-normal text-muted">(Không bắt buộc)</small>
+                                            <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="fw-normal text-muted">({{ __('Không bắt buộc') }})</small>
                                         </label>
-                                        <input type="url" class="form-control form-control-lg" name="customer_facebook" placeholder="Ví dụ: https://facebook.com/username">
+                                        <input type="url" class="form-control form-control-lg" name="customer_facebook" placeholder="{{ __('Ví dụ: https://facebook.com/username') }}">
                                     </div>
                                 </div>
                                 
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">
-                                        <i class="fas fa-home me-2 text-primary"></i>Địa chỉ giao hàng
+                                        <i class="fas fa-home me-2 text-primary"></i>{{ __('Địa chỉ giao hàng') }}
                                     </label>
                                     <textarea class="form-control form-control-lg" 
                                               name="customer_address" 
                                               rows="3" 
-                                              placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                                              placeholder="{{ __('Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố') }}"
                                               required></textarea>
                                     <small class="text-muted">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        Vui lòng nhập địa chỉ đầy đủ để đảm bảo giao hàng chính xác
+                                        {{ __('Vui lòng nhập địa chỉ đầy đủ để đảm bảo giao hàng chính xác') }}
                                     </small>
                                 </div>
 
@@ -103,15 +112,15 @@
                                             <i class="fas fa-truck"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-1 fw-bold">Giao hàng miễn phí</h6>
-                                            <small>Dự kiến giao trong 3-5 ngày làm việc</small>
+                                            <h6 class="mb-1 fw-bold">{{ __('Giao hàng miễn phí') }}</h6>
+                                            <small>{{ __('Dự kiến giao trong 3-5 ngày làm việc') }}</small>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Ghi chú (tùy chọn)</label>
-                                    <textarea class="form-control" name="note" rows="2" placeholder="Thời gian giao hàng mong muốn, ghi chú đặc biệt..."></textarea>
+                                    <label class="form-label fw-bold">{{ __('Ghi chú (tùy chọn)') }}</label>
+                                    <textarea class="form-control" name="note" rows="2" placeholder="{{ __('Thời gian giao hàng mong muốn, ghi chú đặc biệt...') }}"></textarea>
                                 </div>
                             </form>
                         </div>
@@ -123,7 +132,7 @@
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white py-3">
                             <h5 class="mb-0 fw-bold">
-                                <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của bạn
+                                <i class="fas fa-shopping-bag me-2"></i>{{ __('Đơn hàng của bạn') }}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -139,10 +148,10 @@
                                              style="width: 50px; height: 50px; object-fit: cover;">
                                         <div style="max-width: 220px;">
                                             <h6 class="mb-0 text-break">{{ $details['name'] }}</h6>
-                                            <small class="text-muted">SL: {{ $details['quantity'] }}</small>
+                                            <small class="text-muted">{{ __('SL') }}: {{ $details['quantity'] }}</small>
                                         </div>
                                     </div>
-                                    <span class="text-muted">{{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}đ</span>
+                                    <span class="text-muted">{{ $formatPrice($details['price'] * $details['quantity']) }}</span>
                                 </li>
                                 @endforeach
                             </ul>
@@ -150,44 +159,44 @@
                             <div class="border-top pt-3">
                                 <!-- Mã giảm giá -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold mb-2 small text-muted">Mã giảm giá (nếu có)</label>
+                                    <label class="form-label fw-bold mb-2 small text-muted">{{ __('Mã giảm giá (nếu có)') }}</label>
                                     <div class="input-group input-group-sm">
-                                        <input type="text" id="coupon_code" class="form-control" placeholder="Nhập mã giảm giá" value="{{ $couponCode ?? '' }}" {{ isset($couponCode) ? 'disabled' : '' }}>
-                                        <button class="btn btn-primary" type="button" id="apply-coupon-btn" style="{{ isset($couponCode) ? 'display:none;' : '' }}">Áp dụng</button>
-                                        <button class="btn btn-danger" type="button" id="remove-coupon-btn" style="{{ isset($couponCode) ? '' : 'display:none;' }}">Hủy</button>
+                                        <input type="text" id="coupon_code" class="form-control" placeholder="{{ __('Nhập mã giảm giá') }}" value="{{ $couponCode ?? '' }}" {{ isset($couponCode) ? 'disabled' : '' }}>
+                                        <button class="btn btn-primary" type="button" id="apply-coupon-btn" style="{{ isset($couponCode) ? 'display:none;' : '' }}">{{ __('Áp dụng') }}</button>
+                                        <button class="btn btn-danger" type="button" id="remove-coupon-btn" style="{{ isset($couponCode) ? '' : 'display:none;' }}">{{ __('Hủy') }}</button>
                                     </div>
                                     <div id="coupon-feedback" class="small mt-1 d-none text-danger"></div>
                                 </div>
 
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>Tạm tính:</span>
-                                    <span>{{ number_format($total, 0, ',', '.') }}đ</span>
+                                    <span>{{ __('Tạm tính:') }}</span>
+                                    <span>{{ $formatPrice($total) }}</span>
                                 </div>
                                 
                                 <div class="d-flex justify-content-between mb-2 {{ isset($discountAmount) && $discountAmount > 0 ? '' : 'd-none' }}" id="discount-row">
-                                    <span class="text-danger fw-bold">Giảm giá:</span>
-                                    <strong class="text-danger" id="discount-display">-{{ number_format($discountAmount ?? 0, 0, ',', '.') }}đ</strong>
+                                    <span class="text-danger fw-bold">{{ __('Giảm giá:') }}</span>
+                                    <strong class="text-danger" id="discount-display">-{{ $formatPrice($discountAmount ?? 0) }}</strong>
                                 </div>
 
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span>Phí vận chuyển:</span>
-                                    <span class="text-success fw-bold">Miễn phí</span>
+                                    <span>{{ __('Phí vận chuyển:') }}</span>
+                                    <span class="text-success fw-bold">{{ __('Miễn phí') }}</span>
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">Tổng cộng:</h5>
-                                    <h5 class="mb-0 text-primary" id="checkout-total-display">{{ number_format($finalTotal ?? $total, 0, ',', '.') }}đ</h5>
+                                    <h5 class="mb-0">{{ __('Tổng cộng:') }}</h5>
+                                    <h5 class="mb-0 text-primary" id="checkout-total-display">{{ $formatPrice($finalTotal ?? $total) }}</h5>
                                 </div>
                             </div>
                             
                             <button type="submit" form="checkout-form" class="btn btn-success w-100 btn-lg rounded-pill shadow">
-                                <i class="fas fa-check-circle me-2"></i>Đặt Hàng Ngay
+                                <i class="fas fa-check-circle me-2"></i>{{ __('Đặt Hàng Ngay') }}
                             </button>
                             
                             <div class="text-center mt-3">
                                 <small class="text-muted">
                                     <i class="fas fa-shield-alt me-1"></i>
-                                    Thanh toán an toàn & bảo mật
+                                    {{ __('Thanh toán an toàn & bảo mật') }}
                                 </small>
                             </div>
                         </div>
@@ -214,7 +223,7 @@
         applyBtn.addEventListener('click', function() {
             const code = couponInput.value.trim();
             if (!code) {
-                showFeedback('Vui lòng nhập mã giảm giá!', 'text-danger');
+                showFeedback('{{ __("Vui lòng nhập mã giảm giá!") }}', 'text-danger');
                 return;
             }
 
@@ -242,16 +251,16 @@
                 removeBtn.style.display = 'inline-block';
                 
                 // Update pricing row
-                discountDisplay.textContent = '-' + formatNumber(data.discount_amount) + 'đ';
+                discountDisplay.textContent = '-' + formatNumber(data.discount_amount);
                 discountRow.classList.remove('d-none');
-                totalDisplay.textContent = formatNumber(data.final_total) + 'đ';
+                totalDisplay.textContent = formatNumber(data.final_total);
             })
             .catch(err => {
-                showFeedback(err.message || 'Mã giảm giá không hợp lệ!', 'text-danger');
+                showFeedback(err.message || '{{ __("Mã giảm giá không hợp lệ!") }}', 'text-danger');
             })
             .finally(() => {
                 applyBtn.disabled = false;
-                applyBtn.textContent = 'Áp dụng';
+                applyBtn.textContent = '{{ __("Áp dụng") }}';
             });
         });
     }
@@ -277,7 +286,7 @@
                 
                 // Reset pricing row
                 discountRow.classList.add('d-none');
-                totalDisplay.textContent = formatNumber(data.final_total) + 'đ';
+                totalDisplay.textContent = formatNumber(data.final_total);
             })
             .catch(err => {
                 console.error(err);
@@ -295,7 +304,11 @@
     }
 
     function formatNumber(num) {
-        return num.toLocaleString('vi-VN');
+        const locale = '{{ app()->getLocale() }}';
+        if (locale === 'en') {
+            return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        return num.toLocaleString('vi-VN') + 'đ';
     }
 </script>
 @endpush

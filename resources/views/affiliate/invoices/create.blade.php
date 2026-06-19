@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Gửi hóa đơn mới | DungThu')
+@section('title', __('Gửi hóa đơn mới') . ' | DungThu')
 
 @push('styles')
 <style>
@@ -19,7 +19,7 @@
 <div class="aff-wrapper">
     <div class="container">
         <div class="content-card">
-            <h4 class="fw-bold mb-4 text-center">Gửi hóa đơn thanh toán</h4>
+            <h4 class="fw-bold mb-4 text-center">{{ __('Gửi hóa đơn thanh toán') }}</h4>
             
             <form action="{{ route('affiliate.invoices.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -35,16 +35,16 @@
                 @endif
                 
                 <div class="mb-4">
-                    <label class="form-label">Tên sản phẩm / Dịch vụ đã bán</label>
-                    <input type="text" name="product_name" class="form-control @error('product_name') is-invalid @enderror" placeholder="Ví dụ: Tài khoản ChatGPT Plus" value="{{ old('product_name') }}" required>
+                    <label class="form-label">{{ __('Tên sản phẩm / Dịch vụ đã bán') }}</label>
+                    <input type="text" name="product_name" class="form-control @error('product_name') is-invalid @enderror" placeholder="{{ __('Ví dụ: Tài khoản ChatGPT Plus') }}" value="{{ old('product_name') }}" required>
                     @error('product_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Tên khách hàng (Bắt buộc)</label>
-                    <input type="text" name="customer_name" class="form-control @error('customer_name') is-invalid @enderror" placeholder="Nhập tên khách hàng..." value="{{ old('customer_name') }}" required>
+                    <label class="form-label">{{ __('Tên khách hàng (Bắt buộc)') }}</label>
+                    <input type="text" name="customer_name" class="form-control @error('customer_name') is-invalid @enderror" placeholder="{{ __('Nhập tên khách hàng...') }}" value="{{ old('customer_name') }}" required>
                     @error('customer_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -52,15 +52,15 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-4">
-                        <label class="form-label">Email khách hàng (Hoặc SĐT)</label>
-                        <input type="text" name="customer_email" class="form-control @error('customer_email') is-invalid @enderror" placeholder="Email hoặc SĐT..." value="{{ old('customer_email') }}">
+                        <label class="form-label">{{ __('Email khách hàng (Hoặc SĐT)') }}</label>
+                        <input type="text" name="customer_email" class="form-control @error('customer_email') is-invalid @enderror" placeholder="{{ __('Email hoặc SĐT...') }}" value="{{ old('customer_email') }}">
                         @error('customer_email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6 mb-4">
-                        <label class="form-label">Số điện thoại khách hàng (Hoặc Email)</label>
-                        <input type="text" name="customer_phone" class="form-control @error('customer_phone') is-invalid @enderror" placeholder="SĐT hoặc Email..." value="{{ old('customer_phone') }}">
+                        <label class="form-label">{{ __('Số điện thoại khách hàng (Hoặc Email)') }}</label>
+                        <input type="text" name="customer_phone" class="form-control @error('customer_phone') is-invalid @enderror" placeholder="{{ __('SĐT hoặc Email...') }}" value="{{ old('customer_phone') }}">
                         @error('customer_phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -68,8 +68,8 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Số tiền khách hàng đã trả (VNĐ)</label>
-                    <input type="number" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" placeholder="Nhập số tiền..." value="{{ old('amount') }}" required oninput="calcCommission()">
+                    <label class="form-label">{{ __('Số tiền khách hàng đã trả (VNĐ)') }}</label>
+                    <input type="number" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" placeholder="{{ __('Nhập số tiền...') }}" value="{{ old('amount') }}" required oninput="calcCommission()">
                     @error('amount')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -77,17 +77,17 @@
 
                 <div class="commission-box">
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-muted small">Hoa hồng của bạn (5%)</span>
-                        <span class="fw-bold text-primary" id="commission-val">0đ</span>
+                        <span class="text-muted small">{{ __('Hoa hồng của bạn (5%)') }}</span>
+                        <span class="fw-bold text-primary" id="commission-val">{{ app()->getLocale() === 'en' ? '$0.00' : '0đ' }}</span>
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Ảnh hóa đơn / Bill chuyển khoản</label>
+                    <label class="form-label">{{ __('Ảnh hóa đơn / Bill chuyển khoản') }}</label>
                     <div class="image-preview @error('bill_image') border-danger @enderror" onclick="document.getElementById('bill_image').click()">
                         <div id="preview-placeholder">
                             <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
-                            <div class="text-muted small">Click để tải ảnh lên</div>
+                            <div class="text-muted small">{{ __('Click để tải ảnh lên') }}</div>
                         </div>
                         <img id="preview-img" src="#" style="display: none;">
                     </div>
@@ -96,24 +96,24 @@
                         <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
                     @if($errors->any())
-                        <div class="text-warning small mt-1"><i class="fas fa-exclamation-triangle"></i> Vui lòng chọn lại ảnh nếu form có lỗi nhé!</div>
+                        <div class="text-warning small mt-1"><i class="fas fa-exclamation-triangle"></i> {{ __('Vui lòng chọn lại ảnh nếu form có lỗi nhé!') }}</div>
                     @endif
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Ghi chú (nếu có)</label>
-                    <textarea name="note" class="form-control @error('note') is-invalid @enderror" rows="3" placeholder="Thông tin thêm cho Admin...">{{ old('note') }}</textarea>
+                    <label class="form-label">{{ __('Ghi chú (nếu có)') }}</label>
+                    <textarea name="note" class="form-control @error('note') is-invalid @enderror" rows="3" placeholder="{{ __('Thông tin thêm cho Admin...') }}">{{ old('note') }}</textarea>
                     @error('note')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 12px; background: #6366f1;">
-                    Gửi yêu cầu phê duyệt
+                    {{ __('Gửi yêu cầu phê duyệt') }}
                 </button>
                 
                 <a href="{{ route('affiliate.invoices') }}" class="btn btn-link w-100 mt-3 text-muted text-decoration-none">
-                    Quay về danh sách
+                    {{ __('Quay về danh sách') }}
                 </a>
             </form>
         </div>
@@ -126,7 +126,13 @@
     function calcCommission() {
         const amount = document.getElementById('amount').value;
         const commission = Math.round(amount * 0.05);
-        document.getElementById('commission-val').innerText = commission.toLocaleString() + 'đ';
+        const locale = @json(app()->getLocale());
+        const rate = @json(doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000')));
+        if (locale === 'en') {
+            document.getElementById('commission-val').innerText = '$' + (commission / rate).toFixed(2);
+        } else {
+            document.getElementById('commission-val').innerText = commission.toLocaleString() + 'đ';
+        }
     }
 
     function previewImage(input) {

@@ -304,6 +304,20 @@
 @endpush
 
 @section('content')
+@php
+    $locale = app()->getLocale();
+    $exchangeRate = doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000'));
+    $formatPrice = function($amount) use ($locale, $exchangeRate) {
+        if ($locale === 'en') {
+            $usd = $amount / $exchangeRate;
+            if ($usd < 0.01 && $usd > 0) {
+                return '$' . number_format($usd, 4, '.', ',');
+            }
+            return '$' . number_format($usd, 2, '.', ',');
+        }
+        return number_format($amount, 0, ',', '.') . 'đ';
+    };
+@endphp
     <main style="margin-top: 100px; margin-bottom: 2rem;">
         <div class="service-detail-hero">
             <div class="container">
@@ -312,17 +326,17 @@
                         <i class="{{ $buffService->getIcon() }}"></i>
                     </div>
                     <div class="service-info">
-                        <h1>{{ $buffService->name }}</h1>
+                        <h1>{{ __($buffService->name) }}</h1>
                         <p class="text-muted" style="margin-bottom: 0.25rem; font-size: 0.9rem;">
-                            {{ $buffService->description ?? '' }}</p>
+                            {{ $buffService->description ? __($buffService->description) : '' }}</p>
                         <div class="service-meta">
                             <div class="meta-item">
-                                <span class="meta-label">Nền tảng</span>
+                                <span class="meta-label">{{ __('Nền tảng') }}</span>
                                 <span class="meta-value">{{ ucfirst($buffService->platform) }}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-label">Loại</span>
-                                <span class="meta-value">{{ ucfirst($buffService->service_type) }}</span>
+                                <span class="meta-label">{{ __('Loại') }}</span>
+                                <span class="meta-value">{{ __($buffService->service_type) }}</span>
                             </div>
                         </div>
                     </div>
@@ -338,27 +352,27 @@
 
                         <!-- Server Selection -->
                         <div class="form-section">
-                            <h3><span class="step-badge">1</span> Chọn Server</h3>
+                            <h3><span class="step-badge">1</span> {{ __('Chọn Server') }}</h3>
                             <div class="form-group">
                                 @if($servers->isEmpty())
                                     <div class="alert alert-warning">
-                                        Hiện không có server khả dụng. Vui lòng quay lại sau!
+                                        {{ __('Hiện không có server khả dụng. Vui lòng quay lại sau!') }}
                                     </div>
                                 @else
                                     <select name="server_id" id="serverId" class="form-control" required>
-                                        <option value="">-- Chọn server --</option>
+                                        <option value="">-- {{ __('Chọn server') }} --</option>
                                         @foreach($servers as $server)
                                             <option value="{{ $server->id }}" @selected(old('server_id') == $server->id)
-                                                data-fulltext="{{ $server->name }}{{ $server->description ? ' - ' . $server->description : '' }}"
-                                                title="{{ $server->name }}{{ $server->description ? ' - ' . $server->description : '' }}">
-                                                {{ $server->name }}{{ $server->description ? ' - ' . $server->description : '' }}
+                                                data-fulltext="{{ __($server->name) }}{{ $server->description ? ' - ' . __($server->description) : '' }}"
+                                                title="{{ __($server->name) }}{{ $server->description ? ' - ' . __($server->description) : '' }}">
+                                                {{ __($server->name) }}{{ $server->description ? ' - ' . __($server->description) : '' }}
                                             </option>
                                         @endforeach
                                     </select>
                                     <div id="selectedServerInfo" class="mt-2 text-primary fw-bold" style="font-size: 0.85rem;">
                                     </div>
                                     <div class="helper-text mt-1">
-                                        💡 Mỗi server sẽ có giá khác nhau. Hãy chọn server có giá tốt nhất cho bạn.
+                                        💡 {{ __('Mỗi server sẽ có giá khác nhau. Hãy chọn server có giá tốt nhất cho bạn.') }}
                                     </div>
                                 @endif
                             </div>
@@ -369,22 +383,22 @@
 
                         <!-- Social Link -->
                         <div class="form-section">
-                            <h3><span class="step-badge">2</span> Nhập Link {{ ucfirst($buffService->platform) }}</h3>
+                            <h3><span class="step-badge">2</span> {{ __('Nhập Link') }} {{ ucfirst($buffService->platform) }}</h3>
                             <div class="form-group">
                                 <label class="form-label">
                                     Link
                                     <span class="required">*</span>
                                 </label>
                                 <input type="text" name="social_link" id="socialLink" class="form-control"
-                                    placeholder="Dán link profile, video, hoặc bài viết của bạn"
+                                    placeholder="{{ __('Dán link profile, video, hoặc bài viết của bạn') }}"
                                     value="{{ old('social_link') }}" required>
                                 <div class="helper-text">
                                     @if($buffService->platform === 'facebook')
-                                        VD: https://www.facebook.com/yourprofile/ hoặc link bài viết
+                                        {{ __('VD: https://www.facebook.com/yourprofile/ hoặc link bài viết') }}
                                     @elseif($buffService->platform === 'tiktok')
-                                        VD: https://www.tiktok.com/@yourprofile/ hoặc link video
+                                        {{ __('VD: https://www.tiktok.com/@yourprofile/ hoặc link video') }}
                                     @else
-                                        VD: https://www.instagram.com/yourprofile/ hoặc link post
+                                        {{ __('VD: https://www.instagram.com/yourprofile/ hoặc link post') }}
                                     @endif
                                 </div>
                             </div>
@@ -395,17 +409,17 @@
 
                         <!-- Quantity -->
                         <div class="form-section">
-                            <h3><span class="step-badge">3</span> Số Lượng</h3>
+                            <h3><span class="step-badge">3</span> {{ __('Số Lượng') }}</h3>
                             <div class="form-group">
                                 <label class="form-label">
-                                    Số lượng {{ strtolower($buffService->service_type) }}
+                                    {{ __('Số lượng') }} {{ __($buffService->service_type) }}
                                     <span class="required">*</span>
                                 </label>
                                 <input type="number" name="quantity" id="quantity" class="form-control"
                                     min="{{ $buffService->min_amount }}" max="{{ $buffService->max_amount }}"
                                     value="{{ old('quantity', $buffService->min_amount) }}" required>
                                 <div class="helper-text">
-                                    Tối thiểu {{ number_format($buffService->min_amount) }} - Tối đa
+                                    {{ __('Tối thiểu') }} {{ number_format($buffService->min_amount) }} - {{ __('Tối đa') }}
                                     {{ number_format($buffService->max_amount) }}
                                 </div>
                             </div>
@@ -417,7 +431,7 @@
                         <!-- Emotion Type (for comments) -->
                         @if($buffService->service_type === 'comment')
                             <div class="form-section">
-                                <h3><span class="step-badge"><i class="fas fa-smile"></i></span> Chọn Loại Cảm Xúc</h3>
+                                <h3><span class="step-badge"><i class="fas fa-smile"></i></span> {{ __('Chọn Loại Cảm Xúc') }}</h3>
                                 <div class="emotion-selector">
                                     <button type="button" class="emotion-btn" data-emotion="like" title="Like">
                                         👍
@@ -439,18 +453,18 @@
                                     </button>
                                 </div>
                                 <input type="hidden" name="emotion_type" id="emotionType" value="">
-                                <div class="helper-text">Chọn loại cảm xúc bạn muốn tăng</div>
+                                <div class="helper-text">{{ __('Chọn loại cảm xúc bạn muốn tăng') }}</div>
                             </div>
                         @endif
 
                         <!-- Notes -->
                         <div class="form-section">
-                            <h3><span class="step-badge"><i class="fas fa-pen"></i></span> Ghi Chú (Tùy Chọn)</h3>
+                            <h3><span class="step-badge"><i class="fas fa-pen"></i></span> {{ __('Ghi Chú (Tùy Chọn)') }}</h3>
                             <div class="form-group">
-                                <label class="form-label">Ghi chú thêm</label>
+                                <label class="form-label">{{ __('Ghi chú thêm') }}</label>
                                 <textarea name="notes" id="notes" class="form-control" rows="3"
-                                    placeholder="Ghi chú gì đó nếu cần..." maxlength="1000">{{ old('notes') }}</textarea>
-                                <div class="helper-text"><i class="fas fa-info-circle"></i> Tối đa 1000 ký tự</div>
+                                    placeholder="{{ __('Ghi chú gì đó nếu cần...') }}" maxlength="1000">{{ old('notes') }}</textarea>
+                                <div class="helper-text"><i class="fas fa-info-circle"></i> {{ __('Tối đa 1000 ký tự') }}</div>
                             </div>
                         </div>
 
@@ -459,18 +473,18 @@
                         <!-- Price Calculator -->
                         <div class="price-calculator">
                             <div class="calc-row">
-                                <span id="calcQtyLabel">Số lượng:</span>
-                                <span id="calcQty">0đ</span>
+                                <span id="calcQtyLabel">{{ __('Số lượng:') }}</span>
+                                <span id="calcQty">--</span>
                             </div>
                             <div class="calc-total">
-                                <span>Tổng thanh toán:</span>
+                                <span>{{ __('Tổng thanh toán:') }}</span>
                                 <span
-                                    id="calcTotal">{{ number_format(($buffService->price_per_unit * $buffService->min_amount), 0, ',', '.') }}đ</span>
+                                    id="calcTotal">{{ $formatPrice($buffService->price_per_unit * $buffService->min_amount) }}</span>
                             </div>
                         </div>
 
                         <button type="submit" class="btn-submit">
-                            <i class="fas fa-rocket"></i> Tạo Đơn Hàng Ngay
+                            <i class="fas fa-rocket"></i> {{ __('Tạo Đơn Hàng Ngay') }}
                         </button>
                     </form>
                 </div>
@@ -478,22 +492,22 @@
                 <!-- Sidebar Info -->
                 <div class="col-lg-4">
                     <div class="sidebar-widget">
-                        <h4><i class="fas fa-thumbtack text-primary"></i> Lưu Ý Quan Trọng</h4>
+                        <h4><i class="fas fa-thumbtack text-primary"></i> {{ __('Lưu Ý Quan Trọng') }}</h4>
                         <ul class="sidebar-list">
-                            <li><i class="fas fa-check-circle"></i> Hỗ trợ tài khoản Public/Private</li>
-                            <li><i class="fas fa-check-circle"></i> An toàn 100% - Không cần mật khẩu</li>
-                            <li><i class="fas fa-check-circle"></i> Tốc độ buff: 1-24h hoàn thành</li>
-                            <li><i class="fas fa-check-circle"></i> Hoàn tiền nếu gặp lỗi</li>
-                            <li><i class="fas fa-check-circle"></i> Hỗ trợ 24/7 qua chat</li>
+                            <li><i class="fas fa-check-circle"></i> {{ __('Hỗ trợ tài khoản Public/Private') }}</li>
+                            <li><i class="fas fa-check-circle"></i> {{ __('An toàn 100% - Không cần mật khẩu') }}</li>
+                            <li><i class="fas fa-check-circle"></i> {{ __('Tốc độ buff: 1-24h hoàn thành') }}</li>
+                            <li><i class="fas fa-check-circle"></i> {{ __('Hoàn tiền nếu gặp lỗi') }}</li>
+                            <li><i class="fas fa-check-circle"></i> {{ __('Hỗ trợ 24/7 qua chat') }}</li>
                         </ul>
                     </div>
 
                     <div class="sidebar-widget">
-                        <h4><i class="fas fa-info-circle text-info"></i> Thông Tin Thêm</h4>
+                        <h4><i class="fas fa-info-circle text-info"></i> {{ __('Thông Tin Thêm') }}</h4>
                         <ul class="sidebar-list">
-                            <li><strong>Tốc độ:</strong> Tuỳ server</li>
-                            <li><strong>Bảo hành:</strong> 10 ngày giữ nguyên số liệu</li>
-                            <li><strong>Hỗ trợ:</strong> Chat & Email 24/7</li>
+                            <li><strong>{{ __('Tốc độ:') }}</strong> {{ __('Tuỳ server') }}</li>
+                            <li><strong>{{ __('Bảo hành:') }}</strong> {{ __('10 ngày giữ nguyên số liệu') }}</li>
+                            <li><strong>{{ __('Hỗ trợ:') }}</strong> {{ __('Chat & Email 24/7') }}</li>
                         </ul>
                     </div>
                 </div>
@@ -508,6 +522,20 @@
                 const quantity = document.getElementById('quantity');
                 const emotionBtns = document.querySelectorAll('.emotion-btn');
                 const emotionType = document.getElementById('emotionType');
+
+                const currentLocale = @json(app()->getLocale());
+                const exchangeRate = @json(doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000')));
+
+                function formatCurrency(amount) {
+                    if (currentLocale === 'en') {
+                        const usd = amount / exchangeRate;
+                        if (usd < 0.01 && usd > 0) {
+                            return '$' + usd.toFixed(4);
+                        }
+                        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(usd);
+                    }
+                    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+                }
 
                 // Emotion selector
                 emotionBtns.forEach(btn => {
@@ -525,21 +553,18 @@
                     const serverIdValue = serverId.value;
 
                     if (!serverIdValue) {
-                        document.getElementById('calcQty').textContent = '0đ';
-                        document.getElementById('calcTotal').textContent =
-                            new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(0);
+                        document.getElementById('calcQty').textContent = '--';
+                        document.getElementById('calcTotal').textContent = formatCurrency(0);
                         return;
                     }
 
                     fetch('{{ route("buff.calculate-price") }}?service_id={{ $buffService->id }}&server_id=' + serverIdValue + '&quantity=' + qtyValue)
                         .then(res => res.json())
                         .then(data => {
-                            document.getElementById('calcQty').textContent =
-                                new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.quantity * data.unit_price);
-                            document.getElementById('calcTotal').textContent =
-                                new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.total_price);
+                            document.getElementById('calcQty').textContent = formatCurrency(data.quantity * data.unit_price);
+                            document.getElementById('calcTotal').textContent = formatCurrency(data.total_price);
                             document.getElementById('calcQtyLabel').textContent =
-                                qtyValue + ' x ' + new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.unit_price) + ':';
+                                qtyValue + ' x ' + formatCurrency(data.unit_price) + ':';
                         });
                 }
 
@@ -579,20 +604,20 @@
 
                     if (!serverId) {
                         e.preventDefault();
-                        alert('Vui lòng chọn server!');
+                        alert(@json(__('Vui lòng chọn server!')));
                         return false;
                     }
 
                     if (!socialLink) {
                         e.preventDefault();
-                        alert('Vui lòng nhập link!');
+                        alert(@json(__('Vui lòng nhập link!')));
                         return false;
                     }
 
                     @if($buffService->service_type === 'comment')
                         if (!document.getElementById('emotionType').value) {
                             e.preventDefault();
-                            alert('Vui lòng chọn loại cảm xúc!');
+                            alert(@json(__('Vui lòng chọn loại cảm xúc!')));
                             return false;
                         }
                     @endif

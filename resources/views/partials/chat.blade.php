@@ -750,10 +750,10 @@
                 <i class="fas fa-headset"></i>
             </div>
             <div class="chat-header-text">
-                <h3>Chat với Admin</h3>
+                <h3>{{ __('Chat với Admin') }}</h3>
                 <p class="chat-status-indicator">
                     <span class="chat-status-dot"></span>
-                    Hỗ trợ CTV
+                    {{ __('Hỗ trợ CTV') }}
                 </p>
             </div>
         </div>
@@ -765,8 +765,8 @@
     <div class="chat-body" id="affiliateChatBody">
         <div class="chat-welcome">
             <i class="fas fa-headset"></i>
-            <h4>Chào {{ Auth::guard('affiliate')->user()->name }}! 👋</h4>
-            <p>Admin sẽ phản hồi ngay khi có thể<br>Vui lòng để lại tin nhắn hoặc ảnh bill</p>
+            <h4>{{ __('Chào') }} {{ Auth::guard('affiliate')->user()->name }}! 👋</h4>
+            <p>{{ __('Admin sẽ phản hồi ngay khi có thể') }}<br>{{ __('Vui lòng để lại tin nhắn hoặc ảnh bill') }}</p>
         </div>
     </div>
 
@@ -787,7 +787,7 @@
                     <textarea 
                         class="chat-input" 
                         id="affiliateChatInput" 
-                        placeholder="Nhập tin nhắn..."
+                        placeholder="{{ __('Nhập tin nhắn...') }}"
                         autocomplete="off"
                         maxlength="1000"
                         rows="1"
@@ -816,14 +816,14 @@
                 <i class="fas fa-comments"></i>
             </div>
             <div class="chat-header-text">
-                <h3>Admin Hổ trợ</h3>
+                <h3>{{ __('Admin Hỗ trợ') }}</h3>
                 <p class="chat-status-indicator">
                     <span class="chat-status-dot"></span>
-                    Admin sẽ rep tin của bạn sớm nhất
+                    {{ __('Admin sẽ rep tin của bạn sớm nhất') }}
                 </p>
             </div>
         </div>
-        <button class="chat-close-btn" onclick="closeUserChat()" aria-label="Đóng">
+        <button class="chat-close-btn" onclick="closeUserChat()" aria-label="{{ __('Đóng') }}">
             <i class="fas fa-times"></i>
         </button>
     </div>
@@ -831,15 +831,15 @@
     <div class="chat-body" id="userChatBody">
         <div class="chat-welcome" id="userChatWelcome">
             <i class="fas fa-comments"></i>
-            <h4>Xin chào, {{ Auth::user()->name ?? 'bạn' }}! 👋</h4>
-            <p>Chúng tôi luôn ở đây để hỗ trợ bạn.<br>Hãy gửi tin nhắn bên dưới nhé!</p>
+            <h4>{{ __('Xin chào') }}, {{ Auth::user()->name ?? __('bạn') }}! 👋</h4>
+            <p>{{ __('Chúng tôi luôn ở đây để hỗ trợ bạn.') }}<br>{{ __('Hãy gửi tin nhắn bên dưới nhé!') }}</p>
         </div>
     </div>
 
     <div class="chat-footer">
         <form id="userChatForm" onsubmit="sendUserMessage(event)" autocomplete="off">
             <div class="chat-input-wrapper">
-                <label for="userChatImage" class="chat-tool-btn" title="Gửi ảnh">
+                <label for="userChatImage" class="chat-tool-btn" title="{{ __('Gửi ảnh') }}">
                     <i class="fas fa-image"></i>
                     <input type="file" id="userChatImage" hidden accept="image/*" onchange="previewUserImage(this)">
                 </label>
@@ -853,14 +853,14 @@
                     <textarea
                         class="chat-input"
                         id="userChatInput"
-                        placeholder="Nhập tin nhắn..."
+                        placeholder="{{ __('Nhập tin nhắn...') }}"
                         autocomplete="off"
                         maxlength="1000"
                         rows="1"
                         style="resize: none; overflow-y: hidden;"
                     ></textarea>
                 </div>
-                <button class="chat-send-btn" type="submit" id="userChatSendBtn" aria-label="Gửi">
+                <button class="chat-send-btn" type="submit" id="userChatSendBtn" aria-label="{{ __('Gửi') }}">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
@@ -874,27 +874,27 @@
 <div class="chat-fab-container">
 
     <!-- Zalo Chat Button -->
-    <a href="https://zalo.me/0772698113" target="_blank" class="chat-fab d-flex" style="background: #0068ff; text-decoration: none !important;" aria-label="Chat Zalo">
+    <a href="https://zalo.me/0772698113" target="_blank" class="chat-fab d-flex" style="background: #0068ff; text-decoration: none !important;" aria-label="{{ __('Liên hệ Zalo') }}">
         <div class="position-relative d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
             <i class="fa-solid fa-comment" style="color: #ffffff; font-size: 38px;"></i>
             <span style="position: absolute; color: #0068ff; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-weight: 900; font-size: 19px; font-style: italic; top: 44%; left: 47%; transform: translate(-50%, -50%);">z</span>
         </div>
-        <span class="fab-tooltip">Chat Zalo</span>
+        <span class="fab-tooltip">{{ __('Liên hệ Zalo') }}</span>
     </a>
 
     <!-- Telegram Chat Button -->
-    <a href="https://t.me/specademy" target="_blank" class="chat-fab d-flex" style="background: #0088cc; text-decoration: none !important;" aria-label="Chat Telegram">
+    <a href="https://t.me/specademy" target="_blank" class="chat-fab d-flex" style="background: #0088cc; text-decoration: none !important;" aria-label="{{ __('Telegram Admin') }}">
         <i class="fab fa-telegram fab-icon"></i>
-        <span class="fab-tooltip">Chat Telegram</span>
+        <span class="fab-tooltip">{{ __('Telegram Admin') }}</span>
     </a>
 
     <!-- User Support Chat Button (user thường, không phải affiliate) -->
     @auth
     @if(!Auth::guard('affiliate')->check())
-    <button class="chat-fab user-support" onclick="toggleUserChat()" id="userChatFab" aria-label="Hỗ trợ khách hàng">
+    <button class="chat-fab user-support" onclick="toggleUserChat()" id="userChatFab" aria-label="{{ __('Hỗ trợ khách hàng') }}">
         <i class="fas fa-comments fab-icon"></i>
         <span class="unread-badge" id="userUnreadBadge" style="display: none;">0</span>
-        <span class="fab-tooltip">Hỗ trợ khách hàng</span>
+        <span class="fab-tooltip">{{ __('Hỗ trợ khách hàng') }}</span>
     </button>
     @endif
     @endauth
@@ -904,7 +904,7 @@
     <button class="chat-fab admin-chat" onclick="toggleAffiliateChat()" id="affiliateChatFab">
         <i class="fas fa-headset fab-icon"></i>
         <span class="unread-badge" id="affiliateUnreadBadge" style="display: none;">0</span>
-        <span class="fab-tooltip">Chat với Admin</span>
+        <span class="fab-tooltip">{{ __('Chat với Admin') }}</span>
     </button>
     @endif
 </div>

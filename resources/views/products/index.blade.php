@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', $seoTitle ?? 'Cửa Hàng - DungThu.com')
-@section('meta_description', $seoDescription ?? 'Khám phá các sản phẩm số, tài khoản AI, tài liệu và dịch vụ đang bán tại DungThu.com.')
+@section('title', $seoTitle ?? __('Cửa Hàng - DungThu.com'))
+@section('meta_description', $seoDescription ?? __('Khám phá các sản phẩm số, tài khoản AI, tài liệu và dịch vụ đang bán tại DungThu.com.'))
 @section('canonical', $canonical ?? route('shop'))
 
 @push('styles')
@@ -239,7 +239,7 @@
             opacity: 0.85;
         }
         .product-card-modern.out-of-stock .product-image-wrapper::after {
-            content: 'HẾT HÀNG';
+            content: '{{ __('HẾT HÀNG') }}';
             position: absolute;
             top: 50%;
             left: 50%;
@@ -759,7 +759,7 @@
                     <div class="category-icon-wrap">
                         <i class="fas fa-border-all"></i>
                     </div>
-                    <span class="category-name">Tất cả</span>
+                    <span class="category-name">{{ __('Tất cả') }}</span>
                 </button>
             </a>
             
@@ -799,7 +799,7 @@
     @if(!empty($keywordLinks))
     <div class="seo-keyword-section" data-aos="fade-up" data-aos-delay="120">
         <div class="seo-keyword-title">
-            <i class="fas fa-bolt text-warning me-2"></i>Tìm nhanh theo sản phẩm
+            <i class="fas fa-bolt text-warning me-2"></i>{{ __('Tìm nhanh theo sản phẩm') }}
         </div>
         <div class="seo-keyword-links">
             @foreach($keywordLinks as $keywordSlug => $keyword)
@@ -809,7 +809,7 @@
                 </a>
             @endforeach
         </div>
-        <button type="button" class="seo-keyword-toggle" aria-label="Xem thêm sản phẩm" aria-expanded="false">
+        <button type="button" class="seo-keyword-toggle" aria-label="{{ __('Xem thêm sản phẩm') }}" aria-expanded="false">
             <i class="fas fa-chevron-down"></i>
         </button>
     </div>
@@ -822,13 +822,13 @@
                 @if(!empty($pageHeading))
                     {{ $pageHeading }}
                 @elseif($searchTerm || $currentCategoryId != 'all')
-                    Kết quả tìm kiếm
+                    {{ __('Kết quả tìm kiếm') }}
                     @if($currentCategoryId != 'all') 
                         @php $selectedCategory = $categories->firstWhere('id', $currentCategoryId); @endphp
                         @if($selectedCategory) <span class="text-primary">- {{ $selectedCategory->name }}</span> @endif
                     @endif
                 @else
-                    Tất cả sản phẩm
+                    {{ __('Tất cả sản phẩm') }}
                 @endif
             </h4>
             @if(!empty($isKeywordLanding) && !empty($seoDescription))
@@ -839,7 +839,7 @@
         
         <div class="d-flex align-items-center bg-white px-4 py-2 rounded-pill shadow-sm border" style="border-color: rgba(108, 92, 231, 0.2) !important;">
             <i class="fas fa-check-circle text-success me-2"></i> 
-            <span class="fw-bold text-dark me-1">{{ $items->total() }}</span> sản phẩm
+            <span class="fw-bold text-dark me-1">{{ $items->total() }}</span> {{ __('sản phẩm') }}
         </div>
     </div>
 
@@ -854,7 +854,7 @@
                         <div class="product-badges">
                             <span class="badge-category">{{ strtoupper($product->category) }}</span>
                             @if($product->stock <= 0)
-                                <span class="badge bg-danger text-white px-2 py-1" style="font-size: 0.7rem; border-radius: 30px;">HẾT HÀNG</span>
+                                <span class="badge bg-danger text-white px-2 py-1" style="font-size: 0.7rem; border-radius: 30px;">{{ __('HẾT HÀNG') }}</span>
                             @elseif($product->is_on_sale)
                                 <span class="badge-sale">-{{ $product->discount_percent }}%</span>
                             @endif
@@ -883,7 +883,7 @@
                     @endif
                     
                     <div class="stock-display mb-2" style="font-size: 0.75rem; color: #636e72; font-weight: 600;">
-                        Còn: <span class="{{ $product->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $product->stock }}</span>
+                        {{ __('Còn:') }} <span class="{{ $product->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $product->stock }}</span>
                     </div>
                     
                     <div class="product-footer">
@@ -895,7 +895,7 @@
                         </div>
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0 p-0">
                             @csrf
-                            <button type="submit" class="btn-add-cart" title="{{ $product->stock > 0 ? 'Thêm vào giỏ' : 'Thêm vào giỏ (Đặt trước)' }}">
+                            <button type="submit" class="btn-add-cart" title="{{ $product->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}">
                                 <i class="fas fa-cart-plus"></i>
                             </button>
                         </form>
@@ -916,10 +916,10 @@
     <!-- Empty State -->
     <div class="empty-state" data-aos="zoom-in">
         <i class="fas fa-search empty-icon"></i>
-        <h3 class="fw-bold mb-3" style="color: #2d3436;">Không tìm thấy sản phẩm</h3>
-        <p class="text-muted mb-4 mx-auto" style="max-width: 500px; font-size: 1.1rem;">Rất tiếc, chúng tôi không thể tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn. Hãy thử lại với từ khóa khác.</p>
+        <h3 class="fw-bold mb-3" style="color: #2d3436;">{{ __('Không tìm thấy sản phẩm') }}</h3>
+        <p class="text-muted mb-4 mx-auto" style="max-width: 500px; font-size: 1.1rem;">{{ __('Rất tiếc, chúng tôi không thể tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn. Hãy thử lại với từ khóa khác.') }}</p>
         <a href="{{ route('shop') }}" class="btn search-btn d-inline-flex mx-auto" style="width: auto;">
-            <i class="fas fa-sync-alt"></i> Tải lại cửa hàng
+            <i class="fas fa-sync-alt"></i> {{ __('Tải lại cửa hàng') }}
         </a>
     </div>
     @endif
@@ -939,7 +939,7 @@
                 keywordToggle.addEventListener('click', function() {
                     const expanded = keywordSection.classList.toggle('expanded');
                     keywordToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-                    keywordToggle.setAttribute('aria-label', expanded ? 'Thu gọn sản phẩm' : 'Xem thêm sản phẩm');
+                    keywordToggle.setAttribute('aria-label', expanded ? @json(__('Thu gọn sản phẩm')) : @json(__('Xem thêm sản phẩm')));
                 });
             }
         });

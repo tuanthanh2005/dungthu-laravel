@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Đặt Lại Mật Khẩu - DungThu.com')
+@section('title', __('Đặt Lại Mật Khẩu') . ' - DungThu.com')
 
 @push('styles')
     <style>
@@ -185,7 +185,7 @@
 
         <!-- Right Side -->
         <div class="auth-right">
-            <h2 class="auth-title">Đặt Lại Mật Khẩu</h2>
+            <h2 class="auth-title">{{ __('Đặt Lại Mật Khẩu') }}</h2>
 
             @if ($errors->any())
                 <div class="alert alert-danger border-0 rounded-4 mb-2 py-1 px-3 small shadow-sm" role="alert" style="font-size: 11px;">
@@ -208,7 +208,7 @@
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-lock"></i>
-                        <input type="password" name="password" id="password" class="auth-input" placeholder="Mật khẩu mới" required>
+                        <input type="password" name="password" id="password" class="auth-input" placeholder="{{ __('Mật khẩu mới') }}" required>
                         <i class="fas fa-eye toggle-password" onclick="togglePass('password', this)"></i>
                     </div>
                 </div>
@@ -220,13 +220,13 @@
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-shield-alt"></i>
-                        <input type="password" name="password_confirmation" id="password_confirmation" class="auth-input" placeholder="Xác nhận mật khẩu" required>
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="auth-input" placeholder="{{ __('Xác nhận mật khẩu') }}" required>
                         <i class="fas fa-eye toggle-password" onclick="togglePass('password_confirmation', this)"></i>
                     </div>
                 </div>
 
                 <button type="submit" class="auth-btn">
-                    Cập Nhật Mật Khẩu
+                    {{ __('Cập Nhật Mật Khẩu') }}
                 </button>
             </form>
         </div>

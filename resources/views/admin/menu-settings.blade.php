@@ -473,6 +473,25 @@
                         <i class="fas fa-info-circle me-1"></i> Nhập link nhóm Zalo đầy đủ (ví dụ: https://zalo.me/g/abc...).
                     </div>
                 </div>
+
+                {{-- Cài đặt Tỷ giá USD --}}
+                <div class="settings-header mt-5">
+                    <h2><i class="fa-solid fa-money-bill-transfer me-2"></i>Cài đặt Tỷ giá USD (USD Exchange Rate)</h2>
+                    <p class="text-muted mb-0">Cấu hình tỷ giá VND sang 1 USD dùng để tự động đổi giá tiền trên website khi bật giao diện tiếng Anh.</p>
+                </div>
+
+                <div class="menu-item-row flex-column align-items-start mb-4">
+                    <label class="form-label fw-bold text-primary mb-2"><i class="fa-solid fa-dollar-sign"></i> Tỷ giá (VND/USD)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0" style="color: #38a169;"><i class="fa-solid fa-sack-dollar"></i></span>
+                        <input type="number" class="form-control border-start-0 ps-0" name="usd_exchange_rate" 
+                               value="{{ \App\Models\SiteSetting::getValue('usd_exchange_rate', '25000') }}" 
+                               placeholder="25000" min="1" step="1">
+                    </div>
+                    <div class="form-text mt-2">
+                        <i class="fas fa-info-circle me-1"></i> Ví dụ: Nhập 25000 nghĩa là 1 USD = 25.000đ.
+                    </div>
+                </div>
  
                 {{-- Cài đặt Hệ thống Fanpage Chính Thức --}}
                 <div class="settings-header mt-5">

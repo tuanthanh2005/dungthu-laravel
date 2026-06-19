@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Chi tiết Đơn hàng #' . $order->id)
+@section('title', __('Chi tiết Đơn hàng') . ' #' . $order->id)
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -253,35 +253,40 @@
         ->filter()
         ->values();
 
-    $supportCopyMessage = "Bạn hãy copy all nội dung này gửi admin để đơn hàng xử lý nhanh hơn\n"
-        . "Mã đơn hàng: " . ($order->order_code ? $order->order_code : "#{$order->id}") . "\n"
-        . "Tên đơn hàng: " . ($supportProductNames->isNotEmpty() ? $supportProductNames->implode(', ') : 'Không có tên sản phẩm');
+    $isEn = app()->getLocale() === 'en';
+    $supportCopyMessage = $isEn 
+        ? ("Please copy all of this content and send it to the admin for faster processing\n"
+           . "Order Code: " . ($order->order_code ? $order->order_code : "#{$order->id}") . "\n"
+           . "Order Items: " . ($supportProductNames->isNotEmpty() ? $supportProductNames->implode(', ') : 'No products'))
+        : ("Bạn hãy copy all nội dung này gửi admin để đơn hàng xử lý nhanh hơn\n"
+           . "Mã đơn hàng: " . ($order->order_code ? $order->order_code : "#{$order->id}") . "\n"
+           . "Tên đơn hàng: " . ($supportProductNames->isNotEmpty() ? $supportProductNames->implode(', ') : 'Không có tên sản phẩm'));
 @endphp
 <div class="order-detail-wrapper">
     <div class="container">
         <div class="order-card" data-aos="fade-up">
             <div class="mb-4">
                 <a href="{{ route('user.orders') }}" class="btn btn-outline-secondary rounded-pill mb-3">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                    <i class="fas fa-arrow-left me-2"></i>{{ __('Quay lại danh sách') }}
                 </a>
                 
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h3 class="fw-bold mb-2">
-                            <i class="fas fa-file-invoice text-primary me-3"></i>Đơn hàng #{{ $order->id }} @if($order->order_code) <span class="text-primary" style="font-family: monospace;">({{ $order->order_code }})</span> @endif
-                            <a href="#order-support-copy" class="support-icon-btn ms-2" title="Hỗ trợ đơn hàng" aria-label="Hỗ trợ đơn hàng">
+                            <i class="fas fa-file-invoice text-primary me-3"></i>{{ __('Đơn hàng') }} #{{ $order->id }} @if($order->order_code) <span class="text-primary" style="font-family: monospace;">({{ $order->order_code }})</span> @endif
+                            <a href="#order-support-copy" class="support-icon-btn ms-2" title="{{ __('Hỗ trợ đơn hàng') }}" aria-label="{{ __('Hỗ trợ đơn hàng') }}">
                                 <i class="fas fa-headset"></i>
                             </a>
                         </h3>
                         <span class="order-type-badge type-{{ $order->order_type }}">
                             @if($order->order_type == 'qr')
-                                <i class="fas fa-qrcode me-1"></i>Đơn QR Deal
+                                <i class="fas fa-qrcode me-1"></i>{{ __('Đơn QR Deal') }}
                             @elseif($order->order_type == 'document')
-                                <i class="fas fa-file-pdf me-1"></i>Đơn Tài liệu
+                                <i class="fas fa-file-pdf me-1"></i>{{ __('Đơn Tài liệu') }}
                             @elseif($order->order_type == 'shipping')
-                                <i class="fas fa-shipping-fast me-1"></i>Đơn Giao hàng
+                                <i class="fas fa-shipping-fast me-1"></i>{{ __('Đơn Giao hàng') }}
                             @else
-                                <i class="fas fa-download me-1"></i>Đơn Digital
+                                <i class="fas fa-download me-1"></i>{{ __('Đơn Digital') }}
                             @endif
                         </span>
                     </div>
@@ -299,10 +304,10 @@
                         <i class="fas fa-camera fa-2x text-primary me-3"></i>
                         <div>
                             <h6 class="fw-bold mb-1">
-                                <i class="fas fa-check-circle text-success me-1"></i>Đơn hàng đã hoàn thành!
+                                <i class="fas fa-check-circle text-success me-1"></i>{{ __('Đơn hàng đã hoàn thành!') }}
                             </h6>
                             <p class="mb-0">
-                                Hãy <strong>chụp màn hình đơn hàng này</strong> và gửi cho Admin để được cấp tài khoản hoặc hỗ trợ khi gặp lỗi.
+                                {!! __('Hãy <strong>chụp màn hình đơn hàng này</strong> và gửi cho Admin để được cấp tài khoản hoặc hỗ trợ khi gặp lỗi.') !!}
                             </p>
                         </div>
                     </div>
@@ -315,7 +320,7 @@
                     <!-- Products -->
                     <div class="info-section">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-box text-primary me-2"></i>Sản phẩm
+                            <i class="fas fa-box text-primary me-2"></i>{{ __('Sản phẩm') }}
                         </h5>
                         @foreach($order->orderItems as $item)
                             <div class="product-item">
@@ -325,17 +330,17 @@
                                     <div style="width: 80px; height: 80px; background: #e2e8f0; border-radius: 10px; margin-right: 20px;"></div>
                                 @endif
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold mb-1">{{ $item->product->name ?? 'Sản phẩm không tồn tại' }}</div>
+                                    <div class="fw-bold mb-1">{{ $item->product->name ?? __('Sản phẩm không tồn tại') }}</div>
                                     <small class="text-muted">
                                         @if($item->product)
                                             @if($item->product->category == 'ebooks')
-                                                <i class="fas fa-file-pdf text-danger me-1"></i>Tài liệu số
+                                                <i class="fas fa-file-pdf text-danger me-1"></i>{{ __('Tài liệu số') }}
                                             @elseif($item->product->category == 'tiktok')
-                                                <i class="fas fa-qrcode text-primary me-1"></i>TikTok Deal
+                                                <i class="fas fa-qrcode text-primary me-1"></i>{{ __('TikTok Deal') }}
                                             @elseif($item->product->delivery_type == 'physical')
-                                                <i class="fas fa-box text-success me-1"></i>Giao hàng
+                                                <i class="fas fa-box text-success me-1"></i>{{ __('Giao hàng') }}
                                             @else
-                                                <i class="fas fa-download text-info me-1"></i>Digital
+                                                <i class="fas fa-download text-info me-1"></i>{{ __('Digital') }}
                                             @endif
                                         @endif
                                     </small>
@@ -344,7 +349,13 @@
                                     <span class="badge bg-secondary">x{{ $item->quantity }}</span>
                                 </div>
                                 <div class="text-end">
-                                    <div class="fw-bold text-primary">{{ number_format($item->price, 0, ',', '.') }}đ</div>
+                                    <div class="fw-bold text-primary">
+                                        @if($order->currency === 'USD')
+                                            ${{ number_format($item->price, 2) }}
+                                        @else
+                                            {{ $order->currency === 'USD' ? '$' . number_format($item->price, 2) : number_format($item->price, 0, ',', '.') . 'đ' }}
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
@@ -352,7 +363,7 @@
                                 <div class="alert alert-success">
                                     <i class="fas fa-download me-2"></i>
                                     <a href="{{ route('product.download', $item->product) }}" class="fw-bold text-success">
-                                        Click để tải file: {{ $item->product->name }}
+                                        {{ __('Click để tải file:') }} {{ $item->product->name }}
                                     </a>
                                 </div>
                             @endif
@@ -362,23 +373,23 @@
                     <!-- Customer Info -->
                     <div class="info-section">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-user text-primary me-2"></i>Thông tin người nhận
+                            <i class="fas fa-user text-primary me-2"></i>{{ __('Thông tin người nhận') }}
                         </h5>
                         <div class="info-row">
-                            <span class="text-muted">Họ tên:</span>
+                            <span class="text-muted">{{ __('Họ tên:') }}</span>
                             <span class="fw-bold">{{ $order->customer_name }}</span>
                         </div>
                         <div class="info-row">
-                            <span class="text-muted">Email:</span>
+                            <span class="text-muted">{{ __('Email:') }}</span>
                             <span class="fw-bold">{{ $order->customer_email }}</span>
                         </div>
                         <div class="info-row">
-                            <span class="text-muted">Số điện thoại:</span>
+                            <span class="text-muted">{{ __('Số điện thoại:') }}</span>
                             <span class="fw-bold">{{ $order->customer_phone }}</span>
                         </div>
                         @if($order->order_type == 'shipping')
                             <div class="info-row">
-                                <span class="text-muted">Địa chỉ giao hàng:</span>
+                                <span class="text-muted">{{ __('Địa chỉ giao hàng:') }}</span>
                                 <span class="fw-bold">{{ $order->customer_address }}</span>
                             </div>
                         @endif
@@ -389,81 +400,81 @@
                 <div class="col-md-4">
                     <div class="info-section">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-info-circle text-primary me-2"></i>Thông tin đơn hàng
+                            <i class="fas fa-info-circle text-primary me-2"></i>{{ __('Thông tin đơn hàng') }}
                         </h5>
                         <div class="info-row">
-                            <span class="text-muted">Mã đơn:</span>
+                            <span class="text-muted">{{ __('Mã đơn:') }}</span>
                             <span class="fw-bold">#{{ $order->id }} @if($order->order_code) <span class="text-primary" style="font-family: monospace;">({{ $order->order_code }})</span> @endif</span>
                         </div>
                         <div class="info-row">
-                            <span class="text-muted">Ngày đặt:</span>
+                            <span class="text-muted">{{ __('Ngày đặt:') }}</span>
                             <span class="fw-bold">{{ $order->created_at->format('d/m/Y H:i') }}</span>
                         </div>
                         <div class="info-row">
-                            <span class="text-muted">Tổng tiền:</span>
+                            <span class="text-muted">{{ __('Tổng tiền:') }}</span>
                             <span class="fw-bold text-primary fs-5">{{ $order->formatted_total }}</span>
                         </div>
                     </div>
 
                     <div class="info-section support-copy-card" id="order-support-copy">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-headset text-primary me-2"></i>Hỗ trợ đơn hàng
+                            <i class="fas fa-headset text-primary me-2"></i>{{ __('Hỗ trợ đơn hàng') }}
                         </h5>
                         <p class="text-muted mb-3">
-                            Bạn hãy copy all nội dung này gửi admin để đơn hàng xử lý nhanh hơn
+                            {{ __('Bạn hãy copy all nội dung này gửi admin để đơn hàng xử lý nhanh hơn') }}
                         </p>
                         <div class="support-copy-text mb-3" id="support-copy-content">{{ $supportCopyMessage }}</div>
                         <button type="button" class="copy-support-btn" id="copy-support-order">
-                            <i class="fas fa-copy me-2"></i>Copy mã đơn hàng + tên đơn hàng
+                            <i class="fas fa-copy me-2"></i>{{ __('Copy mã đơn hàng + tên đơn hàng') }}
                         </button>
                         <small class="text-success fw-bold mt-2 d-none" id="copy-support-success">
-                            <i class="fas fa-check me-1"></i>Đã copy nội dung gửi admin
+                            <i class="fas fa-check me-1"></i>{{ __('Đã copy nội dung gửi admin') }}
                         </small>
                     </div>
 
                     <!-- Tracking Timeline -->
                     <div class="info-section">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-map-marked-alt text-primary me-2"></i>Theo dõi đơn hàng
+                            <i class="fas fa-map-marked-alt text-primary me-2"></i>{{ __('Theo dõi đơn hàng') }}
                         </h5>
                         <div class="tracking-timeline">
                             <div class="tracking-step {{ in_array($order->status, ['pending', 'processing', 'shipped', 'delivered', 'completed']) ? 'completed' : '' }}">
                                 <div class="tracking-dot"></div>
-                                <div class="fw-bold">Đã đặt hàng</div>
+                                <div class="fw-bold">{{ __('Đã đặt hàng') }}</div>
                                 <small class="text-muted">{{ $order->created_at->format('d/m/Y H:i') }}</small>
                             </div>
 
                             <div class="tracking-step {{ in_array($order->status, ['processing', 'shipped', 'delivered', 'completed']) ? 'completed' : '' }}">
                                 <div class="tracking-dot"></div>
-                                <div class="fw-bold">Đang xử lý</div>
-                                <small class="text-muted">Đơn hàng đang được xử lý</small>
+                                <div class="fw-bold">{{ __('Đang xử lý') }}</div>
+                                <small class="text-muted">{{ __('Đơn hàng đang được xử lý') }}</small>
                             </div>
 
                             @if($order->order_type == 'shipping')
                                 <div class="tracking-step {{ in_array($order->status, ['shipped', 'delivered', 'completed']) ? 'completed' : '' }}">
                                     <div class="tracking-dot"></div>
-                                    <div class="fw-bold">Đã giao hàng</div>
-                                    <small class="text-muted">Đơn vị vận chuyển đang giao</small>
+                                    <div class="fw-bold">{{ __('Đã giao hàng') }}</div>
+                                    <small class="text-muted">{{ __('Đơn vị vận chuyển đang giao') }}</small>
                                 </div>
 
                                 <div class="tracking-step {{ in_array($order->status, ['delivered', 'completed']) ? 'completed' : '' }}">
                                     <div class="tracking-dot"></div>
-                                    <div class="fw-bold">Đã nhận hàng</div>
-                                    <small class="text-muted">Giao hàng thành công</small>
+                                    <div class="fw-bold">{{ __('Đã nhận hàng') }}</div>
+                                    <small class="text-muted">{{ __('Giao hàng thành công') }}</small>
                                 </div>
                             @endif
 
                             <div class="tracking-step {{ $order->status == 'completed' ? 'completed' : '' }}">
                                 <div class="tracking-dot"></div>
-                                <div class="fw-bold">Hoàn thành</div>
-                                <small class="text-muted">Đơn hàng đã hoàn thành</small>
+                                <div class="fw-bold">{{ __('Hoàn thành') }}</div>
+                                <small class="text-muted">{{ __('Đơn hàng đã hoàn thành') }}</small>
                             </div>
 
                             @if($order->status == 'cancelled')
                                 <div class="tracking-step completed">
                                     <div class="tracking-dot bg-danger"></div>
-                                    <div class="fw-bold text-danger">Đã hủy</div>
-                                    <small class="text-muted">Đơn hàng đã bị hủy</small>
+                                    <div class="fw-bold text-danger">{{ __('Đã hủy') }}</div>
+                                    <small class="text-muted">{{ __('Đơn hàng đã bị hủy') }}</small>
                                 </div>
                             @endif
                         </div>
@@ -500,18 +511,18 @@
                     textarea.remove();
                 }
 
-                copySupportButton.innerHTML = '<i class="fas fa-check me-2"></i>Đã copy nội dung';
+                copySupportButton.innerHTML = '<i class="fas fa-check me-2"></i>{{ __("Đã copy nội dung") }}';
                 copySupportSuccess.classList.remove('d-none');
 
                 setTimeout(() => {
-                    copySupportButton.innerHTML = '<i class="fas fa-copy me-2"></i>Copy mã đơn hàng + tên đơn hàng';
+                    copySupportButton.innerHTML = '<i class="fas fa-copy me-2"></i>{{ __("Copy mã đơn hàng + tên đơn hàng") }}';
                     copySupportSuccess.classList.add('d-none');
                 }, 2200);
             } catch (error) {
-                copySupportButton.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Không copy được';
+                copySupportButton.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>{{ __("Không copy được") }}';
 
                 setTimeout(() => {
-                    copySupportButton.innerHTML = '<i class="fas fa-copy me-2"></i>Copy mã đơn hàng + tên đơn hàng';
+                    copySupportButton.innerHTML = '<i class="fas fa-copy me-2"></i>{{ __("Copy mã đơn hàng + tên đơn hàng") }}';
                 }, 2200);
             }
         });

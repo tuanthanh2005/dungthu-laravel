@@ -123,6 +123,22 @@
                     @enderror
                 </div>
 
+                <!-- Product Name (English) -->
+                <div class="mb-4">
+                    <label for="name_en" class="form-label text-success">
+                        <i class="fas fa-tag me-2"></i>Tên sản phẩm (Tiếng Anh)
+                    </label>
+                    <input type="text" 
+                           class="form-control @error('name_en') is-invalid @enderror" 
+                           id="name_en" 
+                           name="name_en" 
+                           value="{{ old('name_en', $product->name_en) }}"
+                           placeholder="Enter product name in English...">
+                    @error('name_en')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <!-- Description -->
                 <div class="mb-4">
                     <label for="description" class="form-label">
@@ -135,6 +151,21 @@
                               placeholder="Nhập mô tả chi tiết sản phẩm..."
                               required>{{ old('description', $product->description) }}</textarea>
                     @error('description')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Description (English) -->
+                <div class="mb-4">
+                    <label for="description_en" class="form-label text-success">
+                        <i class="fas fa-align-left me-2"></i>Mô tả (Tiếng Anh)
+                    </label>
+                    <textarea class="form-control @error('description_en') is-invalid @enderror" 
+                              id="description_en" 
+                              name="description_en" 
+                              rows="4"
+                              placeholder="Enter detailed description in English...">{{ old('description_en', $product->description_en) }}</textarea>
+                    @error('description_en')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -167,7 +198,7 @@
                 <!-- Price and Stock -->
                 <div class="row mb-4">
                     <div class="col-md-4">
-<label for="price" class="form-label">
+                        <label for="price" class="form-label">
                             <i class="fas fa-dollar-sign me-2 text-primary"></i>Giá (VNĐ) <span class="text-danger">*</span>
                         </label>
                         <input type="number" 
@@ -184,6 +215,41 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
+                        <label for="price_usd" class="form-label text-success">
+                            <i class="fas fa-dollar-sign me-2"></i>Giá (USD)
+                        </label>
+                        <input type="number" 
+                               class="form-control @error('price_usd') is-invalid @enderror" 
+                               id="price_usd" 
+                               name="price_usd" 
+                               value="{{ old('price_usd', $product->price_usd) }}"
+                               min="0"
+                               step="0.01"
+                               placeholder="Tự động tính nếu trống">
+                        @error('price_usd')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-4">
+                        <label for="stock" class="form-label">
+                            <i class="fas fa-warehouse me-2 text-primary"></i>Tồn kho <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" 
+                               class="form-control @error('stock') is-invalid @enderror" 
+                               id="stock" 
+                               name="stock" 
+                               value="{{ old('stock', $product->stock) }}"
+                               min="0"
+                               placeholder="0"
+                               required>
+                        @error('stock')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
                         <div class="form-check form-switch mb-2" style="padding-left: 2.5rem;">
                             <input class="form-check-input"
                                    type="checkbox"
@@ -194,7 +260,7 @@
                                    {{ old('is_on_sale', (bool) $product->sale_price) ? 'checked' : '' }}
                                    style="width: 46px; height: 22px; cursor: pointer;">
                             <label class="form-check-label fw-bold" for="is_on_sale" style="margin-left: 8px; cursor: pointer;">
-                                <i class="fas fa-tags text-danger me-1"></i>Bat giam gia
+                                <i class="fas fa-tags text-danger me-1"></i>Bật giảm giá
                             </label>
                         </div>
                         <label for="sale_price" class="form-label">
@@ -213,19 +279,20 @@
                         @enderror
                         <small class="text-muted">Giá giảm phải nhỏ hơn giá gốc</small>
                     </div>
-                    <div class="col-md-4">
-                        <label for="stock" class="form-label">
-                            <i class="fas fa-warehouse me-2 text-primary"></i>Tồn kho <span class="text-danger">*</span>
+                    <div class="col-md-6">
+                        <div style="height: 30px;"></div> <!-- spacer -->
+                        <label for="sale_price_usd" class="form-label text-success">
+                            <i class="fas fa-tags me-2"></i>Giá giảm (USD)
                         </label>
                         <input type="number" 
-                               class="form-control @error('stock') is-invalid @enderror" 
-                               id="stock" 
-                               name="stock" 
-                               value="{{ old('stock', $product->stock) }}"
+                               class="form-control @error('sale_price_usd') is-invalid @enderror" 
+                               id="sale_price_usd" 
+                               name="sale_price_usd" 
+                               value="{{ old('sale_price_usd', $product->sale_price_usd) }}"
                                min="0"
-                               placeholder="0"
-                               required>
-                        @error('stock')
+                               step="0.01"
+                               placeholder="Tự động tính nếu trống">
+                        @error('sale_price_usd')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -460,6 +527,46 @@
                     </button>
                 </div>
 
+                <!-- Technical Specifications (English) -->
+                <div class="mb-4">
+                    <label class="form-label text-success">
+                        <i class="fas fa-cogs me-2"></i>Thông Số Kỹ Thuật (Tiếng Anh)
+                    </label>
+                    <div id="specRowsEn">
+                        @php
+                            if (old('spec_keys_en') !== null) {
+                                $oldKeysEn = old('spec_keys_en', []);
+                                $oldValuesEn = old('spec_values_en', []);
+                                $currentSpecsEn = [];
+                                foreach ($oldKeysEn as $oldIndex => $oldKey) {
+                                    $currentSpecsEn[$oldKey] = $oldValuesEn[$oldIndex] ?? '';
+                                }
+                            } else {
+                                $currentSpecsEn = $product->specs_en ?? [];
+                            }
+                            $currentSpecsEn = count(array_filter($currentSpecsEn ?? [])) > 0 ? $currentSpecsEn : ['' => ''];
+                        @endphp
+                        @foreach($currentSpecsEn as $specKey => $specValue)
+                            <div class="row g-2 mb-2 spec-row-input-en">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="spec_keys_en[]" value="{{ $specKey }}" placeholder="Spec name (EN)">
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="spec_values_en[]" value="{{ is_array($specValue) ? implode(', ', $specValue) : $specValue }}" placeholder="Value (EN)">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRowEn(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRowEn()">
+                        <i class="fas fa-plus me-1"></i>Thêm thông số (EN)
+                    </button>
+                </div>
+
                 <!-- Product Features -->
                 <div class="mb-4">
                     <label class="form-label">
@@ -598,6 +705,35 @@
             button.closest('.spec-row-input').remove();
         } else {
             button.closest('.spec-row-input').querySelectorAll('input').forEach(input => input.value = '');
+        }
+    }
+
+    function addSpecRowEn() {
+        const wrapper = document.getElementById('specRowsEn');
+        const row = document.createElement('div');
+        row.className = 'row g-2 mb-2 spec-row-input-en';
+        row.innerHTML = `
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="spec_keys_en[]" placeholder="Spec name (EN)">
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="spec_values_en[]" placeholder="Value (EN)">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRowEn(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        wrapper.appendChild(row);
+    }
+
+    function removeSpecRowEn(button) {
+        const rows = document.querySelectorAll('.spec-row-input-en');
+        if (rows.length > 1) {
+            button.closest('.spec-row-input-en').remove();
+        } else {
+            button.closest('.spec-row-input-en').querySelectorAll('input').forEach(input => input.value = '');
         }
     }
 </script>

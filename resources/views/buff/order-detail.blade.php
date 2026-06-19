@@ -308,7 +308,7 @@
                 <div>
                     <h1>{{ $buffOrder->order_code }}</h1>
                     <p class="text-muted" style="margin-top: 0.5rem;">
-                        Tạo lúc: {{ $buffOrder->created_at->format('d/m/Y H:i:s') }}
+                        {{ __('Tạo lúc') }}: {{ $buffOrder->created_at->format('d/m/Y H:i:s') }}
                     </p>
                 </div>
                 <span class="status-badge status-{{ $buffOrder->status }}">
@@ -323,18 +323,18 @@
             <div class="col-lg-8">
                 <!-- Service Details -->
                 <div class="section-box">
-                    <h3>📦 Chi Tiết Dịch Vụ</h3>
+                    <h3>📦 {{ __('Chi Tiết Dịch Vụ') }}</h3>
                     <div class="info-row">
                         <div class="info-item">
-                            <span class="info-label">Dịch Vụ</span>
+                            <span class="info-label">{{ __('Dịch Vụ') }}</span>
                             <span class="info-value">{{ $buffOrder->buffService->name }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Nền Tảng</span>
+                            <span class="info-label">{{ __('Nền Tảng') }}</span>
                             <span class="info-value">{{ ucfirst($buffOrder->buffService->platform) }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Loại</span>
+                            <span class="info-label">{{ __('Loại') }}</span>
                             <span class="info-value">{{ ucfirst($buffOrder->buffService->service_type) }}</span>
                         </div>
                     </div>
@@ -342,10 +342,10 @@
 
                 <!-- Social Account Details -->
                 <div class="section-box">
-                    <h3>👤 Thông Tin Tài Khoản</h3>
+                    <h3>👤 {{ __('Thông Tin Tài Khoản') }}</h3>
                     <div class="info-row">
                         <div class="info-item">
-                            <span class="info-label">Liên Kết</span>
+                            <span class="info-label">{{ __('Liên Kết') }}</span>
                             <span class="info-value">
                                 <a href="{{ $buffOrder->social_link }}" target="_blank" rel="noopener noreferrer">
                                     {{ substr($buffOrder->social_link, 0, 50) }}...
@@ -353,7 +353,7 @@
                             </span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Số Lượng</span>
+                            <span class="info-label">{{ __('Số Lượng') }}</span>
                             <span class="info-value">{{ number_format($buffOrder->quantity) }}</span>
                         </div>
                     </div>
@@ -361,7 +361,7 @@
                     @if($buffOrder->emotion_type)
                         <div class="info-row">
                             <div class="info-item">
-                                <span class="info-label">Loại Cảm Xúc</span>
+                                <span class="info-label">{{ __('Loại Cảm Xúc') }}</span>
                                 <div class="emotion-display">
                                     @switch($buffOrder->emotion_type)
                                         @case('like') 👍 @break
@@ -380,7 +380,7 @@
                     @if($buffOrder->notes)
                         <div class="info-row">
                             <div class="info-item">
-                                <span class="info-label">Ghi Chú</span>
+                                <span class="info-label">{{ __('Ghi Chú') }}</span>
                                 <span class="info-value">{{ $buffOrder->notes }}</span>
                             </div>
                         </div>
@@ -389,44 +389,74 @@
 
                 <!-- Price Details -->
                 <div class="section-box">
-                    <h3>💰 Chi Tiết Giá Tiền</h3>
+                    <h3>💰 {{ __('Chi Tiết Giá Tiền') }}</h3>
                     <div class="price-breakdown">
                         <div class="price-row">
-                            <span>Giá/{{ strtolower($buffOrder->buffService->service_type) }}:</span>
-                            <span>{{ number_format($buffOrder->unit_price, 0, ',', '.') }}đ</span>
+                            <span>{{ __('Giá') }}/{{ strtolower($buffOrder->buffService->service_type) }}:</span>
+                            <span>
+                                @if(app()->getLocale() === 'en')
+                                    ${{ number_format($buffOrder->unit_price / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 4) }}
+                                @else
+                                    {{ number_format($buffOrder->unit_price, 0, ',', '.') }}đ
+                                @endif
+                            </span>
                         </div>
                         <div class="price-row">
-                            <span>Số {{ strtolower($buffOrder->buffService->service_type) }} x {{ number_format($buffOrder->quantity) }}:</span>
-                            <span>{{ number_format($buffOrder->unit_price * $buffOrder->quantity, 0, ',', '.') }}đ</span>
+                            <span>{{ __('Số') }} {{ strtolower($buffOrder->buffService->service_type) }} x {{ number_format($buffOrder->quantity) }}:</span>
+                            <span>
+                                @if(app()->getLocale() === 'en')
+                                    ${{ number_format(($buffOrder->unit_price * $buffOrder->quantity) / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) }}
+                                @else
+                                    {{ number_format($buffOrder->unit_price * $buffOrder->quantity, 0, ',', '.') }}đ
+                                @endif
+                            </span>
                         </div>
 
                         @if($buffOrder->actual_price && $buffOrder->actual_price != $buffOrder->total_price)
                             <div class="price-row" style="color: #dc3545; font-weight: 700;">
-                                <span>Giá gốc:</span>
-                                <span>{{ number_format($buffOrder->total_price, 0, ',', '.') }}đ</span>
+                                <span>{{ __('Giá gốc') }}:</span>
+                                <span>
+                                    @if(app()->getLocale() === 'en')
+                                        ${{ number_format($buffOrder->total_price / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) }}
+                                    @else
+                                        {{ number_format($buffOrder->total_price, 0, ',', '.') }}đ
+                                    @endif
+                                </span>
                             </div>
                             <div class="price-row" style="color: #28a745; font-weight: 700;">
-                                <span>Giá đã điều chỉnh:</span>
-                                <span>-{{ number_format($buffOrder->total_price - $buffOrder->actual_price, 0, ',', '.') }}đ</span>
+                                <span>{{ __('Giá đã điều chỉnh') }}:</span>
+                                <span>
+                                    @if(app()->getLocale() === 'en')
+                                        -${{ number_format(($buffOrder->total_price - $buffOrder->actual_price) / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) }}
+                                    @else
+                                        -{{ number_format($buffOrder->total_price - $buffOrder->actual_price, 0, ',', '.') }}đ
+                                    @endif
+                                </span>
                             </div>
                         @endif
 
                         <div class="price-row total">
-                            <span>TỔNG CỘNG:</span>
-                            <span>{{ number_format($buffOrder->getPriceToShow(), 0, ',', '.') }}đ</span>
+                            <span>{{ __('TỔNG CỘNG') }}:</span>
+                            <span>
+                                @if(app()->getLocale() === 'en')
+                                    ${{ number_format($buffOrder->getPriceToShow() / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) }}
+                                @else
+                                    {{ number_format($buffOrder->getPriceToShow(), 0, ',', '.') }}đ
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Timeline -->
                 <div class="section-box">
-                    <h3>⏱️ Lịch Sử Đơn Hàng</h3>
+                    <h3>⏱️ {{ __('Lịch Sử Đơn Hàng') }}</h3>
                     <div class="timeline">
                         <!-- Created -->
                         <div class="timeline-item completed">
                             <div class="timeline-marker">✓</div>
                             <div class="timeline-content">
-                                <div class="timeline-title">Đơn Hàng Được Tạo</div>
+                                <div class="timeline-title">{{ __('Đơn Hàng Được Tạo') }}</div>
                                 <div class="timeline-time">{{ $buffOrder->created_at->format('d/m/Y H:i') }}</div>
                             </div>
                         </div>
@@ -436,10 +466,10 @@
                             <div class="timeline-item completed">
                                 <div class="timeline-marker">✓</div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">Thanh Toán Đã Được Xác Nhận</div>
+                                    <div class="timeline-title">{{ __('Thanh Toán Đã Được Xác Nhận') }}</div>
                                     <div class="timeline-time">{{ $buffOrder->paid_at->format('d/m/Y H:i') }}</div>
                                     <div class="timeline-text">
-                                        Phương thức: <strong>{{ ucfirst(str_replace('_', ' ', $buffOrder->payment_method)) }}</strong>
+                                        {{ __('Phương thức') }}: <strong>{{ ucfirst(str_replace('_', ' ', $buffOrder->payment_method)) }}</strong>
                                     </div>
                                 </div>
                             </div>
@@ -447,8 +477,8 @@
                             <div class="timeline-item pending">
                                 <div class="timeline-marker">⏳</div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">Chờ Thanh Toán</div>
-                                    <div class="timeline-text">Bạn cần hoàn tất thanh toán để bắt đầu buff</div>
+                                    <div class="timeline-title">{{ __('Chờ Thanh Toán') }}</div>
+                                    <div class="timeline-text">{{ __('Bạn cần hoàn tất thanh toán để bắt đầu buff') }}</div>
                                 </div>
                             </div>
                         @endif
@@ -458,7 +488,7 @@
                             <div class="timeline-item completed">
                                 <div class="timeline-marker">⚙️</div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">Bắt Đầu Buff</div>
+                                    <div class="timeline-title">{{ __('Bắt Đầu Buff') }}</div>
                                     <div class="timeline-time">{{ $buffOrder->started_at->format('d/m/Y H:i') }}</div>
                                 </div>
                             </div>
@@ -466,8 +496,8 @@
                             <div class="timeline-item">
                                 <div class="timeline-marker">⚙️</div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">Đang Buff</div>
-                                    <div class="timeline-text">Dịch vụ đang được xử lý...</div>
+                                    <div class="timeline-title">{{ __('Đang Buff') }}</div>
+                                    <div class="timeline-text">{{ __('Dịch vụ đang được xử lý...') }}</div>
                                 </div>
                             </div>
                         @endif
@@ -477,7 +507,7 @@
                             <div class="timeline-item completed">
                                 <div class="timeline-marker">✓</div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">Hoàn Thành</div>
+                                    <div class="timeline-title">{{ __('Hoàn Thành') }}</div>
                                     <div class="timeline-time">{{ $buffOrder->completed_at->format('d/m/Y H:i') }}</div>
                                 </div>
                             </div>
@@ -488,7 +518,7 @@
                 <!-- Admin Notes -->
                 @if($buffOrder->admin_notes)
                     <div class="admin-notes">
-                        <strong>📋 Ghi Chú Từ Admin:</strong><br>
+                        <strong>📋 {{ __('Ghi Chú Từ Admin') }}:</strong><br>
                         {{ $buffOrder->admin_notes }}
                     </div>
                 @endif
@@ -498,7 +528,7 @@
             <div class="col-lg-4">
                 <!-- Quick Status -->
                 <div class="section-box">
-                    <h3>ℹ️ Thông Tin Server</h3>
+                    <h3>ℹ️ {{ __('Thông Tin Server') }}</h3>
                     <div class="info-row">
                         <div class="info-item">
                             <span class="info-label">Server</span>
@@ -508,7 +538,7 @@
                     @if($buffOrder->buffServer->description)
                         <div class="info-row">
                             <div class="info-item">
-                                <span class="info-label">Mô Tả</span>
+                                <span class="info-label">{{ __('Mô Tả') }}</span>
                                 <span class="info-value">{{ $buffOrder->buffServer->description }}</span>
                             </div>
                         </div>
@@ -517,24 +547,24 @@
 
                 <!-- Actions -->
                 <div class="section-box">
-                    <h3>⚡ Thao Tác</h3>
+                    <h3>⚡ {{ __('Thao Tác') }}</h3>
                     <div class="btn-group">
                         @if($buffOrder->status === 'pending')
                             <a href="{{ route('buff.payment', $buffOrder) }}" class="btn btn-primary">
-                                💰 Thanh Toán Ngay
+                                💰 {{ __('Thanh Toán Ngay') }}
                             </a>
                         @endif
                         <a href="{{ route('buff.history') }}" class="btn btn-secondary">
-                            ← Quay Lại
+                            ← {{ __('Quay Lại') }}
                         </a>
                     </div>
                 </div>
 
                 <!-- Support -->
                 <div class="section-box">
-                    <h3>🆘 Hỗ Trợ</h3>
+                    <h3>🆘 {{ __('Hỗ Trợ') }}</h3>
                     <p style="margin-bottom: 1rem; font-size: 0.95rem;">
-                        Nếu bạn có bất kỳ câu hỏi nào về đơn hàng này, vui lòng liên hệ với chúng tôi qua:
+                        {{ __('Nếu bạn có bất kỳ câu hỏi nào về đơn hàng này, vui lòng liên hệ với chúng tôi qua:') }}
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
                         @if($supportInfo['live_chat'] && $supportInfo['live_chat'] !== '#')
@@ -542,7 +572,7 @@
                                 💬 Live Chat
                             </a>
                         @else
-                            <span>💬 Live Chat (Không khả dụng)</span>
+                            <span>💬 {{ __('Live Chat (Không khả dụng)') }}</span>
                         @endif
                         
                         <a href="mailto:{{ $supportInfo['email'] }}" class="text-decoration-none">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Cộng Đồng - DungThu.com')
+@section('title', __('Cộng Đồng') . ' - DungThu.com')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -122,16 +122,16 @@
 <div class="container py-2 community-page" style="margin-top: 50px;">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="fw-bold">Cộng Đồng Chia Sẻ Miễn Phí</h1>
-            <p class="text-muted mb-0">Cộng Đồng Free Các Bạn Cứ Đăng Chia Sẻ Ở Đây Nhé !!!!</p>
+            <h1 class="fw-bold">{{ __('Cộng Đồng Chia Sẻ Miễn Phí') }}</h1>
+            <p class="text-muted mb-0">{{ __('Cộng Đồng Free Các Bạn Cứ Đăng Chia Sẻ Ở Đây Nhé !!!!') }}</p>
         </div>
         @auth
             <a href="{{ route('community.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm mt-3 mt-md-0">
-                <i class="fas fa-pen me-2"></i>Đăng bài
+                <i class="fas fa-pen me-2"></i>{{ __('Đăng bài') }}
             </a>
         @else
             <a href="{{ route('login') }}" class="btn btn-outline-primary rounded-pill px-4 mt-3 mt-md-0">
-                Đăng nhập để đăng bài
+                {{ __('Đăng nhập để đăng bài') }}
             </a>
         @endauth
     </div>
@@ -140,7 +140,7 @@
         @forelse($posts as $post)
             <div class="col-12 mb-4" data-aos="fade-up">
                 <div class="community-post-card">
-                    <a href="{{ route('community.show', $post) }}" class="stretched-link" aria-label="Xem chi tiết: {{ $post->title }}"></a>
+                    <a href="{{ route('community.show', $post) }}" class="stretched-link" aria-label="{{ __("Xem chi tiết") }}: {{ $post->title }}"></a>
                     @php
                         $firstImage = null;
                         if (!empty($post->content)) {
@@ -157,14 +157,14 @@
                             <div class="post-title-row">
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <h4 class="post-title">{{ $post->title }}</h4>
-                                    <span class="post-badge">Góc chia sẻ</span>
+                                    <span class="post-badge">{{ __('Góc chia sẻ') }}</span>
                                 </div>
                                 <div class="comment-pill">
                                     <i class="far fa-comment"></i> {{ $post->comments_count }}
                                 </div>
                             </div>
                             <div class="post-meta mt-1">
-                                <i class="far fa-user"></i> {{ $post->user->name ?? 'Thành viên' }}
+                                <i class="far fa-user"></i> {{ $post->user->name ?? __('Thành viên') }}
                                 <span class="mx-2">•</span>
                                 <i class="far fa-clock"></i> {{ $post->created_at->format('d/m/Y H:i') }}
                             </div>
@@ -183,7 +183,7 @@
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-light border text-center">Chưa có bài viết nào.</div>
+                <div class="alert alert-light border text-center">{{ __('Chưa có bài viết nào.') }}</div>
             </div>
         @endforelse
     </div>

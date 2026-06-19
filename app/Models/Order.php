@@ -13,6 +13,7 @@ class Order extends Model
         'customer_phone',
         'customer_address',
         'total_amount',
+        'currency',
         'status',
         'order_type',
         'coupon_code',
@@ -110,12 +111,40 @@ class Order extends Model
     // Format tổng tiền
     public function getFormattedTotalAttribute()
     {
+        $currency = $this->currency ?? 'VND';
+        if ($currency === 'USD') {
+            return '$' . number_format($this->total_amount, 2);
+        }
         return number_format($this->total_amount, 0, ',', '.') . 'đ';
+    }
+
+    // Format tiền giảm giá
+    public function getFormattedDiscountAttribute()
+    {
+        $currency = $this->currency ?? 'VND';
+        $discount = (float) ($this->discount_amount ?? 0);
+        if ($currency === 'USD') {
+            return '$' . number_format($discount, 2);
+        }
+        return number_format($discount, 0, ',', '.') . 'đ';
     }
 
     // Get status label
     public function getStatusLabelAttribute()
     {
+        $locale = app()->getLocale();
+        if ($locale === 'en') {
+            $statuses = [
+                'pending' => 'Pending',
+                'processing' => 'Processing',
+                'shipped' => 'Shipped',
+                'delivered' => 'Delivered',
+                'completed' => 'Completed',
+                'cancelled' => 'Cancelled',
+            ];
+            return $statuses[$this->status] ?? 'Unknown';
+        }
+
         $statuses = [
             'pending' => 'Chờ xử lý',
             'processing' => 'Đang xử lý',

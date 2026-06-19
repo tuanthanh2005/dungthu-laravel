@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Lịch Sử Đơn Buff - DungThu.com')
+@section('title', __('Lịch Sử Đơn Buff') . ' - DungThu.com')
 
 @push('styles')
 <style>
@@ -295,8 +295,8 @@
 <main style="margin-top: 100px; margin-bottom: 3rem;">
     <div class="history-header">
         <div class="container">
-            <h1>📝 Lịch Sử Đơn Buff</h1>
-            <p>Quản lý và theo dõi trạng thái tất cả đơn hàng của bạn</p>
+            <h1>📝 {{ __('Lịch Sử Đơn Buff') }}</h1>
+            <p>{{ __('Quản lý và theo dõi trạng thái tất cả đơn hàng của bạn') }}</p>
         </div>
     </div>
 
@@ -306,14 +306,14 @@
             <form method="GET" action="{{ route('buff.history') }}" class="filter-section">
                 <div class="filter-row">
                     <div class="filter-group">
-                        <label class="filter-label">Lọc theo trạng thái</label>
+                        <label class="filter-label">{{ __('Lọc theo trạng thái') }}</label>
                         <select name="status" class="filter-select" onchange="this.form.submit()">
-                            <option value="">-- Tất cả đơn --</option>
-                            <option value="pending" @selected(request('status') === 'pending')>⏳ Chờ thanh toán</option>
-                            <option value="paid" @selected(request('status') === 'paid')>✅ Đã thanh toán</option>
-                            <option value="processing" @selected(request('status') === 'processing')>⚙️ Đang buff</option>
-                            <option value="completed" @selected(request('status') === 'completed')>🎉 Hoàn thành</option>
-                            <option value="cancelled" @selected(request('status') === 'cancelled')>❌ Đã hủy</option>
+                            <option value="">-- {{ __('Tất cả đơn') }} --</option>
+                            <option value="pending" @selected(request('status') === 'pending')>⏳ {{ __('Chờ thanh toán') }}</option>
+                            <option value="paid" @selected(request('status') === 'paid')>✅ {{ __('Đã thanh toán') }}</option>
+                            <option value="processing" @selected(request('status') === 'processing')>⚙️ {{ __('Đang buff') }}</option>
+                            <option value="completed" @selected(request('status') === 'completed')>🎉 {{ __('Hoàn thành') }}</option>
+                            <option value="cancelled" @selected(request('status') === 'cancelled')>❌ {{ __('Đã hủy') }}</option>
                         </select>
                     </div>
                 </div>
@@ -338,7 +338,7 @@
 
                         <div class="order-details">
                             <div class="detail-item">
-                                <span class="detail-label">Dịch Vụ</span>
+                                <span class="detail-label">{{ __('Dịch Vụ') }}</span>
                                 <span class="detail-value">{{ $order->buffService->name }}</span>
                             </div>
                             <div class="detail-item">
@@ -346,12 +346,18 @@
                                 <span class="detail-value">{{ $order->buffServer->name }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Số Lượng</span>
+                                <span class="detail-label">{{ __('Số Lượng') }}</span>
                                 <span class="detail-value">{{ number_format($order->quantity) }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Giá Tiền</span>
-                                <span class="detail-value price">{{ number_format($order->getPriceToShow(), 0, ',', '.') }}đ</span>
+                                <span class="detail-label">{{ __('Giá Tiền') }}</span>
+                                <span class="detail-value price">
+                                    @if(app()->getLocale() === 'en')
+                                        ${{ number_format($order->getPriceToShow() / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) }}
+                                    @else
+                                        {{ number_format($order->getPriceToShow(), 0, ',', '.') }}đ
+                                    @endif
+                                </span>
                             </div>
                         </div>
 
@@ -361,11 +367,11 @@
 
                         <div class="order-actions" style="margin-top: 1rem;">
                             <a href="{{ route('buff.detail', $order) }}" class="btn-action btn-view">
-                                👁️ Xem Chi Tiết
+                                👁️ {{ __('Xem Chi Tiết') }}
                             </a>
                             @if($order->status === 'pending')
                                 <a href="{{ route('buff.payment', $order) }}" class="btn-action btn-pay">
-                                    💰 Thanh Toán
+                                    💰 {{ __('Thanh Toán') }}
                                 </a>
                             @endif
                         </div>
@@ -382,11 +388,11 @@
         @else
             <div class="empty-state">
                 <div class="empty-state-icon">📭</div>
-                <h3>Chưa có đơn hàng</h3>
-                <p>Bạn chưa tạo đơn hàng buff nào. Hãy bắt đầu ngay!</p>
+                <h3>{{ __('Chưa có đơn hàng') }}</h3>
+                <p>{{ __('Bạn chưa tạo đơn hàng buff nào. Hãy bắt đầu ngay!') }}</p>
                 <a href="{{ route('buff.index') }}" class="btn" 
                     style="background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
-                    Chọn Dịch Vụ →
+                    {{ __('Chọn Dịch Vụ') }} →
                 </a>
             </div>
         @endif

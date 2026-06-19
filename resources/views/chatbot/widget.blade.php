@@ -26,14 +26,14 @@ Usage: @include('chatbot.widget')
 
         <div id="chatbot-messages" class="chatbot-messages">
             <div class="chatbot-welcome">
-                <p>👋 Chào bạn!</p>
-                <p>Mình có thể giúp bạn tìm sản phẩm hoặc tư vấn dịch vụ.</p>
-                <p style="font-size: 0.85em; color: #999;">Nhập câu hỏi bên dưới nha!</p>
+                <p>👋 {{ __('Chào bạn!') }}</p>
+                <p>{{ __('Mình có thể giúp bạn tìm sản phẩm hoặc tư vấn dịch vụ.') }}</p>
+                <p style="font-size: 0.85em; color: #999;">{{ __('Nhập câu hỏi bên dưới nha!') }}</p>
             </div>
         </div>
 
         <div class="chatbot-input-area">
-            <input type="text" id="chatbot-msg-input" class="chatbot-input" placeholder="Hỏi gì đó...">
+            <input type="text" id="chatbot-msg-input" class="chatbot-input" placeholder="{{ __('Hỏi gì đó...') }}">
             <button id="chatbot-send-btn" class="chatbot-send-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 C22.9702544,11.6889879 22.9702544,11.5318905 22.9702544,11.4748031 L4.13399899,1.16346278 C3.34915502,0.9 2.40734225,1.00636533 1.77946707,1.4776575 C0.994623095,2.10604706 0.837654326,3.0486314 1.15159189,3.98721575 L3.03521743,10.4282088 C3.03521743,10.5853061 3.34915502,10.7424035 3.50612381,10.7424035 L16.6915026,11.5318905 C16.6915026,11.5318905 17.1624089,11.5318905 17.1624089,11.0606983 L17.1624089,12.4744748 C17.1624089,12.4744748 17.1624089,12.4744748 16.6915026,12.4744748 Z"></path>
@@ -381,11 +381,11 @@ Usage: @include('chatbot.widget')
                 if (data.success) {
                     addMessageToWidget(data.message, 'bot');
                 } else {
-                    addMessageToWidget('❌ Có lỗi xảy ra. Vui lòng thử lại!', 'bot');
+                    addMessageToWidget(@json(__('Có lỗi xảy ra, vui lòng thử lại sau!')), 'bot');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                addMessageToWidget('❌ Lỗi kết nối. Vui lòng thử lại!', 'bot');
+                addMessageToWidget(@json(__('❌ Lỗi kết nối. Vui lòng thử lại!')), 'bot');
             }
         }
 

@@ -107,6 +107,22 @@
                     @enderror
                 </div>
 
+                <!-- Category Name (English) -->
+                <div class="mb-4">
+                    <label for="name_en" class="form-label text-success">
+                        <i class="fas fa-tag me-2"></i>Tên danh mục (Tiếng Anh)
+                    </label>
+                    <input type="text" 
+                           class="form-control @error('name_en') is-invalid @enderror" 
+                           id="name_en" 
+                           name="name_en" 
+                           value="{{ old('name_en', $category->name_en) }}"
+                           placeholder="Enter category name in English...">
+                    @error('name_en')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="mb-4">
                     <label for="type" class="form-label">
                         <i class="fas fa-layer-group me-2 text-primary"></i>Loại danh mục <span class="text-danger">*</span>
@@ -145,6 +161,21 @@
                               name="description" 
                               rows="4">{{ old('description', $category->description) }}</textarea>
                     @error('description')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Description (English) -->
+                <div class="mb-4">
+                    <label for="description_en" class="form-label text-success">
+                        <i class="fas fa-align-left me-2"></i>Mô tả (Tiếng Anh)
+                    </label>
+                    <textarea class="form-control @error('description_en') is-invalid @enderror" 
+                              id="description_en" 
+                              name="description_en" 
+                              rows="4"
+                              placeholder="Enter description in English...">{{ old('description_en', $category->description_en) }}</textarea>
+                    @error('description_en')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

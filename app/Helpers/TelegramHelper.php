@@ -74,49 +74,98 @@ class TelegramHelper
         // Load order items với product
         $order->load('orderItems.product');
 
-        $message = "🔔 <b>ĐỚN HÀNG MỚI - XÁC NHẬN ĐÃ THANH TOÁN</b>\n";
-        $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+        $isUsd = ($order->currency === 'USD');
 
-        // Thông tin đơn hàng
-        $message .= "📦 <b>THÔNG TIN ĐƠN HÀNG</b>\n";
-        $message .= "• Mã đơn: <b>#" . $order->id . "</b>\n";
-        $message .= "• Loại đơn: <b>" . self::getOrderTypeLabel($order->order_type) . "</b>\n";
-        $message .= "• Thời gian: <b>" . $order->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') . "</b>\n";
-        $message .= "• Trạng thái: <b>" . $order->status_label . "</b>\n\n";
+        if ($isUsd) {
+            $message = "🔔 <b>NEW ORDER - CONFIRMED PAYMENT</b>\n";
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
-        // Thông tin khách hàng
-        $message .= "👤 <b>THÔNG TIN KHÁCH HÀNG</b>\n";
-        $message .= "• Họ tên: <b>" . $order->customer_name . "</b>\n";
-        $message .= "• Email: <b>" . $order->customer_email . "</b>\n";
-        $message .= "• SĐT: <b>" . $order->customer_phone . "</b>\n";
-        
-        if ($order->customer_address && $order->customer_address !== 'Sản phẩm số - không cần giao hàng') {
-            $message .= "• Địa chỉ: <b>" . $order->customer_address . "</b>\n";
-        }
-        $message .= "\n";
+            // Thông tin đơn hàng
+            $message .= "📦 <b>ORDER DETAILS</b>\n";
+            $message .= "• Order ID: <b>#" . $order->id . "</b>\n";
+            $message .= "• Order Type: <b>" . self::getOrderTypeLabel($order->order_type) . "</b>\n";
+            $message .= "• Time: <b>" . $order->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') . "</b>\n";
+            $message .= "• Status: <b>" . $order->status_label . "</b>\n\n";
 
-        // Chi tiết sản phẩm
-        $message .= "🛒 <b>CHI TIẾT SẢN PHẨM</b>\n";
-        foreach ($order->orderItems as $item) {
-            $productName = $item->product ? $item->product->name : 'Sản phẩm không tồn tại';
-            $message .= "• " . $productName . "\n";
-            $message .= "  ├ Số lượng: <b>" . $item->quantity . "</b>\n";
-            $message .= "  ├ Đơn giá: <b>" . number_format($item->price, 0, ',', '.') . "đ</b>\n";
-            $message .= "  └ Thành tiền: <b>" . number_format($item->price * $item->quantity, 0, ',', '.') . "đ</b>\n\n";
-        }
+            // Thông tin khách hàng
+            $message .= "👤 <b>CUSTOMER INFORMATION</b>\n";
+            $message .= "• Full Name: <b>" . $order->customer_name . "</b>\n";
+            $message .= "• Email: <b>" . $order->customer_email . "</b>\n";
+            $message .= "• Phone: <b>" . $order->customer_phone . "</b>\n";
+            
+            if ($order->customer_address && $order->customer_address !== 'Digital product - no shipping required') {
+                $message .= "• Address: <b>" . $order->customer_address . "</b>\n";
+            }
+            $message .= "\n";
 
-        // Tổng tiền
-        $message .= "━━━━━━━━━━━━━━━━━━━━━━\n";
-        if (isset($order->discount_amount) && $order->discount_amount > 0) {
-            $message .= "• Giảm giá: <b>-" . number_format($order->discount_amount, 0, ',', '.') . "đ</b> (" . $order->coupon_code . ")\n";
-        }
-        $message .= "💰 <b>TỔNG TIỀN: " . number_format($order->total_amount, 0, ',', '.') . "đ</b>\n";
-        $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+            // Chi tiết sản phẩm
+            $message .= "🛒 <b>PRODUCT DETAILS</b>\n";
+            foreach ($order->orderItems as $item) {
+                $productName = $item->product ? ($item->product->name_en ?? $item->product->name) : 'Product does not exist';
+                $message .= "• " . $productName . "\n";
+                $message .= "  ├ Quantity: <b>" . $item->quantity . "</b>\n";
+                $message .= "  ├ Unit Price: <b>$" . number_format($item->price, 2) . "</b>\n";
+                $message .= "  └ Subtotal: <b>$" . number_format($item->price * $item->quantity, 2) . "</b>\n\n";
+            }
 
-        if ($order->status === 'completed') {
-            $message .= "✅ <i>Đơn hàng có sẵn kho đã được xử lý và hoàn thành tự động!</i>";
+            // Tổng tiền
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+            if (isset($order->discount_amount) && $order->discount_amount > 0) {
+                $message .= "• Discount: <b>-$" . number_format($order->discount_amount, 2) . "</b> (" . $order->coupon_code . ")\n";
+            }
+            $message .= "💰 <b>TOTAL AMOUNT: $" . number_format($order->total_amount, 2) . "</b>\n";
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+
+            if ($order->status === 'completed') {
+                $message .= "✅ <i>Instant digital order processed and completed automatically!</i>";
+            } else {
+                $message .= "⚠️ <i>Order requires manual processing. Please check and process!</i>";
+            }
         } else {
-            $message .= "⚠️ <i>Đơn hàng chưa có sẵn kho. Vui lòng kiểm tra và xử lý đơn hàng!</i>";
+            $message = "🔔 <b>ĐƠN HÀNG MỚI - XÁC NHẬN ĐÃ THANH TOÁN</b>\n";
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+
+            // Thông tin đơn hàng
+            $message .= "📦 <b>THÔNG TIN ĐƠN HÀNG</b>\n";
+            $message .= "• Mã đơn: <b>#" . $order->id . "</b>\n";
+            $message .= "• Loại đơn: <b>" . self::getOrderTypeLabel($order->order_type) . "</b>\n";
+            $message .= "• Thời gian: <b>" . $order->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') . "</b>\n";
+            $message .= "• Trạng thái: <b>" . $order->status_label . "</b>\n\n";
+
+            // Thông tin khách hàng
+            $message .= "👤 <b>THÔNG TIN KHÁCH HÀNG</b>\n";
+            $message .= "• Họ tên: <b>" . $order->customer_name . "</b>\n";
+            $message .= "• Email: <b>" . $order->customer_email . "</b>\n";
+            $message .= "• SĐT: <b>" . $order->customer_phone . "</b>\n";
+            
+            if ($order->customer_address && $order->customer_address !== 'Sản phẩm số - không cần giao hàng') {
+                $message .= "• Địa chỉ: <b>" . $order->customer_address . "</b>\n";
+            }
+            $message .= "\n";
+
+            // Chi tiết sản phẩm
+            $message .= "🛒 <b>CHI TIẾT SẢN PHẨM</b>\n";
+            foreach ($order->orderItems as $item) {
+                $productName = $item->product ? $item->product->name : 'Sản phẩm không tồn tại';
+                $message .= "• " . $productName . "\n";
+                $message .= "  ├ Số lượng: <b>" . $item->quantity . "</b>\n";
+                $message .= "  ├ Đơn giá: <b>" . number_format($item->price, 0, ',', '.') . "đ</b>\n";
+                $message .= "  └ Thành tiền: <b>" . number_format($item->price * $item->quantity, 0, ',', '.') . "đ</b>\n\n";
+            }
+
+            // Tổng tiền
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+            if (isset($order->discount_amount) && $order->discount_amount > 0) {
+                $message .= "• Giảm giá: <b>-" . number_format($order->discount_amount, 0, ',', '.') . "đ</b> (" . $order->coupon_code . ")\n";
+            }
+            $message .= "💰 <b>TỔNG TIỀN: " . number_format($order->total_amount, 0, ',', '.') . "đ</b>\n";
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+
+            if ($order->status === 'completed') {
+                $message .= "✅ <i>Đơn hàng có sẵn kho đã được xử lý và hoàn thành tự động!</i>";
+            } else {
+                $message .= "⚠️ <i>Đơn hàng chưa có sẵn kho. Vui lòng kiểm tra và xử lý đơn hàng!</i>";
+            }
         }
 
         return $message;

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Chat với Admin - DungThu.com')
+@section('title', __('Chat với Admin') . ' - DungThu.com')
 
 @push('styles')
 <style>
@@ -564,14 +564,14 @@
                         <h5>DungThu Support</h5>
                         <div class="status-text">
                             <i class="fas fa-circle" style="font-size: 7px;"></i>
-                            <span>Online - Sẵn sàng hỗ trợ</span>
+                            <span>Online - {{ __('Sẵn sàng hỗ trợ') }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="header-actions">
                     <a href="{{ route('home') }}" class="btn-exit">
                         <i class="fas fa-arrow-left" style="font-size: 13px;"></i>
-                        <span>Thoát</span>
+                        <span>{{ __('Thoát') }}</span>
                     </a>
                 </div>
             </div>
@@ -580,8 +580,8 @@
             <div class="chat-body" id="chatBody">
                 <div class="chat-welcome-box">
                     <span class="wave">👋</span>
-                    <h5>Xin chào, {{ Auth::user()->name ?? 'bạn' }}!</h5>
-                    <p>Hãy để lại tin nhắn, Admin sẽ phản hồi ngay lập tức.</p>
+                    <h5>{{ __('Xin chào') }}, {{ Auth::user()->name ?? __('bạn') }}!</h5>
+                    <p>{{ __('Hãy để lại tin nhắn, Admin sẽ phản hồi ngay lập tức.') }}</p>
                 </div>
 
                 @foreach($messages as $msg)
@@ -604,7 +604,7 @@
                 <div class="input-area-container">
                     <div id="imagePreviewContainer" class="image-preview-container">
                         <img id="imagePreview" class="preview-img" alt="preview">
-                        <button class="remove-preview" onclick="clearImagePreview()" type="button" title="Xóa ảnh">
+                        <button class="remove-preview" onclick="clearImagePreview()" type="button" title="{{ __('Xóa ảnh') }}">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -612,7 +612,7 @@
                     <form id="chatForm" onsubmit="return false;" autocomplete="off">
                         @csrf
                         <div class="chat-input-wrapper">
-                            <label for="chatImage" class="tool-btn" title="Gửi ảnh">
+                            <label for="chatImage" class="tool-btn" title="{{ __('Gửi ảnh') }}">
                                 <i class="fas fa-image"></i>
                                 <input type="file" id="chatImage" name="image" hidden accept="image/*" onchange="previewImage(this)">
                             </label>
@@ -621,7 +621,7 @@
                                 id="chatInput"
                                 name="message"
                                 class="chat-input"
-                                placeholder="Nhập tin nhắn..."
+                                placeholder="{{ __('Nhập tin nhắn...') }}"
                                 autocomplete="off"
                                 maxlength="1000"
                                 enterkeyhint="send"
@@ -717,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(err => {
             console.error('Send error:', err);
-            alert('Lỗi gửi tin nhắn: ' + err.message);
+            alert(@json(__('Lỗi gửi tin nhắn: ')) + err.message);
         })
         .finally(() => {
             sendBtn.disabled = false;

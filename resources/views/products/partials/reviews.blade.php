@@ -3,7 +3,7 @@
     <div class="card border-0 shadow-sm rounded-4" style="background: white;">
         <div class="card-body p-4">
             <h4 class="fw-bold mb-4">
-                <i class="fas fa-comments text-warning me-2"></i>Đánh Giá Sản Phẩm
+                <i class="fas fa-comments text-warning me-2"></i>{{ __('Đánh Giá Sản Phẩm') }}
             </h4>
             
             <!-- Overall Rating -->
@@ -20,7 +20,7 @@
                         @endif
                     @endfor
                 </div>
-                <p class="text-muted mb-0">Dựa trên <strong>{{ $totalReviews }} đánh giá</strong></p>
+                <p class="text-muted mb-0">{{ __('Dựa trên') }} <strong>{{ $totalReviews }}</strong> {{ __('đánh giá') }}</p>
             </div>
 
             <!-- Comment Form (Only for logged in users) -->
@@ -28,12 +28,12 @@
             <div class="card bg-light border-0 mb-4 rounded-4">
                 <div class="card-body p-4">
                     <h5 class="fw-bold mb-3">
-                        <i class="fas fa-edit text-primary me-2"></i>Viết đánh giá của bạn
+                        <i class="fas fa-edit text-primary me-2"></i>{{ __('Viết đánh giá của bạn') }}
                     </h5>
                     <form action="{{ route('product.comment', $product->id) }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Đánh giá của bạn <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">{{ __('Đánh giá của bạn') }} <span class="text-danger">*</span></label>
                             <div class="rating-input mb-2">
                                 <input type="radio" name="rating" value="5" id="star5" required>
                                 <label for="star5" title="5 sao"><i class="fas fa-star"></i></label>
@@ -51,15 +51,15 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Nhận xét <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">{{ __('Nhận xét') }} <span class="text-danger">*</span></label>
                             <textarea name="comment" class="form-control rounded-3" rows="4" 
-                                      placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..." required>{{ old('comment') }}</textarea>
+                                      placeholder="{{ __('Chia sẻ trải nghiệm của bạn về sản phẩm...') }}" required>{{ old('comment') }}</textarea>
                             @error('comment')
-                                <small class="text-danger">{{ $message }}</small>
+                                  <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary rounded-pill px-4">
-                            <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
+                            <i class="fas fa-paper-plane me-2"></i>{{ __('Gửi đánh giá') }}
                         </button>
                     </form>
                 </div>
@@ -67,7 +67,7 @@
             @else
             <div class="alert alert-info rounded-4 mb-4">
                 <i class="fas fa-info-circle me-2"></i>
-                Bạn cần <a href="{{ route('login') }}" class="alert-link fw-bold">đăng nhập</a> để viết đánh giá.
+                {!! __('Bạn cần :login để viết đánh giá.', ['login' => '<a href="'.route('login').'" class="alert-link fw-bold">'.__('đăng nhập').'</a>']) !!}
             </div>
             @endauth
 
@@ -102,7 +102,7 @@
             @empty
             <div class="text-center py-5">
                 <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên!</p>
+                <p class="text-muted">{{ __('Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên!') }}</p>
             </div>
             @endforelse
         </div>

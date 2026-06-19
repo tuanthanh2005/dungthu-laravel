@@ -632,9 +632,13 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'name_en' => 'nullable|string|max:255',
             'description' => 'required|string',
+            'description_en' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'price_usd' => 'nullable|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0|lt:price',
+            'sale_price_usd' => 'nullable|numeric|min:0',
             'category_id' => 'required|exists:product_categories,id',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -709,6 +713,17 @@ class AdminController extends Controller
             }
         }
 
+        // Xử lý specs tiếng Anh
+        $specsEn = [];
+        $keysEn = $request->input('spec_keys_en', []);
+        $valuesEn = $request->input('spec_values_en', []);
+
+        foreach ($keysEn as $index => $key) {
+            if (!empty($key) && !empty($valuesEn[$index])) {
+                $specsEn[$key] = $valuesEn[$index];
+            }
+        }
+
         if (empty($specs) && $categoryType === 'ebooks') {
             $specs = [
                 'pages' => $request->input('pages'),
@@ -724,12 +739,24 @@ class AdminController extends Controller
             ];
         }
 
+        if (empty($specsEn) && $categoryType === 'ebooks') {
+            $specsEn = [
+                'pages' => $request->input('pages'),
+                'language' => 'English',
+                'format' => $fileType ?? 'PDF',
+            ];
+        }
+
           $product = Product::create([
               'name' => $request->name,
+              'name_en' => $request->name_en,
               'slug' => $slug,
               'description' => $request->description,
+              'description_en' => $request->description_en,
               'price' => $request->price,
+              'price_usd' => $request->price_usd,
               'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
+              'sale_price_usd' => $request->has('is_on_sale') && $request->filled('sale_price_usd') ? $request->sale_price_usd : null,
               'category' => $categoryType,
               'category_id' => $categoryRecord->id,
               'stock' => $request->stock,
@@ -738,6 +765,7 @@ class AdminController extends Controller
               'file_type' => $fileType,
             'file_size' => $fileSize,
             'specs' => $specs,
+            'specs_en' => $specsEn,
             'delivery_type' => $request->delivery_type,
             'is_featured' => $request->has('is_featured') ? true : false,
             'is_exclusive' => $request->has('is_exclusive') ? true : false,
@@ -778,9 +806,13 @@ class AdminController extends Controller
       {
           $request->validate([
               'name' => 'required|string|max:255',
+              'name_en' => 'nullable|string|max:255',
               'description' => 'required|string',
+              'description_en' => 'nullable|string',
               'price' => 'required|numeric|min:0',
+              'price_usd' => 'nullable|numeric|min:0',
               'sale_price' => 'nullable|numeric|min:0|lt:price',
+              'sale_price_usd' => 'nullable|numeric|min:0',
               'category_id' => 'required|exists:product_categories,id',
               'stock' => 'required|integer|min:0',
               'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -872,6 +904,17 @@ class AdminController extends Controller
             }
         }
 
+        // Xử lý specs tiếng Anh
+        $specsEn = [];
+        $keysEn = $request->input('spec_keys_en', []);
+        $valuesEn = $request->input('spec_values_en', []);
+
+        foreach ($keysEn as $index => $key) {
+            if (!empty($key) && !empty($valuesEn[$index])) {
+                $specsEn[$key] = $valuesEn[$index];
+            }
+        }
+
         if (empty($specs) && $categoryType === 'ebooks') {
             $specs = [
                 'pages' => $request->input('pages'),
@@ -887,16 +930,29 @@ class AdminController extends Controller
             ];
         }
 
+        if (empty($specsEn) && $categoryType === 'ebooks') {
+            $specsEn = [
+                'pages' => $request->input('pages'),
+                'language' => 'English',
+                'format' => $request->input('format'),
+            ];
+        }
+
           $product->update([
               'name' => $request->name,
+              'name_en' => $request->name_en,
               'slug' => $slug,
               'description' => $request->description,
+              'description_en' => $request->description_en,
               'price' => $request->price,
+              'price_usd' => $request->price_usd,
               'sale_price' => $request->has('is_on_sale') && $request->filled('sale_price') ? $request->sale_price : null,
+              'sale_price_usd' => $request->has('is_on_sale') && $request->filled('sale_price_usd') ? $request->sale_price_usd : null,
               'category' => $categoryType,
               'category_id' => $categoryRecord->id,
               'stock' => $request->stock,
               'specs' => $specs,
+              'specs_en' => $specsEn,
               'delivery_type' => $request->delivery_type,
             'file_path' => $filePath,
             'file_type' => $fileType,
@@ -1014,17 +1070,21 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'name_en' => 'nullable|string|max:255',
             'icon' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:7',
             'description' => 'nullable|string',
+            'description_en' => 'nullable|string',
             'category' => 'required|in:tech,ebooks,doc',
         ]);
 
         \App\Models\Feature::create([
             'name' => $request->name,
+            'name_en' => $request->name_en,
             'icon' => $request->icon ?? 'fas fa-star',
             'color' => $request->color ?? '#667eea',
             'description' => $request->description,
+            'description_en' => $request->description_en,
             'category' => $request->category,
         ]);
 
@@ -1040,17 +1100,21 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'name_en' => 'nullable|string|max:255',
             'icon' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:7',
             'description' => 'nullable|string',
+            'description_en' => 'nullable|string',
             'category' => 'required|in:tech,ebooks,doc',
         ]);
 
         $feature->update([
             'name' => $request->name,
+            'name_en' => $request->name_en,
             'icon' => $request->icon ?? 'fas fa-star',
             'color' => $request->color ?? '#667eea',
             'description' => $request->description,
+            'description_en' => $request->description_en,
             'category' => $request->category,
         ]);
 
@@ -1087,9 +1151,11 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'name_en' => 'nullable|string|max:255',
             'type' => 'required|in:tech,ebooks,doc',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
+            'description_en' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'show_on_home' => 'nullable|boolean',
         ]);
@@ -1116,10 +1182,12 @@ class AdminController extends Controller
 
         $category = ProductCategory::create([
             'name' => $request->name,
+            'name_en' => $request->name_en,
             'slug' => $slug,
             'type' => $request->type,
             'image' => $imagePath ? asset($imagePath) : null,
             'description' => $request->description,
+            'description_en' => $request->description_en,
             'is_active' => $request->has('is_active'),
             'show_on_home' => $request->has('show_on_home'),
         ]);
@@ -1148,9 +1216,11 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'name_en' => 'nullable|string|max:255',
             'type' => 'required|in:tech,ebooks,doc',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
+            'description_en' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'show_on_home' => 'nullable|boolean',
         ]);
@@ -1188,10 +1258,12 @@ class AdminController extends Controller
 
         $category->update([
             'name' => $request->name,
+            'name_en' => $request->name_en,
             'slug' => $slug,
             'type' => $request->type,
             'image' => $imagePath,
             'description' => $request->description,
+            'description_en' => $request->description_en,
             'is_active' => $request->has('is_active'),
             'show_on_home' => $request->has('show_on_home'),
         ]);
@@ -1477,7 +1549,7 @@ class AdminController extends Controller
         }
 
         // Save fake orders settings
-        $settingsKeys = ['fake_orders_top1', 'fake_orders_top2', 'fake_orders_top3', 'zalo_group_link'];
+        $settingsKeys = ['fake_orders_top1', 'fake_orders_top2', 'fake_orders_top3', 'zalo_group_link', 'usd_exchange_rate'];
         foreach ($settingsKeys as $key) {
             if ($request->has($key)) {
                 SiteSetting::setValue($key, $request->input($key));

@@ -176,6 +176,16 @@
                 @enderror
             </div>
 
+            <div class="form-group @error('name_en') has-error @enderror">
+                <label class="form-label" style="color: #2ecc71;">Tên Dịch Vụ (Tiếng Anh)</label>
+                <input type="text" name="name_en" class="form-control"
+                    placeholder="VD: Facebook Like Boost"
+                    value="{{ old('name_en') }}">
+                @error('name_en')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
             <div class="form-row">
                 <div class="form-group @error('platform') has-error @enderror">
                     <label class="form-label">Nền Tảng <span style="color: #dc3545;">*</span></label>
@@ -210,6 +220,15 @@
                 <textarea name="description" class="form-control"
                     placeholder="Mô tả chi tiết về dịch vụ...">{{ old('description') }}</textarea>
                 @error('description')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group @error('description_en') has-error @enderror">
+                <label class="form-label" style="color: #2ecc71;">Mô Tả (Tiếng Anh)</label>
+                <textarea name="description_en" class="form-control"
+                    placeholder="Detailed description of service in English...">{{ old('description_en') }}</textarea>
+                @error('description_en')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>

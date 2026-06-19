@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Dùng Thử | AI | Blog | Khám Phá')
+@section('title', __('Dùng Thử | AI | Blog | Khám Phá'))
 
 @section('seo_h1')
-    <h1 style="display:none;">Dùng Thử | AI | Blog | Khám Phá</h1>
+    <h1 style="display:none;">{{ __('Dùng Thử | AI | Blog | Khám Phá') }}</h1>
 @endsection
 
 @push('styles')
@@ -1490,7 +1490,7 @@
         }
 
         .combo-prod-card.out-of-stock .img-wrap::after {
-            content: 'HẾT HÀNG';
+            content: '{{ __('HẾT HÀNG') }}';
             position: absolute;
             top: 50%;
             left: 50%;
@@ -1709,32 +1709,32 @@
             <!-- Part 1 -->
             <div class="marquee-item">
                 <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
-                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>{{ __('CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!') }}</span>
                 <span>•</span>
                 <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
-                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+                <span>{{ __('Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.') }}</span>
             </div>
             <div class="marquee-item">
                 <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
-                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>{{ __('CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!') }}</span>
                 <span>•</span>
                 <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
-                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+                <span>{{ __('Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.') }}</span>
             </div>
             <!-- Part 2 (Duplicate for seamless loop) -->
             <div class="marquee-item">
                 <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
-                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>{{ __('CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!') }}</span>
                 <span>•</span>
                 <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
-                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+                <span>{{ __('Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.') }}</span>
             </div>
             <div class="marquee-item">
                 <i class="fa-solid fa-triangle-exclamation marquee-icon-warning"></i>
-                <span>CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!</span>
+                <span>{{ __('CẢNH BÁO: Đang có đối tượng giả danh Fanpage / Admin DungThu.com. Chỉ giao dịch qua website hoặc trang liên hệ chính chủ!') }}</span>
                 <span>•</span>
                 <i class="fa-solid fa-clock" style="color: #38bdf8;"></i>
-                <span>Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.</span>
+                <span>{{ __('Giờ làm việc hỗ trợ khách hàng: 08:00 - 23:00 hàng ngày.') }}</span>
             </div>
         </div>
     </div>
@@ -1750,32 +1750,32 @@
                             <div class="hero-ai-badge">
                                 <i class="fa-solid fa-bolt"></i> DungThu.com AI Hub
                             </div>
-                            <h2 class="hero-title">Khám Phá Sức Mạnh AI<br>Tối Ưu Hiệu Suất Công Việc</h2>
+                            <h2 class="hero-title">{!! __('Khám Phá Sức Mạnh AI<br>Tối Ưu Hiệu Suất Công Việc') !!}</h2>
                             <p class="hero-desc">
-                                Cung cấp tài khoản premium giá rẻ, phần mềm chuyên dụng và giải pháp tự động hóa giúp bạn bứt phá năng suất làm việc mỗi ngày. Nhanh chóng - Uy tín - Bảo hành trọn đời.
+                                {{ __('Cung cấp tài khoản premium giá rẻ, phần mềm chuyên dụng và giải pháp tự động hóa giúp bạn bứt phá năng suất làm việc mỗi ngày. Nhanh chóng - Uy tín - Bảo hành trọn đời.') }}
                             </p>
                             
                             <!-- Lợi ích nổi bật -->
                             <div class="hero-features">
                                 <div class="hero-feature-chip">
-                                    <i class="fa-solid fa-circle-check"></i> Kích hoạt tức thì
+                                    <i class="fa-solid fa-circle-check"></i> {{ __('Kích hoạt tức thì') }}
                                 </div>
                                 <div class="hero-feature-chip">
-                                    <i class="fa-solid fa-shield-halved"></i> Bảo hành uy tín
+                                    <i class="fa-solid fa-shield-halved"></i> {{ __('Bảo hành uy tín') }}
                                 </div>
                                 <div class="hero-feature-chip">
-                                    <i class="fa-solid fa-headset"></i> Hỗ trợ 24/7
+                                    <i class="fa-solid fa-headset"></i> {{ __('Hỗ trợ 24/7') }}
                                 </div>
                             </div>
 
                             <!-- Các hành động -->
                             <div class="hero-actions">
                                 <a href="{{ route('shop') }}" class="hero-btn-primary">
-                                    <i class="fa-solid fa-store"></i> Mua Tài Khoản AI
+                                    <i class="fa-solid fa-store"></i> {{ __('Mua Tài Khoản AI') }}
                                 </a>
                                 <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" 
                                    target="_blank" class="hero-btn-secondary">
-                                    <i class="fa-solid fa-users"></i> Nhóm Zalo Hỗ Trợ
+                                    <i class="fa-solid fa-users"></i> {{ __('Nhóm Zalo Hỗ Trợ') }}
                                 </a>
                             </div>
                         </div>
@@ -1792,10 +1792,10 @@
                                         <div class="card-status">Hot</div>
                                     </div>
                                     <div class="card-name">ChatGPT Plus</div>
-                                    <div class="card-desc">Sử dụng GPT-4, DALL-E 3 & các công cụ phân tích nâng cao.</div>
+                                    <div class="card-desc">{{ __('Sử dụng GPT-4, DALL-E 3 & các công cụ phân tích nâng cao.') }}</div>
                                     <div class="card-foot">
-                                        <span class="text-muted">Giá từ</span>
-                                        <span class="card-price">60.000đ</span>
+                                        <span class="text-muted">{{ __('Giá từ') }}</span>
+                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$2.40' : '60.000đ' }}</span>
                                     </div>
                                 </div>
 
@@ -1806,10 +1806,10 @@
                                         <div class="card-status">Vip</div>
                                     </div>
                                     <div class="card-name">Claude AI Pro</div>
-                                    <div class="card-desc">Sở hữu Claude 3.5 Sonnet với giới hạn chat lớn nhất.</div>
+                                    <div class="card-desc">{{ __('Sở hữu Claude 3.5 Sonnet với giới hạn chat lớn nhất.') }}</div>
                                     <div class="card-foot">
-                                        <span class="text-muted">Giá từ</span>
-                                        <span class="card-price">89.000đ</span>
+                                        <span class="text-muted">{{ __('Giá từ') }}</span>
+                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$3.56' : '89.000đ' }}</span>
                                     </div>
                                 </div>
 
@@ -1820,10 +1820,10 @@
                                         <div class="card-status">New</div>
                                     </div>
                                     <div class="card-name">VPN Premium</div>
-                                    <div class="card-desc">Bảo mật thông tin, truy cập website bị chặn & tăng tốc internet.</div>
+                                    <div class="card-desc">{{ __('Bảo mật thông tin, truy cập website bị chặn & tăng tốc internet.') }}</div>
                                     <div class="card-foot">
-                                        <span class="text-muted">Giá từ</span>
-                                        <span class="card-price">20.000đ</span>
+                                        <span class="text-muted">{{ __('Giá từ') }}</span>
+                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$0.80' : '20.000đ' }}</span>
                                     </div>
                                 </div>
 
@@ -1834,10 +1834,10 @@
                                         <div class="card-status">Sale</div>
                                     </div>
                                     <div class="card-name">Cursor Pro</div>
-                                    <div class="card-desc">Trình soạn thảo code AI bứt phá tốc độ lập trình.</div>
+                                    <div class="card-desc">{{ __('Trình soạn thảo code AI bứt phá tốc độ lập trình.') }}</div>
                                     <div class="card-foot">
-                                        <span class="text-muted">Giá từ</span>
-                                        <span class="card-price">150.000đ</span>
+                                        <span class="text-muted">{{ __('Giá từ') }}</span>
+                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$6.00' : '150.000đ' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1868,10 +1868,10 @@
                         <div class="official-header">
                             <div class="official-header-title">
                                 <i class="fa-solid fa-shield-halved text-success fs-5"></i>
-                                <h3>Kênh liên hệ & Fanpage chính thức</h3>
+                                <h3>{{ __('Kênh liên hệ & Fanpage chính thức') }}</h3>
                             </div>
                             <div class="official-badge-verify">
-                                <i class="fa-solid fa-circle-check"></i> Đã xác minh
+                                <i class="fa-solid fa-circle-check"></i> {{ __('Đã xác minh') }}
                             </div>
                         </div>
                         <div class="official-grid">
@@ -1908,17 +1908,17 @@
                                     <div class="official-card-info">
                                         <div class="official-card-title">
                                             {{ $fp['name'] }}
-                                            <span class="official-card-badge-verified" title="Trang chính chủ đã xác minh">
+                                            <span class="official-card-badge-verified" title="{{ __('Đã xác minh') }}">
                                                 <i class="fa-solid fa-circle-check"></i>
                                             </span>
                                         </div>
                                         @if(!empty($fp['desc']))
                                             <div class="official-card-desc">{{ $fp['desc'] }}</div>
                                         @else
-                                            <div class="official-card-desc">Kênh hỗ trợ và thông báo chính thức của công ty.</div>
+                                            <div class="official-card-desc">{{ __('Kênh hỗ trợ và thông báo chính thức của công ty.') }}</div>
                                         @endif
                                         <div class="official-action-link">
-                                            Truy cập ngay <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem;"></i>
+                                            {{ __('Truy cập ngay') }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem;"></i>
                                         </div>
                                     </div>
                                 </a>
@@ -1941,7 +1941,7 @@
                                 <span class="text-danger fw-bold"
                                     style="font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;">⚡ Flash Sale</span>
                                 <div class="fw-bold" id="flash-sale-title" style="font-size:1.1rem;">
-                                    {{ $isExpired ? 'Sản phẩm gợi ý cho bạn' : 'Giảm giá sốc hôm nay' }}
+                                    {{ $isExpired ? __('Sản phẩm gợi ý cho bạn') : __('Giảm giá sốc hôm nay') }}
                                 </div>
                             </div>
                             <div id="flash-sale-timer-container"
@@ -1958,7 +1958,7 @@
                                     <div
                                         style="background:#fff;border:1px solid #edeff1;border-radius:10px;overflow:hidden;position:relative; {{ $sp->stock <= 0 ? 'opacity: 0.7;' : '' }}">
                                         @if($sp->stock <= 0)
-                                            <div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">HẾT HÀNG</div>
+                                            <div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">{{ __('HẾT HÀNG') }}</div>
                                         @endif
                                         <img src="{{ $sp->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $sp->name }}"
                                             style="width:100%;height:120px;object-fit:cover;">
@@ -1966,7 +1966,7 @@
                                             <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">
                                                 {{ $sp->name }}</div>
                                             <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
-                                                Còn: <span class="{{ $sp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $sp->stock }}</span>
+                                                {{ __('Còn:') }} <span class="{{ $sp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $sp->stock }}</span>
                                             </div>
                                             <div style="color:#e53935;font-weight:800;">{{ $sp->formatted_price }}</div>
                                         </div>
@@ -1983,7 +1983,7 @@
                     @if(\App\Models\SiteSetting::getValue('home_show_featured', '1') === '1' && isset($featuredProducts) && $featuredProducts->count() > 0)
                     <div class="combo-cat-section">
                         <div class="combo-cat-title" style="border-bottom:none; margin-bottom: 15px; font-size: 1.1rem; padding-bottom: 0;">
-                            <i class="fa-solid fa-star" style="color:#ffca28;"></i> Sản Phẩm Nổi Bật
+                            <i class="fa-solid fa-star" style="color:#ffca28;"></i> {{ __('Sản Phẩm Nổi Bật') }}
                         </div>
                         <div class="combo-product-grid">
                             @foreach($featuredProducts->take(6) as $fp)
@@ -1999,7 +1999,7 @@
                                 <div class="card-body">
                                     <div class="prod-name">{{ $fp->name }}</div>
                                     <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        Còn: <span class="{{ $fp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $fp->stock }}</span>
+                                        {{ __('Còn:') }} <span class="{{ $fp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $fp->stock }}</span>
                                     </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $fp->formatted_price }}</span>
@@ -2011,7 +2011,7 @@
                                           onclick="event.preventDefault(); this.submit();">
                                         @csrf
                                         <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ $fp->stock > 0 ? 'Thêm vào giỏ' : 'Thêm vào giỏ (Đặt trước)' }}
+                                            <i class="fa-solid fa-cart-plus"></i> {{ $fp->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}
                                         </button>
                                     </form>
                                 </div>
@@ -2025,7 +2025,7 @@
                     @if(\App\Models\SiteSetting::getValue('home_show_exclusive', '1') === '1' && isset($highlightProducts) && $highlightProducts->count() > 0)
                     <div class="combo-cat-section mt-4">
                         <div class="combo-cat-title" style="border-bottom:none; margin-bottom: 15px; font-size: 1.1rem; padding-bottom: 0;">
-                            <i class="fa-solid fa-gem" style="color:#8b5cf6;"></i> Sản Phẩm Độc Quyền
+                            <i class="fa-solid fa-gem" style="color:#8b5cf6;"></i> {{ __('Sản Phẩm Độc Quyền') }}
                         </div>
                         <div class="combo-product-grid">
                             @foreach($highlightProducts->take(6) as $hp)
@@ -2041,7 +2041,7 @@
                                 <div class="card-body">
                                     <div class="prod-name">{{ $hp->name }}</div>
                                     <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        Còn: <span class="{{ $hp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $hp->stock }}</span>
+                                        {{ __('Còn:') }} <span class="{{ $hp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $hp->stock }}</span>
                                     </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $hp->formatted_price }}</span>
@@ -2053,7 +2053,7 @@
                                           onclick="event.preventDefault(); this.submit();">
                                         @csrf
                                         <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ $hp->stock > 0 ? 'Thêm vào giỏ' : 'Thêm vào giỏ (Đặt trước)' }}
+                                            <i class="fa-solid fa-cart-plus"></i> {{ $hp->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}
                                         </button>
                                     </form>
                                 </div>
@@ -2067,7 +2067,7 @@
                     @if(\App\Models\SiteSetting::getValue('home_show_combo_ai', '1') === '1' && isset($latestProducts) && $latestProducts->count() > 0)
                     <div class="combo-cat-section mt-4">
                         <div class="combo-cat-title" style="border-bottom:none; margin-bottom: 15px; font-size: 1.1rem; padding-bottom: 0;">
-                            <i class="fa-solid fa-box-open" style="color:#6366f1;"></i> Combo AI Giá Rẻ
+                            <i class="fa-solid fa-box-open" style="color:#6366f1;"></i> {{ __('Combo AI Giá Rẻ') }}
                         </div>
                         <div class="combo-product-grid">
                             @foreach($latestProducts->take(12) as $cp)
@@ -2082,7 +2082,7 @@
                                 <div class="card-body">
                                     <div class="prod-name">{{ $cp->name }}</div>
                                     <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        Còn: <span class="{{ $cp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $cp->stock }}</span>
+                                        {{ __('Còn:') }} <span class="{{ $cp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $cp->stock }}</span>
                                     </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $cp->formatted_price }}</span>
@@ -2094,7 +2094,7 @@
                                           onclick="event.preventDefault(); this.submit();">
                                         @csrf
                                         <button type="submit" class="add-cart-btn">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ $cp->stock > 0 ? 'Thêm vào giỏ' : 'Thêm vào giỏ (Đặt trước)' }}
+                                            <i class="fa-solid fa-cart-plus"></i> {{ $cp->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}
                                         </button>
                                     </form>
                                 </div>
@@ -2107,7 +2107,7 @@
                     {{-- View all --}}
                     <div class="combo-view-all mt-4">
                         <a href="{{ route('shop') }}">
-                            <i class="fa-solid fa-store"></i> Xem tất cả sản phẩm
+                            <i class="fa-solid fa-store"></i> {{ __('Xem tất cả sản phẩm') }}
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
@@ -2127,7 +2127,7 @@
                     <div class="tf-widget top-buyers-widget text-center">
                         <div class="d-flex align-items-center gap-2 mb-3 justify-content-center">
                             <i class="fa-solid fa-crown text-warning fs-5"></i>
-                            <h2 class="h6 fw-bold mb-0 text-uppercase" style="letter-spacing: 0.5px;">Top Mua Hàng</h2>
+                            <h2 class="h6 fw-bold mb-0 text-uppercase" style="letter-spacing: 0.5px;">{{ __('Top Mua Hàng') }}</h2>
                         </div>
                         
                         @php
@@ -2150,7 +2150,7 @@
                                     <div class="avatar bg-secondary text-white mx-auto">{{ strtoupper(substr($rank2->name, 0, 1)) }}</div>
                                 </div>
                                 <div class="name mt-2 fw-bold text-truncate mx-auto" style="max-width: 60px; font-size: 0.75rem;">{{ explode(' ', trim($rank2->name))[count(explode(' ', trim($rank2->name)))-1] }}</div>
-                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank2->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top2', 19) }} đơn</div>
+                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank2->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top2', 19) }} {{ __('đơn') }}</div>
                                 <div class="podium-bar bar-silver"></div>
                             </div>
                             @endif
@@ -2163,7 +2163,7 @@
                                     <div class="avatar bg-warning text-white mx-auto" style="width: 55px; height: 55px; font-size: 1.5rem;">{{ strtoupper(substr($rank1->name, 0, 1)) }}</div>
                                 </div>
                                 <div class="name mt-2 fw-bold text-truncate text-danger mx-auto" style="max-width: 70px; font-size: 0.85rem;">{{ explode(' ', trim($rank1->name))[count(explode(' ', trim($rank1->name)))-1] }}</div>
-                                <div class="orders text-muted" style="font-size: 0.7rem;">{{ $rank1->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top1', 30) }} đơn</div>
+                                <div class="orders text-muted" style="font-size: 0.7rem;">{{ $rank1->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top1', 30) }} {{ __('đơn') }}</div>
                                 <div class="podium-bar bar-gold"></div>
                             </div>
                             @endif
@@ -2176,14 +2176,14 @@
                                     <div class="avatar bg-info text-white mx-auto">{{ strtoupper(substr($rank3->name, 0, 1)) }}</div>
                                 </div>
                                 <div class="name mt-2 fw-bold text-truncate mx-auto" style="max-width: 60px; font-size: 0.75rem;">{{ explode(' ', trim($rank3->name))[count(explode(' ', trim($rank3->name)))-1] }}</div>
-                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank3->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top3', 10) }} đơn</div>
+                                <div class="orders text-muted" style="font-size: 0.65rem;">{{ $rank3->orders_count + (int)\App\Models\SiteSetting::getValue('fake_orders_top3', 10) }} {{ __('đơn') }}</div>
                                 <div class="podium-bar bar-bronze"></div>
                             </div>
                             @endif
                         </div>
                         
                         <a href="{{ route('shop') }}" class="tf-join-btn text-white mt-2 w-100 fw-bold py-2" style="background: linear-gradient(45deg, #ff416c, #ff4b2b); border: none; box-shadow: 0 4px 10px rgba(255, 75, 43, 0.3); border-radius: 8px;">
-                            <i class="fa-solid fa-cart-shopping me-2"></i>Mua hàng ngay
+                            <i class="fa-solid fa-cart-shopping me-2"></i>{{ __('Mua hàng ngay') }}
                         </a>
                     </div>
 
@@ -2201,7 +2201,7 @@
                     @if(isset($saleProducts) && $saleProducts->count() > 0)
                         <div class="tf-widget">
                             <div class="tf-widget-title" id="sidebar-flash-sale-title">
-                                ⚡ {{ $isExpired ? 'Gợi Ý Cho Bạn' : 'Flash Sale' }} &nbsp;
+                                ⚡ {{ $isExpired ? __('Gợi Ý Cho Bạn') : 'Flash Sale' }} &nbsp;
                                 <span id="sf-timer" style="color:#e53935;font-size:.72rem;font-weight:700;"></span>
                             </div>
                             <div id="sidebar-flash-sale-products">
@@ -2225,7 +2225,7 @@
                     {{-- Top Selling --}}
                     @if(isset($featuredProducts) && $featuredProducts->count() > 0)
                         <div class="tf-widget">
-                            <div class="tf-widget-title">🔥 Bán Chạy Tuần Này</div>
+                            <div class="tf-widget-title">🔥 {{ __('Bán Chạy Tuần Này') }}</div>
                             @foreach($featuredProducts->take(5) as $ri => $prod)
                                 <a href="{{ route('product.show', $prod->slug) }}" class="tf-top-item">
                                     <img src="{{ $prod->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $prod->name }}"
@@ -2235,21 +2235,21 @@
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="price">{{ $prod->formatted_price }}</div>
                                             @if($prod->stock <= 0)
-                                                <span class="text-danger fw-bold" style="font-size: 0.7rem;">Hết hàng</span>
+                                                <span class="text-danger fw-bold" style="font-size: 0.7rem;">{{ __('Hết hàng') }}</span>
                                             @endif
                                         </div>
                                     </div>
                                 </a>
                             @endforeach
                             <a href="{{ route('shop') }}"
-                                class="btn btn-outline-primary btn-sm rounded-pill w-100 mt-3 fw-bold">Xem tất cả cửa hàng</a>
+                                class="btn btn-outline-primary btn-sm rounded-pill w-100 mt-3 fw-bold">{{ __('Xem tất cả cửa hàng') }}</a>
                         </div>
                     @endif
 
                     {{-- Blog Sidebar --}}
                     @if(isset($latestBlogs) && $latestBlogs->count() > 0)
                         <div class="tf-widget">
-                            <div class="tf-widget-title">📰 Bài Viết Mới Nhất</div>
+                            <div class="tf-widget-title">📰 {{ __('Bài Viết Mới Nhất') }}</div>
                             @foreach($latestBlogs->take(3) as $b)
                                 <a href="{{ route('blog.show', $b->slug) }}" class="tf-blog-item">
                                     @if($b->image)
@@ -2281,13 +2281,13 @@
                     {{-- Footer mini --}}
                     <div class="d-flex flex-wrap gap-2 px-1" style="font-size:.74rem;color:#787c7e;">
                         <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal"
-                            data-bs-target="#aboutModal">Điều khoản</a>·
+                            data-bs-target="#aboutModal">{{ __('Điều khoản') }}</a>·
                         <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal"
-                            data-bs-target="#privacyModal">Bảo mật</a>·
+                            data-bs-target="#privacyModal">{{ __('Bảo mật') }}</a>·
                         <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal"
-                            data-bs-target="#advertisingModal">Quảng cáo</a>·
+                            data-bs-target="#advertisingModal">{{ __('Quảng cáo') }}</a>·
                         <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal"
-                            data-bs-target="#contactModal">Liên hệ</a>
+                            data-bs-target="#contactModal">{{ __('Liên hệ') }}</a>
                         <div class="w-100 mt-1">DungThu.com © {{ date('Y') }}</div>
                     </div>
 
@@ -2306,9 +2306,9 @@
             <div class="inner">
                 <div class="ava" id="rptAva">K</div>
                 <div>
-                    <div class="rn" id="rptName">Khách hàng</div>
-                    <div class="rs" id="rptSub">vừa mua thành công</div>
-                    <a href="#" class="rp" id="rptProd">Sản phẩm</a>
+                    <div class="rn" id="rptName">{{ __('Khách hàng') }}</div>
+                    <div class="rs" id="rptSub">{{ __('vừa mua thành công') }}</div>
+                    <a href="#" class="rp" id="rptProd">{{ __('Sản phẩm') }}</a>
                 </div>
             </div>
         </div>
@@ -2328,7 +2328,7 @@
             window.copyLink = function (btn) {
                 navigator.clipboard?.writeText(window.location.href).then(() => {
                     const orig = btn.innerHTML;
-                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Đã sao chép!';
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + @json(__('Đã sao chép!'));
                     setTimeout(() => { btn.innerHTML = orig; }, 2000);
                 });
             }
@@ -2365,11 +2365,11 @@
                             // Trigger transition to random products
                             const titleEl = document.getElementById('flash-sale-title');
                             if (titleEl) {
-                                titleEl.textContent = 'Sản phẩm gợi ý cho bạn';
+                                titleEl.textContent = @json(__('Sản phẩm gợi ý cho bạn'));
                             }
                             const sidebarTitleEl = document.getElementById('sidebar-flash-sale-title');
                             if (sidebarTitleEl) {
-                                sidebarTitleEl.innerHTML = `⚡ Gợi Ý Cho Bạn &nbsp;<span id="sf-timer" style="color:#e53935;font-size:.72rem;font-weight:700;">00:00:00</span>`;
+                                sidebarTitleEl.innerHTML = `⚡ ${@json(__('Gợi Ý Cho Bạn'))} &nbsp;<span id="sf-timer" style="color:#e53935;font-size:.72rem;font-weight:700;">00:00:00</span>`;
                             }
                             const timerContainer = document.getElementById('flash-sale-timer-container');
                             if (timerContainer) {
@@ -2383,7 +2383,7 @@
                                     const mainRow = document.getElementById('flash-sale-products-row');
                                     if (mainRow && products) {
                                         mainRow.innerHTML = products.map(sp => {
-                                            const outOfStockBadge = sp.stock <= 0 ? `<div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">HẾT HÀNG</div>` : '';
+                                            const outOfStockBadge = sp.stock <= 0 ? `<div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">${@json(__('HẾT HÀNG'))}</div>` : '';
                                             const opacityStyle = sp.stock <= 0 ? 'opacity: 0.7;' : '';
                                             const stockColorClass = sp.stock <= 0 ? 'text-danger' : 'text-success';
                                             const linkTag = sp.stock > 0 ? `<a href="${sp.show_url}" class="stretched-link"></a>` : '';
@@ -2396,7 +2396,7 @@
                                                         <div style="padding:8px;">
                                                             <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">${sp.name}</div>
                                                             <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
-                                                                Còn: <span class="${stockColorClass}">${sp.stock}</span>
+                                                                ${@json(__('Còn:'))} <span class="${stockColorClass}">${sp.stock}</span>
                                                             </div>
                                                             <div style="color:#e53935;font-weight:800;">${sp.formatted_price}</div>
                                                         </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Vòng Xoay May Mắn - Mini Game')
+@section('title', __('Vòng Xoay May Mắn') . ' - Mini Game')
 
 @push('styles')
 <style>
@@ -279,10 +279,10 @@
         <!-- Header -->
         <div class="text-center mb-5" data-aos="fade-down">
             <h1 class="fw-bold mb-2" style="background: linear-gradient(135deg, #ff5e00, #ffb075); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                <i class="fa-solid fa-gift me-2"></i>Vòng Xoay May Mắn
+                <i class="fa-solid fa-gift me-2"></i>{{ __('Vòng Xoay May Mắn') }}
             </h1>
             <p class="opacity-75 lead" style="max-width: 600px; margin: 0 auto;">
-                Hoàn thành mỗi đơn hàng thành công để nhận ngay 1 vé quay miễn phí. Cơ hội trúng các thẻ giảm giá giá trị lên tới 50k!
+                {{ __('Hoàn thành mỗi đơn hàng thành công để nhận ngay 1 vé quay miễn phí. Cơ hội trúng các thẻ giảm giá giá trị lên tới 50k!') }}
             </p>
         </div>
 
@@ -296,7 +296,7 @@
                     
                     <!-- Spin Button Center -->
                     <div class="spin-center-btn {{ $user->spin_tickets < 1 ? 'disabled' : '' }}" id="spinBtn">
-                        Quay
+                        {{ __('Quay') }}
                     </div>
 
                     <!-- SVG Wheel -->
@@ -337,24 +337,24 @@
                 
                 <!-- Ticket Stats -->
                 <div class="ticket-card">
-                    <div class="ticket-label">Số vé quay của bạn</div>
+                    <div class="ticket-label">{{ __('Số vé quay của bạn') }}</div>
                     <div class="ticket-count" id="ticketCount">{{ $user->spin_tickets }}</div>
                     <p class="text-muted small mb-0">
                         <i class="fa-solid fa-circle-info me-1"></i>
-                        Mua thêm sản phẩm để nhận thêm lượt quay may mắn.
+                        {{ __('Mua thêm sản phẩm để nhận thêm lượt quay may mắn.') }}
                     </p>
                 </div>
 
                 <!-- Rules / Help -->
                 <div class="card border-0 bg-white bg-opacity-5 p-4 rounded-4 mb-4">
                     <h5 class="fw-bold mb-3 text-warning">
-                        <i class="fa-solid fa-circle-question me-2"></i>Thể Lệ Mini Game
+                        <i class="fa-solid fa-circle-question me-2"></i>{{ __('Thể Lệ Mini Game') }}
                     </h5>
                     <ul class="ps-3 mb-0 opacity-75 text-start" style="font-size: 0.9rem; line-height: 1.8;">
-                        <li>Đơn hàng sau khi được xác nhận <strong>Hoàn thành (Completed)</strong> sẽ tự động tặng cho bạn 1 vé.</li>
-                        <li>Vé quay không giới hạn và được tích lũy cộng dồn.</li>
-                        <li>Tỷ lệ trúng thưởng cực cao: <strong>Thẻ giảm giá 50k là 5%</strong>, các thẻ khác (2k, 5k, 10k, 15k, 25k) là ngẫu nhiên cơ hội ngang nhau.</li>
-                        <li>Mã giảm giá áp dụng được ngay lập tức tại bước Checkout của cửa hàng.</li>
+                        <li>{!! __('Đơn hàng sau khi được xác nhận <strong>Hoàn thành (Completed)</strong> sẽ tự động tặng cho bạn 1 vé.') !!}</li>
+                        <li>{{ __('Vé quay không giới hạn và được tích lũy cộng dồn.') }}</li>
+                        <li>{!! __('Tỷ lệ trúng thưởng cực cao: <strong>Thẻ giảm giá 50k là 5%</strong>, các thẻ khác (2k, 5k, 10k, 15k, 25k) là ngẫu nhiên cơ hội ngang nhau.') !!}</li>
+                        <li>{{ __('Mã giảm giá áp dụng được ngay lập tức tại bước Checkout của cửa hàng.') }}</li>
                     </ul>
                 </div>
 
@@ -367,17 +367,17 @@
                 <div class="history-card">
                     <h4 class="fw-bold mb-4 d-flex align-items-center gap-2">
                         <i class="fa-solid fa-clock-rotate-left text-warning"></i>
-                        Lịch Sử Trúng Thưởng
+                        {{ __('Lịch Sử Trúng Thưởng') }}
                     </h4>
 
                     <div class="table-responsive">
                         <table class="table history-table text-start" id="historyTable">
                             <thead>
                                 <tr>
-                                    <th>Thời gian</th>
-                                    <th>Giải thưởng</th>
-                                    <th>Mã giảm giá</th>
-                                    <th>Trạng thái</th>
+                                    <th>{{ __('Thời gian') }}</th>
+                                    <th>{{ __('Giải thưởng') }}</th>
+                                    <th>{{ __('Mã giảm giá') }}</th>
+                                    <th>{{ __('Trạng thái') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -388,25 +388,25 @@
                                         <div class="small opacity-50" style="font-size: 0.75rem;">{{ $coupon->created_at->timezone('Asia/Ho_Chi_Minh')->format('H:i') }}</div>
                                     </td>
                                     <td class="fw-bold" style="color: rgba(255, 255, 255, 0.95);">
-                                        <span class="d-none d-sm-inline">Thẻ giảm giá </span>{{ number_format($coupon->value, 0, ',', '.') }}đ
+                                        <span class="d-none d-sm-inline">{{ __('Thẻ giảm giá') }} </span>{{ app()->getLocale() === 'en' ? '$' . number_format($coupon->value / 25000, 2) : number_format($coupon->value, 0, ',', '.') . 'đ' }}
                                     </td>
                                     <td>
-                                        <div class="coupon-code-badge" onclick="copyToClipboard('{{ $coupon->code }}')" title="Bấm để sao chép">
+                                        <div class="coupon-code-badge" onclick="copyToClipboard('{{ $coupon->code }}')" title="{{ __('Bấm để sao chép') }}">
                                             <span>{{ $coupon->code }}</span>
                                             <i class="fa-regular fa-copy"></i>
                                         </div>
                                     </td>
                                     <td>
                                         @if($coupon->is_used)
-                                            <span class="badge-status badge-used">Đã dùng</span>
+                                            <span class="badge-status badge-used">{{ __('Đã dùng') }}</span>
                                         @else
-                                            <span class="badge-status badge-unused">Chưa dùng</span>
+                                            <span class="badge-status badge-unused">{{ __('Chưa dùng') }}</span>
                                         @endif
                                     </td>
                                 </tr>
                                 @empty
                                 <tr id="no-history-row">
-                                    <td colspan="4" class="text-center text-muted py-4">Bạn chưa quay lần nào. Hãy thực hiện lượt quay đầu tiên nhé!</td>
+                                    <td colspan="4" class="text-center text-muted py-4">{{ __('Bạn chưa quay lần nào. Hãy thực hiện lượt quay đầu tiên nhé!') }}</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -434,8 +434,8 @@
         if (spinBtn.classList.contains('disabled')) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Hết lượt quay!',
-                text: 'Bạn cần hoàn thành thêm đơn hàng để nhận thêm vé quay nhé!',
+                title: @json(__('Hết lượt quay!')),
+                text: @json(__('Bạn cần hoàn thành thêm đơn hàng để nhận thêm vé quay nhé!')),
                 confirmButtonColor: '#ff5e00',
             });
             return;
@@ -466,16 +466,6 @@
             const luckyWheel = document.getElementById('luckyWheel');
 
             // 6 segments, each is 60 degrees.
-            // SVG indices are:
-            // Slice 0 (10k)
-            // Slice 1 (5k)
-            // Slice 2 (2k)
-            // Slice 3 (50k)
-            // Slice 4 (25k)
-            // Slice 5 (15k)
-            
-            // To make the wheel stop at the correct index at the top marker (12 o'clock / 270 degrees in SVG coordinates):
-            // The center of Segment i is (i * 60) + 30. To align with 270 degrees, rotation is 270 - ((i * 60) + 30) = 240 - (i * 60)
             const randomOffset = Math.floor(Math.random() * 24) - 12; // ±12 degrees variation for visual realism
             const targetDegree = (360 * 5) + 240 - (prizeIndex * 60) + randomOffset;
             
@@ -493,22 +483,27 @@
                 // Re-enable button if they still have tickets
                 if (data.spin_tickets > 0) {
                     spinBtn.classList.remove('disabled');
-                    spinBtn.textContent = 'Quay';
+                    spinBtn.textContent = @json(__('Quay'));
                 } else {
-                    spinBtn.textContent = 'Quay';
+                    spinBtn.textContent = @json(__('Quay'));
                 }
 
                 // Celebrate with confetti!
                 triggerConfetti();
 
                 // Alert congratulations
+                const congratsTitle = @json(__('🎉 CHÚC MỪNG BẠN! 🎉'));
+                const congratsHtml = @json(__('Bạn đã quay trúng <strong>:prize</strong>!<br><br>Mã giảm giá của bạn:<br>'))
+                    .replace(':prize', prize.label) + 
+                    `<span class="fs-4 fw-bold text-danger px-3 py-2 border border-danger border-dashed rounded d-inline-block mt-2" style="font-family: monospace;">${prize.code}</span>`;
+
                 Swal.fire({
-                    title: '🎉 CHÚC MỪNG BẠN! 🎉',
-                    html: `Bạn đã quay trúng <strong>${prize.label}</strong>!<br><br>Mã giảm giá của bạn:<br><span class="fs-4 fw-bold text-danger px-3 py-2 border border-danger border-dashed rounded d-inline-block mt-2" style="font-family: monospace;">${prize.code}</span>`,
+                    title: congratsTitle,
+                    html: congratsHtml,
                     icon: 'success',
                     showCancelButton: true,
-                    confirmButtonText: '<i class="fa-solid fa-copy me-1"></i> Sao chép mã',
-                    cancelButtonText: 'Đóng',
+                    confirmButtonText: '<i class="fa-solid fa-copy me-1"></i> ' + @json(__('Sao chép mã')),
+                    cancelButtonText: @json(__('Đóng')),
                     confirmButtonColor: '#ff5e00',
                     cancelButtonColor: '#64748b'
                 }).then((result) => {
@@ -529,21 +524,23 @@
                 const timeStr = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
                 
                 const newRow = historyTable.insertRow(0);
+                const discountText = @json(__('Thẻ giảm giá'));
+                const unusedText = @json(__('Chưa dùng'));
                 newRow.innerHTML = `
                     <td>
                         <div class="fw-semibold">${dateStr}</div>
                         <div class="small opacity-50" style="font-size: 0.75rem;">${timeStr}</div>
                     </td>
                     <td class="fw-bold" style="color: rgba(255, 255, 255, 0.95);">
-                        <span class="d-none d-sm-inline">Thẻ giảm giá </span>${prize.value.toLocaleString('vi-VN')}đ
+                        <span class="d-none d-sm-inline">${discountText} </span>${locale === 'en' ? '$' + (prize.value / 25000).toFixed(2) : prize.value.toLocaleString('vi-VN') + 'đ'}
                     </td>
                     <td>
-                        <div class="coupon-code-badge" onclick="copyToClipboard('${prize.code}')" title="Bấm để sao chép">
+                        <div class="coupon-code-badge" onclick="copyToClipboard('${prize.code}')" title="${@json(__('Bấm để sao chép'))}">
                             <span>${prize.code}</span>
                             <i class="fa-regular fa-copy"></i>
                         </div>
                     </td>
-                    <td><span class="badge-status badge-unused">Chưa dùng</span></td>
+                    <td><span class="badge-status badge-unused">${unusedText}</span></td>
                 `;
 
                 // Reset wheel transition and angle quickly to allow another spin smoothly
@@ -558,12 +555,12 @@
         .catch(err => {
             isSpinning = false;
             spinBtn.classList.remove('disabled');
-            spinBtn.textContent = 'Quay';
+            spinBtn.textContent = @json(__('Quay'));
             
             Swal.fire({
                 icon: 'error',
-                title: 'Lỗi',
-                text: err.message || 'Có lỗi xảy ra, vui lòng thử lại sau!'
+                title: @json(__('Lỗi')),
+                text: err.message || @json(__('Có lỗi xảy ra, vui lòng thử lại sau!'))
             });
         });
     });
@@ -585,7 +582,6 @@
             }
 
             const particleCount = 50 * (timeLeft / duration);
-            // since particles fall down, animate a bit higher than random
             confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
             confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
         }, 250);
@@ -597,13 +593,13 @@
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
-                title: 'Đã sao chép mã giảm giá!',
+                title: @json(__('Đã sao chép mã giảm giá!')),
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true,
             });
         }).catch(err => {
-            console.error('Không thể sao chép: ', err);
+            console.error('Copy failed: ', err);
         });
     }
 </script>

@@ -144,6 +144,17 @@
                             @enderror
                         </div>
 
+                        <!-- Tên tính năng (Tiếng Anh) -->
+                        <div class="mb-4">
+                            <label for="name_en" class="form-label text-success">Tên tính năng (Tiếng Anh)</label>
+                            <input type="text" class="form-control @error('name_en') is-invalid @enderror" 
+                                   id="name_en" name="name_en" value="{{ old('name_en', $feature->name_en) }}" 
+                                   placeholder="e.g. High Performance, Long Battery Life, Premium Design...">
+                            @error('name_en')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Mô tả -->
                         <div class="mb-4">
                             <label for="description" class="form-label">Mô tả chi tiết</label>
@@ -151,6 +162,17 @@
                                       id="description" name="description" rows="4" 
                                       placeholder="Mô tả chi tiết về tính năng này...">{{ old('description', $feature->description) }}</textarea>
                             @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Mô tả (Tiếng Anh) -->
+                        <div class="mb-4">
+                            <label for="description_en" class="form-label text-success">Mô tả chi tiết (Tiếng Anh)</label>
+                            <textarea class="form-control @error('description_en') is-invalid @enderror" 
+                                      id="description_en" name="description_en" rows="4" 
+                                      placeholder="Detailed description of this feature in English...">{{ old('description_en', $feature->description_en) }}</textarea>
+                            @error('description_en')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

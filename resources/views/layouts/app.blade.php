@@ -22,8 +22,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="google-site-verification" content="JXAkwIu8Sp6m3NoBdys1fP9YRH7eeUiiVQ49OEGUSqw" />
-    <title>@yield('title', 'Dùng Thử | AI | Blog | Khám Phá')</title>
-    <meta name="description" content="@yield('meta_description', 'Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.')">
+    <title>@yield('title', __('Dùng Thử | AI | Blog | Khám Phá'))</title>
+    <meta name="description" content="@yield('meta_description', __('Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.'))">
     <meta name="keywords" content="@yield('meta_keywords', 'dung thu, dungthu, dungthu.com, dung thu ai, blog cong nghe, mua sam truc tuyen, san pham so, kham pha ai')">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="@yield('canonical', url()->current())">
@@ -31,8 +31,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="@yield('canonical', url()->current())">
-    <meta property="og:title" content="@yield('title', 'Dùng Thử | AI | Blog | Khám Phá')">
-    <meta property="og:description" content="@yield('meta_description', 'Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.')">
+    <meta property="og:title" content="@yield('title', __('Dùng Thử | AI | Blog | Khám Phá'))">
+    <meta property="og:description" content="@yield('meta_description', __('Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.'))">
     <meta property="og:image" content="@yield('og_image', asset('images/dungthu-seo.png'))">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
@@ -41,8 +41,8 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="@yield('canonical', url()->current())">
-    <meta property="twitter:title" content="@yield('title', 'Dùng Thử | AI | Blog | Khám Phá')">
-    <meta property="twitter:description" content="@yield('meta_description', 'Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.')">
+    <meta property="twitter:title" content="@yield('title', __('Dùng Thử | AI | Blog | Khám Phá'))">
+    <meta property="twitter:description" content="@yield('meta_description', __('Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.'))">
     <meta property="twitter:image" content="@yield('og_image', asset('images/dungthu-seo.png'))">
     
     <!-- Favicon -->
@@ -161,10 +161,10 @@
 
                 e.preventDefault();
 
-                const pin = window.prompt('Nhập mã xác nhận để thực hiện thao tác');
+                const pin = window.prompt(@json(__('Nhập mã xác nhận để thực hiện thao tác')));
                 if (pin === null) return;
                 if (!/^\d{3}$/.test(pin)) {
-                    alert('Mã xác nhận phải đúng 3 số.');
+                    alert(@json(__('Mã xác nhận phải đúng 3 số.')));
                     return;
                 }
 
@@ -188,7 +188,7 @@
     <script>
         Swal.fire({
             icon: 'success',
-            title: 'Thành công!',
+            title: @json(__('Thành công!')),
             text: '{{ session()->pull('success') }}',
             toast: true,
             position: 'top-end',
@@ -217,7 +217,7 @@
     <script>
         Swal.fire({
             icon: 'error',
-            title: 'Lỗi!',
+            title: @json(__('Lỗi!')),
             text: '{{ session('error') }}',
             toast: true,
             position: 'top-end',

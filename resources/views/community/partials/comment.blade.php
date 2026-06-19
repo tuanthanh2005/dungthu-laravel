@@ -8,10 +8,10 @@
             @if($comment->parent)
                 <div class="reply-to mb-1">
                     <i class="fas fa-reply"></i>
-                    {{ $comment->parent->user->name ?? 'Khách' }}
+                    {{ $comment->parent->user->name ?? __('Khách') }}
                 </div>
             @endif
-            <div class="fw-bold">{{ $comment->user->name ?? 'Khách' }}</div>
+            <div class="fw-bold">{{ $comment->user->name ?? __('Khách') }}</div>
             <div class="small text-muted">{{ $comment->created_at->format('d/m/Y H:i') }}</div>
         </div>
         @auth
@@ -22,10 +22,10 @@
                     </button>
                 @endcan
                 @can('community-comment.delete', $comment)
-                    <form method="POST" action="{{ route('community.comments.delete', $comment) }}" onsubmit="return confirm('Xóa bình luận này?');">
+                    <form method="POST" action="{{ route('community.comments.delete', $comment) }}" onsubmit="return confirm('{{ __('Xóa bình luận này?') }}');">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-sm btn-outline-danger" type="submit">Xóa</button>
+                        <button class="btn btn-sm btn-outline-danger" type="submit">{{ __('Xóa') }}</button>
                     </form>
                 @endcan
             </div>
@@ -44,9 +44,9 @@
         <form method="POST" action="{{ route('community.comments.store', $post) }}">
             @csrf
             <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-            <textarea name="content" rows="3" class="form-control" placeholder="Viết trả lời..." required></textarea>
+            <textarea name="content" rows="3" class="form-control" placeholder="{{ __('Viết trả lời...') }}" required></textarea>
             @error('content')<small class="text-danger">{{ $message }}</small>@enderror
-            <button type="submit" class="btn btn-sm btn-primary mt-2">Gửi trả lời</button>
+            <button type="submit" class="btn btn-sm btn-primary mt-2">{{ __('Gửi trả lời') }}</button>
         </form>
     </div>
 
@@ -56,7 +56,7 @@
                 @csrf
                 @method('PUT')
                 <textarea name="content" rows="3" class="form-control" required>{{ $comment->content }}</textarea>
-                <button type="submit" class="btn btn-sm btn-primary mt-2">Lưu</button>
+                <button type="submit" class="btn btn-sm btn-primary mt-2">{{ __('Lưu') }}</button>
             </form>
         </div>
     @endcan
@@ -75,7 +75,7 @@
         @if($hiddenReplies->count())
             <div>
                 <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#more-replies-{{ $comment->id }}">
-                    Xem thêm {{ $hiddenReplies->count() }} phản hồi
+                    {{ __('Xem thêm') }} {{ $hiddenReplies->count() }} {{ __('phản hồi') }}
                 </button>
             </div>
             <div class="collapse d-flex flex-column gap-2" id="more-replies-{{ $comment->id }}">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Quên Mật Khẩu - DungThu.com')
+@section('title', __('Quên Mật Khẩu') . ' - DungThu.com')
 
 @push('styles')
     <style>
@@ -186,8 +186,8 @@
 
         <!-- Right Side -->
         <div class="auth-right">
-            <h2 class="auth-title">Quên Mật Khẩu?</h2>
-            <p class="auth-subtitle">Nhập email để nhận link đặt lại mật khẩu</p>
+            <h2 class="auth-title">{{ __('Quên Mật Khẩu?') }}</h2>
+            <p class="auth-subtitle">{{ __('Nhập email để nhận link đặt lại mật khẩu') }}</p>
 
             @if ($errors->any())
                 <div class="alert alert-danger border-0 rounded-4 mb-2 py-1 px-3 small shadow-sm" role="alert" style="font-size: 11px;">
@@ -209,16 +209,16 @@
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" name="email" class="auth-input" placeholder="Email của bạn" value="{{ old('email') }}" required>
+                        <input type="email" name="email" class="auth-input" placeholder="{{ __('Email của bạn') }}" value="{{ old('email') }}" required>
                     </div>
                 </div>
 
                 <button type="submit" class="auth-btn">
-                    Gửi Link Đặt Lại
+                    {{ __('Gửi Link Đặt Lại') }}
                 </button>
 
                 <a href="{{ route('login') }}" class="back-link">
-                    <i class="fas fa-arrow-left me-2"></i> Quay lại Đăng nhập
+                    <i class="fas fa-arrow-left me-2"></i> {{ __('Quay lại Đăng nhập') }}
                 </a>
             </form>
         </div>

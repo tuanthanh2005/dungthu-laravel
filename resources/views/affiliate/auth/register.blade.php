@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Đăng ký Cộng tác viên | DungThu')
-@section('meta_description', 'Đăng ký trở thành cộng tác viên DungThu và kiếm thu nhập hấp dẫn.')
+@section('title', __('Đăng ký Cộng tác viên') . ' | DungThu')
+@section('meta_description', __('Đăng ký trở thành cộng tác viên DungThu và kiếm thu nhập hấp dẫn.'))
 
 @push('styles')
 <style>
@@ -242,18 +242,18 @@
 <div class="aff-register-wrapper">
     <div class="reg-card" data-aos="fade-up">
         <div class="reg-header">
-            <div class="ctv-badge"><i class="fas fa-star"></i>Cộng Tác Viên</div>
-            <h1>Đăng ký tham gia</h1>
-            <p>Điền đầy đủ thông tin bên dưới. Admin sẽ duyệt hồ sơ trong 24 giờ.</p>
+            <div class="ctv-badge"><i class="fas fa-star"></i>{{ __('Cộng Tác Viên') }}</div>
+            <h1>{{ __('Đăng ký tham gia') }}</h1>
+            <p>{{ __('Điền đầy đủ thông tin bên dưới. Admin sẽ duyệt hồ sơ trong 24 giờ.') }}</p>
         </div>
 
         <!-- Benefits -->
         <div class="benefit-list">
-            <h6><i class="fas fa-gift me-2"></i>Quyền lợi khi tham gia</h6>
-            <div class="benefit-item"><i class="fas fa-check-circle"></i>Hoa hồng <strong>5%</strong> trên mỗi đơn hàng giới thiệu thành công</div>
-            <div class="benefit-item"><i class="fas fa-check-circle"></i>Rút tiền linh hoạt qua chuyển khoản ngân hàng</div>
-            <div class="benefit-item"><i class="fas fa-check-circle"></i>Dashboard quản lý thu nhập chuyên nghiệp</div>
-            <div class="benefit-item"><i class="fas fa-check-circle"></i>Hỗ trợ 24/7 qua Zalo & Telegram</div>
+            <h6><i class="fas fa-gift me-2"></i>{{ __('Quyền lợi khi tham gia') }}</h6>
+            <div class="benefit-item"><i class="fas fa-check-circle"></i>{{ __('Hoa hồng :percent trên mỗi đơn hàng giới thiệu thành công', ['percent' => '5%']) }}</div>
+            <div class="benefit-item"><i class="fas fa-check-circle"></i>{{ __('Rút tiền linh hoạt qua chuyển khoản ngân hàng') }}</div>
+            <div class="benefit-item"><i class="fas fa-check-circle"></i>{{ __('Dashboard quản lý thu nhập chuyên nghiệp') }}</div>
+            <div class="benefit-item"><i class="fas fa-check-circle"></i>{{ __('Hỗ trợ 24/7 qua Zalo & Telegram') }}</div>
         </div>
 
         @if($errors->any())
@@ -268,30 +268,30 @@
             @csrf
 
             <!-- Thông tin cá nhân -->
-            <div class="section-title"><i class="fas fa-user"></i>Thông tin cá nhân</div>
+            <div class="section-title"><i class="fas fa-user"></i>{{ __('Thông tin cá nhân') }}</div>
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="aff-label">Họ và tên <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Họ và tên') }} <span class="aff-required">*</span></label>
                     <input type="text" name="name" class="aff-input @error('name') is-invalid @enderror"
-                           placeholder="Nguyễn Văn A" value="{{ old('name') }}" required>
+                           placeholder="{{ __('Nguyễn Văn A') }}" value="{{ old('name') }}" required>
                     @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
-                    <label class="aff-label">Số điện thoại <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Số điện thoại') }} <span class="aff-required">*</span></label>
                     <input type="tel" name="phone" class="aff-input @error('phone') is-invalid @enderror"
                            placeholder="0912 345 678" value="{{ old('phone') }}" required>
                     @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-12">
-                    <label class="aff-label">Địa chỉ <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Địa chỉ') }} <span class="aff-required">*</span></label>
                     <input type="text" name="address" class="aff-input @error('address') is-invalid @enderror"
-                           placeholder="Số nhà, Đường, Phường/Xã, Quận/Huyện, Tỉnh/TP" value="{{ old('address') }}" required>
+                           placeholder="{{ __('Số nhà, Đường, Phường/Xã, Quận/Huyện, Tỉnh/TP') }}" value="{{ old('address') }}" required>
                     @error('address')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
 
             <!-- Tài khoản đăng nhập -->
-            <div class="section-title"><i class="fas fa-key"></i>Tài khoản đăng nhập</div>
+            <div class="section-title"><i class="fas fa-key"></i>{{ __('Tài khoản đăng nhập') }}</div>
             <div class="row g-3">
                 <div class="col-12">
                     <label class="aff-label">Email <span class="aff-required">*</span></label>
@@ -300,72 +300,72 @@
                     @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
-                    <label class="aff-label">Mật khẩu <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Mật khẩu') }} <span class="aff-required">*</span></label>
                     <input type="password" name="password" class="aff-input @error('password') is-invalid @enderror"
-                           placeholder="Ít nhất 8 ký tự" required>
+                           placeholder="{{ __('Ít nhất 8 ký tự') }}" required>
                     @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
-                    <label class="aff-label">Xác nhận mật khẩu <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Xác nhận mật khẩu') }} <span class="aff-required">*</span></label>
                     <input type="password" name="password_confirmation" class="aff-input"
-                           placeholder="Nhập lại mật khẩu" required>
+                           placeholder="{{ __('Nhập lại mật khẩu') }}" required>
                 </div>
             </div>
 
             <!-- CCCD -->
-            <div class="section-title"><i class="fas fa-id-card"></i>Căn cước công dân (CCCD)</div>
+            <div class="section-title"><i class="fas fa-id-card"></i>{{ __('Căn cước công dân (CCCD)') }}</div>
             <div class="row g-3">
                 <div class="col-12">
-                    <label class="aff-label">Số CCCD / CMND <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Số CCCD / CMND') }} <span class="aff-required">*</span></label>
                     <input type="text" name="cccd_number" class="aff-input @error('cccd_number') is-invalid @enderror"
                            placeholder="012345678901" value="{{ old('cccd_number') }}" required>
                     @error('cccd_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
-                    <label class="aff-label">Ảnh CCCD mặt trước <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Ảnh CCCD mặt trước') }} <span class="aff-required">*</span></label>
                     <div class="cccd-upload-area" id="front-upload-area">
                         <input type="file" name="cccd_front" id="cccd_front" accept="image/*"
                                onchange="previewImage(this, 'front-preview', 'front-upload-area')" required>
                         <div id="front-placeholder">
                             <div class="upload-icon"><i class="fas fa-id-card"></i></div>
-                            <div class="upload-label">Click để upload ảnh mặt trước</div>
-                            <div class="upload-hint">JPG, PNG tối đa 5MB</div>
+                            <div class="upload-label">{{ __('Click để upload ảnh mặt trước') }}</div>
+                            <div class="upload-hint">{{ __('JPG, PNG tối đa 5MB') }}</div>
                         </div>
-                        <img id="front-preview" class="cccd-preview" alt="CCCD mặt trước">
+                        <img id="front-preview" class="cccd-preview" alt="{{ __('CCCD mặt trước') }}">
                     </div>
                     @error('cccd_front')<div class="invalid-feedback d-block mt-n3">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
-                    <label class="aff-label">Ảnh CCCD mặt sau <span class="aff-required">*</span></label>
+                    <label class="aff-label">{{ __('Ảnh CCCD mặt sau') }} <span class="aff-required">*</span></label>
                     <div class="cccd-upload-area" id="back-upload-area">
                         <input type="file" name="cccd_back" id="cccd_back" accept="image/*"
                                onchange="previewImage(this, 'back-preview', 'back-upload-area')" required>
                         <div id="back-placeholder">
                             <div class="upload-icon"><i class="fas fa-id-card-alt"></i></div>
-                            <div class="upload-label">Click để upload ảnh mặt sau</div>
-                            <div class="upload-hint">JPG, PNG tối đa 5MB</div>
+                            <div class="upload-label">{{ __('Click để upload ảnh mặt sau') }}</div>
+                            <div class="upload-hint">{{ __('JPG, PNG tối đa 5MB') }}</div>
                         </div>
-                        <img id="back-preview" class="cccd-preview" alt="CCCD mặt sau">
+                        <img id="back-preview" class="cccd-preview" alt="{{ __('CCCD mặt sau') }}">
                     </div>
                     @error('cccd_back')<div class="invalid-feedback d-block mt-n3">{{ $message }}</div>@enderror
                 </div>
             </div>
 
             <!-- Ngân hàng (tùy chọn) -->
-            <div class="section-title"><i class="fas fa-university"></i>Thông tin ngân hàng <small style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:normal;">(có thể bổ sung sau)</small></div>
+            <div class="section-title"><i class="fas fa-university"></i>{{ __('Thông tin ngân hàng') }} <small style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:normal;">({{ __('có thể bổ sung sau') }})</small></div>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="aff-label">Tên ngân hàng</label>
+                    <label class="aff-label">{{ __('Tên ngân hàng') }}</label>
                     <input type="text" name="bank_name" class="aff-input"
                            placeholder="Vietcombank, MB, TP..." value="{{ old('bank_name') }}">
                 </div>
                 <div class="col-md-4">
-                    <label class="aff-label">Số tài khoản</label>
+                    <label class="aff-label">{{ __('Số tài khoản') }}</label>
                     <input type="text" name="bank_account_number" class="aff-input"
                            placeholder="9012345678901" value="{{ old('bank_account_number') }}">
                 </div>
                 <div class="col-md-4">
-                    <label class="aff-label">Tên chủ tài khoản</label>
+                    <label class="aff-label">{{ __('Tên chủ tài khoản') }}</label>
                     <input type="text" name="bank_account_name" class="aff-input"
                            placeholder="NGUYEN VAN A" value="{{ old('bank_account_name') }}"
                            style="text-transform:uppercase;">
@@ -373,17 +373,17 @@
             </div>
 
             <button type="submit" class="aff-btn-register" id="submitBtn">
-                <i class="fas fa-paper-plane me-2"></i>Gửi đăng ký — Chờ duyệt trong 24h
+                <i class="fas fa-paper-plane me-2"></i>{{ __('Gửi đăng ký — Chờ duyệt trong 24h') }}
             </button>
         </form>
 
         <div class="text-center mt-4" style="color:rgba(255,255,255,0.6);font-size:14px;">
-            Đã có tài khoản?
-            <a href="{{ route('affiliate.login') }}" class="aff-link ms-1">Đăng nhập</a>
+            {{ __('Đã có tài khoản?') }}
+            <a href="{{ route('affiliate.login') }}" class="aff-link ms-1">{{ __('Đăng nhập') }}</a>
         </div>
         <div class="text-center mt-2">
             <a href="{{ route('home') }}" class="aff-link" style="font-size:13px;opacity:0.7;">
-                <i class="fas fa-arrow-left me-1"></i>Về trang chủ
+                <i class="fas fa-arrow-left me-1"></i>{{ __('Về trang chủ') }}
             </a>
         </div>
     </div>
@@ -409,7 +409,7 @@ function previewImage(input, previewId, areaId) {
 }
 
 document.getElementById('submitBtn').addEventListener('click', function() {
-    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
+    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + @json(__('Đang gửi...'));
     this.disabled = true;
     setTimeout(() => { this.form.submit(); }, 100);
 });

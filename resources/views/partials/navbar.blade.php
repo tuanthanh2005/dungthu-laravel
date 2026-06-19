@@ -79,7 +79,7 @@
 
         {{-- Compact menu for small laptops/tablets --}}
         <div class="dropdown d-none d-lg-block d-xl-none ms-auto me-2">
-            <button class="nav-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Mở menu">
+            <button class="nav-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('Mở menu') }}">
                 <i class="fa-solid fa-bars"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-techfeed">
@@ -140,7 +140,7 @@
                 <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 120px; border: none; border-radius: 12px;">
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 13.5px;">
-                            <span>🇻🇳</span> Tiếng Việt
+                            <span>🇻🇳</span> {{ __('Tiếng Việt') }}
                         </a>
                     </li>
                     <li>
@@ -316,7 +316,7 @@
                 <div>
                     <h5 class="modal-title fw-bold d-flex align-items-center gap-2 mb-0" id="quickContactModalLabel" style="font-size: 18px;">
                         <i class="fa-solid fa-headset"></i>
-                        Liên hệ & Nhắn tin nhanh
+                        {{ __('Liên hệ & Nhắn tin nhanh') }}
                     </h5>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; filter: invert(1) grayscale(1) brightness(2);"></button>
@@ -336,8 +336,8 @@
                             <i class="fa-solid fa-users"></i>
                         </div>
                         <div class="flex-grow-1 text-start">
-                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">GROUP ZALO HỖ TRỢ</h6>
-                            <p class="mb-0 text-muted" style="font-size: 12px;">Tham gia nhóm hỗ trợ thành viên</p>
+                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">{{ __('GROUP ZALO HỖ TRỢ') }}</h6>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">{{ __('Tham gia nhóm hỗ trợ thành viên') }}</p>
                         </div>
                         <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
                     </a>
@@ -352,8 +352,8 @@
                             <i class="fa-brands fa-facebook"></i>
                         </div>
                         <div class="flex-grow-1 text-start">
-                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">FANPAGE FACEBOOK</h6>
-                            <p class="mb-0 text-muted" style="font-size: 12px;">Gửi tin nhắn qua Fanpage chính thức</p>
+                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">{{ __('FANPAGE FACEBOOK') }}</h6>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">{{ __('Gửi tin nhắn qua Fanpage chính thức') }}</p>
                         </div>
                         <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
                     </a>
@@ -368,8 +368,8 @@
                             <i class="fa-solid fa-comment-dots"></i>
                         </div>
                         <div class="flex-grow-1 text-start">
-                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">CHAT ZALO ADMIN</h6>
-                            <p class="mb-0 text-muted" style="font-size: 12px;">Zalo liên hệ: 0772698113</p>
+                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">{{ __('CHAT ZALO ADMIN') }}</h6>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">{{ __('Zalo liên hệ: 0772698113') }}</p>
                         </div>
                         <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
                     </a>
@@ -379,7 +379,7 @@
             
             {{-- Footer --}}
             <div class="modal-footer border-0 justify-content-center py-2" style="background-color: #f1f3f5;">
-                <span class="text-muted" style="font-size: 11px; font-weight: 500;">DungThu.com hân hạnh hỗ trợ!</span>
+                <span class="text-muted" style="font-size: 11px; font-weight: 500;">{{ __('DungThu.com hân hạnh hỗ trợ!') }}</span>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Đăng Nhập - DungThu.com')
+@section('title', __('Đăng Nhập') . ' - DungThu.com')
 
 @push('styles')
     <style>

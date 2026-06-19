@@ -1,6 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Giỏ Hàng - DungThu.com')
+@section('title', __('Giỏ Hàng') . ' - DungThu.com')
+
+@php
+    $formatPrice = function($amount) {
+        if (app()->getLocale() === 'en') {
+            return '$' . number_format($amount, 2);
+        }
+        $locale = app()->getLocale();
+    if ($locale === 'en') {
+        return '$' . number_format($amount / 25000, 2, '.', ',');
+    }
+    return number_format($amount, 0, ',', '.') . 'đ';
+    };
+@endphp
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -330,8 +343,8 @@
 <div class="container py-4" style="margin-top: 50px;">
     <!-- Header -->
     <div class="cart-header" data-aos="fade-down">
-        <h1>Giỏ Hàng Của Bạn</h1>
-        <p>Kiểm tra lại các sản phẩm trước khi tiến hành thanh toán</p>
+        <h1>{{ __('Giỏ Hàng Của Bạn') }}</h1>
+        <p>{{ __('Kiểm tra lại các sản phẩm trước khi tiến hành thanh toán') }}</p>
     </div>
     
     @if(session('cart') && count(session('cart')) > 0)
@@ -352,7 +365,7 @@
                         <a href="{{ route('product.show', \Str::slug($details['name'])) }}" class="text-decoration-none">
                             <h3 class="cart-item-title">{{ $details['name'] }}</h3>
                         </a>
-                        <div class="cart-item-price">{{ number_format($details['price'], 0, ',', '.') }}đ</div>
+                        <div class="cart-item-price">{{ $formatPrice($details['price']) }}</div>
                     </div>
                     
                     <!-- Hide on mobile, show on desktop -->
@@ -360,20 +373,20 @@
                         <div class="qty-wrapper">
                             <form action="{{ route('cart.decrement', $id) }}" method="POST" class="m-0 p-0">
                                 @csrf
-                                <button type="submit" class="btn-qty" aria-label="Giảm"><i class="fas fa-minus"></i></button>
+                                <button type="submit" class="btn-qty" aria-label="{{ __('Giảm') }}"><i class="fas fa-minus"></i></button>
                             </form>
                             <input type="number" value="{{ $details['quantity'] }}" class="qty-input" readonly>
                             <form action="{{ route('cart.increment', $id) }}" method="POST" class="m-0 p-0">
                                 @csrf
-                                <button type="submit" class="btn-qty" aria-label="Tăng"><i class="fas fa-plus"></i></button>
+                                <button type="submit" class="btn-qty" aria-label="{{ __('Tăng') }}"><i class="fas fa-plus"></i></button>
                             </form>
                         </div>
                         
                         <div class="cart-item-total">
-                            {{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}đ
+                            {{ $formatPrice($details['price'] * $details['quantity']) }}
                         </div>
                         
-                        <a href="{{ route('cart.remove', $id) }}" class="btn-delete" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
+                        <a href="{{ route('cart.remove', $id) }}" class="btn-delete" title="{{ __('Xóa') }}" onclick="return confirm('{{ __('Bạn có chắc chắn muốn xóa sản phẩm này?') }}')">
                             <i class="fas fa-trash-alt"></i>
                         </a>
                     </div>
@@ -394,10 +407,10 @@
                     </div>
                     
                     <div class="cart-item-total">
-                        {{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}đ
+                        {{ $formatPrice($details['price'] * $details['quantity']) }}
                     </div>
                     
-                    <a href="{{ route('cart.remove', $id) }}" class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                    <a href="{{ route('cart.remove', $id) }}" class="btn-delete" onclick="return confirm('{{ __('Bạn có chắc chắn muốn xóa?') }}')">
                         <i class="fas fa-trash-alt"></i>
                     </a>
                 </div>
@@ -407,7 +420,7 @@
             <!-- Continue Shopping Button -->
             <div class="mt-4" data-aos="fade-up">
                 <a href="{{ route('shop') }}" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm" style="color: #636e72;">
-                    <i class="fas fa-arrow-left me-2"></i> Tiếp tục mua sắm
+                    <i class="fas fa-arrow-left me-2"></i> {{ __('Tiếp tục mua sắm') }}
                 </a>
             </div>
         </div>
@@ -416,40 +429,40 @@
         <div class="col-lg-4">
             <div class="cart-summary" data-aos="fade-left" data-aos-delay="100">
                 <div class="summary-title">
-                    <i class="fas fa-receipt"></i> Tóm tắt đơn hàng
+                    <i class="fas fa-receipt"></i> {{ __('Tóm tắt đơn hàng') }}
                 </div>
                 
                 <div class="summary-row">
-                    <span>Tạm tính</span>
-                    <span>{{ number_format($total, 0, ',', '.') }}đ</span>
+                    <span>{{ __('Tạm tính') }}</span>
+                    <span>{{ $formatPrice($total) }}</span>
                 </div>
                 
                 <div class="summary-row">
-                    <span>Phí vận chuyển</span>
-                    <span class="text-warning fw-bold">Miễn phí</span>
+                    <span>{{ __('Phí vận chuyển') }}</span>
+                    <span class="text-warning fw-bold">{{ __('Miễn phí') }}</span>
                 </div>
                 
                 <div class="summary-row total-row">
-                    <span>Tổng cộng</span>
-                    <span>{{ number_format($total, 0, ',', '.') }}đ</span>
+                    <span>{{ __('Tổng cộng') }}</span>
+                    <span>{{ $formatPrice($total) }}</span>
                 </div>
 
                 <a href="{{ route('checkout') }}" class="btn btn-checkout">
-                    <i class="fas fa-credit-card me-2"></i> Thanh Toán Ngay
+                    <i class="fas fa-credit-card me-2"></i> {{ __('Thanh Toán Ngay') }}
                 </a>
 
                 <div class="trust-badges">
                     <div class="trust-badge">
                         <i class="fas fa-shield-alt fs-5 text-warning"></i>
-                        <span>Thanh toán an toàn & bảo mật</span>
+                        <span>{{ __('Thanh toán an toàn & bảo mật') }}</span>
                     </div>
                     <div class="trust-badge">
                         <i class="fas fa-bolt fs-5 text-warning"></i>
-                        <span>Giao hàng / Xử lý cực nhanh</span>
+                        <span>{{ __('Giao hàng / Xử lý cực nhanh') }}</span>
                     </div>
                     <div class="trust-badge">
                         <i class="fas fa-headset fs-5 text-warning"></i>
-                        <span>Hỗ trợ khách hàng 24/7</span>
+                        <span>{{ __('Hỗ trợ khách hàng 24/7') }}</span>
                     </div>
                 </div>
             </div>
@@ -459,10 +472,10 @@
     <!-- Empty Cart State -->
     <div class="empty-cart" data-aos="zoom-in">
         <i class="fas fa-shopping-basket empty-icon"></i>
-        <h2 class="fw-bold mb-3" style="color: #2d3436;">Giỏ hàng trống</h2>
-        <p class="text-muted mb-4 fs-5">Bạn chưa chọn sản phẩm nào vào giỏ hàng.</p>
+        <h2 class="fw-bold mb-3" style="color: #2d3436;">{{ __('Giỏ hàng trống') }}</h2>
+        <p class="text-muted mb-4 fs-5">{{ __('Bạn chưa chọn sản phẩm nào vào giỏ hàng.') }}</p>
         <a href="{{ route('shop') }}" class="btn btn-lg rounded-pill px-5 shadow-sm" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; font-weight: 700;">
-            <i class="fas fa-shopping-bag me-2"></i> Khám Phá Sản Phẩm Ngay
+            <i class="fas fa-shopping-bag me-2"></i> {{ __('Khám Phá Sản Phẩm Ngay') }}
         </a>
     </div>
     @endif

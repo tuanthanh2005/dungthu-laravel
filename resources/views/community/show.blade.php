@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $post->title . ' - Cộng Đồng')
+@section('title', $post->title . ' - ' . __('Cộng Đồng') . "')"
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -86,13 +86,13 @@
 <div class="container py-5 community-page" style="margin-top: 50px; max-width: 980px;">
     <div class="d-flex align-items-center gap-2 mb-3">
         <a href="{{ route('community.index') }}" class="text-decoration-none">
-            <i class="fas fa-arrow-left"></i> Quay lại
+            <i class="fas fa-arrow-left"></i> {{ __('Quay lại') }}
         </a>
     </div>
 
     <div class="community-post-card mb-4">
         <div class="small text-muted mb-2">
-            <i class="far fa-user"></i> {{ $post->user->name ?? 'Thành viên' }}
+            <i class="far fa-user"></i> {{ $post->user->name ?? __('Thành viên') }}
             <span class="mx-2">•</span>
             <i class="far fa-clock"></i> {{ $post->created_at->format('d/m/Y H:i') }}
         </div>
@@ -104,15 +104,15 @@
                 <div class="d-flex gap-2 mt-4">
                     @can('community-post.update', $post)
                         <a href="{{ route('community.edit', $post) }}" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-edit me-1"></i>Sửa bài
+                            <i class="fas fa-edit me-1"></i>{{ __('Sửa bài') }}
                         </a>
                     @endcan
                     @can('community-post.delete', $post)
-                        <form method="POST" action="{{ route('community.delete', $post) }}" onsubmit="return confirm('Xóa bài viết này?');">
+                        <form method="POST" action="{{ route('community.delete', $post) }}" onsubmit="return confirm('{{ __('Xóa bài viết này?') }}');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="fas fa-trash me-1"></i>Xóa bài
+                                <i class="fas fa-trash me-1"></i>{{ __('Xóa bài') }}
                             </button>
                         </form>
                     @endcan
@@ -126,16 +126,16 @@
 
         <form method="POST" action="{{ route('community.comments.store', $post) }}" class="mb-3">
             @csrf
-            <textarea name="content" rows="3" class="form-control" placeholder="Viết bình luận..." required></textarea>
+            <textarea name="content" rows="3" class="form-control" placeholder="{{ __('Viết bình luận...') }}" required></textarea>
             @error('content')<small class="text-danger">{{ $message }}</small>@enderror
-            <button type="submit" class="btn btn-primary mt-2">Gửi</button>
+            <button type="submit" class="btn btn-primary mt-2">{{ __('Gửi') }}</button>
         </form>
 
         <div class="d-flex flex-column gap-3">
             @forelse($post->comments->whereNull('parent_id')->values() as $comment)
                 @include('community.partials.comment', ['comment' => $comment, 'post' => $post, 'level' => 0])
             @empty
-                <div class="alert alert-light border">Chưa có bình luận nào.</div>
+                <div class="alert alert-light border">{{ __('Chưa có bình luận nào.') }}</div>
             @endforelse
         </div>
     </div>

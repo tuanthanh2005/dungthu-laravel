@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Chỉnh Sửa Bài Viết')
+@section('title', __('Chỉnh Sửa Bài Viết'))
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -8,26 +8,26 @@
 
 @section('content')
 <div class="container py-2" style="margin-top: 50px; max-width: 900px;">
-    <h2 class="fw-bold mb-4">Chỉnh sửa bài viết</h2>
+    <h2 class="fw-bold mb-4">{{ __('Chỉnh sửa bài viết') }}</h2>
 
     <form method="POST" action="{{ route('community.update', $post) }}">
         @csrf
         @method('PUT')
         <div class="mb-3">
-            <label class="form-label fw-bold">Tiêu đề</label>
+            <label class="form-label fw-bold">{{ __('Tiêu đề') }}</label>
             <input type="text" name="title" class="form-control" value="{{ old('title', $post->title) }}" required>
             @error('title')<small class="text-danger">{{ $message }}</small>@enderror
         </div>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Nội dung</label>
+            <label class="form-label fw-bold">{{ __('Nội dung') }}</label>
             <textarea id="community-editor" name="content" rows="10" class="form-control">{{ old('content', html_entity_decode($post->content, ENT_QUOTES, 'UTF-8')) }}</textarea>
             @error('content')<small class="text-danger">{{ $message }}</small>@enderror
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ route('community.show', $post) }}" class="btn btn-light">Hủy</a>
-            <button type="submit" class="btn btn-primary">Lưu</button>
+            <a href="{{ route('community.show', $post) }}" class="btn btn-light">{{ __('Hủy') }}</a>
+            <button type="submit" class="btn btn-primary">{{ __('Lưu') }}</button>
         </div>
     </form>
 </div>
@@ -89,7 +89,7 @@
             const content = tinymce.get('community-editor').getContent();
             if (!content || content.trim() === '') {
                 e.preventDefault();
-                alert('Vui lòng nhập nội dung bài viết!');
+                alert(@json(__('Vui lòng nhập nội dung bài viết!')));
                 tinymce.get('community-editor').focus();
                 return false;
             }

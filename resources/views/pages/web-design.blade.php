@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Thiết kế website giá rẻ')
+@section('title', __('Thiết kế website giá rẻ'))
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -32,8 +32,8 @@
 <div class="container py-2" style="margin-top: 50px;">
     <div class="row mb-4" data-aos="fade-down">
         <div class="col-12 text-center">
-            <h1 class="fw-bold mb-3">Thiết kế website giá rẻ</h1>
-            <p class="text-muted">Trao đổi nhanh, chốt trong 1-2 tiếng. Thiết kế chuẩn SEO, tối ưu mobile, bàn giao nhanh.</p>
+            <h1 class="fw-bold mb-3">{{ __('Thiết kế website giá rẻ') }}</h1>
+            <p class="text-muted">{{ __('Trao đổi nhanh, chốt trong 1-2 tiếng. Thiết kế chuẩn SEO, tối ưu mobile, bàn giao nhanh.') }}</p>
         </div>
     </div>
 
@@ -43,12 +43,12 @@
                 <div class="card-body p-4">
                     <div class="d-flex flex-wrap justify-content-between align-items-end">
                         <div>
-                            <span class="text-primary fw-bold text-uppercase ls-1">Dịch vụ</span>
-                            <h3 class="fw-bold section-title mb-2">Thiết kế website giá rẻ</h3>
-                            <p class="text-muted mb-0">Chỉ nhận: website bán hàng, website blog, website tin tức. Vui lòng liên hệ qua Zalo hoặc Facebook. Thời gian thiết kế 3-14 ngày tùy độ phức tạp. Tên domain và hosting shop sẽ đứng hộ để bảo trì nâng cấp.</p>
+                            <span class="text-primary fw-bold text-uppercase ls-1">{{ __('Dịch vụ') }}</span>
+                            <h3 class="fw-bold section-title mb-2">{{ __('Thiết kế website giá rẻ') }}</h3>
+                            <p class="text-muted mb-0">{{ __('Chỉ nhận: website bán hàng, website blog, website tin tức. Vui lòng liên hệ qua Zalo hoặc Facebook. Thời gian thiết kế 3-14 ngày tùy độ phức tạp. Tên domain và hosting shop sẽ đứng hộ để bảo trì nâng cấp.') }}</p>
                         </div>
                         <a href="#" class="btn btn-primary rounded-pill px-4 mt-3 mt-md-0" data-bs-toggle="modal" data-bs-target="#contactModal">
-                            Nhận tư vấn
+                            {{ __('Nhận tư vấn') }}
                         </a>
                     </div>
                 </div>
@@ -60,55 +60,55 @@
         <div class="col">
             <div class="web-design-card">
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="fw-bold mb-0">Gói Starter</h6>
-                    <span class="badge bg-primary">Phổ biến</span>
+                    <h6 class="fw-bold mb-0">{{ __('Gói Starter') }}</h6>
+                    <span class="badge bg-primary">{{ __('Phổ biến') }}</span>
                 </div>
-                <div class="price">3.000.000đ</div>
+                <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(3000000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : '3.000.000đ' }}</div>
                 <ul class="text-muted small">
-                    <li>Website 1-3 trang (Trang chủ, Giới thiệu, Liên hệ)</li>
-                    <li>Thêm 1 trang sản phẩm</li>
-                    <li>Giao diện chuẩn mobile, hiển thị đẹp trên điện thoại</li>
-                    <li>Bao gồm tên miền + hosting 1 năm</li>
-                    <li>Phù hợp lưu lượng nhỏ; nếu vào đông sẽ tư vấn nâng cấp</li>
-                    <li>Tốc độ tải nhanh, tối ưu hình ảnh cơ bản</li>
-                    <li>Hỗ trợ chỉnh sửa nhỏ trong 7 ngày</li>
-                    <li>Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web</li>
+                    <li>{{ __('Website 1-3 trang (Trang chủ, Giới thiệu, Liên hệ)') }}</li>
+                    <li>{{ __('Thêm 1 trang sản phẩm') }}</li>
+                    <li>{{ __('Giao diện chuẩn mobile, hiển thị đẹp trên điện thoại') }}</li>
+                    <li>{{ __('Bao gồm tên miền + hosting 1 năm') }}</li>
+                    <li>{{ __('Phù hợp lưu lượng nhỏ; nếu vào đông sẽ tư vấn nâng cấp') }}</li>
+                    <li>{{ __('Tốc độ tải nhanh, tối ưu hình ảnh cơ bản') }}</li>
+                    <li>{{ __('Hỗ trợ chỉnh sửa nhỏ trong 7 ngày') }}</li>
+                    <li>{{ __('Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web') }}</li>
                 </ul>
             </div>
         </div>
         <div class="col">
             <div class="web-design-card">
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="fw-bold mb-0">Gói Business</h6>
-                    <span class="badge bg-success">Đề xuất</span>
+                    <h6 class="fw-bold mb-0">{{ __('Gói Business') }}</h6>
+                    <span class="badge bg-success">{{ __('Đề xuất') }}</span>
                 </div>
-                <div class="price">4.800.000đ</div>
+                <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(4800000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : '4.800.000đ' }}</div>
                 <ul class="text-muted small">
-                    <li>Website 5-7 trang (sản phẩm/dịch vụ, bảng giá, FAQ...)</li>
-                    <li>Form liên hệ + bản đồ Google Maps</li>
-                    <li>Bao gồm tên miền + hosting 1 năm</li>
+                    <li>{{ __('Website 5-7 trang (sản phẩm/dịch vụ, bảng giá, FAQ...)') }}</li>
+                    <li>{{ __('Form liên hệ + bản đồ Google Maps') }}</li>
+                    <li>{{ __('Bao gồm tên miền + hosting 1 năm') }}</li>
                     <li>Phù hợp lưu lượng vừa; nếu vào đông sẽ tư vấn nâng cấp</li>
-                    <li>Chuẩn SEO cơ bản (title, meta, sitemap)</li>
-                    <li>Hỗ trợ chỉnh sửa nội dung trong 30 ngày</li>
-                    <li>Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web</li>
+                    <li>{{ __('Chuẩn SEO cơ bản (title, meta, sitemap)') }}</li>
+                    <li>{{ __('Hỗ trợ chỉnh sửa nội dung trong 30 ngày') }}</li>
+                    <li>{{ __('Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web') }}</li>
                 </ul>
             </div>
         </div>
         <div class="col">
             <div class="web-design-card">
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="fw-bold mb-0">Gói Pro</h6>
-                    <span class="badge bg-warning text-dark">Nâng cao</span>
+                    <h6 class="fw-bold mb-0">{{ __('Gói Pro') }}</h6>
+                    <span class="badge bg-warning text-dark">{{ __('Nâng cao') }}</span>
                 </div>
-                <div class="price">6.700.000đ</div>
+                <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(6700000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : '6.700.000đ' }}</div>
                 <ul class="text-muted small">
-                    <li>Website 10+ trang, cấu trúc rõ ràng</li>
-                    <li>Blog + quản trị nội dung (đăng bài, danh mục)</li>
-                    <li>Bao gồm tên miền + hosting 1 năm</li>
-                    <li>Phù hợp lưu lượng lớn; nếu vào đông sẽ tư vấn nâng cấp</li>
-                    <li>Tracking & báo cáo (Google Analytics)</li>
-                    <li>Hỗ trợ bảo trì cơ bản 60 ngày</li>
-                    <li>Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web</li>
+                    <li>{{ __('Website 10+ trang, cấu trúc rõ ràng') }}</li>
+                    <li>{{ __('Blog + quản trị nội dung (đăng bài, danh mục)') }}</li>
+                    <li>{{ __('Bao gồm tên miền + hosting 1 năm') }}</li>
+                    <li>{{ __('Phù hợp lưu lượng lớn; nếu vào đông sẽ tư vấn nâng cấp') }}</li>
+                    <li>{{ __('Tracking & báo cáo (Google Analytics)') }}</li>
+                    <li>{{ __('Hỗ trợ bảo trì cơ bản 60 ngày') }}</li>
+                    <li>{{ __('Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web') }}</li>
                 </ul>
             </div>
         </div>

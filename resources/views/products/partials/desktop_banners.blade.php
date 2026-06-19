@@ -82,8 +82,8 @@
                 <div class="banner-icon-circle">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="banner-title">GROUP ZALO</div>
-                <div class="banner-subtitle">Tham gia nhóm hỗ trợ thành viên</div>
+                <div class="banner-title">{{ __('GROUP ZALO') }}</div>
+                <div class="banner-subtitle">{{ __('Tham gia nhóm hỗ trợ thành viên') }}</div>
             </a>
         </div>
         <div class="col-4">
@@ -93,8 +93,8 @@
                 <div class="banner-icon-circle">
                     <i class="fab fa-facebook-f"></i>
                 </div>
-                <div class="banner-title">Fanpage</div>
-                <div class="banner-subtitle">Theo dõi Fanpage chính thức</div>
+                <div class="banner-title">{{ __('Fanpage') }}</div>
+                <div class="banner-subtitle">{{ __('Theo dõi Fanpage chính thức') }}</div>
             </a>
         </div>
         <div class="col-4">
@@ -104,8 +104,8 @@
                 <div class="banner-icon-circle">
                     <i class="fas fa-headset"></i>
                 </div>
-                <div class="banner-title">Inbox Admin</div>
-                <div class="banner-subtitle">Liên hệ Zalo: 0772698113</div>
+                <div class="banner-title">{{ __('Inbox Admin') }}</div>
+                <div class="banner-subtitle">{{ __('Liên hệ Zalo: 0772698113') }}</div>
             </a>
         </div>
     </div>

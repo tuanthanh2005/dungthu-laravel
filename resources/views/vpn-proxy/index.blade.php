@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'VPN & Proxy Chuyên Nghiệp - DungThu.com')
-@section('meta_description', 'Dịch vụ VPN & Proxy tốc độ cao, ổn định, bảo mật. Đa dạng quốc gia, IP sạch, phù hợp cho cá nhân và doanh nghiệp.')
+@section('title', __('VPN & Proxy Chuyên Nghiệp - DungThu.com'))
+@section('meta_description', __('Dịch vụ VPN & Proxy tốc độ cao, ổn định, bảo mật. Đa dạng quốc gia, IP sạch, phù hợp cho cá nhân và doanh nghiệp.'))
 
 @push('styles')
 <style>
@@ -132,7 +132,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $tab == 'proxy' ? 'active' : '' }}" href="{{ route('vpn.tab', ['tab' => 'proxy']) }}">
-                <i class="fas fa-server me-2"></i>Dịch Vụ Proxy
+                <i class="fas fa-server me-2"></i>{{ __('Dịch Vụ Proxy') }}
             </a>
         </li>
     </ul>
@@ -163,7 +163,7 @@
                                         @endif
                                     </div>
                                     <a href="{{ route('product.show', $product->slug) }}" class="btn btn-outline-primary w-100 rounded-pill">
-                                        <i class="fas fa-shopping-cart me-2"></i>Xem Chi Tiết
+                                        <i class="fas fa-shopping-cart me-2"></i>{{ __('Xem Chi Tiết') }}
                                     </a>
                                 </div>
                             </div>
@@ -174,7 +174,7 @@
             @else
             <div class="text-center py-5 bg-white rounded-3 shadow-sm border" data-aos="fade-up" data-aos-delay="100">
                 <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Chưa có phần mềm VPN nào được thêm...</h5>
+                <h5 class="text-muted">{{ __('Chưa có phần mềm VPN nào được thêm...') }}</h5>
             </div>
             @endif
         </div>
@@ -188,12 +188,12 @@
                     <table class="table table-hover mb-0 text-center">
                         <thead>
                             <tr>
-                                <th class="text-start">Tên Gói Proxy</th>
-                                <th>Quốc Gia</th>
-                                <th>Giao Thức</th>
-                                <th>Thời Hạn</th>
-                                <th>Giá / Chu kỳ</th>
-                                <th>Thao Tác</th>
+                                <th class="text-start">{{ __('Tên Gói Proxy') }}</th>
+                                <th>{{ __('Quốc Gia') }}</th>
+                                <th>{{ __('Giao Thức') }}</th>
+                                <th>{{ __('Thời Hạn') }}</th>
+                                <th>{{ __('Giá / Chu kỳ') }}</th>
+                                <th>{{ __('Thao Tác') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -209,14 +209,22 @@
                                     <span class="badge bg-secondary">{{ $proxy->protocol ?? 'HTTP/SOCKS5' }}</span>
                                 </td>
                                 <td>
-                                    {{ $proxy->duration ?? '30 Ngày' }}
+                                    {{ $proxy->duration ?? __('30 Ngày') }}
                                 </td>
                                 <td>
-                                    <strong class="text-danger">{{ number_format($proxy->price, 0, ',', '.') }}đ</strong>
+                                    @if(app()->getLocale() === 'en')
+                                        @php
+                                            $rate = (float) \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000);
+                                            $priceUsd = (float) $proxy->price / $rate;
+                                        @endphp
+                                        <strong class="text-danger">${{ number_format($priceUsd, 2) }}</strong>
+                                    @else
+                                        <strong class="text-danger">{{ number_format($proxy->price, 0, ',', '.') }}đ</strong>
+                                    @endif
                                 </td>
                                 <td>
                                     <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-sm btn-success rounded-pill px-3">
-                                        <i class="fas fa-comment-dots me-1"></i>Mua ngay
+                                        <i class="fas fa-comment-dots me-1"></i>{{ __('Mua ngay') }}
                                     </a>
                                 </td>
                             </tr>
@@ -225,14 +233,14 @@
                     </table>
                 </div>
                 <div class="mt-3 text-end text-muted small" data-aos="fade-up" data-aos-delay="200">
-                    <i class="fas fa-info-circle me-1"></i> Proxy sẽ được cấp phát ngay sau khi thanh toán qua bộ phận hỗ trợ Zalo.
+                    <i class="fas fa-info-circle me-1"></i> {{ __('Proxy sẽ được cấp phát ngay sau khi thanh toán qua bộ phận hỗ trợ Zalo.') }}
                 </div>
             @else
                 <div class="text-center py-5 bg-white rounded-3 shadow-sm border" data-aos="fade-up" data-aos-delay="100">
                     <i class="fas fa-server fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Hệ thống đang cập nhật danh sách Proxy...</h5>
-                    <p>Vui lòng quay lại sau hoặc liên hệ bộ phận hỗ trợ qua Zalo để mua Proxy trực tiếp.</p>
-                    <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-primary rounded-pill mt-2"><i class="fas fa-comment-dots me-2"></i>Liên hệ Zalo</a>
+                    <h5 class="text-muted">{{ __('Hệ thống đang cập nhật danh sách Proxy...') }}</h5>
+                    <p>{{ __('Vui lòng quay lại sau hoặc liên hệ bộ phận hỗ trợ qua Zalo để mua Proxy trực tiếp.') }}</p>
+                    <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-primary rounded-pill mt-2"><i class="fas fa-comment-dots me-2"></i>{{ __('Liên hệ Zalo') }}</a>
                 </div>
             @endif
         </div>

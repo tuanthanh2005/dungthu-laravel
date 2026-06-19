@@ -27,7 +27,9 @@ class AdminBuffController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|unique:buff_servers|max:100',
+            'name_en' => 'nullable|max:100',
             'description' => 'nullable|max:500',
+            'description_en' => 'nullable|max:500',
             'is_active' => 'boolean',
         ]);
 
@@ -45,7 +47,9 @@ class AdminBuffController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|unique:buff_servers,name,' . $buffServer->id . '|max:100',
+            'name_en' => 'nullable|max:100',
             'description' => 'nullable|max:500',
+            'description_en' => 'nullable|max:500',
             'is_active' => 'boolean',
             'is_maintenance' => 'boolean',
         ]);
@@ -77,9 +81,11 @@ class AdminBuffController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|max:100',
+            'name_en' => 'nullable|max:100',
             'platform' => 'required|in:facebook,tiktok,instagram',
             'service_type' => 'required|in:like,follow,comment,view',
             'description' => 'nullable|max:500',
+            'description_en' => 'nullable|max:500',
             'base_price' => 'required|numeric|min:0',
             'price_per_unit' => 'required|numeric|min:0',
             'min_amount' => 'required|integer|min:1',
@@ -101,9 +107,11 @@ class AdminBuffController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|max:100',
+            'name_en' => 'nullable|max:100',
             'platform' => 'required|in:facebook,tiktok,instagram',
             'service_type' => 'required|in:like,follow,comment,view',
             'description' => 'nullable|max:500',
+            'description_en' => 'nullable|max:500',
             'base_price' => 'required|numeric|min:0',
             'price_per_unit' => 'required|numeric|min:0',
             'min_amount' => 'required|integer|min:1',

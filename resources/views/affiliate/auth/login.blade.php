@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Đăng nhập Cộng tác viên | DungThu')
-@section('meta_description', 'Đăng nhập vào trang quản lý cộng tác viên DungThu.com')
+@section('title', __('Đăng nhập Cộng tác viên') . ' | DungThu')
+@section('meta_description', __('Đăng nhập vào trang quản lý cộng tác viên DungThu.com'))
 
 @push('styles')
 <style>
@@ -220,10 +220,10 @@
         <div class="aff-logo">
             <div class="badge-ctv">
                 <i class="fas fa-handshake"></i>
-                CỘNG TÁC VIÊN
+                {{ __('Cộng Tác Viên') }}
             </div>
-            <h1>Đăng nhập</h1>
-            <p>Chào mừng trở lại! Quản lý thu nhập của bạn.</p>
+            <h1>{{ __('Đăng nhập') }}</h1>
+            <p>{{ __('Chào mừng trở lại! Quản lý thu nhập của bạn.') }}</p>
         </div>
 
         @if(session('error'))
@@ -249,32 +249,32 @@
             </div>
 
             <div class="aff-form-group">
-                <label for="password"><i class="fas fa-lock me-2"></i>Mật khẩu</label>
+                <label for="password"><i class="fas fa-lock me-2"></i>{{ __('Mật khẩu') }}</label>
                 <input type="password" id="password" name="password" class="aff-input"
-                       placeholder="Nhập mật khẩu" required autocomplete="current-password">
+                       placeholder="{{ __('Nhập mật khẩu') }}" required autocomplete="current-password">
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom:20px;">
                 <label class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;">
-                    <input type="checkbox" name="remember" style="accent-color:#6c63ff;"> Ghi nhớ đăng nhập
+                    <input type="checkbox" name="remember" style="accent-color:#6c63ff;"> {{ __('Ghi nhớ đăng nhập') }}
                 </label>
             </div>
 
             <button type="submit" class="aff-btn-primary">
-                <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                <i class="fas fa-sign-in-alt me-2"></i>{{ __('Đăng nhập') }}
             </button>
         </form>
 
-        <div class="aff-divider">hoặc</div>
+        <div class="aff-divider">{{ __('hoặc') }}</div>
 
         <div class="text-center" style="color:rgba(255,255,255,0.6);font-size:14px;">
-            Chưa có tài khoản?
-            <a href="javascript:void(0)" class="aff-link ms-1" data-bs-toggle="modal" data-bs-target="#contactAdminModal">Đăng ký ngay</a>
+            {{ __('Chưa có tài khoản?') }}
+            <a href="javascript:void(0)" class="aff-link ms-1" data-bs-toggle="modal" data-bs-target="#contactAdminModal">{{ __('Đăng ký ngay') }}</a>
         </div>
 
         <div class="text-center mt-3">
             <a href="{{ route('home') }}" class="aff-link" style="font-size:13px;opacity:0.7;">
-                <i class="fas fa-arrow-left me-1"></i>Về trang chủ
+                <i class="fas fa-arrow-left me-1"></i>{{ __('Về trang chủ') }}
             </a>
         </div>
     </div>
@@ -284,18 +284,18 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
             <div class="modal-header border-0">
-                <h5 class="modal-title text-white fw-bold"><i class="fas fa-info-circle me-2" style="color: #48cfad;"></i>Thông báo</h5>
+                <h5 class="modal-title text-white fw-bold"><i class="fas fa-info-circle me-2" style="color: #48cfad;"></i>{{ __('Thông báo') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center py-4">
                 <div class="mb-4">
                     <i class="fas fa-user-plus fa-4x" style="color: #6c63ff;"></i>
                 </div>
-                <h5 class="text-white mb-3">Đăng ký Cộng Tác Viên</h5>
-                <p style="color: rgba(255,255,255,0.7); font-size: 15px;">Bạn hãy liên hệ Admin để cấp tài khoản nhé!</p>
+                <h5 class="text-white mb-3">{{ __('Đăng ký Cộng Tác Viên') }}</h5>
+                <p style="color: rgba(255,255,255,0.7); font-size: 15px;">{{ __('Bạn hãy liên hệ Admin để cấp tài khoản nhé!') }}</p>
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <a href="https://t.me/specademy" target="_blank" class="btn btn-primary rounded-pill px-4 fw-bold" style="background: linear-gradient(135deg, #6c63ff, #48cfad); border: none;">
-                        <i class="fab fa-telegram me-2"></i>Liên hệ Admin
+                        <i class="fab fa-telegram me-2"></i>{{ __('Liên hệ Admin') }}
                     </a>
                 </div>
             </div>

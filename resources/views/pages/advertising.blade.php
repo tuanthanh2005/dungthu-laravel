@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Liên Hệ Quảng Cáo')
+@section('title', __('Liên Hệ Quảng Cáo'))
 
 @push('styles')
     <style>
@@ -122,114 +122,109 @@
         <div class="container">
             <div class="advertising-card" data-aos="fade-up">
                 <h1 class="fw-bold mb-5">
-                    <i class="fas fa-bullhorn text-primary me-2"></i>Liên Hệ Quảng Cáo
+                    <i class="fas fa-bullhorn text-primary me-2"></i>{{ __('Liên Hệ Quảng Cáo') }}
                 </h1>
 
                 <div class="ad-section">
-                    <h3>📢 Cơ Hội Quảng Cáo Với DungThu</h3>
-                    <p>DungThu.com là một nền tảng bán hàng trực tuyến với hàng ngàn khách hàng tiềm năng hàng tháng. Chúng
-                        tôi cung cấp các giải pháp quảng cáo linh hoạt giúp thương hiệu của bạn tiếp cận khán giả chính xác.
-                    </p>
+                    <h3>📢 {{ __('Cơ Hội Quảng Cáo Với DungThu') }}</h3>
+                    <p>{{ __('DungThu.com là một nền tảng bán hàng trực tuyến với hàng ngàn khách hàng tiềm năng hàng tháng. Chúng tôi cung cấp các giải pháp quảng cáo linh hoạt giúp thương hiệu của bạn tiếp cận khán giả chính xác.') }}</p>
                 </div>
 
                 <div class="ad-section">
-                    <h3>🎯 Các Gói Quảng Cáo</h3>
+                    <h3>🎯 {{ __('Các Gói Quảng Cáo') }}</h3>
 
                     <div class="pricing-box">
-                        <h4>📦 Gói Basic</h4>
-                        <div class="price">100.000đ/tháng</div>
+                        <h4>📦 {{ __('Gói Basic') }}</h4>
+                        <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(100000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) . '/' . __('tháng') : '100.000đ/tháng' }}</div>
                         <div class="description">
-                            • Banner trên trang chủ (1 vị trí)<br>
-                            • Hiển thị 30 ngày<br>
-                            • Báo cáo lượt xem cơ bản
+                            • {{ __('Banner trên trang chủ (1 vị trí)') }}<br>
+                            • {{ __('Hiển thị 30 ngày') }}<br>
+                            • {{ __('Báo cáo lượt xem cơ bản') }}
                         </div>
                     </div>
 
                     <div class="pricing-box">
-                        <h4>⭐ Gói Premium</h4>
-                        <div class="price">300.000đ/tháng</div>
+                        <h4>⭐ {{ __('Gói Premium') }}</h4>
+                        <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(300000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) . '/' . __('tháng') : '300.000đ/tháng' }}</div>
                         <div class="description">
-                            • 2 vị trí banner quảng cáo<br>
-                            • Quảng cáo email được gửi<br>
-                            • Báo cáo chi tiết CTR & conversion<br>
-                            • Hỗ trợ ưu tiên
+                            • {{ __('2 vị trí banner quảng cáo') }}<br>
+                            • {{ __('Quảng cáo email được gửi') }}<br>
+                            • {{ __('Báo cáo chi tiết CTR & conversion') }}<br>
+                            • {{ __('Hỗ trợ ưu tiên') }}
                         </div>
                     </div>
 
                     <div class="pricing-box">
-                        <h4>🚀 Gói Enterprise</h4>
-                        <div class="price">Liên hệ để tư vấn</div>
+                        <h4>🚀 {{ __('Gói Enterprise') }}</h4>
+                        <div class="price">{{ __('Liên hệ để tư vấn') }}</div>
                         <div class="description">
-                            • Giải pháp quảng cáo tùy chỉnh<br>
-                            • Partnership kéo dài<br>
-                            • Báo cáo phân tích chuyên sâu<br>
-                            • Quản lý tài khoản chuyên dụng
+                            • {{ __('Giải pháp quảng cáo tùy chỉnh') }}<br>
+                            • {{ __('Partnership kéo dài') }}<br>
+                            • {{ __('Báo cáo phân tích chuyên sâu') }}<br>
+                            • {{ __('Quản lý tài khoản chuyên dụng') }}
                         </div>
                     </div>
                 </div>
 
                 <div class="ad-section">
-                    <h3>✨ Tại Sao Chọn DungThu?</h3>
+                    <h3>✨ {{ __('Tại Sao Chọn DungThu?') }}</h3>
                     <ul>
-                        <li><strong>Khán giả chất lượng:</strong> Hàng ngàn người dùng hoạt động hàng tuần</li>
-                        <li><strong>Vị trí quảng cáo chiến lược:</strong> Hiển thị ở các vị trí có tỷ lệ click cao</li>
-                        <li><strong>Báo cáo chi tiết:</strong> Theo dõi hiệu suất quảng cáo của bạn theo thời gian thực</li>
-                        <li><strong>Giá cạnh tranh:</strong> Giải pháp quảng cáo phù hợp với mọi ngân sách</li>
-                        <li><strong>Hỗ trợ 24/7:</strong> Đội ngũ chuyên gia sẵn sàng hỗ trợ</li>
+                        <li><strong>{{ __('Khán giả chất lượng') }}:</strong> {{ __('Hàng ngàn người dùng hoạt động hàng tuần') }}</li>
+                        <li><strong>{{ __('Vị trí quảng cáo chiến lược') }}:</strong> {{ __('Hiển thị ở các vị trí có tỷ lệ click cao') }}</li>
+                        <li><strong>{{ __('Báo cáo chi tiết') }}:</strong> {{ __('Theo dõi hiệu suất quảng cáo của bạn theo thời gian thực') }}</li>
+                        <li><strong>{{ __('Giá cạnh tranh') }}:</strong> {{ __('Giải pháp quảng cáo phù hợp với mọi ngân sách') }}</li>
+                        <li><strong>{{ __('Hỗ trợ 24/7') }}:</strong> {{ __('Đội ngũ chuyên gia sẵn sàng hỗ trợ') }}</li>
                     </ul>
                 </div>
 
                 <div class="ad-section">
-                    <h3>📊 Thống Kê DungThu</h3>
+                    <h3>📊 {{ __('Thống Kê DungThu') }}</h3>
                     <ul>
-                        <li>👥 <strong>+5.000</strong> người dùng hoạt động hàng tháng</li>
-                        <li>📱 <strong>+10.000</strong> lượt truy cập hàng tháng</li>
-                        <li>🛒 <strong>+1.000</strong> đơn hàng thành công hàng tháng</li>
-                        <li>⭐ <strong>4.8/5</strong> đánh giá từ khách hàng</li>
+                        <li>👥 <strong>+5.000</strong> {{ __('người dùng hoạt động hàng tháng') }}</li>
+                        <li>📱 <strong>+10.000</strong> {{ __('lượt truy cập hàng tháng') }}</li>
+                        <li>🛒 <strong>+1.000</strong> {{ __('đơn hàng thành công hàng tháng') }}</li>
+                        <li>⭐ <strong>4.8/5</strong> {{ __('đánh giá từ khách hàng') }}</li>
                     </ul>
                 </div>
 
                 <div class="ad-section">
-                    <h3>🤝 Các Loại Hình Hợp Tác</h3>
+                    <h3>🤝 {{ __('Các Loại Hình Hợp Tác') }}</h3>
                     <ul>
-                        <li><strong>Quảng cáo Banner:</strong> Hiển thị logo và link sản phẩm của bạn</li>
-                        <li><strong>Sponsored Content:</strong> Bài viết giới thiệu sản phẩm trên blog</li>
-                        <li><strong>Email Marketing:</strong> Gửi thông tin đến danh sách khách hàng</li>
-                        <li><strong>Social Media:</strong> Chia sẻ sản phẩm trên kênh mạng xã hội</li>
-                        <li><strong>Affiliate Program:</strong> Hợp tác doanh số, chi trả hoa hồng</li>
+                        <li><strong>{{ __('Quảng cáo Banner') }}:</strong> {{ __('Hiển thị logo và link sản phẩm của bạn') }}</li>
+                        <li><strong>{{ __('Sponsored Content') }}:</strong> {{ __('Bài viết giới thiệu sản phẩm trên blog') }}</li>
+                        <li><strong>{{ __('Email Marketing') }}:</strong> {{ __('Gửi thông tin đến danh sách khách hàng') }}</li>
+                        <li><strong>{{ __('Social Media') }}:</strong> {{ __('Chia sẻ sản phẩm trên kênh mạng xã hội') }}</li>
+                        <li><strong>{{ __('Affiliate Program') }}:</strong> {{ __('Hợp tác doanh số, chi trả hoa hồng') }}</li>
                     </ul>
                 </div>
 
                 <div class="alert alert-info mt-5">
-                    <strong>💡 Lưu ý:</strong> Tất cả các gói quảng cáo tuân thủ chính sách quảng cáo của chúng tôi. Sản
-                    phẩm quảng cáo phải phù hợp với tiêu chí chất lượng và an toàn.
+                    <strong>💡 {{ __('Lưu ý') }}:</strong> {{ __('Tất cả các gói quảng cáo tuân thủ chính sách quảng cáo của chúng tôi. Sản phẩm quảng cáo phải phù hợp với tiêu chí chất lượng và an toàn.') }}
                 </div>
             </div>
 
             <div class="advertising-card" data-aos="fade-up" data-aos-delay="100">
-                <h2 class="fw-bold mb-4">
-                    <i class="fas fa-envelope text-primary me-2"></i>Liên Hệ Với Chúng Tôi
-                </h2>
-                <p class="mb-4">Bạn quan tâm đến quảng cáo? Hãy liên hệ với đội ngũ bán hàng của chúng tôi ngay hôm nay:</p>
+                <h2 class="fw-bold mb-4"><i class="fas fa-envelope text-primary me-2"></i>{{ __('Liên Hệ Với Chúng Tôi') }}</h2>
+                <p class="mb-4">{{ __('Bạn quan tâm đến quảng cáo? Hãy liên hệ với đội ngũ bán hàng của chúng tôi ngay hôm nay:') }}</p>
 
                 <div class="contact-methods">
                     <div class="contact-method">
                         <i class="fas fa-envelope"></i>
-                        <h5>Email</h5>
+                        <h5>{{ __('Email') }}</h5>
                         <a href="mailto:tranthanhtuanfix@gmail.com">tranthanhtuanfix@gmail.com</a>
-                        <p style="font-size: 13px; margin-top: 10px; color: #718096;">Phản hồi trong 24 giờ</p>
+                        <p style="font-size: 13px; margin-top: 10px; color: #718096;">{{ __('Phản hồi trong 24 giờ') }}</p>
                     </div>
                     <div class="contact-method">
                         <i class="fab fa-telegram"></i>
-                        <h5>Telegram</h5>
+                        <h5>{{ __('Telegram') }}</h5>
                         <a href="https://t.me/specademy" target="_blank">@specademy</a>
-                        <p style="font-size: 13px; margin-top: 10px; color: #718096;">Chat trực tiếp và nhanh</p>
+                        <p style="font-size: 13px; margin-top: 10px; color: #718096;">{{ __('Chat trực tiếp và nhanh') }}</p>
                     </div>
                     <div class="contact-method">
                         <i class="fas fa-comments"></i>
-                        <h5>Zalo</h5>
+                        <h5>{{ __('Zalo') }}</h5>
                         <a href="https://zalo.me/0708910952" target="_blank">0708910952</a>
-                        <p style="font-size: 13px; margin-top: 10px; color: #718096;">Liên hệ qua Zalo</p>
+                        <p style="font-size: 13px; margin-top: 10px; color: #718096;">{{ __('Liên hệ qua Zalo') }}</p>
                     </div>
                 </div>
             </div>

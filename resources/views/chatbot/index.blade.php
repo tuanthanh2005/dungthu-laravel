@@ -9,7 +9,7 @@
                 <div class="card shadow-lg">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0">💬 AI Customer Support Chatbot</h4>
-                        <small>Tư vấn sản phẩm & dịch vụ 24/7</small>
+                        <small>{{ __('Tư vấn sản phẩm & dịch vụ 24/7') }}</small>
                     </div>
 
                     <div class="card-body">
@@ -17,30 +17,30 @@
                             style="height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px;">
                             <!-- Chat messages will be loaded here -->
                             <div class="text-center text-muted my-5">
-                                <p>👋 Chào bạn! Mình là AI tư vấn viên của DungThu.</p>
-                                <p>Bạn có thể hỏi tôi về:</p>
+                                <p>{{ __('👋 Chào bạn! Mình là AI tư vấn viên của DungThu.') }}</p>
+                                <p>{{ __('Bạn có thể hỏi tôi về:') }}</p>
                                 <ul class="list-unstyled">
                                     <li>💻 Digital Products</li>
                                     <li>📱 Social Media Services (TikTok, Facebook, Instagram)</li>
                                     <li>🎁 TikTok Deals</li>
                                     <li>🔄 Card Exchange</li>
                                 </ul>
-                                <p>Bắt đầu bằng cách nhập câu hỏi bên dưới! 😊</p>
+                                <p>{{ __('Bắt đầu bằng cách nhập câu hỏi bên dưới! 😊') }}</p>
                             </div>
                         </div>
 
                         <div class="input-group">
                             <input type="text" id="messageInput" class="form-control"
-                                placeholder="Hỏi tôi gì đó... (VD: Có sản phẩm nào về WordPress?)" />
+                                placeholder="{{ __('Hỏi tôi gì đó... (VD: Có sản phẩm nào về WordPress?)') }}" />
                             <button class="btn btn-primary" id="sendBtn" type="button">
-                                <span id="sendBtnText">Gửi</span>
+                                <span id="sendBtnText">{{ __('Gửi') }}</span>
                                 <span id="sendBtnSpinner" class="spinner-border spinner-border-sm ms-2"
                                     style="display: none;"></span>
                             </button>
                         </div>
 
                         <small class="text-muted d-block mt-3">
-                            ⚠️ Chatbot có thể không chính xác 100%. Vui lòng liên hệ support nếu cần hỗ trợ:
+                            {{ __('⚠️ Chatbot có thể không chính xác 100%. Vui lòng liên hệ support nếu cần hỗ trợ:') }}
                             <br>📧 tranthanhtuanfix@gmail.com | ☎️ 0772698113 | 💬 Zalo: 0708910952
                         </small>
                     </div>
@@ -263,8 +263,8 @@
                 const feedbackDiv = document.createElement('div');
                 feedbackDiv.className = 'feedback-buttons mt-2';
                 feedbackDiv.innerHTML = `
-                        <button class="feedback-btn-like" data-message-id="${messageId}">👍 Hữu ích</button>
-                        <button class="feedback-btn-dislike" data-message-id="${messageId}">👎 Không</button>
+                        <button class="feedback-btn-like" data-message-id="${messageId}">{{ __('👍 Hữu ích') }}</button>
+                        <button class="feedback-btn-dislike" data-message-id="${messageId}">{{ __('👎 Không') }}</button>
                     `;
                 messageBubble.appendChild(feedbackDiv);
 
@@ -392,11 +392,11 @@
                     addMessage(data.message, 'bot', now);
                     messageCount++;
                 } else {
-                    addMessage(data.message || 'Xin lỗi, có lỗi xảy ra!', 'bot');
+                    addMessage(data.message || __('Xin lỗi, có lỗi xảy ra!'), 'bot');
                 }
             } catch (error) {
                 console.error('Error sending message:', error);
-                addMessage('❌ Lỗi kết nối. Vui lòng thử lại!', 'bot');
+                addMessage(__('❌ Lỗi kết nối. Vui lòng thử lại!'), 'bot');
             } finally {
                 sendBtn.disabled = false;
                 sendBtnText.style.display = 'inline';
@@ -421,7 +421,7 @@
                 });
 
                 if (response.ok) {
-                    alert('Cảm ơn feedback của bạn! 🙏');
+                    alert(__('Cảm ơn feedback của bạn! 🙏'));
                 }
             } catch (error) {
                 console.error('Error submitting feedback:', error);

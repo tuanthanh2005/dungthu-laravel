@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Đăng Ký - DungThu.com')
+@section('title', __('Đăng Ký') . ' - DungThu.com')
 
 @push('styles')
     <style>
@@ -177,7 +177,7 @@
 
         <!-- Right Side -->
         <div class="auth-right">
-            <h2 class="auth-title">Đăng Ký</h2>
+            <h2 class="auth-title">{{ __('Đăng Ký') }}</h2>
 
             @if($errors->any())
                 <div class="alert alert-danger border-0 rounded-4 mb-2 py-1 px-3 small shadow-sm" role="alert" style="font-size: 11px;">
@@ -195,46 +195,46 @@
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-user"></i>
-                        <input type="text" name="name" class="auth-input" placeholder="Họ và tên" value="{{ old('name') }}" required>
+                        <input type="text" name="name" class="auth-input" placeholder="{{ __('Họ và tên') }}" value="{{ old('name') }}" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" name="email" class="auth-input" placeholder="Email của bạn" value="{{ old('email') }}" required>
+                        <input type="email" name="email" class="auth-input" placeholder="{{ __('Email của bạn') }}" value="{{ old('email') }}" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-lock"></i>
-                        <input type="password" name="password" class="auth-input" placeholder="Mật khẩu" required>
+                        <input type="password" name="password" class="auth-input" placeholder="{{ __('Mật khẩu') }}" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-shield-alt"></i>
-                        <input type="password" name="password_confirmation" class="auth-input" placeholder="Xác nhận mật khẩu" required>
+                        <input type="password" name="password_confirmation" class="auth-input" placeholder="{{ __('Xác nhận mật khẩu') }}" required>
                     </div>
                 </div>
 
                 <div class="form-check mb-2 px-4">
                     <input class="form-check-input" type="checkbox" id="terms" required style="width: 0.8rem; height: 0.8rem;">
                     <label class="form-check-label text-muted" for="terms" style="font-size: 10px;">
-                        Tôi đồng ý với <a href="javascript:void(0)" class="text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#termsModal">Điều khoản</a> 
-                        và <a href="javascript:void(0)" class="text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#privacyRegisterModal">Bảo mật</a>
+                        {{ __('Tôi đồng ý với') }} <a href="javascript:void(0)" class="text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#termsModal">{{ __('Điều khoản') }}</a> 
+                        {{ __('và') }} <a href="javascript:void(0)" class="text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#privacyRegisterModal">{{ __('Bảo mật') }}</a>
                     </label>
                 </div>
 
                 <button type="submit" class="auth-btn">
-                    Tạo Tài Khoản
+                    {{ __('Tạo Tài Khoản') }}
                 </button>
             </form>
 
             <p class="login-text">
-                Đã có tài khoản? <a href="{{ route('login') }}">Đăng nhập ngay</a>
+                {{ __('Đã có tài khoản?') }} <a href="{{ route('login') }}">{{ __('Đăng nhập ngay') }}</a>
             </p>
         </div>
     </div>
@@ -245,15 +245,15 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
             <div class="modal-header border-0 p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
-                <h6 class="modal-title fw-bold">Điều Khoản Dịch Vụ</h6>
+                <h6 class="modal-title fw-bold">{{ __('Điều Khoản Dịch Vụ') }}</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4 small text-muted">
-                <p>Chào mừng bạn đến với DungThu.com. Khi đăng ký tài khoản, bạn đồng ý tuân thủ các điều khoản sau:</p>
+                <p>{{ __('Chào mừng bạn đến với DungThu.com. Khi đăng ký tài khoản, bạn đồng ý tuân thủ các điều khoản sau:') }}</p>
                 <ul class="ps-3">
-                    <li>Sử dụng dịch vụ đúng mục đích, không vi phạm pháp luật.</li>
-                    <li>Bảo mật thông tin tài khoản cá nhân.</li>
-                    <li>Không chia sẻ tài khoản cho người khác.</li>
+                    <li>{{ __('Sử dụng dịch vụ đúng mục đích, không vi phạm pháp luật.') }}</li>
+                    <li>{{ __('Bảo mật thông tin tài khoản cá nhân.') }}</li>
+                    <li>{{ __('Không chia sẻ tài khoản cho người khác.') }}</li>
                 </ul>
             </div>
         </div>
@@ -264,15 +264,15 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
             <div class="modal-header border-0 p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
-                <h6 class="modal-title fw-bold">Chính Sách Bảo Mật</h6>
+                <h6 class="modal-title fw-bold">{{ __('Chính Sách Bảo Mật') }}</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4 small text-muted">
-                <p>Chúng tôi cam kết bảo vệ dữ liệu của bạn:</p>
+                <p>{{ __('Chúng tôi cam kết bảo vệ dữ liệu của bạn:') }}</p>
                 <ul class="ps-3">
-                    <li>Thông tin cá nhân chỉ được dùng để cung cấp dịch vụ.</li>
-                    <li>Không bán hoặc chia sẻ thông tin cho bên thứ ba.</li>
-                    <li>Sử dụng các biện pháp bảo mật hiện đại nhất.</li>
+                    <li>{{ __('Thông tin cá nhân chỉ được dùng để cung cấp dịch vụ.') }}</li>
+                    <li>{{ __('Không bán hoặc chia sẻ thông tin cho bên thứ ba.') }}</li>
+                    <li>{{ __('Sử dụng các biện pháp bảo mật hiện đại nhất.') }}</li>
                 </ul>
             </div>
         </div>

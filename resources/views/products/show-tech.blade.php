@@ -251,8 +251,8 @@
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down">
             <ol class="breadcrumb bg-transparent">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" style="color: #06d6a0; font-weight: 600;">Trang chủ</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('shop') }}" style="color: #06d6a0; font-weight: 600;">Cửa hàng</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" style="color: #06d6a0; font-weight: 600;">{{ __('Trang chủ') }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('shop') }}" style="color: #06d6a0; font-weight: 600;">{{ __('Cửa hàng') }}</a></li>
                 <li class="breadcrumb-item active" style="color: #ff6348; font-weight: 700;">{{ $product->name }}</li>
             </ol>
         </nav>
@@ -285,19 +285,19 @@
                                 </div>
                             @endif
                         </div>
-                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Giá đã bao gồm VAT</small>
+                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>{{ __('Giá đã bao gồm VAT') }}</small>
                     </div>
                     
                     @if($product->stock > 0)
                         <div class="d-flex align-items-center flex-wrap gap-2">
                             <div class="alert alert-success d-inline-flex align-items-center mb-0">
-                                <i class="fas fa-check-circle"></i> Còn hàng ({{ $product->stock }} sản phẩm)
+                                <i class="fas fa-check-circle"></i> {{ __('Còn hàng') }} ({{ $product->stock }} {{ __('sản phẩm') }})
                             </div>
-                            <small class="text-muted">Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat</small>
+                            <small class="text-muted">{{ __('Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat') }}</small>
                         </div>
                         @else
                         <div class="alert alert-danger d-inline-block">
-                            <i class="fas fa-times-circle"></i> Hết hàng
+                            <i class="fas fa-times-circle"></i> {{ __('Hết hàng') }}
                         </div>
                     @endif
                     
@@ -306,15 +306,15 @@
                         <div class="d-flex gap-3 mb-3 flex-wrap">
                             <button type="submit" class="btn btn-lg rounded-pill px-5 shadow" 
                                     style="background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: white; border: none;">
-                                <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ
+                                <i class="fas fa-shopping-cart me-2"></i> {{ __('Thêm vào giỏ') }}
                             </button>
                             @if($product->delivery_type === 'digital')
                             <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow">
-                                <i class="fas fa-bolt me-2"></i> Mua ngay
+                                <i class="fas fa-bolt me-2"></i> {{ __('Mua ngay') }}
                             </button>
                             @endif
                             <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
-                                <i class="fas fa-arrow-left me-2"></i> Tiếp tục mua
+                                <i class="fas fa-arrow-left me-2"></i> {{ __('Tiếp tục mua') }}
                             </a>
                         </div>
                     </form>
@@ -327,7 +327,7 @@
         <div class="row mt-4" data-aos="fade-up">
             <div class="col-12">
                 <div class="tech-card">
-                    <h5 class="fw-bold mb-4" style="color: #0f2027;"><i class="fas fa-cogs me-2 text-info"></i>Thông Số Kỹ Thuật</h5>
+                    <h5 class="fw-bold mb-4" style="color: #0f2027;"><i class="fas fa-cogs me-2 text-info"></i>{{ __('Thông Số Kỹ Thuật') }}</h5>
                     @if($product->specs && count(array_filter($product->specs)) > 0)
                         <div class="row g-3">
                             @foreach($product->specs as $key => $value)
@@ -344,7 +344,7 @@
                     @else
                         <div class="alert alert-warning mb-0">
                             <i class="fas fa-info-circle me-2"></i>
-                            Chưa có thông tin thông số kỹ thuật cho sản phẩm này.
+                            {{ __('Chưa có thông tin thông số kỹ thuật cho sản phẩm này.') }}
                         </div>
                     @endif
                 </div>
@@ -376,21 +376,21 @@
                         <button class="nav-link tech-tab active" id="features-tab" data-bs-toggle="tab" 
                                 data-bs-target="#features" type="button" role="tab">
                             <i class="fas fa-microchip"></i>
-                            <span>Tính Năng</span>
+                            <span>{{ __('Tính Năng') }}</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link tech-tab" id="description-tab" data-bs-toggle="tab" 
                                 data-bs-target="#description" type="button" role="tab">
                             <i class="fas fa-list-alt"></i>
-                            <span>Mô Tả</span>
+                            <span>{{ __('Mô Tả') }}</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link tech-tab" id="reviews-tab" data-bs-toggle="tab" 
                                 data-bs-target="#reviews" type="button" role="tab">
                             <i class="fas fa-comments"></i>
-                            <span>Đánh Giá</span>
+                            <span>{{ __('Đánh Giá') }}</span>
                         </button>
                     </li>
                 </ul>
@@ -400,7 +400,7 @@
                     <div class="tab-pane fade show active" id="features" role="tabpanel" data-aos="fade-up">
                         <div class="tech-card">
                             <h4 class="fw-bold mb-4">
-                                <i class="fas fa-star text-warning me-2"></i>Tính Năng Nổi Bật
+                                <i class="fas fa-star text-warning me-2"></i>{{ __('Tính Năng Nổi Bật') }}
                             </h4>
                             @if($product->features && $product->features->count() > 0)
                             <div class="row g-3">
@@ -434,7 +434,7 @@
                             @else
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle me-2"></i>
-                                Chưa có thông tin tính năng nổi bật cho sản phẩm này.
+                                {{ __('Chưa có thông tin tính năng nổi bật cho sản phẩm này.') }}
                             </div>
                             @endif
                         </div>
@@ -444,14 +444,13 @@
                     <div class="tab-pane fade" id="description" role="tabpanel" data-aos="fade-up">
                         <div class="tech-card">
                             <h4 class="fw-bold mb-4">
-                                <i class="fas fa-align-left text-info me-2"></i>Mô Tả Chi Tiết
+                                <i class="fas fa-align-left text-info me-2"></i>{{ __('Mô Tả Chi Tiết') }}
                             </h4>
                             <div class="text-muted description-content" style="line-height: 1.8;">{!! nl2br(e($product->description)) !!}</div>
                             <hr class="my-4">
                             <div class="alert alert-info rounded-4">
                                 <i class="fas fa-info-circle me-2"></i>
-                                <strong>Lưu ý:</strong> Sản phẩm công nghệ được kiểm tra kỹ lưỡng trước khi giao hàng. 
-                                Bảo hành chính hãng 24 tháng tại các trung tâm bảo hành toàn quốc.
+                                <strong>{{ __('Lưu ý:') }}</strong> {{ __('Sản phẩm công nghệ được kiểm tra kỹ lưỡng trước khi giao hàng. Bảo hành chính hãng 24 tháng tại các trung tâm bảo hành toàn quốc.') }}
                             </div>
                         </div>
                     </div>

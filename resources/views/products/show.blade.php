@@ -185,8 +185,8 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('shop') }}">Cửa hàng</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Trang chủ') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('shop') }}">{{ __('Cửa hàng') }}</a></li>
             <li class="breadcrumb-item active">{{ $product->name }}</li>
         </ol>
     </nav>
@@ -214,19 +214,19 @@
                         </div>
                     @endif
                 </div>
-                <small class="text-muted">Giá đã bao gồm VAT</small>
+                <small class="text-muted">{{ __('Giá đã bao gồm VAT') }}</small>
             </div>
             
             @if($product->stock > 0)
                 <div class="d-flex align-items-center flex-wrap gap-2">
                     <div class="alert alert-success d-inline-flex align-items-center mb-0">
-                        <i class="fas fa-check-circle"></i> Còn hàng ({{ $product->stock }} sản phẩm)
+                        <i class="fas fa-check-circle"></i> {{ __('Còn hàng') }} ({{ $product->stock }} {{ __('sản phẩm') }})
                     </div>
-                    <small class="text-muted">Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat</small>
+                    <small class="text-muted">{{ __('Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat') }}</small>
                 </div>
                 @else
                 <div class="alert alert-danger d-inline-block">
-                    <i class="fas fa-times-circle"></i> Hết hàng
+                    <i class="fas fa-times-circle"></i> {{ __('Hết hàng') }}
                 </div>
             @endif
             
@@ -234,28 +234,28 @@
                 @csrf
                 <div class="d-flex gap-3 mb-3 flex-wrap">
                     <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
-                        <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ
+                        <i class="fas fa-shopping-cart me-2"></i> {{ __('Thêm vào giỏ') }}
                     </button>
                     @if($product->delivery_type === 'digital')
                     <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow">
-                        <i class="fas fa-bolt me-2"></i> Mua ngay
+                        <i class="fas fa-bolt me-2"></i> {{ __('Mua ngay') }}
                     </button>
                     @endif
                     <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
-                        <i class="fas fa-arrow-left me-2"></i> Tiếp tục mua
+                        <i class="fas fa-arrow-left me-2"></i> {{ __('Tiếp tục mua') }}
                     </a>
                 </div>
             </form>
 
             <div class="mt-5">
-                <h5 class="fw-bold mb-3"><i class="fas fa-star text-warning"></i> Ưu điểm nổi bật</h5>
+                <h5 class="fw-bold mb-3"><i class="fas fa-star text-warning"></i> {{ __('Ưu điểm nổi bật') }}</h5>
                 <div class="row g-2">
                     <div class="col-md-6">
                         <div class="info-badge">
                             <i class="fas fa-shield-alt"></i>
                             <div>
-                                <strong>Chính hãng 100%</strong><br>
-                                <small>Cam kết hàng thật</small>
+                                <strong>{{ __('Chính hãng 100%') }}</strong><br>
+                                <small>{{ __('Cam kết hàng thật') }}</small>
                             </div>
                         </div>
                     </div>
@@ -263,8 +263,8 @@
                         <div class="info-badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                             <i class="fas fa-tools"></i>
                             <div>
-                                <strong>Bảo hành 12 tháng</strong><br>
-                                <small>Đổi trả miễn phí</small>
+                                <strong>{{ __('Bảo hành 12 tháng') }}</strong><br>
+                                <small>{{ __('Đổi trả miễn phí') }}</small>
                             </div>
                         </div>
                     </div>
@@ -272,8 +272,8 @@
                         <div class="info-badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                             <i class="fas fa-shipping-fast"></i>
                             <div>
-                                <strong>Giao hàng nhanh</strong><br>
-                                <small>Toàn quốc 24h</small>
+                                <strong>{{ __('Giao hàng nhanh') }}</strong><br>
+                                <small>{{ __('Toàn quốc 24h') }}</small>
                             </div>
                         </div>
                     </div>
@@ -281,8 +281,8 @@
                         <div class="info-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
                             <i class="fas fa-headset"></i>
                             <div>
-                                <strong>Hỗ trợ 24/7</strong><br>
-                                <small>Tư vấn miễn phí</small>
+                                <strong>{{ __('Hỗ trợ 24/7') }}</strong><br>
+                                <small>{{ __('Tư vấn miễn phí') }}</small>
                             </div>
                         </div>
                     </div>
@@ -315,19 +315,19 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active fw-bold" id="features-tab" data-bs-toggle="tab" 
                             data-bs-target="#features" type="button" role="tab">
-                        <i class="fas fa-star me-2"></i>Tính Năng Nổi Bật
+                        <i class="fas fa-star me-2"></i>{{ __('Tính Năng Nổi Bật') }}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link fw-bold" id="description-tab" data-bs-toggle="tab" 
                             data-bs-target="#description" type="button" role="tab">
-                        <i class="fas fa-align-left me-2"></i>Mô Tả Chi Tiết
+                        <i class="fas fa-align-left me-2"></i>{{ __('Mô Tả Chi Tiết') }}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link fw-bold" id="reviews-tab" data-bs-toggle="tab" 
                             data-bs-target="#reviews" type="button" role="tab">
-                        <i class="fas fa-comments me-2"></i>Đánh Giá Sản Phẩm
+                        <i class="fas fa-comments me-2"></i>{{ __('Đánh Giá Sản Phẩm') }}
                     </button>
                 </li>
             </ul>
@@ -338,7 +338,7 @@
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-4">
                             <h4 class="fw-bold mb-4">
-                                <i class="fas fa-star text-warning me-2"></i>Tính Năng Nổi Bật
+                                <i class="fas fa-star text-warning me-2"></i>{{ __('Tính Năng Nổi Bật') }}
                             </h4>
                             @if($product->features && $product->features->count() > 0)
                                 <div class="row g-3">
@@ -361,7 +361,7 @@
                             @else
                                 <div class="alert alert-info mb-0">
                                     <i class="fas fa-info-circle me-2"></i>
-                                    Chưa có thông tin tính năng cho sản phẩm này.
+                                    {{ __('Chưa có thông tin tính năng cho sản phẩm này.') }}
                                 </div>
                             @endif
                         </div>
@@ -373,18 +373,18 @@
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-4">
                             <h4 class="fw-bold mb-4">
-                                <i class="fas fa-align-left text-primary me-2"></i>Mô Tả Chi Tiết
+                                <i class="fas fa-align-left text-primary me-2"></i>{{ __('Mô Tả Chi Tiết') }}
                             </h4>
                             <div class="text-muted mb-4 description-content" style="line-height: 1.8;" >{{ $product->description }}</div>
                             
                             <div class="border-top pt-4 mt-4">
                                 <h5 class="fw-bold text-primary mb-4">
-                                    <i class="fas fa-cube me-2"></i>Thông Số Kỹ Thuật
+                                    <i class="fas fa-cube me-2"></i>{{ __('Thông Số Kỹ Thuật') }}
                                 </h5>
                                 <div class="row g-4">
                                     <div class="col-lg-6">
                                         <div class="p-3 bg-light rounded-3 mb-3">
-                                            <i class="fas fa-list-ul text-primary me-2"></i><strong>Danh mục:</strong>
+                                            <i class="fas fa-list-ul text-primary me-2"></i><strong>{{ __('Danh mục:') }}</strong>
                                             <p class="ms-4 mb-0 text-muted">{{ strtoupper($product->category) }}</p>
                                         </div>
                                         <div class="p-3 bg-light rounded-3 mb-3">
@@ -394,12 +394,12 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="p-3 bg-light rounded-3 mb-3">
-                                            <i class="fas fa-check-circle text-success me-2"></i><strong>Tình trạng:</strong>
-                                            <p class="ms-4 mb-0 text-muted">{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</p>
+                                            <i class="fas fa-check-circle text-success me-2"></i><strong>{{ __('Tình trạng:') }}</strong>
+                                            <p class="ms-4 mb-0 text-muted">{{ $product->stock > 0 ? __('Còn hàng') : __('Hết hàng') }}</p>
                                         </div>
                                         <div class="p-3 bg-light rounded-3 mb-3">
-                                            <i class="fas fa-globe text-primary me-2"></i><strong>Xuất xứ:</strong>
-                                            <p class="ms-4 mb-0 text-muted">Chính hãng</p>
+                                            <i class="fas fa-globe text-primary me-2"></i><strong>{{ __('Xuất xứ:') }}</strong>
+                                            <p class="ms-4 mb-0 text-muted">{{ __('Chính hãng') }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -420,35 +420,34 @@
 
                             <div class="border-top pt-4 mt-4">
                                 <h5 class="fw-bold text-primary mb-4">
-                                    <i class="fas fa-box-open me-2"></i>Thông Tin Thêm
+                                    <i class="fas fa-box-open me-2"></i>{{ __('Thông Tin Thêm') }}
                                 </h5>
                                 <div class="row g-4">
                                     <div class="col-lg-6">
                                         <div class="p-3 bg-light rounded-3 mb-3">
-                                            <i class="fas fa-shield-alt text-primary me-2"></i><strong>Bảo hành:</strong>
-                                            <p class="ms-4 mb-0 text-muted">12 tháng</p>
+                                            <i class="fas fa-shield-alt text-primary me-2"></i><strong>{{ __('Bảo hành:') }}</strong>
+                                            <p class="ms-4 mb-0 text-muted">{{ __('12 tháng') }}</p>
                                         </div>
                                         <div class="p-3 bg-light rounded-3 mb-3">
-                                            <i class="fas fa-credit-card text-primary me-2"></i><strong>Thanh toán:</strong>
+                                            <i class="fas fa-credit-card text-primary me-2"></i><strong>{{ __('Thanh toán:') }}</strong>
                                             <p class="ms-4 mb-0 text-muted">COD, Banking, Transfer</p>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="p-3 bg-light rounded-3 mb-3">
-                                            <i class="fas fa-shipping-fast text-primary me-2"></i><strong>Giao hàng:</strong>
-                                            <p class="ms-4 mb-0 text-muted">Toàn quốc (24-48h)</p>
+                                            <i class="fas fa-shipping-fast text-primary me-2"></i><strong>{{ __('Giao hàng:') }}</strong>
+                                            <p class="ms-4 mb-0 text-muted">{{ __('Toàn quốc (24-48h)') }}</p>
                                         </div>
                                         <div class="p-3 bg-light rounded-3 mb-3">
-                                            <i class="fas fa-undo text-primary me-2"></i><strong>Đổi trả:</strong>
-                                            <p class="ms-4 mb-0 text-muted">7 ngày từ ngày mua</p>
+                                            <i class="fas fa-undo text-primary me-2"></i><strong>{{ __('Đổi trả:') }}</strong>
+                                            <p class="ms-4 mb-0 text-muted">{{ __('7 ngày từ ngày mua') }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="alert alert-info mt-4 rounded-4">
                                 <i class="fas fa-info-circle me-2"></i>
-                                <strong>Lưu ý:</strong> Sản phẩm được đóng gói cẩn thận, kiểm tra kỹ càng trước khi giao hàng. 
-                                Quý khách vui lòng kiểm tra sản phẩm trước khi thanh toán.
+                                <strong>{{ __('Lưu ý:') }}</strong> {{ __('Sản phẩm được đóng gói cẩn thận, kiểm tra kỹ càng trước khi giao hàng. Quý khách vui lòng kiểm tra sản phẩm trước khi thanh toán.') }}
                             </div>
                         </div>
                     </div>
@@ -459,7 +458,7 @@
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-4">
                             <h4 class="fw-bold mb-4">
-                                <i class="fas fa-comments text-warning me-2"></i>Đánh Giá Sản Phẩm
+                                <i class="fas fa-comments text-warning me-2"></i>{{ __('Đánh Giá Sản Phẩm') }}
                             </h4>
                             
                             <!-- Overall Rating -->
@@ -476,7 +475,7 @@
                                         @endif
                                     @endfor
                                 </div>
-                                <p class="text-muted mb-0">Dựa trên <strong>{{ $totalReviews }} đánh giá</strong></p>
+                                <p class="text-muted mb-0">{{ __('Dựa trên') }} <strong>{{ $totalReviews }}</strong> {{ __('đánh giá') }}</p>
                             </div>
 
                             <!-- Comment Form (Only for logged in users) -->
@@ -484,12 +483,12 @@
                             <div class="card bg-light border-0 mb-4 rounded-4">
                                 <div class="card-body p-4">
                                     <h5 class="fw-bold mb-3">
-                                        <i class="fas fa-edit text-primary me-2"></i>Viết đánh giá của bạn
+                                        <i class="fas fa-edit text-primary me-2"></i>{{ __('Viết đánh giá của bạn') }}
                                     </h5>
                                     <form action="{{ route('product.comment', $product->id) }}" method="POST">
                                         @csrf
                                         <div class="mb-3">
-                                            <label class="form-label fw-bold">Đánh giá của bạn <span class="text-danger">*</span></label>
+                                            <label class="form-label fw-bold">{{ __('Đánh giá của bạn') }} <span class="text-danger">*</span></label>
                                             <div class="rating-input mb-2">
                                                 <input type="radio" name="rating" value="5" id="star5" required>
                                                 <label for="star5" title="5 sao"><i class="fas fa-star"></i></label>
@@ -507,15 +506,15 @@
                                             @enderror
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label fw-bold">Nhận xét <span class="text-danger">*</span></label>
+                                            <label class="form-label fw-bold">{{ __('Nhận xét') }} <span class="text-danger">*</span></label>
                                             <textarea name="comment" class="form-control rounded-3" rows="4" 
-                                                      placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..." required>{{ old('comment') }}</textarea>
+                                                      placeholder="{{ __('Chia sẻ trải nghiệm của bạn về sản phẩm...') }}" required>{{ old('comment') }}</textarea>
                                             @error('comment')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
                                         <button type="submit" class="btn btn-primary rounded-pill px-4">
-                                            <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
+                                            <i class="fas fa-paper-plane me-2"></i>{{ __('Gửi đánh giá') }}
                                         </button>
                                     </form>
                                 </div>
@@ -523,7 +522,7 @@
                             @else
                             <div class="alert alert-info rounded-4 mb-4">
                                 <i class="fas fa-info-circle me-2"></i>
-                                Bạn cần <a href="{{ route('login') }}" class="alert-link fw-bold">đăng nhập</a> để viết đánh giá.
+                                {!! __('Bạn cần :login để viết đánh giá.', ['login' => '<a href="'.route('login').'" class="alert-link fw-bold">'.__('đăng nhập').'</a>']) !!}
                             </div>
                             @endauth
 
@@ -558,7 +557,7 @@
                             @empty
                             <div class="text-center py-5">
                                 <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên!</p>
+                                <p class="text-muted">{{ __('Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên!') }}</p>
                             </div>
                             @endforelse
                         </div>

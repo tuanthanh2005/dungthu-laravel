@@ -11,11 +11,29 @@ class Feature extends Model
 
     protected $fillable = [
         'name',
+        'name_en',
         'icon',
         'color',
         'description',
+        'description_en',
         'category',
     ];
+
+    public function getNameAttribute($value)
+    {
+        if (app()->getLocale() === 'en' && !empty($this->name_en) && !request()->is('admin*')) {
+            return $this->name_en;
+        }
+        return $value;
+    }
+
+    public function getDescriptionAttribute($value)
+    {
+        if (app()->getLocale() === 'en' && !empty($this->description_en) && !request()->is('admin*')) {
+            return $this->description_en;
+        }
+        return $value;
+    }
 
     // Relationship với Products
     public function products()

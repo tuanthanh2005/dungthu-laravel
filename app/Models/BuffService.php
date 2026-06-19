@@ -9,15 +9,33 @@ class BuffService extends Model
 {
     protected $fillable = [
         'name',
+        'name_en',
         'platform',
         'service_type',
         'description',
+        'description_en',
         'base_price',
         'price_per_unit',
         'min_amount',
         'max_amount',
         'is_active',
     ];
+
+    public function getNameAttribute($value)
+    {
+        if (app()->getLocale() === 'en' && !empty($this->name_en) && !request()->is('admin*')) {
+            return $this->name_en;
+        }
+        return $value;
+    }
+
+    public function getDescriptionAttribute($value)
+    {
+        if (app()->getLocale() === 'en' && !empty($this->description_en) && !request()->is('admin*')) {
+            return $this->description_en;
+        }
+        return $value;
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

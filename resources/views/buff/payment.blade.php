@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Thanh Toán Đơn Buff - DungThu.com')
+@section('title', __('Thanh Toán Đơn Buff') . ' - DungThu.com')
 
 @push('styles')
 <style>
@@ -288,42 +288,60 @@
 @endpush
 
 @section('content')
+@php
+    $locale = app()->getLocale();
+    $exchangeRate = doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000'));
+    $formatPrice = function($amount) use ($locale, $exchangeRate) {
+        if ($locale === 'en') {
+            $usd = $amount / $exchangeRate;
+            if ($usd < 0.01 && $usd > 0) {
+                return '$' . number_format($usd, 4, '.', ',');
+            }
+            return '$' . number_format($usd, 2, '.', ',');
+        }
+        $locale = app()->getLocale();
+    if ($locale === 'en') {
+        return '$' . number_format($amount / $exchangeRate, 2);
+    }
+    return number_format($amount, 0, ',', '.') . 'đ';
+    };
+@endphp
 <main>
     <div class="container" style="margin-top: 100px; margin-bottom: 3rem;">
         <div class="payment-container">
             <div class="payment-header">
-                <h1>Xác Nhận Thanh Toán</h1>
-                <p class="mb-2">Đơn #<span class="order-code">{{ $buffOrder->order_code }}</span></p>
+                <h1>{{ __('Xác Nhận Thanh Toán') }}</h1>
+                <p class="mb-2">{{ __('Đơn') }} #<span class="order-code">{{ $buffOrder->order_code }}</span></p>
             </div>
 
             <!-- Order Summary -->
             <div class="order-summary">
                 <div class="summary-row">
-                    <strong>Dịch vụ:</strong>
-                    <span>{{ $buffOrder->buffService->name }}</span>
+                    <strong>{{ __('Dịch vụ:') }}</strong>
+                    <span>{{ __($buffOrder->buffService->name) }}</span>
                 </div>
                 <div class="summary-row">
-                    <strong>Server:</strong>
-                    <span>{{ $buffOrder->buffServer->name }}</span>
+                    <strong>{{ __('Server:') }}</strong>
+                    <span>{{ __($buffOrder->buffServer->name) }}</span>
                 </div>
                 <div class="summary-row">
-                    <strong>Số lượng:</strong>
+                    <strong>{{ __('Số lượng:') }}</strong>
                     <span>{{ number_format($buffOrder->quantity) }}</span>
                 </div>
                 <div class="summary-row">
-                    <strong>Giá/đơn vị:</strong>
-                    <span>{{ number_format($buffOrder->unit_price, 0, ',', '.') }}đ</span>
+                    <strong>{{ __('Giá/đơn vị:') }}</strong>
+                    <span>{{ $formatPrice($buffOrder->unit_price) }}</span>
                 </div>
                 <div class="summary-total">
                     <div class="summary-row">
-                        <span>TỔNG CỘNG:</span>
-                        <span>{{ number_format($buffOrder->total_price, 0, ',', '.') }}đ</span>
+                        <span>{{ __('TỔNG CỘNG:') }}</span>
+                        <span>{{ $formatPrice($buffOrder->total_price) }}</span>
                     </div>
                 </div>
             </div>
 
             <div class="info-box">
-                ℹ️ Vui lòng chuyển khoản đủ số tiền. Nếu chuyển thiếu, đơn hàng sẽ bị hủy.
+                ℹ️ {{ __('Vui lòng chuyển khoản đủ số tiền. Nếu chuyển thiếu, đơn hàng sẽ bị hủy.') }}
             </div>
 
             <!-- Payment Method Selection -->
@@ -331,24 +349,26 @@
                 @csrf
 
                 <div class="payment-method-section">
-                    <h3>Chọn Phương Thức Thanh Toán</h3>
+                    <h3>{{ __('Chọn Phương Thức Thanh Toán') }}</h3>
                     <div class="payment-method-group">
+                        @if(app()->getLocale() !== 'en')
                         <label class="payment-option active">
                             <input type="radio" name="payment_method" value="qr_code" checked>
                             <div class="payment-option-icon">📱</div>
-                            <span class="payment-option-label">Quét QR Code</span>
+                            <span class="payment-option-label">{{ __('Quét QR Code') }}</span>
                             <span class="payment-option-text">VietQR / Momo</span>
                         </label>
                         <label class="payment-option">
                             <input type="radio" name="payment_method" value="bank_transfer">
                             <div class="payment-option-icon">🏦</div>
-                            <span class="payment-option-label">Chuyển Khoản</span>
+                            <span class="payment-option-label">{{ __('Chuyển Khoản') }}</span>
                             <span class="payment-option-text">{{ config('services.vietqr.bank_name') }}</span>
                         </label>
-                        <label class="payment-option">
-                            <input type="radio" name="payment_method" value="crypto">
+                        @endif
+                        <label class="payment-option {{ app()->getLocale() === 'en' ? 'active' : '' }}">
+                            <input type="radio" name="payment_method" value="crypto" {{ app()->getLocale() === 'en' ? 'checked' : '' }}>
                             <div class="payment-option-icon">🪙</div>
-                            <span class="payment-option-label">Ví Crypto</span>
+                            <span class="payment-option-label">{{ __('Ví Crypto') }}</span>
                             <span class="payment-option-text">USDT, BTC...</span>
                         </label>
                         <label class="payment-option">
@@ -360,53 +380,54 @@
                     </div>
                 </div>
 
+                @if(app()->getLocale() !== 'en')
                 <!-- QR Section -->
                 <div id="qrSection" class="qr-section show">
-                    <h4>📲 Quét QR Code Để Thanh Toán</h4>
+                    <h4>📲 {{ __('Quét QR Code Để Thanh Toán') }}</h4>
                     <p style="color: #666; margin-bottom: 1rem;">
-                        Sử dụng ứng dụng Momo hoặc ngân hàng để quét mã QR bên dưới
+                        {{ __('Sử dụng ứng dụng Momo hoặc ngân hàng để quét mã QR bên dưới') }}
                     </p>
-                    {{-- Real VietQR Code --}}
                     <div class="qr-code">
                         <img src="{{ $qrUrl }}" alt="VietQR Code" style="max-width: 250px; width: 100%;">
                     </div>
 
                     <div class="qr-amount">
-                        {{ number_format($buffOrder->total_price, 0, ',', '.') }}đ
+                        {{ $formatPrice($buffOrder->total_price) }}
                     </div>
 
                     <div class="qr-info">
-                        ✓ Số tiền: {{ number_format($buffOrder->total_price, 0, ',', '.') }}đ<br>
-                        ✓ Nội dung: DungThu Buff - {{ $buffOrder->order_code }}<br>
-                        ✓ Bạn sẽ nhận thông báo khi thanh toán thành công
+                        ✓ {{ __('Số tiền:') }} {{ $formatPrice($buffOrder->total_price) }}<br>
+                        ✓ {{ __('Nội dung:') }} DungThu Buff - {{ $buffOrder->order_code }}<br>
+                        ✓ {{ __('Bạn sẽ nhận thông báo khi thanh toán thành công') }}
                     </div>
                 </div>
 
                 <!-- Bank Transfer Section -->
                 <div id="bankSection" class="qr-section">
-                    <h4>🏦 Hướng dẫn chuyển khoản VN</h4>
+                    <h4>🏦 {{ __('Hướng dẫn chuyển khoản VN') }}</h4>
                     <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
-                        <p><strong>Ngân Hàng:</strong> {{ config('services.vietqr.bank_name') }}</p>
-                        <p><strong>Tên TK:</strong> {{ config('services.vietqr.account_name') }}</p>
-                        <p><strong>Số TK:</strong> {{ config('services.vietqr.account_number') }}</p>
-                        <p><strong>Số Tiền:</strong> {{ number_format($buffOrder->total_price, 0, ',', '.') }}đ</p>
-                        <p style="margin-bottom: 0;"><strong>Nội Dung:</strong> DungThu Buff - {{ $buffOrder->order_code }}</p>
+                        <p><strong>{{ __('Ngân Hàng:') }}</strong> {{ config('services.vietqr.bank_name') }}</p>
+                        <p><strong>{{ __('Tên TK:') }}</strong> {{ config('services.vietqr.account_name') }}</p>
+                        <p><strong>{{ __('Số TK:') }}</strong> {{ config('services.vietqr.account_number') }}</p>
+                        <p><strong>{{ __('Số Tiền:') }}</strong> {{ $formatPrice($buffOrder->total_price) }}</p>
+                        <p style="margin-bottom: 0;"><strong>{{ __('Nội Dung:') }}</strong> DungThu Buff - {{ $buffOrder->order_code }}</p>
                     </div>
                 </div>
+                @endif
 
                 <!-- Crypto Section -->
-                <div id="cryptoSection" class="qr-section">
-                    <h4>🪙 Ví Crypto (USDT, BTC, ETH...)</h4>
+                <div id="cryptoSection" class="qr-section {{ app()->getLocale() === 'en' ? 'show' : '' }}">
+                    <h4>🪙 {{ __('Ví Crypto (USDT, BTC, ETH...)') }}</h4>
                     <p style="color: #666; margin-bottom: 1rem;">
-                        Chuyển tiền điện tử đến địa chỉ ví bên dưới
+                        {{ __('Chuyển tiền điện tử đến địa chỉ ví bên dưới') }}
                     </p>
                     <div class="qr-code">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9" alt="Crypto QR" style="max-width: 220px; width: 100%;">
                     </div>
                     <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
-                        <p class="mb-2"><strong>Mạng lưới:</strong> Hỗ trợ nhiều mạng lưới khác nhau (TRC20, ERC20, BEP20...)</p>
+                        <p class="mb-2"><strong>{{ __('Mạng lưới:') }}</strong> {{ __('Hỗ trợ nhiều mạng lưới khác nhau (TRC20, ERC20, BEP20...)') }}</p>
                         <div class="mb-3">
-                            <strong>Địa chỉ ví (Wallet Address):</strong>
+                            <strong>{{ __('Địa chỉ ví (Wallet Address):') }}</strong>
                             <div class="d-flex align-items-center justify-content-between mt-1 bg-white p-2 border rounded">
                                 <code class="text-danger text-break" style="font-size: 0.9rem;">0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9</code>
                                 <button type="button" class="btn btn-sm btn-secondary ms-2 text-nowrap" onclick="copyToClipboard('0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9', this)">
@@ -415,24 +436,27 @@
                             </div>
                         </div>
                         <div style="font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 10px; line-height: 1.5; color: #555;">
-                            <strong>English:</strong> Please let me know which cryptocurrency and network you will use. Once the payment is sent, please contact us.<br>
-                            <strong>Tiếng Việt:</strong> Vui lòng cho biết bạn sử dụng loại tiền điện tử và mạng lưới nào. Sau khi gửi thanh toán, hãy liên hệ với chúng tôi.
+                            @if(app()->getLocale() === 'en')
+                                Please let me know which cryptocurrency and network you will use. Once the payment is sent, please contact us.
+                            @else
+                                {{ __('Vui lòng cho biết bạn sử dụng loại tiền điện tử và mạng lưới nào. Sau khi gửi thanh toán, hãy liên hệ với chúng tôi.') }}
+                            @endif
                         </div>
                     </div>
                 </div>
 
                 <!-- Binance Pay Section -->
                 <div id="binanceSection" class="qr-section">
-                    <h4>💳 Binance Pay / UID</h4>
+                    <h4>💳 {{ __('Binance Pay / UID') }}</h4>
                     <p style="color: #666; margin-bottom: 1rem;">
-                        Chuyển khoản nội bộ Binance Pay qua UID bên dưới
+                        {{ __('Chuyển khoản nội bộ Binance Pay qua UID bên dưới') }}
                     </p>
                     <div class="qr-code">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=490696268" alt="Binance Pay QR" style="max-width: 220px; width: 100%;">
                     </div>
                     <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
                         <div class="mb-3">
-                            <strong>Binance UID:</strong>
+                            <strong>{{ __('Binance UID:') }}</strong>
                             <div class="d-flex align-items-center justify-content-between mt-1 bg-white p-2 border rounded">
                                 <span class="text-danger fw-bold">490696268</span>
                                 <button type="button" class="btn btn-sm btn-secondary ms-2 text-nowrap" onclick="copyToClipboard('490696268', this)">
@@ -441,8 +465,11 @@
                             </div>
                         </div>
                         <div style="font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 10px; line-height: 1.5; color: #555;">
-                            <strong>English:</strong> Once the payment is sent, please contact us.<br>
-                            <strong>Tiếng Việt:</strong> Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.
+                            @if(app()->getLocale() === 'en')
+                                Once the payment is sent, please contact us.
+                            @else
+                                {{ __('Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.') }}
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -452,17 +479,17 @@
                     <div class="confirm-checkbox">
                         <input type="checkbox" id="confirmPayment" required>
                         <label for="confirmPayment" style="margin: 0; cursor: pointer;">
-                            Tôi đã chuyển khoản đủ {{ number_format($buffOrder->total_price, 0, ',', '.') }}đ
+                            {{ __('Tôi đã chuyển khoản đủ :amount', ['amount' => $formatPrice($buffOrder->total_price)]) }}
                         </label>
                     </div>
                     <button type="submit" class="btn-confirm" id="btnConfirm">
-                        ✓ Hoàn Thành Thanh Toán
+                        ✓ {{ __('Hoàn Thành Thanh Toán') }}
                     </button>
                 </div>
 
                 <!-- Back Link -->
                 <div class="back-link">
-                    <a href="{{ route('buff.history') }}">← Quay lại lịch sử đơn hàng</a>
+                    <a href="{{ route('buff.history') }}">← {{ __('Quay lại lịch sử đơn hàng') }}</a>
                 </div>
             </form>
         </div>
@@ -475,7 +502,7 @@
 window.copyToClipboard = function(text, btnElement) {
     navigator.clipboard.writeText(text).then(() => {
         const originalText = btnElement.innerHTML;
-        btnElement.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btnElement.innerHTML = '<i class="fas fa-check"></i> ' + @json(__('Copied!'));
         btnElement.classList.replace('btn-secondary', 'btn-success');
         setTimeout(() => {
             btnElement.innerHTML = originalText;
@@ -505,16 +532,16 @@ document.addEventListener('DOMContentLoaded', function() {
             this.closest('.payment-option').classList.add('active');
 
             // Hide all sections first
-            qrSection.classList.remove('show');
-            bankSection.classList.remove('show');
+            if (qrSection) qrSection.classList.remove('show');
+            if (bankSection) bankSection.classList.remove('show');
             if (cryptoSection) cryptoSection.classList.remove('show');
             if (binanceSection) binanceSection.classList.remove('show');
 
             // Show selected section
             if (this.value === 'qr_code') {
-                qrSection.classList.add('show');
+                if (qrSection) qrSection.classList.add('show');
             } else if (this.value === 'bank_transfer') {
-                bankSection.classList.add('show');
+                if (bankSection) bankSection.classList.add('show');
             } else if (this.value === 'crypto') {
                 if (cryptoSection) cryptoSection.classList.add('show');
             } else if (this.value === 'binance_uid') {
@@ -528,13 +555,13 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
 
         if (!confirmPayment.checked) {
-            alert('Vui lòng xác nhận rằng bạn đã thanh toán!');
+            alert(@json(__('Vui lòng xác nhận rằng bạn đã thanh toán!')));
             return;
         }
 
         const confirmBtn = document.getElementById('btnConfirm');
         confirmBtn.disabled = true;
-        confirmBtn.textContent = '⏳ Đang xử lý...';
+        confirmBtn.textContent = '⏳ ' + @json(__('Đang xử lý...'));
 
         fetch(this.action, {
             method: 'POST',
@@ -552,16 +579,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 window.location.href = data.redirect;
             } else {
-                alert('Lỗi: ' + (data.error || 'Không xác định'));
+                alert(@json(__('Lỗi:')) + ' ' + (data.error || 'Unknown'));
                 confirmBtn.disabled = false;
-                confirmBtn.textContent = '✓ Hoàn Thành Thanh Toán';
+                confirmBtn.textContent = '✓ ' + @json(__('Hoàn Thành Thanh Toán'));
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Lỗi kết nối. Vui lòng thử lại!');
+            alert(@json(__('Lỗi kết nối. Vui lòng thử lại!')));
             confirmBtn.disabled = false;
-            confirmBtn.textContent = '✓ Hoàn Thành Thanh Toán';
+            confirmBtn.textContent = '✓ ' + @json(__('Hoàn Thành Thanh Toán'));
         });
     });
 });

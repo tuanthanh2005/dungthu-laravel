@@ -148,7 +148,9 @@ class CartController extends Controller
         // Calculate total amount
         $total = 0;
         foreach($cart as $id => $details) {
-            $total += $details['price'] * $details['quantity'];
+            $product = Product::find($id);
+            $price = $product ? (float) $product->effective_price : (float) $details['price'];
+            $total += $price * $details['quantity'];
         }
 
         // Apply coupon if exists in session
@@ -165,6 +167,10 @@ class CartController extends Controller
                 ->first();
             if ($coupon) {
                 $discountAmount = (float) $coupon->value;
+                if (app()->getLocale() === 'en') {
+                    $rate = (float) \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000);
+                    $discountAmount = $discountAmount / $rate;
+                }
                 $couponCode = $coupon->code;
             } else {
                 session()->forget('applied_coupon');
@@ -218,12 +224,17 @@ class CartController extends Controller
         
         $request->validate($rules);
 
+        $isEn = app()->getLocale() === 'en';
+        $currency = $isEn ? 'USD' : 'VND';
+
         $totalAmount = 0;
         foreach($cart as $id => $details) {
-            $totalAmount += $details['price'] * $details['quantity'];
+            $product = Product::find($id);
+            $price = $product ? (float) $product->effective_price : (float) $details['price'];
+            $totalAmount += $price * $details['quantity'];
         }
 
-        $customerAddress = $request->customer_address ?? 'Sản phẩm số - không cần giao hàng';
+        $customerAddress = $request->customer_address ?? ($isEn ? 'Digital product - no shipping required' : 'Sản phẩm số - không cần giao hàng');
         if ($request->filled('customer_zalo')) {
             $customerAddress .= "\nZalo: " . $request->customer_zalo;
         }
@@ -233,11 +244,11 @@ class CartController extends Controller
         if ($request->filled('payment_method')) {
             $pm = $request->payment_method;
             if ($pm === 'crypto') {
-                $customerAddress .= "\nPhương thức thanh toán: Ví Crypto (USDT,...)";
+                $customerAddress .= "\n" . ($isEn ? 'Payment Method: Crypto Wallet (USDT,...)' : 'Phương thức thanh toán: Ví Crypto (USDT,...)');
             } elseif ($pm === 'binance_uid') {
-                $customerAddress .= "\nPhương thức thanh toán: Binance UID";
+                $customerAddress .= "\n" . ($isEn ? 'Payment Method: Binance UID' : 'Phương thức thanh toán: Binance UID');
             } else {
-                $customerAddress .= "\nPhương thức thanh toán: Chuyển khoản VietQR";
+                $customerAddress .= "\n" . ($isEn ? 'Payment Method: VietQR Bank Transfer' : 'Phương thức thanh toán: Chuyển khoản VietQR');
             }
         }
 
@@ -267,6 +278,10 @@ class CartController extends Controller
                     ->first();
                 if ($coupon) {
                     $discountAmount = (float) $coupon->value;
+                    if ($currency === 'USD') {
+                        $rate = (float) \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000);
+                        $discountAmount = $discountAmount / $rate;
+                    }
                 }
             }
             $finalTotal = max(0, $totalAmount - $discountAmount);
@@ -278,6 +293,7 @@ class CartController extends Controller
                 'customer_phone' => $request->customer_phone,
                 'customer_address' => $customerAddress,
                 'total_amount' => $finalTotal,
+                'currency' => $currency,
                 'status' => $orderStatus,
                 'coupon_code' => $coupon ? $coupon->code : null,
                 'discount_amount' => $discountAmount,
@@ -285,11 +301,13 @@ class CartController extends Controller
             ]);
 
             foreach($cart as $id => $details) {
+                $product = Product::find($id);
+                $price = $product ? (float) $product->effective_price : (float) $details['price'];
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $id,
                     'quantity' => $details['quantity'],
-                    'price' => $details['price'],
+                    'price' => $price,
                 ]);
 
                 // Trừ tồn kho nếu sản phẩm còn hàng sẵn

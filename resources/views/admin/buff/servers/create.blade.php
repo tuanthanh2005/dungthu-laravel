@@ -166,11 +166,30 @@
                 @enderror
             </div>
 
+            <div class="form-group @error('name_en') has-error @enderror">
+                <label class="form-label" style="color: #2ecc71;">Tên Server (Tiếng Anh)</label>
+                <input type="text" name="name_en" class="form-control"
+                    placeholder="VD: Server 1310 (US), ..."
+                    value="{{ old('name_en') }}">
+                @error('name_en')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
             <div class="form-group @error('description') has-error @enderror">
                 <label class="form-label">Mô Tả</label>
                 <textarea name="description" class="form-control"
                     placeholder="Mô tả chi tiết về server này...">{{ old('description') }}</textarea>
                 @error('description')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group @error('description_en') has-error @enderror">
+                <label class="form-label" style="color: #2ecc71;">Mô Tả (Tiếng Anh)</label>
+                <textarea name="description_en" class="form-control"
+                    placeholder="Detailed description of this server in English...">{{ old('description_en') }}</textarea>
+                @error('description_en')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>

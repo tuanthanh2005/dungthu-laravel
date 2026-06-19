@@ -37,6 +37,15 @@ class AffiliateInvoice extends Model
 
     public function getStatusLabelAttribute(): string
     {
+        $locale = app()->getLocale();
+        if ($locale === 'en') {
+            return match($this->status) {
+                'pending'  => 'Pending',
+                'approved' => 'Approved',
+                'rejected' => 'Rejected',
+                default    => 'Unknown',
+            };
+        }
         return match($this->status) {
             'pending'  => 'Chờ duyệt',
             'approved' => 'Đã duyệt',

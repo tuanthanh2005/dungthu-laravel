@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Quản lý hóa đơn | DungThu')
+@section('title', __('Quản lý hóa đơn') . ' | DungThu')
 
 @push('styles')
 <style>
@@ -35,22 +35,22 @@
                     
                     <nav>
                         <a href="{{ route('affiliate.dashboard') }}" class="aff-nav-link">
-                            <i class="fas fa-th-large"></i> Thống kê
+                            <i class="fas fa-th-large"></i> {{ __('Thống kê') }}
                         </a>
                         <a href="{{ route('affiliate.invoices') }}" class="aff-nav-link active">
-                            <i class="fas fa-file-invoice-dollar"></i> Gửi hóa đơn
+                            <i class="fas fa-file-invoice-dollar"></i> {{ __('Gửi hóa đơn') }}
                         </a>
                         <a href="{{ route('affiliate.withdrawals') }}" class="aff-nav-link">
-                            <i class="fas fa-wallet"></i> Rút tiền
+                            <i class="fas fa-wallet"></i> {{ __('Rút tiền') }}
                         </a>
                         <a href="{{ route('affiliate.account') }}" class="aff-nav-link">
-                            <i class="fas fa-user-cog"></i> Tài khoản
+                            <i class="fas fa-user-cog"></i> {{ __('Tài khoản') }}
                         </a>
                         <hr class="my-3">
                         <form action="{{ route('affiliate.logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="aff-nav-link text-danger border-0 bg-transparent w-100 text-start">
-                                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                <i class="fas fa-sign-out-alt"></i> {{ __('Đăng xuất') }}
                             </button>
                         </form>
                     </nav>
@@ -60,9 +60,9 @@
             <div class="col-lg-9">
                 <div class="content-card">
                     <div class="section-title">
-                        <i class="fas fa-list text-primary"></i> Danh sách hóa đơn đã gửi
+                        <i class="fas fa-list text-primary"></i> {{ __('Danh sách hóa đơn đã gửi') }}
                         <a href="{{ route('affiliate.invoices.create') }}" class="ms-auto btn btn-primary btn-sm" style="border-radius: 8px;">
-                            + Gửi mới
+                            + {{ __('Gửi mới') }}
                         </a>
                     </div>
 
@@ -70,27 +70,27 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Sản phẩm</th>
-                                    <th>Số tiền khách trả</th>
-                                    <th>Hoa hồng (5%)</th>
-                                    <th>Trạng thái</th>
-                                    <th>Ngày tạo</th>
-                                    <th>Thao tác</th>
+                                    <th>{{ __('Sản phẩm') }}</th>
+                                    <th>{{ __('Số tiền khách trả') }}</th>
+                                    <th>{{ __('Hoa hồng (5%)') }}</th>
+                                    <th>{{ __('Trạng thái') }}</th>
+                                    <th>{{ __('Ngày tạo') }}</th>
+                                    <th>{{ __('Thao tác') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($invoices as $invoice)
                                 <tr>
                                     <td class="fw-bold">{{ $invoice->product_name }}</td>
-                                    <td>{{ number_format($invoice->amount, 0, ',', '.') }}đ</td>
-                                    <td class="text-success fw-bold">+{{ number_format($invoice->commission, 0, ',', '.') }}đ</td>
+                                    <td>{{ app()->getLocale() === 'en' ? '$' . number_format($invoice->amount / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : number_format($invoice->amount, 0, ',', '.') . 'đ' }}</td>
+                                    <td class="text-success fw-bold">+{{ app()->getLocale() === 'en' ? '$' . number_format($invoice->commission / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : number_format($invoice->commission, 0, ',', '.') . 'đ' }}</td>
                                     <td>
                                         <span class="badge-status badge-{{ $invoice->status }}">
                                             {{ $invoice->status_label }}
                                         </span>
                                         @if($invoice->status === 'rejected' && $invoice->admin_note)
                                             <div class="small text-danger mt-1" title="{{ $invoice->admin_note }}">
-                                                <i class="fas fa-info-circle"></i> Lý do từ chối
+                                                <i class="fas fa-info-circle"></i> {{ __('Lý do từ chối') }}
                                             </div>
                                         @endif
                                     </td>
@@ -105,7 +105,7 @@
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Hóa đơn: {{ $invoice->product_name }}</h5>
+                                                        <h5 class="modal-title">{{ __('Hóa đơn') }}: {{ $invoice->product_name }}</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body text-center">
@@ -118,7 +118,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">Chưa có hóa đơn nào được gửi</td>
+                                    <td colspan="6" class="text-center py-4 text-muted">{{ __('Chưa có hóa đơn nào được gửi') }}</td>
                                 </tr>
                                 @endforelse
                             </tbody>

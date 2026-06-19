@@ -9,10 +9,28 @@ class BuffServer extends Model
 {
     protected $fillable = [
         'name',
+        'name_en',
         'description',
+        'description_en',
         'is_active',
         'is_maintenance',
     ];
+
+    public function getNameAttribute($value)
+    {
+        if (app()->getLocale() === 'en' && !empty($this->name_en) && !request()->is('admin*')) {
+            return $this->name_en;
+        }
+        return $value;
+    }
+
+    public function getDescriptionAttribute($value)
+    {
+        if (app()->getLocale() === 'en' && !empty($this->description_en) && !request()->is('admin*')) {
+            return $this->description_en;
+        }
+        return $value;
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

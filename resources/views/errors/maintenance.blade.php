@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đang Bảo Trì – DungThu.com</title>
+    <title>{{ __('Đang Bảo Trì') }} – DungThu.com</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -341,35 +341,35 @@
 
         <div class="badge">
             <i class="fa-solid fa-circle-dot"></i>
-            Tạm thời đóng
+            {{ __('Tạm thời đóng') }}
         </div>
 
-        <h1>Trang đang<br><span>Bảo Trì</span></h1>
+        <h1>{{ __('Trang đang') }}<br><span>{{ __('Bảo Trì') }}</span></h1>
 
         <p class="subtitle">
-            Chức năng <strong style="color:rgba(255,255,255,0.9);">{{ $pageName ?? 'này' }}</strong> hiện đang được bảo trì hoặc tạm thời đóng cửa.<br>
-            Hệ thống sẽ sớm trở lại, cảm ơn bạn đã kiên nhẫn!
+            {{ __('Chức năng') }} <strong style="color:rgba(255,255,255,0.9);">{{ __($pageName ?? 'này') }}</strong> {{ __('hiện đang được bảo trì hoặc tạm thời đóng cửa.') }}<br>
+            {{ __('Hệ thống sẽ sớm trở lại, cảm ơn bạn đã kiên nhẫn!') }}
         </p>
 
         <div class="status-bar">
             <div class="status-dot"></div>
             <div class="status-text">
-                <strong>Trạng thái hệ thống</strong>
-                Chúng tôi đang nâng cấp tính năng này để mang lại trải nghiệm tốt hơn cho bạn.
+                <strong>{{ __('Trạng thái hệ thống') }}</strong>
+                {{ __('Chúng tôi đang nâng cấp tính năng này để mang lại trải nghiệm tốt hơn cho bạn.') }}
             </div>
         </div>
 
         <div class="btn-group">
             <a href="{{ route('home') }}" class="btn-home">
-                <i class="fa-solid fa-house"></i> Về trang chủ
+                <i class="fa-solid fa-house"></i> {{ __('Về trang chủ') }}
             </a>
             <a href="javascript:history.back()" class="btn-back">
-                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                <i class="fa-solid fa-arrow-left"></i> {{ __('Quay lại') }}
             </a>
         </div>
     </div>
 
-    <div class="footer-note">© {{ date('Y') }} DungThu.com — Hệ thống đang được cập nhật</div>
+    <div class="footer-note">© {{ date('Y') }} DungThu.com  — {{ __('Hệ thống đang được cập nhật') }}</div>
 
     <script>
         // Generate particles

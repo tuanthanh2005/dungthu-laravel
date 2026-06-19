@@ -40,7 +40,10 @@ document.addEventListener('DOMContentLoaded', function () {
 // 2. HIỆU ỨNG GÕ CHỮ (TYPING EFFECT)
 const textElement = document.getElementById('typewriter');
 if (textElement) {
-    const phrases = ["Mua Sắm Thả Ga.", "Mua AI Giá Rẻ.", "Đổi Thẻ Cào.", "Đọc Blog Hay."];
+    const isEn = document.documentElement.lang === 'en';
+    const phrases = isEn 
+        ? ["Shop Without Limits.", "Buy Cheap AI Tools.", "Scratch Card Exchange.", "Read Awesome Blog."]
+        : ["Mua Sắm Thả Ga.", "Mua AI Giá Rẻ.", "Đổi Thẻ Cào.", "Đọc Blog Hay."];
     let phraseIndex = 0;
     let charIndex = 0;
     let isDeleting = false;

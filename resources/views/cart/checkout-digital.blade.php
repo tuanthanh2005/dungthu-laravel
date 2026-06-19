@@ -198,13 +198,22 @@
 </style>
 @endpush
 
+@php
+    $formatPrice = function($amount) {
+        if (app()->getLocale() === 'en') {
+            return '$' . number_format($amount, 2);
+        }
+        return number_format($amount, 0, ',', '.') . 'đ';
+    };
+@endphp
+
 @section('content')
 <div class="container py-2" style="margin-top: 50px;">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="text-center mb-4">
                 <h1 class="fw-bold">
-                    <i class="fas fa-qrcode text-primary me-2"></i>Thanh Toán QR
+                    <i class="fas fa-qrcode text-primary me-2"></i>{{ __('Thanh Toán QR') }}
                 </h1>
 
             </div>
@@ -215,17 +224,17 @@
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <h5 class="mb-0 fw-bold">
-                                <i class="fas fa-user me-2"></i>Thông tin của bạn
+                                <i class="fas fa-user me-2"></i>{{ __('Thông tin của bạn') }}
                             </h5>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('checkout.place') }}" method="POST" id="checkout-form">
                                 @csrf
-                                <input type="hidden" name="payment_method" id="payment_method_input" value="vietqr">
+                                <input type="hidden" name="payment_method" id="payment_method_input" value="{{ app()->getLocale() === 'en' ? 'crypto' : 'vietqr' }}">
                                 <input type="hidden" name="order_code" value="{{ $orderCode }}">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fas fa-user-circle me-2 text-primary"></i>Họ và tên
+                                        <i class="fas fa-user-circle me-2 text-primary"></i>{{ __('Họ và tên') }}
                                     </label>
                                     <input type="text" class="form-control form-control-lg" name="customer_name" required>
                                 </div>
@@ -234,11 +243,11 @@
                                         <i class="fas fa-envelope me-2 text-primary"></i>Email
                                     </label>
                                     <input type="email" class="form-control form-control-lg" name="customer_email" required>
-                                    <small class="text-muted">Mã kích hoạt sẽ được gửi qua email</small>
+                                    <small class="text-muted">{{ __('Mã kích hoạt sẽ được gửi qua email') }}</small>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fas fa-phone me-2 text-primary"></i>Số điện thoại
+                                        <i class="fas fa-phone me-2 text-primary"></i>{{ __('Số điện thoại') }}
                                     </label>
                                     <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
                                 </div>
@@ -246,37 +255,37 @@
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-danger fw-normal" id="zalo-label">(Bắt buộc nếu không có Facebook)</small>
+                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-danger fw-normal" id="zalo-label">{{ __('(Bắt buộc nếu không có Facebook)') }}</small>
                                     </label>
-                                    <input type="text" class="form-control form-control-lg contact-input" name="customer_zalo" placeholder="Nhập số Zalo của bạn">
+                                    <input type="text" class="form-control form-control-lg contact-input" name="customer_zalo" placeholder="{{ __('Nhập số Zalo của bạn') }}">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">
-                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-danger fw-normal" id="facebook-label">(Bắt buộc nếu không có Zalo)</small>
+                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-danger fw-normal" id="facebook-label">{{ __('(Bắt buộc nếu không có Zalo)') }}</small>
                                     </label>
-                                    <input type="url" class="form-control form-control-lg contact-input" name="customer_facebook" placeholder="Ví dụ: https://facebook.com/username">
+                                    <input type="url" class="form-control form-control-lg contact-input" name="customer_facebook" placeholder="{{ __('Ví dụ: https://facebook.com/username') }}">
                                 </div>
 
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" name="use_boxchat" id="use_boxchat" value="1">
                                     <label class="form-check-label fw-bold text-primary" for="use_boxchat" style="cursor: pointer;">
-                                        Tôi sẽ tự liên hệ qua Boxchat (Không cần để lại Zalo/FB)
+                                        {{ __('Tôi sẽ tự liên hệ qua Boxchat (Không cần để lại Zalo/FB)') }}
                                     </label>
                                 </div>
 
                                 <div id="contact-error" class="alert alert-danger py-2 mb-3 d-none" style="font-size: 13px;">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>Vui lòng để lại ít nhất 1 thông tin liên hệ hoặc chọn "Tự liên hệ qua Boxchat"!
+                                    <i class="fas fa-exclamation-triangle me-2"></i>{{ __('Vui lòng để lại ít nhất 1 thông tin liên hệ hoặc chọn "Tự liên hệ qua Boxchat"!') }}
                                 </div>
 
                                 <!-- Mã giảm giá -->
                                 <div class="card bg-light border-0 rounded-3 p-3 mb-3 text-dark">
                                     <label class="form-label fw-bold mb-2">
-                                        <i class="fas fa-ticket-alt text-primary me-2"></i>Mã giảm giá (nếu có)
+                                        <i class="fas fa-ticket-alt text-primary me-2"></i>{{ __('Mã giảm giá (nếu có)') }}
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" id="coupon_code" class="form-control" placeholder="Nhập mã giảm giá của bạn" value="{{ $couponCode ?? '' }}" {{ isset($couponCode) ? 'disabled' : '' }}>
-                                        <button class="btn btn-primary" type="button" id="apply-coupon-btn" style="{{ isset($couponCode) ? 'display:none;' : '' }}">Áp dụng</button>
-                                        <button class="btn btn-danger" type="button" id="remove-coupon-btn" style="{{ isset($couponCode) ? '' : 'display:none;' }}">Hủy</button>
+                                        <input type="text" id="coupon_code" class="form-control" placeholder="{{ __('Nhập mã giảm giá của bạn') }}" value="{{ $couponCode ?? '' }}" {{ isset($couponCode) ? 'disabled' : '' }}>
+                                        <button class="btn btn-primary" type="button" id="apply-coupon-btn" style="{{ isset($couponCode) ? 'display:none;' : '' }}">{{ __('Áp dụng') }}</button>
+                                        <button class="btn btn-danger" type="button" id="remove-coupon-btn" style="{{ isset($couponCode) ? '' : 'display:none;' }}">{{ __('Hủy') }}</button>
                                     </div>
                                     <div id="coupon-feedback" class="small mt-2 d-none"></div>
                                 </div>
@@ -284,26 +293,26 @@
                                 <!-- Đơn hàng -->
                                 <div class="alert alert-info mt-4">
                                     <h6 class="fw-bold mb-3">
-                                        <i class="fas fa-shopping-bag me-2"></i>Sản phẩm đã chọn
+                                        <i class="fas fa-shopping-bag me-2"></i>{{ __('Sản phẩm đã chọn') }}
                                     </h6>
                                     @php $total = 0 @endphp
                                     @foreach($cart as $id => $details)
                                     @php $total += $details['price'] * $details['quantity'] @endphp
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="text-break" style="max-width: 75%;">{{ $details['name'] }} x{{ $details['quantity'] }}</span>
-                                        <strong class="text-nowrap">{{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}đ</strong>
+                                        <strong class="text-nowrap">{{ $formatPrice($details['price'] * $details['quantity']) }}</strong>
                                     </div>
                                     @endforeach
                                     
                                     <div class="d-flex justify-content-between mb-2 {{ isset($discountAmount) && $discountAmount > 0 ? '' : 'd-none' }}" id="discount-row">
-                                        <span class="text-danger fw-bold">Giảm giá:</span>
-                                        <strong class="text-danger" id="discount-display">-{{ number_format($discountAmount ?? 0, 0, ',', '.') }}đ</strong>
+                                        <span class="text-danger fw-bold">{{ __('Giảm giá:') }}</span>
+                                        <strong class="text-danger" id="discount-display">-{{ $formatPrice($discountAmount ?? 0) }}</strong>
                                     </div>
                                     
                                     <hr>
                                     <div class="d-flex justify-content-between">
-                                        <h5 class="mb-0">Tổng cộng:</h5>
-                                        <h5 class="mb-0 text-primary" id="checkout-total-display">{{ number_format($finalTotal ?? $total, 0, ',', '.') }}đ</h5>
+                                        <h5 class="mb-0">{{ __('Tổng cộng:') }}</h5>
+                                        <h5 class="mb-0 text-primary" id="checkout-total-display">{{ $formatPrice($finalTotal ?? $total) }}</h5>
                                     </div>
                                 </div>
                             </form>
@@ -316,10 +325,12 @@
                     <div class="qr-payment-card">
                         <!-- Navigation Tabs -->
                         <div class="payment-tabs">
+                            @if(app()->getLocale() !== 'en')
                             <button type="button" class="payment-tab-btn active" data-target="vietqr-panel" data-method="vietqr">
                                 <i class="fas fa-university me-1"></i> VietQR (VN)
                             </button>
-                            <button type="button" class="payment-tab-btn" data-target="crypto-panel" data-method="crypto">
+                            @endif
+                            <button type="button" class="payment-tab-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}" data-target="crypto-panel" data-method="crypto">
                                 <i class="fas fa-coins me-1"></i> {{ __('Ví Crypto') }}
                             </button>
                             <button type="button" class="payment-tab-btn" data-target="binance-panel" data-method="binance_uid">
@@ -327,6 +338,7 @@
                             </button>
                         </div>
 
+                        @if(app()->getLocale() !== 'en')
                         <!-- PANEL 1: VietQR -->
                         <div id="vietqr-panel" class="payment-tab-content active">
                             <div class="mb-3">
@@ -359,7 +371,7 @@
                                     </div>
                                     <div class="col-6">
                                         <small class="opacity-75">{{ __('Số tiền:') }}</small>
-                                        <div class="fw-bold text-warning" id="transfer-amount-display">{{ number_format($finalTotal ?? $total ?? 0, 0, ',', '.') }}đ</div>
+                                        <div class="fw-bold text-warning" id="transfer-amount-display">{{ $formatPrice($finalTotal ?? $total ?? 0) }}</div>
                                     </div>
                                     <div class="col-12">
                                         <small class="opacity-75">{{ __('Nội dung:') }}</small>
@@ -368,12 +380,13 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
 
                         <!-- PANEL 2: Crypto Wallet -->
-                        <div id="crypto-panel" class="payment-tab-content">
+                        <div id="crypto-panel" class="payment-tab-content {{ app()->getLocale() === 'en' ? 'active' : '' }}">
                             <div class="mb-3">
                                 <i class="fas fa-wallet fa-3x mb-3"></i>
-                                <h3 class="fw-bold">Ví Crypto (USDT,...)</h3>
+                                <h3 class="fw-bold">{{ __('Ví Crypto (USDT,...)') }}</h3>
                                 <p class="opacity-75">Pay using Cryptocurrency (USDT/BTC/ETH...)</p>
                             </div>
 
@@ -385,9 +398,9 @@
                             </div>
 
                             <div class="payment-info text-start">
-                                <h5 class="fw-bold mb-3 text-center">Thông tin ví nhận tiền / Wallet Details</h5>
+                                <h5 class="fw-bold mb-3 text-center">{{ __('Thông tin ví nhận tiền / Wallet Details') }}</h5>
                                 <div class="mb-3">
-                                    <small class="opacity-75 d-block">Địa chỉ ví (Wallet Address):</small>
+                                    <small class="opacity-75 d-block">{{ __('Địa chỉ ví (Wallet Address):') }}</small>
                                     <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-2 rounded mt-1">
                                         <code class="text-warning text-break" style="font-size: 0.85rem;">0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9</code>
                                         <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9', this)">
@@ -396,10 +409,15 @@
                                     </div>
                                 </div>
                                 <div class="alert alert-warning py-2 mb-0" style="font-size: 0.85rem; background: rgba(255, 193, 7, 0.15); border: none; color: #fff;">
-                                    <i class="fas fa-info-circle me-1 text-warning"></i>
-                                    <strong>English:</strong> Please let me know which cryptocurrency and network you will use. Once the payment is sent, please contact us.<br>
-                                    <i class="fas fa-info-circle me-1 text-warning"></i>
-                                    <strong>Tiếng Việt:</strong> Vui lòng cho biết bạn sử dụng loại tiền điện tử và mạng lưới nào. Sau khi gửi thanh toán, hãy liên hệ với chúng tôi.
+                                    @if(app()->getLocale() === 'en')
+                                        <i class="fas fa-info-circle me-1 text-warning"></i>
+                                        Please let us know which cryptocurrency and network you will use. Once the payment is sent, please contact us.
+                                    @else
+                                        <i class="fas fa-info-circle me-1 text-warning"></i>
+                                        <strong>English:</strong> Please let me know which cryptocurrency and network you will use. Once the payment is sent, please contact us.<br>
+                                        <i class="fas fa-info-circle me-1 text-warning"></i>
+                                        <strong>{{ __("Lưu ý") }}:</strong> Vui lòng cho biết bạn sử dụng loại tiền điện tử và mạng lưới nào. Sau khi gửi thanh toán, hãy liên hệ với chúng tôi.
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -420,7 +438,7 @@
                             </div>
 
                             <div class="payment-info text-start">
-                                <h5 class="fw-bold mb-3 text-center">Thông tin tài khoản / Account Details</h5>
+                                <h5 class="fw-bold mb-3 text-center">{{ __('Thông tin tài khoản / Account Details') }}</h5>
                                 <div class="mb-3">
                                     <small class="opacity-75 d-block">Binance UID:</small>
                                     <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-2 rounded mt-1">
@@ -431,10 +449,15 @@
                                     </div>
                                 </div>
                                 <div class="alert alert-warning py-2 mb-0" style="font-size: 0.85rem; background: rgba(255, 193, 7, 0.15); border: none; color: #fff;">
-                                    <i class="fas fa-info-circle me-1 text-warning"></i>
-                                    <strong>English:</strong> Once the payment is sent, please contact us.<br>
-                                    <i class="fas fa-info-circle me-1 text-warning"></i>
-                                    <strong>Tiếng Việt:</strong> Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.
+                                    @if(app()->getLocale() === 'en')
+                                        <i class="fas fa-info-circle me-1 text-warning"></i>
+                                        Once the payment is sent, please contact us.
+                                    @else
+                                        <i class="fas fa-info-circle me-1 text-warning"></i>
+                                        <strong>English:</strong> Once the payment is sent, please contact us.<br>
+                                        <i class="fas fa-info-circle me-1 text-warning"></i>
+                                        <strong>{{ __("Lưu ý") }}:</strong> Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -551,14 +574,14 @@
                 input.disabled = true;
                 input.value = '';
             });
-            zaloLabel.textContent = '(Đã tắt)';
-            facebookLabel.textContent = '(Đã tắt)';
+            zaloLabel.textContent = '{{ __("(Đã tắt)") }}';
+            facebookLabel.textContent = '{{ __("(Đã tắt)") }}';
             zaloLabel.classList.replace('text-danger', 'text-muted');
             facebookLabel.classList.replace('text-danger', 'text-muted');
         } else {
             contactInputs.forEach(input => input.disabled = false);
-            zaloLabel.textContent = '(Bắt buộc nếu không có Facebook)';
-            facebookLabel.textContent = '(Bắt buộc nếu không có Zalo)';
+            zaloLabel.textContent = '{{ __("(Bắt buộc nếu không có Facebook)") }}';
+            facebookLabel.textContent = '{{ __("(Bắt buộc nếu không có Zalo)") }}';
             zaloLabel.classList.replace('text-muted', 'text-danger');
             facebookLabel.classList.replace('text-muted', 'text-danger');
         }
@@ -606,7 +629,7 @@
         applyBtn.addEventListener('click', function() {
             const code = couponInput.value.trim();
             if (!code) {
-                showFeedback('Vui lòng nhập mã giảm giá!', 'text-danger');
+                showFeedback('{{ __("Vui lòng nhập mã giảm giá!") }}', 'text-danger');
                 return;
             }
 
@@ -634,11 +657,11 @@
                 removeBtn.style.display = 'inline-block';
                 
                 // Update pricing row
-                discountDisplay.textContent = '-' + formatNumber(data.discount_amount) + 'đ';
+                discountDisplay.textContent = '-' + formatNumber(data.discount_amount);
                 discountRow.classList.remove('d-none');
-                totalDisplay.textContent = formatNumber(data.final_total) + 'đ';
+                totalDisplay.textContent = formatNumber(data.final_total);
                 if (transferAmountDisplay) {
-                    transferAmountDisplay.textContent = formatNumber(data.final_total) + 'đ';
+                    transferAmountDisplay.textContent = formatNumber(data.final_total);
                 }
                 
                 // Update QR image src
@@ -648,11 +671,11 @@
                 }
             })
             .catch(err => {
-                showFeedback(err.message || 'Mã giảm giá không hợp lệ!', 'text-danger');
+                showFeedback(err.message || '{{ __("Mã giảm giá không hợp lệ!") }}', 'text-danger');
             })
             .finally(() => {
                 applyBtn.disabled = false;
-                applyBtn.textContent = 'Áp dụng';
+                applyBtn.textContent = '{{ __("Áp dụng") }}';
             });
         });
     }
@@ -678,9 +701,9 @@
                 
                 // Reset pricing row
                 discountRow.classList.add('d-none');
-                totalDisplay.textContent = formatNumber(data.final_total) + 'đ';
+                totalDisplay.textContent = formatNumber(data.final_total);
                 if (transferAmountDisplay) {
-                    transferAmountDisplay.textContent = formatNumber(data.final_total) + 'đ';
+                    transferAmountDisplay.textContent = formatNumber(data.final_total);
                 }
                 
                 // Update QR image src
@@ -705,7 +728,11 @@
     }
 
     function formatNumber(num) {
-        return num.toLocaleString('vi-VN');
+        const locale = '{{ app()->getLocale() }}';
+        if (locale === 'en') {
+            return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        return num.toLocaleString('vi-VN') + 'đ';
     }
 </script>
 @endpush

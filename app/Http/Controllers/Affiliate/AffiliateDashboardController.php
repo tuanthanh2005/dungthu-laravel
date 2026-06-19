@@ -72,15 +72,15 @@ class AffiliateDashboardController extends Controller
             'bill_image'     => 'required|image|mimes:jpeg,png,jpg|max:5120',
             'note'           => 'nullable|string|max:1000',
         ], [
-            'product_name.required'  => 'Tên sản phẩm không được để trống.',
-            'customer_name.required' => 'Tên khách hàng là bắt buộc.',
-            'customer_email.required_without' => 'Vui lòng nhập Email hoặc Số điện thoại khách hàng.',
-            'customer_phone.required_without' => 'Vui lòng nhập Email hoặc Số điện thoại khách hàng.',
-            'amount.required'        => 'Số tiền không được để trống.',
-            'amount.min'             => 'Số tiền tối thiểu là 1.000đ.',
-            'bill_image.required'    => 'Vui lòng upload ảnh hóa đơn.',
-            'bill_image.image'       => 'File phải là ảnh.',
-            'bill_image.max'         => 'Ảnh không được quá 5MB.',
+            'product_name.required'  => __('Tên sản phẩm không được để trống.'),
+            'customer_name.required' => __('Tên khách hàng là bắt buộc.'),
+            'customer_email.required_without' => __('Vui lòng nhập Email hoặc Số điện thoại khách hàng.'),
+            'customer_phone.required_without' => __('Vui lòng nhập Email hoặc Số điện thoại khách hàng.'),
+            'amount.required'        => __('Số tiền không được để trống.'),
+            'amount.min'             => __('Số tiền tối thiểu là 1.000đ.'),
+            'bill_image.required'    => __('Vui lòng upload ảnh hóa đơn.'),
+            'bill_image.image'       => __('File phải là ảnh.'),
+            'bill_image.max'         => __('Ảnh không được quá 5MB.'),
         ]);
 
         $affiliate = $this->affiliate();
@@ -129,7 +129,7 @@ class AffiliateDashboardController extends Controller
         $msg .= "🔗 " . url('/admin/affiliates/invoices');
         TelegramHelper::sendMessage($msg);
 
-        return redirect()->route('affiliate.invoices')->with('success', 'Gửi hóa đơn thành công! Vui lòng chờ admin duyệt.');
+        return redirect()->route('affiliate.invoices')->with('success', __('Gửi hóa đơn thành công! Vui lòng chờ admin duyệt.'));
     }
 
     // ─── Withdrawals (rút tiền) ───────────────────────────────────────────────
@@ -157,22 +157,22 @@ class AffiliateDashboardController extends Controller
             'bank_account_name'   => 'required|string|max:100',
             'note'                => 'nullable|string|max:500',
         ], [
-            'amount.required'              => 'Số tiền không được để trống.',
-            'amount.min'                   => 'Số tiền rút tối thiểu là 50.000đ.',
-            'bank_name.required'           => 'Tên ngân hàng không được để trống.',
-            'bank_account_number.required' => 'Số tài khoản không được để trống.',
-            'bank_account_name.required'   => 'Tên chủ tài khoản không được để trống.',
+            'amount.required'              => __('Số tiền không được để trống.'),
+            'amount.min'                   => __('Số tiền rút tối thiểu là 50.000đ.'),
+            'bank_name.required'           => __('Tên ngân hàng không được để trống.'),
+            'bank_account_number.required' => __('Số tài khoản không được để trống.'),
+            'bank_account_name.required'   => __('Tên chủ tài khoản không được để trống.'),
         ]);
 
         $amount = (int) $request->amount;
 
         if ($amount > $affiliate->balance) {
-            return back()->withErrors(['amount' => 'Số dư không đủ để rút. Số dư hiện tại: ' . number_format($affiliate->balance, 0, ',', '.') . 'đ'])->withInput();
+            return back()->withErrors(['amount' => __('Số dư không đủ để rút. Số dư hiện tại: :balanceđ', ['balance' => number_format($affiliate->balance, 0, ',', '.')])])->withInput();
         }
 
         // Check no pending withdrawal
         if ($affiliate->withdrawals()->where('status', 'pending')->exists()) {
-            return back()->with('error', 'Bạn đang có yêu cầu rút tiền đang chờ duyệt. Vui lòng chờ admin xử lý xong trước khi tạo yêu cầu mới.');
+            return back()->with('error', __('Bạn đang có yêu cầu rút tiền đang chờ duyệt. Vui lòng chờ admin xử lý xong trước khi tạo yêu cầu mới.'));
         }
 
         $withdrawal = AffiliateWithdrawal::create([
@@ -202,7 +202,7 @@ class AffiliateDashboardController extends Controller
         $msg .= "🔗 " . url('/admin/affiliates/withdrawals');
         TelegramHelper::sendMessage($msg);
 
-        return redirect()->route('affiliate.withdrawals')->with('success', 'Yêu cầu rút tiền đã gửi! Admin sẽ chuyển tiền và duyệt sớm nhất.');
+        return redirect()->route('affiliate.withdrawals')->with('success', __('Yêu cầu rút tiền đã gửi! Admin sẽ chuyển tiền và duyệt sớm nhất.'));
     }
 
     // ─── Account Settings ─────────────────────────────────────────────────────
@@ -226,7 +226,7 @@ class AffiliateDashboardController extends Controller
 
         $affiliate->update($request->only('name', 'phone', 'address', 'bank_name', 'bank_account_number', 'bank_account_name'));
 
-        return back()->with('success', 'Cập nhật thông tin tài khoản thành công!');
+        return back()->with('success', __('Cập nhật thông tin tài khoản thành công!'));
     }
 
     public function updatePassword(Request $request)
@@ -237,17 +237,17 @@ class AffiliateDashboardController extends Controller
             'current_password'     => 'required',
             'new_password'         => 'required|string|min:8|confirmed',
         ], [
-            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
-            'new_password.min'          => 'Mật khẩu mới phải ít nhất 8 ký tự.',
-            'new_password.confirmed'    => 'Xác nhận mật khẩu mới không khớp.',
+            'current_password.required' => __('Vui lòng nhập mật khẩu hiện tại.'),
+            'new_password.min'          => __('Mật khẩu mới phải ít nhất 8 ký tự.'),
+            'new_password.confirmed'    => __('Xác nhận mật khẩu mới không khớp.'),
         ]);
 
         if (!Hash::check($request->current_password, $affiliate->password)) {
-            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
+            return back()->withErrors(['current_password' => __('Mật khẩu hiện tại không đúng.')]);
         }
 
         $affiliate->update(['password' => Hash::make($request->new_password)]);
 
-        return back()->with('success', 'Đổi mật khẩu thành công!');
+        return back()->with('success', __('Đổi mật khẩu thành công!'));
     }
 }

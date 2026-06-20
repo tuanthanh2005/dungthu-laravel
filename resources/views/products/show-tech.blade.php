@@ -301,6 +301,7 @@
                         </div>
                     @endif
                     
+                    @if($product->stock > 0)
                     <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
                         @csrf
                         <div class="d-flex gap-3 mb-3 flex-wrap">
@@ -318,6 +319,16 @@
                             </a>
                         </div>
                     </form>
+                    @else
+                    <div class="d-flex gap-3 mb-3 mt-4 flex-wrap">
+                        <button type="button" class="btn btn-secondary btn-lg rounded-pill px-5" disabled>
+                            <i class="fas fa-ban me-2"></i> {{ __('Hết hàng') }}
+                        </button>
+                        <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                            <i class="fas fa-arrow-left me-2"></i> {{ __('Tiếp tục mua') }}
+                        </a>
+                    </div>
+                    @endif
 
                 </div>
             </div>

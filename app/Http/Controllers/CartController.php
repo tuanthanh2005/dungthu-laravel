@@ -24,10 +24,9 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($id);
         
-        // Bỏ chặn để cho phép đặt hàng khi hết kho
-        // if ($product->stock <= 0) {
-        //     return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
-        // }
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        }
         
         $cart = session()->get('cart', []);
 
@@ -51,10 +50,9 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($id);
         
-        // Bỏ chặn để cho phép đặt hàng khi hết kho
-        // if ($product->stock <= 0) {
-        //     return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
-        // }
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        }
         
         $cart = session()->get('cart', []);
 
@@ -91,6 +89,10 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {
+            $product = Product::find($id);
+            if ($product && $cart[$id]['quantity'] >= $product->stock) {
+                return redirect()->back()->with('error', 'Không thể tăng thêm số lượng vì đã đạt giới hạn tồn kho!');
+            }
             $cart[$id]['quantity'] = max(1, (int) $cart[$id]['quantity'] + 1);
             session()->put('cart', $cart);
         }
@@ -125,6 +127,34 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         if(empty($cart)) {
             return redirect()->route('shop')->with('error', 'Giỏ hàng của bạn đang trống!');
+        }
+        
+        // Kiểm tra tồn kho của sản phẩm trong giỏ hàng
+        $adjusted = false;
+        $messages = [];
+        foreach($cart as $id => $details) {
+            $product = Product::find($id);
+            if (!$product) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm không tồn tại đã được xóa khỏi giỏ hàng.";
+                continue;
+            }
+            if ($product->stock <= 0) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm '{$product->name}' đã hết hàng và được xóa khỏi giỏ hàng.";
+            } elseif ($details['quantity'] > $product->stock) {
+                $cart[$id]['quantity'] = $product->stock;
+                $adjusted = true;
+                $messages[] = "Số lượng sản phẩm '{$product->name}' được điều chỉnh về {$product->stock} do vượt quá tồn kho.";
+            }
+        }
+        
+        if ($adjusted) {
+            session()->put('cart', $cart);
+            $this->syncAbandonedCart($cart);
+            return redirect()->route('cart.index')->with('error', implode(' ', $messages));
         }
         
         // Check if user is logged in and new user (from Google OAuth)
@@ -253,12 +283,22 @@ class CartController extends Controller
         }
 
         // Kiểm tra xem có sản phẩm nào thiếu kho không
-        $hasOutOfStock = false;
+        $outOfStockMessages = [];
         foreach($cart as $id => $details) {
             $product = Product::find($id);
-            if(!$product || $product->stock < $details['quantity']) {
-                $hasOutOfStock = true;
+            if(!$product) {
+                $outOfStockMessages[] = "Sản phẩm không tồn tại.";
+            } elseif($product->stock < $details['quantity']) {
+                if ($product->stock <= 0) {
+                    $outOfStockMessages[] = "Sản phẩm '{$product->name}' đã hết hàng.";
+                } else {
+                    $outOfStockMessages[] = "Sản phẩm '{$product->name}' chỉ còn {$product->stock} sản phẩm trong kho.";
+                }
             }
+        }
+
+        if (!empty($outOfStockMessages)) {
+            return redirect()->route('cart.index')->with('error', implode(' ', $outOfStockMessages));
         }
 
         $orderStatus = 'pending';

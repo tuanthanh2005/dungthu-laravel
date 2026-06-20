@@ -893,12 +893,18 @@
                                 <span class="price-old">{{ $product->formatted_original_price }}</span>
                             @endif
                         </div>
+                        @if($product->stock > 0)
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0 p-0">
                             @csrf
-                            <button type="submit" class="btn-add-cart" title="{{ $product->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}">
+                            <button type="submit" class="btn-add-cart" title="{{ __('Thêm vào giỏ') }}">
                                 <i class="fas fa-cart-plus"></i>
                             </button>
                         </form>
+                        @else
+                        <button type="button" class="btn-add-cart text-muted" style="cursor: not-allowed; opacity: 0.5;" title="{{ __('Hết hàng') }}" disabled>
+                            <i class="fas fa-ban"></i>
+                        </button>
+                        @endif
                     </div>
                 </div>
             </div>

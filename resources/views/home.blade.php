@@ -2007,13 +2007,19 @@
                                             <span class="prod-price-old">{{ $fp->formatted_original_price }}</span>
                                         @endif
                                     </div>
+                                    @if($fp->stock > 0)
                                     <form action="{{ route('cart.add', $fp->id) }}" method="POST"
                                           onclick="event.preventDefault(); this.submit();">
                                         @csrf
                                         <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ $fp->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}
+                                            <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
                                         </button>
                                     </form>
+                                    @else
+                                    <button type="button" class="add-cart-btn text-muted" style="cursor: not-allowed; opacity: 0.6; background: #e5e7eb; pointer-events: none;" disabled>
+                                        <i class="fa-solid fa-ban"></i> {{ __('Hết hàng') }}
+                                    </button>
+                                    @endif
                                 </div>
                             </a>
                             @endforeach
@@ -2049,13 +2055,19 @@
                                             <span class="prod-price-old">{{ $hp->formatted_original_price }}</span>
                                         @endif
                                     </div>
+                                    @if($hp->stock > 0)
                                     <form action="{{ route('cart.add', $hp->id) }}" method="POST"
                                           onclick="event.preventDefault(); this.submit();">
                                         @csrf
                                         <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ $hp->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}
+                                            <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
                                         </button>
                                     </form>
+                                    @else
+                                    <button type="button" class="add-cart-btn text-muted" style="cursor: not-allowed; opacity: 0.6; background: #e5e7eb; pointer-events: none;" disabled>
+                                        <i class="fa-solid fa-ban"></i> {{ __('Hết hàng') }}
+                                    </button>
+                                    @endif
                                 </div>
                             </a>
                             @endforeach
@@ -2090,13 +2102,19 @@
                                             <span class="prod-price-old">{{ $cp->formatted_original_price }}</span>
                                         @endif
                                     </div>
+                                    @if($cp->stock > 0)
                                     <form action="{{ route('cart.add', $cp->id) }}" method="POST"
                                           onclick="event.preventDefault(); this.submit();">
                                         @csrf
                                         <button type="submit" class="add-cart-btn">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ $cp->stock > 0 ? __('Thêm vào giỏ') : __('Thêm vào giỏ (Đặt trước)') }}
+                                            <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
                                         </button>
                                     </form>
+                                    @else
+                                    <button type="button" class="add-cart-btn text-muted" style="cursor: not-allowed; opacity: 0.6; background: #e5e7eb; pointer-events: none;" disabled>
+                                        <i class="fa-solid fa-ban"></i> {{ __('Hết hàng') }}
+                                    </button>
+                                    @endif
                                 </div>
                             </a>
                             @endforeach

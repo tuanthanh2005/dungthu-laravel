@@ -146,15 +146,22 @@ class HomeController extends Controller
         $parts = preg_split('/\\s+/u', $name) ?: [];
         $parts = array_values(array_filter($parts, fn ($p) => $p !== ''));
 
-        if (count($parts) === 1) {
-            $first = mb_substr($parts[0], 0, 1);
-            return $first . '***';
+        $givenName = count($parts) > 0 ? $parts[count($parts) - 1] : 'Khách';
+        $len = mb_strlen($givenName);
+
+        if ($len <= 2) {
+            return mb_substr($givenName, 0, 1) . '*';
         }
 
-        $givenName = $parts[count($parts) - 1];
-        $surnameInitial = mb_substr($parts[0], 0, 1);
+        $char1 = mb_substr($givenName, 0, 1);
+        $char2 = mb_substr($givenName, (int)($len / 2), 1);
+        $char3 = mb_substr($givenName, $len - 1, 1);
 
-        return $givenName . ' ' . $surnameInitial . '.';
+        if ($len == 3) {
+            return $char1 . '*' . $char3;
+        }
+
+        return $char1 . '*' . $char2 . '*' . $char3;
     }
 
     public function getRandomProducts()

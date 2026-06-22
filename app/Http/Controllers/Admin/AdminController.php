@@ -1549,7 +1549,20 @@ class AdminController extends Controller
         }
 
         // Save fake orders settings
-        $settingsKeys = ['fake_orders_top1', 'fake_orders_top2', 'fake_orders_top3', 'zalo_group_link', 'usd_exchange_rate'];
+        $settingsKeys = [
+            'fake_orders_top1',
+            'fake_orders_top2',
+            'fake_orders_top3',
+            'zalo_group_link',
+            'usd_exchange_rate',
+            'support_facebook_link',
+            'support_zalo_link',
+            'support_zalo_number',
+            'support_telegram_link',
+            'support_telegram_username',
+            'support_phone',
+            'support_email'
+        ];
         foreach ($settingsKeys as $key) {
             if ($request->has($key)) {
                 SiteSetting::setValue($key, $request->input($key));

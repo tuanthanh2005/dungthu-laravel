@@ -223,7 +223,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-sm btn-success rounded-pill px-3">
+                                    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="btn btn-sm btn-success rounded-pill px-3">
                                         <i class="fas fa-comment-dots me-1"></i>{{ __('Mua ngay') }}
                                     </a>
                                 </td>
@@ -240,7 +240,7 @@
                     <i class="fas fa-server fa-3x text-muted mb-3"></i>
                     <h5 class="text-muted">{{ __('Hệ thống đang cập nhật danh sách Proxy...') }}</h5>
                     <p>{{ __('Vui lòng quay lại sau hoặc liên hệ bộ phận hỗ trợ qua Zalo để mua Proxy trực tiếp.') }}</p>
-                    <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-primary rounded-pill mt-2"><i class="fas fa-comment-dots me-2"></i>{{ __('Liên hệ Zalo') }}</a>
+                    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="btn btn-primary rounded-pill mt-2"><i class="fas fa-comment-dots me-2"></i>{{ __('Liên hệ Zalo') }}</a>
                 </div>
             @endif
         </div>

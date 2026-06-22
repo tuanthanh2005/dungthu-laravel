@@ -256,7 +256,7 @@
         <span>{{ __('Cửa hàng') }}</span>
     </a>
     @endif
-    <a href="https://zalo.me/0772698113" target="_blank" class="mobile-nav-item">
+    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="mobile-nav-item">
         <i class="fa-solid fa-headset"></i>
         <span>{{ __('Hỗ trợ') }}</span>
     </a>
@@ -347,7 +347,7 @@
                     </a>
 
                     {{-- Item 2: Fanpage --}}
-                    <a href="https://www.facebook.com/profile.php?id=61589359706008" 
+                    <a href="{{ \App\Helpers\SupportHelper::getFacebookLink() }}" 
                        target="_blank" 
                        class="d-flex align-items-center gap-3 p-3 text-decoration-none bg-white rounded-3 contact-modal-item"
                        style="border: 1px solid #e5e7eb; transition: all 0.2s ease;">
@@ -363,7 +363,7 @@
                     </a>
 
                     {{-- Item 3: Admin Zalo --}}
-                    <a href="https://zalo.me/0772698113" 
+                    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" 
                        target="_blank" 
                        class="d-flex align-items-center gap-3 p-3 text-decoration-none bg-white rounded-3 contact-modal-item"
                        style="border: 1px solid #e5e7eb; transition: all 0.2s ease;">
@@ -373,7 +373,7 @@
                         </div>
                         <div class="flex-grow-1 text-start">
                             <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">{{ __('CHAT ZALO ADMIN') }}</h6>
-                            <p class="mb-0 text-muted" style="font-size: 12px;">{{ __('Zalo liên hệ: 0772698113') }}</p>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">{{ __('Zalo liên hệ:') }} {{ \App\Helpers\SupportHelper::getZaloNumber() }}</p>
                         </div>
                         <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
                     </a>

@@ -874,7 +874,7 @@
 <div class="chat-fab-container">
 
     <!-- Zalo Chat Button -->
-    <a href="https://zalo.me/0772698113" target="_blank" class="chat-fab d-flex" style="background: #0068ff; text-decoration: none !important;" aria-label="{{ __('Liên hệ Zalo') }}">
+    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="chat-fab d-flex" style="background: #0068ff; text-decoration: none !important;" aria-label="{{ __('Liên hệ Zalo') }}">
         <div class="position-relative d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
             <i class="fa-solid fa-comment" style="color: #ffffff; font-size: 38px;"></i>
             <span style="position: absolute; color: #0068ff; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-weight: 900; font-size: 19px; font-style: italic; top: 44%; left: 47%; transform: translate(-50%, -50%);">z</span>
@@ -883,7 +883,7 @@
     </a>
 
     <!-- Telegram Chat Button -->
-    <a href="https://t.me/specademy" target="_blank" class="chat-fab d-flex" style="background: #0088cc; text-decoration: none !important;" aria-label="{{ __('Telegram Admin') }}">
+    <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" class="chat-fab d-flex" style="background: #0088cc; text-decoration: none !important;" aria-label="{{ __('Telegram Admin') }}">
         <i class="fab fa-telegram fab-icon"></i>
         <span class="fab-tooltip">{{ __('Telegram Admin') }}</span>
     </a>

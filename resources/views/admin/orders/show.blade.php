@@ -198,7 +198,7 @@
             <div class="row">
                 <!-- Customer Information -->
                 <div class="col-md-6">
-                    <div class="info-section">
+                    <div class="info-section h-100 mb-0">
                         <h5 class="fw-bold mb-3">
                             <i class="fas fa-user text-primary me-2"></i>Thông tin khách hàng
                         </h5>
@@ -211,12 +211,19 @@
                         <div class="mb-2">
                             <strong>Số điện thoại:</strong> {{ $order->customer_phone }}
                         </div>
-                        @if($order->order_type == 'shipping')
-                            <div class="mb-2">
-                                <strong>Địa chỉ giao hàng:</strong><br>
-                                {{ $order->customer_address }}
+                        
+                        <div class="mb-2 mt-3">
+                            <strong>
+                                @if($order->order_type == 'shipping')
+                                    <i class="fas fa-map-marker-alt text-success me-1"></i>Địa chỉ giao hàng:
+                                @else
+                                    <i class="fas fa-credit-card text-success me-1"></i>Thông tin thanh toán & Liên hệ:
+                                @endif
+                            </strong>
+                            <div class="p-3 bg-white rounded border mt-2 text-dark" style="white-space: pre-line; font-size: 0.92rem; border-left: 4px solid #667eea !important; line-height: 1.6; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
+                                {!! e($order->customer_address) !!}
                             </div>
-                        @endif
+                        </div>
                     </div>
                 </div>
 

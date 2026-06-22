@@ -474,6 +474,112 @@
                     </div>
                 </div>
 
+                {{-- Cấu hình Kênh Hỗ trợ & CSKH --}}
+                <div class="settings-header mt-5">
+                    <h2><i class="fas fa-headset me-2" style="color: #6366f1;"></i>Cấu hình Kênh Hỗ trợ & CSKH</h2>
+                    <p class="text-muted mb-0">Cập nhật thông tin các kênh liên hệ hỗ trợ chính thức hiển thị trên website.</p>
+                </div>
+
+                <div class="row mb-4">
+                    {{-- Facebook Fanpage --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-primary mb-2"><i class="fab fa-facebook"></i> Link Fanpage Facebook</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #1877f2;"><i class="fab fa-facebook-f"></i></span>
+                                <input type="url" class="form-control border-start-0 ps-0" name="support_facebook_link" 
+                                       value="{{ \App\Helpers\SupportHelper::getFacebookLink() }}" 
+                                       placeholder="https://www.facebook.com/profile.php?id=...">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Link Fanpage hỗ trợ chính thức.</div>
+                        </div>
+                    </div>
+
+                    {{-- Telegram --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-info mb-2"><i class="fab fa-telegram"></i> Link Telegram Hỗ trợ</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #0088cc;"><i class="fab fa-telegram-plane"></i></span>
+                                <input type="url" class="form-control border-start-0 ps-0" name="support_telegram_link" 
+                                       value="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" 
+                                       placeholder="https://t.me/...">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Đường dẫn click chat trực tiếp Telegram.</div>
+                        </div>
+                    </div>
+
+                    {{-- Telegram Username --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-info mb-2"><i class="fab fa-telegram"></i> Username Telegram hiển thị</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #0088cc;"><i class="fas fa-at"></i></span>
+                                <input type="text" class="form-control border-start-0 ps-0" name="support_telegram_username" 
+                                       value="{{ \App\Helpers\SupportHelper::getTelegramUsername() }}" 
+                                       placeholder="@username">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Tên Telegram hiển thị (ví dụ: @specademy).</div>
+                        </div>
+                    </div>
+
+                    {{-- Zalo Chat Link --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-comment-dots"></i> Link Chat Zalo</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #07be9e;"><i class="fas fa-comments"></i></span>
+                                <input type="url" class="form-control border-start-0 ps-0" name="support_zalo_link" 
+                                       value="{{ \App\Helpers\SupportHelper::getZaloLink() }}" 
+                                       placeholder="https://zalo.me/...">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Đường dẫn click chat Zalo cá nhân/OA.</div>
+                        </div>
+                    </div>
+
+                    {{-- Zalo Phone Number --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-phone-alt"></i> Số Zalo hiển thị</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #07be9e;"><i class="fas fa-comment-alt"></i></span>
+                                <input type="text" class="form-control border-start-0 ps-0" name="support_zalo_number" 
+                                       value="{{ \App\Helpers\SupportHelper::getZaloNumber() }}" 
+                                       placeholder="0123456789">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Số điện thoại Zalo hiển thị ở phần thông tin.</div>
+                        </div>
+                    </div>
+
+                    {{-- Hotline --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-danger mb-2"><i class="fas fa-phone-volume"></i> Số Hotline Gọi điện</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #e53e3e;"><i class="fas fa-phone"></i></span>
+                                <input type="text" class="form-control border-start-0 ps-0" name="support_phone" 
+                                       value="{{ \App\Helpers\SupportHelper::getPhone() }}" 
+                                       placeholder="0123456789">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Số Hotline để khách hàng gọi điện hỗ trợ.</div>
+                        </div>
+                    </div>
+
+                    {{-- Email --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-warning mb-2"><i class="fas fa-envelope"></i> Email Hỗ trợ</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #d97706;"><i class="fas fa-envelope-open-text"></i></span>
+                                <input type="email" class="form-control border-start-0 ps-0" name="support_email" 
+                                       value="{{ \App\Helpers\SupportHelper::getEmail() }}" 
+                                       placeholder="support@domain.com">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Hòm thư điện tử nhận yêu cầu hỗ trợ.</div>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Cài đặt Tỷ giá USD --}}
                 <div class="settings-header mt-5">
                     <h2><i class="fa-solid fa-money-bill-transfer me-2"></i>Cài đặt Tỷ giá USD (USD Exchange Rate)</h2>

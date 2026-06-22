@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Models\SiteSetting;
+
 class SupportHelper
 {
     /**
@@ -10,11 +12,51 @@ class SupportHelper
     public static function getContactInfo()
     {
         return [
-            'email' => env('SUPPORT_EMAIL', 'tranthanhtuanfix@gmail.com'),
-            'zalo' => env('SUPPORT_ZALO', '0708910952'),
-            'phone' => env('SUPPORT_PHONE', '0772698113'),
-            'live_chat' => env('SUPPORT_LIVE_CHAT_URL', '#'),
+            'email' => self::getEmail(),
+            'zalo' => self::getZaloNumber(),
+            'phone' => self::getPhone(),
+            'live_chat' => self::getLiveChat(),
         ];
+    }
+
+    /**
+     * Get Facebook Fanpage Link
+     */
+    public static function getFacebookLink()
+    {
+        return SiteSetting::getValue('support_facebook_link', 'https://www.facebook.com/profile.php?id=61589359706008');
+    }
+
+    /**
+     * Get Zalo Chat Link
+     */
+    public static function getZaloLink()
+    {
+        return SiteSetting::getValue('support_zalo_link', 'https://zalo.me/0772698113');
+    }
+
+    /**
+     * Get Zalo Number
+     */
+    public static function getZaloNumber()
+    {
+        return SiteSetting::getValue('support_zalo_number', '0772698113');
+    }
+
+    /**
+     * Get Telegram Link
+     */
+    public static function getTelegramLink()
+    {
+        return SiteSetting::getValue('support_telegram_link', 'https://t.me/specademy');
+    }
+
+    /**
+     * Get Telegram Username
+     */
+    public static function getTelegramUsername()
+    {
+        return SiteSetting::getValue('support_telegram_username', '@specademy');
     }
 
     /**
@@ -22,15 +64,7 @@ class SupportHelper
      */
     public static function getEmail()
     {
-        return self::getContactInfo()['email'];
-    }
-
-    /**
-     * Get zalo number
-     */
-    public static function getZalo()
-    {
-        return self::getContactInfo()['zalo'];
+        return SiteSetting::getValue('support_email', 'tranthanhtuanfix@gmail.com');
     }
 
     /**
@@ -38,14 +72,15 @@ class SupportHelper
      */
     public static function getPhone()
     {
-        return self::getContactInfo()['phone'];
+        return SiteSetting::getValue('support_phone', '0772698113');
     }
 
     /**
-     * Get live chat URL
+     * Get live chat URL (or custom support link if any)
      */
     public static function getLiveChat()
     {
-        return self::getContactInfo()['live_chat'];
+        return SiteSetting::getValue('support_live_chat_url', '#');
     }
 }
+

@@ -863,7 +863,7 @@
                     <textarea
                         class="chat-input"
                         id="userChatInput"
-                        placeholder="{{ __('Nhập tin nhắn... (Nhấn Shift + Enter để xuống dòng)') }}"
+                        placeholder="{{ __('Nhập tin nhắn...') }}"
                         autocomplete="off"
                         maxlength="1000"
                         rows="1"

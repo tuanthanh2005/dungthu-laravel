@@ -372,7 +372,7 @@
                         <i class="fas fa-image"></i>
                         <input type="file" id="adminFile" name="image" hidden accept="image/*" onchange="previewImage(this)">
                     </label>
-                    <textarea class="admin-chat-input" id="adminChatInput" name="message" placeholder="Nhập tin nhắn... (Nhấn Shift + Enter để xuống dòng)" autocomplete="off" rows="1" style="resize: none; max-height: 120px; overflow-y: hidden;"></textarea>
+                    <textarea class="admin-chat-input" id="adminChatInput" name="message" placeholder="Nhập tin nhắn..." autocomplete="off" rows="1" style="resize: none; max-height: 120px; overflow-y: hidden;"></textarea>
                     <button class="admin-send-btn" type="button" id="adminSendBtn" onclick="sendAdminMessage()">
                         <i class="fas fa-paper-plane"></i>
                     </button>

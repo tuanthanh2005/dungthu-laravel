@@ -186,7 +186,22 @@
                             <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>{{ __('Dashboard Admin') }}</a></li>
                             <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>{{ __('Quản lý Menu') }}</a></li>
                             <li><a class="dropdown-item" href="{{ route('admin.proxies') }}"><i class="fas fa-network-wired me-2 text-info"></i>{{ __('Quản lý Proxy') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('admin.buff.dashboard') }}"><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Quản lý Buff') }}</a></li>
+                            
+                            {{-- Collapsible Quản lý Buff --}}
+                            <li>
+                                <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#adminBuffCollapse" role="button" aria-expanded="false" aria-controls="adminBuffCollapse" onclick="event.stopPropagation();">
+                                    <span><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Quản lý Buff') }}</span>
+                                    <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
+                                </a>
+                                <div class="collapse px-2" id="adminBuffCollapse" onclick="event.stopPropagation();">
+                                    <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
+                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.dashboard') }}" style="font-size: 0.85rem;"><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Buff Dashboard') }}</a></li>
+                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.orders.index') }}" style="font-size: 0.85rem;"><i class="fas fa-list-alt me-2" style="color:#ec4899;"></i>{{ __('Đơn Buff') }}</a></li>
+                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.services.index') }}" style="font-size: 0.85rem;"><i class="fas fa-cogs me-2" style="color:#06b6d4;"></i>{{ __('Dịch vụ Buff') }}</a></li>
+                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.servers.index') }}" style="font-size: 0.85rem;"><i class="fas fa-server me-2" style="color:#10b981;"></i>{{ __('Máy chủ Buff') }}</a></li>
+                                    </ul>
+                                </div>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                         @endif
                         @if(Auth::guard('affiliate')->check())
@@ -196,6 +211,30 @@
                             <li><a class="dropdown-item" href="{{ route('affiliate.login') }}"><i class="fas fa-handshake me-2"></i>{{ __('Đăng ký CTV') }}</a></li>
                             <li><hr class="dropdown-divider"></li>
                         @endif
+                        
+                        {{-- Collapsible Dịch vụ & Tiện ích --}}
+                        <li>
+                            <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#quickLinksCollapse" role="button" aria-expanded="false" aria-controls="quickLinksCollapse" onclick="event.stopPropagation();">
+                                <span><i class="fas fa-link me-2 text-primary"></i>{{ __('Dịch vụ & Tiện ích') }}</span>
+                                <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
+                            </a>
+                            <div class="collapse px-2" id="quickLinksCollapse" onclick="event.stopPropagation();">
+                                <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
+                                    <li><a class="dropdown-item py-1" href="{{ route('home') }}" style="font-size: 0.85rem;"><i class="fa-solid fa-house me-2 text-primary"></i>{{ __('Trang chủ') }}</a></li>
+                                    <li><a class="dropdown-item py-1" href="{{ route('shop') }}" style="font-size: 0.85rem;"><i class="fa-solid fa-store me-2 text-primary"></i>{{ __('Cửa hàng') }}</a></li>
+                                    <li><a class="dropdown-item py-1 fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4; font-size: 0.85rem;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN & Proxy') }}</a></li>
+                                    <li><a class="dropdown-item py-1 fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00; font-size: 0.85rem;"><i class="fas fa-rocket me-2"></i>{{ __('Buff Mạng XH') }}</a></li>
+                                    <li><a class="dropdown-item py-1" href="{{ route('web-design') }}" style="font-size: 0.85rem;"><i class="fa-solid fa-code me-2 text-primary"></i>{{ __('Thiết Kế Website') }}</a></li>
+                                    <li><a class="dropdown-item py-1" href="{{ route('card-exchange.index') }}" style="font-size: 0.85rem;"><i class="fas fa-exchange-alt me-2 text-warning"></i>{{ __('Đổi thẻ cào') }}</a></li>
+                                    <li><a class="dropdown-item py-1" href="{{ route('blog.index') }}" style="font-size: 0.85rem;"><i class="fa-solid fa-newspaper me-2 text-primary"></i>{{ __('Blog') }}</a></li>
+                                    <li><a class="dropdown-item py-1" href="{{ route('community.index') }}" style="font-size: 0.85rem;"><i class="fas fa-users me-2 text-success"></i>{{ __('Cộng đồng') }}</a></li>
+                                    <li><a class="dropdown-item py-1 fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff; font-size: 0.85rem;"><i class="fas fa-users me-2"></i>{{ __('Nhóm Zalo') }}</a></li>
+                                    <li><a class="dropdown-item py-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal" style="font-size: 0.85rem;"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ') }}</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        
                         <li><a class="dropdown-item" href="{{ route('minigame.index') }}"><i class="fas fa-gamepad me-2 text-danger"></i>{{ __('Vòng xoay may mắn') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>{{ __('Tài khoản') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>{{ __('Đơn hàng') }}</a></li>

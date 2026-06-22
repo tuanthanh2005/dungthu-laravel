@@ -994,61 +994,67 @@
         /* Recent purchase toast */
         .rpt-toast {
             position: fixed;
-            left: 16px;
-            bottom: 16px;
-            width: min(360px, calc(100vw - 32px));
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 10px 36px rgba(0, 0, 0, .18);
-            border-left: 4px solid #12b76a;
-            padding: 12px 14px;
-            z-index: 2000;
+            left: 20px;
+            bottom: 20px;
+            width: 340px;
+            max-width: calc(100vw - 40px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 0 5px 15px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-left: 5px solid #10b981;
+            padding: 14px 16px;
+            z-index: 99999;
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateX(-30px) scale(0.95);
             pointer-events: none;
-            transition: opacity .25s, transform .25s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .rpt-toast.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0) scale(1);
             pointer-events: auto;
         }
 
         .rpt-toast .inner {
             display: flex;
-            gap: 10px;
-            align-items: flex-start;
+            gap: 12px;
+            align-items: center;
         }
 
         .rpt-toast .ava {
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #12b76a, #00cec9);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: #fff;
             font-weight: 800;
-            font-size: 15px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
         }
 
         .rpt-toast .rn {
             font-weight: 800;
-            font-size: .85rem;
+            font-size: 0.86rem;
+            color: #1f2937;
         }
 
         .rpt-toast .rs {
-            font-size: .75rem;
-            color: #6b7280;
+            font-size: 0.76rem;
+            color: #4b5563;
+            margin-top: 1px;
         }
 
         .rpt-toast .rp {
-            font-size: .78rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: #ff4500;
+            color: #ef4444;
             display: block;
             margin-top: 3px;
             white-space: nowrap;
@@ -1056,17 +1062,49 @@
             text-overflow: ellipsis;
             max-width: 220px;
             text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .rpt-toast .rp:hover {
+            color: #dc2626;
+            text-decoration: underline;
         }
 
         .rpt-toast .rc {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 10px;
+            right: 12px;
             background: none;
             border: none;
-            font-size: 16px;
+            font-size: 18px;
             color: #9ca3af;
             cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s;
+        }
+
+        .rpt-toast .rc:hover {
+            color: #4b5563;
+        }
+
+        @media (max-width: 991px) {
+            .rpt-toast {
+                bottom: 76px; /* Positioned above the mobile bottom nav bar */
+                left: 12px;
+                width: 290px;
+                max-width: calc(100vw - 24px);
+                padding: 10px 12px;
+            }
+            .rpt-toast .ava {
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
+            }
+            .rpt-toast .rp {
+                max-width: 190px;
+                font-size: 0.76rem;
+            }
         }
 
         /* Mobile adjusts */
@@ -2472,5 +2510,88 @@
                 }
             });
         };
+
+        // Recent Purchase Toast Notification rotation
+        (function() {
+            const rptDataEl = document.getElementById('rptData');
+            const toastEl = document.getElementById('rptToast');
+            const closeBtn = document.getElementById('rptClose');
+            if (!rptDataEl || !toastEl || !closeBtn) return;
+
+            let purchases = [];
+            try {
+                purchases = JSON.parse(rptDataEl.textContent);
+            } catch (e) {
+                console.error("Failed to parse recent purchase data", e);
+                return;
+            }
+
+            if (purchases.length === 0) return;
+
+            let currentIndex = 0;
+            let showTimeout = null;
+            let rotateInterval = null;
+
+            function showToast(item) {
+                const nameEl = document.getElementById('rptName');
+                const subEl = document.getElementById('rptSub');
+                const prodEl = document.getElementById('rptProd');
+                const avaEl = document.getElementById('rptAva');
+
+                if (nameEl) nameEl.textContent = item.customer_name;
+                if (subEl) subEl.textContent = `${item.verb} • ${item.time_ago}`;
+                
+                if (prodEl) {
+                    prodEl.textContent = item.product_name + (item.extra_items > 0 ? ` (+${item.extra_items})` : '');
+                    if (item.product_url) {
+                        prodEl.href = item.product_url;
+                        prodEl.style.pointerEvents = 'auto';
+                        prodEl.style.cursor = 'pointer';
+                    } else {
+                        prodEl.removeAttribute('href');
+                        prodEl.style.pointerEvents = 'none';
+                        prodEl.style.cursor = 'default';
+                    }
+                }
+
+                if (avaEl) {
+                    const nameParts = item.customer_name.trim().split(/\s+/);
+                    const letter = nameParts[0] ? nameParts[0].charAt(0).toUpperCase() : 'K';
+                    avaEl.textContent = letter;
+                }
+
+                toastEl.classList.add('show');
+
+                showTimeout = setTimeout(() => {
+                    toastEl.classList.remove('show');
+                }, 6000);
+            }
+
+            function rotateToast() {
+                if (toastEl.classList.contains('show')) {
+                    toastEl.classList.remove('show');
+                }
+                
+                setTimeout(() => {
+                    const item = purchases[currentIndex];
+                    showToast(item);
+                    currentIndex = (currentIndex + 1) % purchases.length;
+                }, 500);
+            }
+
+            closeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toastEl.classList.remove('show');
+                clearTimeout(showTimeout);
+                clearInterval(rotateInterval);
+            });
+
+            // Start toast rotation: initial delay 4s, repeat every 15s
+            setTimeout(() => {
+                rotateToast();
+                rotateInterval = setInterval(rotateToast, 15000);
+            }, 4000);
+        })();
     </script>
 @endpush

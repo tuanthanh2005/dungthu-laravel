@@ -73,7 +73,7 @@ class HomeController extends Controller
                     $product = $firstItem?->product;
                     $extraItems = max(0, $order->orderItems->count() - 1);
 
-                    $verb = in_array($order->status, ['completed', 'delivered', 'shipped'], true) ? 'mua' : 'đặt';
+                    $verb = in_array($order->status, ['completed', 'delivered', 'shipped'], true) ? __('vừa mua thành công') : __('vừa đặt hàng');
 
                     return [
                         'customer_name' => self::maskCustomerName((string) $order->customer_name),
@@ -82,7 +82,7 @@ class HomeController extends Controller
                         'product_slug' => $product?->slug,
                         'product_url' => $product?->slug ? route('product.show', $product->slug) : null,
                         'extra_items' => $extraItems,
-                        'time_ago' => optional($order->created_at)->diffForHumans(),
+                        'time_ago' => (app()->getLocale() === 'en' ? (rand(5, 55) . 'm ago') : (rand(5, 55) . ' phút trước')),
                         'sort_at' => $order->created_at,
                     ];
                 });
@@ -100,12 +100,12 @@ class HomeController extends Controller
 
                     return [
                         'customer_name' => self::maskCustomerName((string) optional($exchange->user)->name),
-                        'verb' => 'đổi',
+                        'verb' => __('vừa đổi thành công'),
                         'product_name' => 'Đổi thẻ cào' . $cardType . ' ' . $cardValue,
                         'product_slug' => null,
                         'product_url' => route('card-exchange.index'),
                         'extra_items' => 0,
-                        'time_ago' => optional($time)->diffForHumans(),
+                        'time_ago' => (app()->getLocale() === 'en' ? (rand(5, 55) . 'm ago') : (rand(5, 55) . ' phút trước')),
                         'sort_at' => $time,
                     ];
                 });

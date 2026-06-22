@@ -439,6 +439,7 @@
     word-wrap: break-word;
     position: relative;
     box-shadow: var(--chat-shadow-sm);
+    white-space: pre-wrap;
 }
 
 .chat-message.user .message-content {

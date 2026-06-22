@@ -151,6 +151,7 @@
         font-size: 14px;
         line-height: 1.5;
         position: relative;
+        white-space: pre-wrap;
     }
 
     .chat-message.admin .message-bubble {
@@ -310,7 +311,7 @@
                         <span class="btn btn-light rounded-circle me-1"><i class="fas fa-image"></i></span>
                         <input type="file" id="adminFile" name="image" hidden accept="image/*" onchange="previewImage(this)">
                     </label>
-                    <input type="text" class="form-control" id="adminChatInput" name="message" placeholder="Nhập tin nhắn..." autocomplete="off">
+                    <textarea class="form-control" id="adminChatInput" name="message" placeholder="Nhập tin nhắn..." autocomplete="off" rows="1" style="resize: none; max-height: 120px; overflow-y: hidden;"></textarea>
                     <button class="btn btn-primary" type="button" id="adminSendBtn" onclick="sendAdminMessage()">
                         <i class="fas fa-paper-plane"></i>
                     </button>
@@ -434,6 +435,8 @@ function sendAdminMessage() {
             appendMsg(data);
             lastMessageId = Math.max(lastMessageId, data.id);
             input.value = '';
+            input.style.height = 'auto';
+            input.style.overflowY = 'hidden';
             clearPreview();
             scrollToBottom();
         }
@@ -447,9 +450,20 @@ function sendAdminMessage() {
     });
 }
 
-// Handle Enter
-document.getElementById('adminChatInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
+// Auto-grow textarea height
+document.getElementById('adminChatInput').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(120, this.scrollHeight) + 'px';
+    if (this.scrollHeight > 120) {
+        this.style.overflowY = 'auto';
+    } else {
+        this.style.overflowY = 'hidden';
+    }
+});
+
+// Handle Enter and Shift+Enter
+document.getElementById('adminChatInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendAdminMessage();
     }

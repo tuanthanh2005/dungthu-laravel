@@ -204,13 +204,6 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                         @endif
-                        @if(Auth::guard('affiliate')->check())
-                            <li><a class="dropdown-item fw-bold text-primary" href="{{ route('affiliate.dashboard') }}"><i class="fas fa-handshake me-2"></i>{{ __('Dashboard CTV') }}</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                        @else
-                            <li><a class="dropdown-item" href="{{ route('affiliate.login') }}"><i class="fas fa-handshake me-2"></i>{{ __('Đăng ký CTV') }}</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                        @endif
                         <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>{{ __('Trang chủ') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>{{ __('Cửa hàng') }}</a></li>
                         <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN & Proxy') }}</a></li>
@@ -225,6 +218,11 @@
                             </a>
                             <div class="collapse px-2" id="quickLinksCollapse" onclick="event.stopPropagation();">
                                 <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
+                                    @if(Auth::guard('affiliate')->check())
+                                        <li><a class="dropdown-item py-1 fw-bold text-primary" href="{{ route('affiliate.dashboard') }}" style="font-size: 0.85rem;"><i class="fas fa-handshake me-2"></i>{{ __('Dashboard CTV') }}</a></li>
+                                    @else
+                                        <li><a class="dropdown-item py-1" href="{{ route('affiliate.login') }}" style="font-size: 0.85rem;"><i class="fas fa-handshake me-2"></i>{{ __('Đăng ký CTV') }}</a></li>
+                                    @endif
                                     <li><a class="dropdown-item py-1 fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00; font-size: 0.85rem;"><i class="fas fa-rocket me-2"></i>{{ __('Buff Mạng XH') }}</a></li>
                                     <li><a class="dropdown-item py-1" href="{{ route('web-design') }}" style="font-size: 0.85rem;"><i class="fa-solid fa-code me-2 text-primary"></i>{{ __('Thiết Kế Website') }}</a></li>
                                     <li><a class="dropdown-item py-1" href="{{ route('card-exchange.index') }}" style="font-size: 0.85rem;"><i class="fas fa-exchange-alt me-2 text-warning"></i>{{ __('Đổi thẻ cào') }}</a></li>

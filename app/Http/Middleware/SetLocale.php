@@ -19,6 +19,15 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next)
     {
+        // Check query parameter 'lang' or 'locale' to set language (useful when sharing links)
+        $queryLocale = $request->query('lang') ?? $request->query('locale');
+        if ($queryLocale && in_array(strtolower($queryLocale), ['vi', 'en'])) {
+            $locale = strtolower($queryLocale);
+            session(['locale' => $locale]);
+            App::setLocale($locale);
+            return $next($request);
+        }
+
         if (session()->has('locale')) {
             App::setLocale(session('locale'));
         } else {

@@ -684,19 +684,28 @@
 
 /* Chat Tools & Image Preview */
 .chat-tool-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6b7280;
+    color: var(--widget-color, #6366f1);
+    background: #f3f4f6;
+    border: 1.5px dashed var(--widget-color, #6366f1);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
     border-radius: 50%;
+    flex-shrink: 0;
+}
+.chat-tool-btn i {
+    font-size: 18px;
 }
 .chat-tool-btn:hover {
-    background: #f3f4f6;
-    color: var(--widget-color);
+    background: var(--widget-color, #6366f1);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-style: solid;
 }
 .chat-input-container {
     flex: 1;
@@ -788,7 +797,7 @@
                     <textarea 
                         class="chat-input" 
                         id="affiliateChatInput" 
-                        placeholder="{{ __('Nhập tin nhắn...') }}"
+                        placeholder="{{ __('Nhập tin nhắn... (Nhấn Shift + Enter để xuống dòng)') }}"
                         autocomplete="off"
                         maxlength="1000"
                         rows="1"
@@ -854,7 +863,7 @@
                     <textarea
                         class="chat-input"
                         id="userChatInput"
-                        placeholder="{{ __('Nhập tin nhắn...') }}"
+                        placeholder="{{ __('Nhập tin nhắn... (Nhấn Shift + Enter để xuống dòng)') }}"
                         autocomplete="off"
                         maxlength="1000"
                         rows="1"

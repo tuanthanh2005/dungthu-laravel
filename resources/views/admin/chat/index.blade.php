@@ -183,6 +183,67 @@
         border-top: 1px solid #e9ecef;
     }
 
+    .admin-image-upload-btn {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.08);
+        border: 1px dashed rgba(102, 126, 234, 0.4);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .admin-image-upload-btn:hover {
+        background: rgba(102, 126, 234, 0.15);
+        color: #764ba2;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+        border-style: solid;
+    }
+
+    .admin-chat-input {
+        flex: 1;
+        border: 2px solid #e9ecef;
+        border-radius: 22px;
+        padding: 10px 18px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        line-height: 20px;
+    }
+
+    .admin-chat-input:focus {
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    .admin-send-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        padding: 0;
+    }
+
+    .admin-send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
     .empty-state {
         display: flex;
         flex-direction: column;
@@ -306,13 +367,13 @@
             </div>
             <form id="adminChatForm" onsubmit="return false;">
                 @csrf
-                <div class="input-group">
-                    <label for="adminFile">
-                        <span class="btn btn-light rounded-circle me-1"><i class="fas fa-image"></i></span>
+                <div class="d-flex align-items-end gap-2">
+                    <label for="adminFile" class="admin-image-upload-btn mb-0" title="Gửi ảnh">
+                        <i class="fas fa-image"></i>
                         <input type="file" id="adminFile" name="image" hidden accept="image/*" onchange="previewImage(this)">
                     </label>
-                    <textarea class="form-control" id="adminChatInput" name="message" placeholder="Nhập tin nhắn..." autocomplete="off" rows="1" style="resize: none; max-height: 120px; overflow-y: hidden;"></textarea>
-                    <button class="btn btn-primary" type="button" id="adminSendBtn" onclick="sendAdminMessage()">
+                    <textarea class="admin-chat-input" id="adminChatInput" name="message" placeholder="Nhập tin nhắn... (Nhấn Shift + Enter để xuống dòng)" autocomplete="off" rows="1" style="resize: none; max-height: 120px; overflow-y: hidden;"></textarea>
+                    <button class="admin-send-btn" type="button" id="adminSendBtn" onclick="sendAdminMessage()">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>

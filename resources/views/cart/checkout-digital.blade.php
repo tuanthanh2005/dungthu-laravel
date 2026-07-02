@@ -503,8 +503,13 @@
 
                                 @php
                                     $rate = doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000'));
-                                    $totalAmountVnd = $finalTotal ?? $total ?? 0;
-                                    $totalAmountUsd = $totalAmountVnd / $rate;
+                                    if (app()->getLocale() === 'en') {
+                                        $totalAmountUsd = $finalTotal ?? $total ?? 0;
+                                        $totalAmountVnd = $totalAmountUsd * $rate;
+                                    } else {
+                                        $totalAmountVnd = $finalTotal ?? $total ?? 0;
+                                        $totalAmountUsd = $totalAmountVnd / $rate;
+                                    }
                                 @endphp
                                 <div class="mb-3 p-2 bg-dark bg-opacity-25 rounded text-center">
                                     <span class="opacity-75 d-block" style="font-size: 0.8rem;">{{ __('Số tiền cần thanh toán / Amount to Pay:') }}</span>

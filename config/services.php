@@ -69,5 +69,10 @@ return [
         'add_info' => env('VIETQR_ADD_INFO', 'AI GIA RE THUDUNG'),
     ],
 
+    'paypal' => [
+        'email' => env('PAYPAL_EMAIL', 'tranthanhtuanfix@gmail.com'),
+        'username' => env('PAYPAL_USERNAME', 'tranthanhtuanmt'),
+    ],
+
 ];
 

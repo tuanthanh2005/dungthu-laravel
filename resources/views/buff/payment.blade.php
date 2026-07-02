@@ -377,6 +377,12 @@
                             <span class="payment-option-label">Binance UID</span>
                             <span class="payment-option-text">Binance Pay</span>
                         </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="paypal">
+                            <div class="payment-option-icon">🅿️</div>
+                            <span class="payment-option-label">PayPal</span>
+                            <span class="payment-option-text">{{ config('services.paypal.email') }}</span>
+                        </label>
                     </div>
                 </div>
 
@@ -474,6 +480,62 @@
                     </div>
                 </div>
 
+                <!-- PayPal Section -->
+                <div id="paypalSection" class="qr-section">
+                    <h4>🅿️ PayPal</h4>
+                    <p style="color: #666; margin-bottom: 1rem;">
+                        {{ __('Chuyển tiền đến tài khoản PayPal bên dưới') }}
+                    </p>
+                    <div class="qr-code">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://paypal.me/{{ config('services.paypal.username') }}" alt="PayPal QR" style="max-width: 220px; width: 100%;">
+                    </div>
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
+                        <div class="mb-3">
+                            <strong>{{ __('PayPal Email:') }}</strong>
+                            <div class="d-flex align-items-center justify-content-between mt-1 bg-white p-2 border rounded">
+                                <span class="text-danger fw-bold">{{ config('services.paypal.email') }}</span>
+                                <button type="button" class="btn btn-sm btn-secondary ms-2 text-nowrap" onclick="copyToClipboard('{{ config('services.paypal.email') }}', this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <strong>{{ __('PayPal.Me Link:') }}</strong>
+                            <div class="d-flex align-items-center justify-content-between mt-1 bg-white p-2 border rounded">
+                                <span class="text-danger fw-bold">https://paypal.me/{{ config('services.paypal.username') }}</span>
+                                <a href="https://paypal.me/{{ config('services.paypal.username') }}" target="_blank" class="btn btn-sm btn-info text-white text-nowrap ms-2" style="font-size: 0.8rem; padding: 4px 8px; border-radius: 4px;">
+                                    <i class="fas fa-external-link-alt"></i> Open
+                                </a>
+                            </div>
+                        </div>
+                        
+                        @php
+                            $rate = doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000'));
+                            $totalVnd = $buffOrder->total_price;
+                            $totalUsd = $totalVnd / $rate;
+                        @endphp
+                        <div class="mb-3">
+                            <strong>{{ __('Số Tiền:') }}</strong>
+                            <div class="mt-1 bg-white p-2 border rounded text-center">
+                                @if(app()->getLocale() === 'en')
+                                    <span class="text-danger fw-bold fs-5">${{ number_format($totalUsd, 2) }} USD</span>
+                                @else
+                                    <span class="text-danger fw-bold fs-5">{{ number_format($totalVnd, 0, ',', '.') }}đ</span>
+                                    <span class="text-muted d-block" style="font-size: 0.85rem;">(≈ ${{ number_format($totalUsd, 2) }} USD)</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div style="font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 10px; line-height: 1.5; color: #555;">
+                            @if(app()->getLocale() === 'en')
+                                Once the payment is sent, please contact us.
+                            @else
+                                {{ __('Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.') }}
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Confirmation -->
                 <div class="confirm-section">
                     <div class="confirm-checkbox">
@@ -520,6 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const bankSection = document.getElementById('bankSection');
     const cryptoSection = document.getElementById('cryptoSection');
     const binanceSection = document.getElementById('binanceSection');
+    const paypalSection = document.getElementById('paypalSection');
     const confirmPayment = document.getElementById('confirmPayment');
 
     // Payment method toggle
@@ -536,6 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (bankSection) bankSection.classList.remove('show');
             if (cryptoSection) cryptoSection.classList.remove('show');
             if (binanceSection) binanceSection.classList.remove('show');
+            if (paypalSection) paypalSection.classList.remove('show');
 
             // Show selected section
             if (this.value === 'qr_code') {
@@ -546,6 +610,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (cryptoSection) cryptoSection.classList.add('show');
             } else if (this.value === 'binance_uid') {
                 if (binanceSection) binanceSection.classList.add('show');
+            } else if (this.value === 'paypal') {
+                if (paypalSection) paypalSection.classList.add('show');
             }
         });
     });

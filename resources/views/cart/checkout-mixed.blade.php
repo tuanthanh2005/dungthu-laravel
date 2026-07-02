@@ -298,6 +298,9 @@
                                 <button type="button" class="payment-tab-btn" data-target="binance-panel" data-method="binance_uid">
                                     <i class="fab fa-bitcoin me-1"></i> Binance
                                 </button>
+                                <button type="button" class="payment-tab-btn" data-target="paypal-panel" data-method="paypal">
+                                    <i class="fab fa-paypal me-1"></i> PayPal
+                                </button>
                             </div>
 
                             @if(app()->getLocale() !== 'en')
@@ -390,6 +393,60 @@
                                         @else
                                             <strong>English:</strong> Once the payment is sent, please contact us.<br>
                                             <strong>{{ __("Lưu ý") }}:</strong> Sau khi chuyển khoản thành công, hãy liên hệ với chúng tôi.
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PANEL 4: PayPal -->
+                            <div id="paypal-panel" class="payment-tab-content">
+                                <h6 class="fw-bold mb-2">PayPal</h6>
+                                <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://paypal.me/{{ config('services.paypal.username') }}" 
+                                         alt="PayPal QR" 
+                                         style="max-width: 180px;">
+                                </div>
+                                <div class="text-start" style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; font-size: 0.85rem;">
+                                    <div class="mb-2">
+                                        <small class="opacity-75 d-block">PayPal Email:</small>
+                                        <div class="d-flex align-items-center justify-content-between mt-1" style="background: rgba(0,0,0,0.2); padding: 5px; border-radius: 5px;">
+                                            <span class="text-warning fw-bold">{{ config('services.paypal.email') }}</span>
+                                            <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('{{ config('services.paypal.email') }}', this)">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="opacity-75 d-block">PayPal.Me Link:</small>
+                                        <div class="d-flex align-items-center justify-content-between mt-1" style="background: rgba(0,0,0,0.2); padding: 5px; border-radius: 5px;">
+                                            <span class="text-warning fw-bold" style="font-size: 0.8rem; word-break: break-all;">https://paypal.me/{{ config('services.paypal.username') }}</span>
+                                            <a href="https://paypal.me/{{ config('services.paypal.username') }}" target="_blank" class="btn btn-sm btn-info text-white text-nowrap ms-1" style="font-size: 0.75rem; padding: 2px 6px;">
+                                                <i class="fas fa-external-link-alt"></i> Open
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    @php
+                                        $rate = doubleval(\App\Models\SiteSetting::getValue('usd_exchange_rate', '25000'));
+                                        $totalAmountVnd = $finalTotal ?? $total ?? 0;
+                                        $totalAmountUsd = $totalAmountVnd / $rate;
+                                    @endphp
+                                    <div class="mb-2 p-2 rounded text-center" style="background: rgba(0,0,0,0.15);">
+                                        <small class="opacity-75 d-block" style="font-size: 0.75rem;">{{ __('Số tiền cần thanh toán / Amount to Pay:') }}</small>
+                                        @if(app()->getLocale() === 'en')
+                                            <strong class="text-warning font-weight-bold">${{ number_format($totalAmountUsd, 2) }} USD</strong>
+                                        @else
+                                            <strong class="text-warning font-weight-bold">{{ number_format($totalAmountVnd, 0, ',', '.') }}đ</strong>
+                                            <span class="d-block text-white opacity-75 mt-1" style="font-size: 0.75rem;">(≈ ${{ number_format($totalAmountUsd, 2) }} USD)</span>
+                                        @endif
+                                    </div>
+
+                                    <div style="font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px; line-height: 1.4;">
+                                        @if(app()->getLocale() === 'en')
+                                            Once the payment is sent, please contact us.
+                                        @else
+                                            <strong>English:</strong> Once the payment is sent, please contact us.<br>
+                                            <strong>{{ __("Lưu ý") }}:</strong> Sau khi thanh toán thành công, hãy liên hệ với chúng tôi.
                                         @endif
                                     </div>
                                 </div>

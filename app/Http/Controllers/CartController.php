@@ -277,6 +277,8 @@ class CartController extends Controller
                 $customerAddress .= "\n" . ($isEn ? 'Payment Method: Crypto Wallet (USDT,...)' : 'Phương thức thanh toán: Ví Crypto (USDT,...)');
             } elseif ($pm === 'binance_uid') {
                 $customerAddress .= "\n" . ($isEn ? 'Payment Method: Binance UID' : 'Phương thức thanh toán: Binance UID');
+            } elseif ($pm === 'paypal') {
+                $customerAddress .= "\n" . ($isEn ? 'Payment Method: PayPal' : 'Phương thức thanh toán: PayPal');
             } else {
                 $customerAddress .= "\n" . ($isEn ? 'Payment Method: VietQR Bank Transfer' : 'Phương thức thanh toán: Chuyển khoản VietQR');
             }

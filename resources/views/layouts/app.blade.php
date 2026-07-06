@@ -278,8 +278,30 @@
         .swal2-toast .swal2-content {
             flex-grow: 1 !important;
         }
+
+        /* Prevent double-tap to zoom on mobile devices */
+        html, body {
+            touch-action: manipulation;
+        }
     </style>
     
+    <!-- Prevent pinch-to-zoom and double-tap zoom via JS -->
+    <script>
+        document.addEventListener('touchstart', function (event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
 
 @stack('scripts')
 </body>

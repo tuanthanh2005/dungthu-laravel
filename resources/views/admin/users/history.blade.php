@@ -1,15 +1,9 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Lịch Sử Mua Hàng - ' . $user->name)
 
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
 
     .admin-card {
         background: white;
@@ -158,8 +152,7 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
+<div class="container-fluid px-0">
         <a href="{{ route('admin.users') }}" class="back-btn mb-3">
             <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
         </a>

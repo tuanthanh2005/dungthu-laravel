@@ -1,15 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Cấu hình & Lập chỉ mục Google Indexing')
 
+@section('page_title', 'Google Indexing')
+
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
 
     .admin-card {
         background: white;
@@ -18,15 +14,6 @@
         box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         margin-bottom: 30px;
     }
-
-    .admin-nav {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
     .admin-nav .nav-link {
         color: #4a5568;
         font-weight: 600;
@@ -70,99 +57,7 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
-        <!-- Admin Navigation -->
-        <nav class="admin-nav" data-aos="fade-down">
-            <ul class="nav nav-pills justify-content-center flex-wrap">
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-home me-2"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.products') }}">
-                        <i class="fas fa-box me-2"></i>Sản phẩm
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.categories') }}">
-                        <i class="fas fa-list me-2"></i>Danh mục
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.products', ['flash_sale' => 1]) }}">
-                        <i class="fas fa-bolt me-2"></i>Flash Sale
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.orders') }}">
-                        <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.users') }}">
-                        <i class="fas fa-users me-2"></i>Người dùng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.blogs') }}">
-                        <i class="fas fa-blog me-2"></i>Blog
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.card-exchanges') }}">
-                        <i class="fas fa-credit-card me-2"></i>Đổi thẻ cào
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.chat.index') }}">
-                        <i class="fas fa-comments me-2"></i>Chat
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative" href="{{ route('admin.affiliates.index') }}">
-                        <i class="fas fa-handshake me-2"></i>Cộng tác viên
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.abandoned-carts') }}">
-                        <i class="fas fa-shopping-basket me-2"></i>Giỏ bỏ quên
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.preorders') }}">
-                        <i class="fas fa-hourglass-half me-2"></i>Pre-orders
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.seo-keywords') }}">
-                        <i class="fas fa-search me-2"></i>Từ khóa SEO
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.blog-topics') }}">
-                        <i class="fas fa-tags me-2"></i>Chủ đề Blog
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.google-indexing.index') }}">
-                        <i class="fab fa-google me-2"></i>Google Indexing
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.system-notifications') }}">
-                        <i class="fas fa-bullhorn me-2"></i>Thông báo hệ thống
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="javascript:void(0)" onclick="adminLockManual()">
-                        <i class="fas fa-lock me-2"></i>Khóa Admin
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
+<div class="container-fluid px-0">
         <!-- Google Indexing Panel -->
         <div class="row">
             <!-- Configuration Status -->

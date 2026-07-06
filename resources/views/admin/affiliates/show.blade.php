@@ -1,10 +1,9 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Chi tiết Cộng tác viên | Admin')
 
 @push('styles')
 <style>
-    .admin-wrapper { padding: 40px 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin-top: 70px; }
     .admin-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px; }
     .cccd-img { border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; transition: transform 0.3s; cursor: pointer; }
     .cccd-img:hover { transform: scale(1.02); }
@@ -12,8 +11,7 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
+<div class="container-fluid px-0">
         <div class="mb-4 d-flex align-items-center">
             <a href="{{ route('admin.affiliates.index') }}" class="btn btn-light"><i class="fas fa-arrow-left me-2"></i> Quay lại</a>
             <h4 class="fw-bold mb-0 text-white ms-3">Chi tiết: {{ $affiliate->name }}</h4>

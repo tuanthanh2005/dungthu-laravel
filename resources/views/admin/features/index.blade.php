@@ -1,15 +1,9 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Quản lý Tính Năng Nổi Bật - Admin')
 
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
 
     .admin-card {
         background: white;
@@ -17,15 +11,6 @@
         padding: 30px;
         box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
-
-    .admin-nav {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
     .admin-nav .nav-link {
         color: #4a5568;
         font-weight: 600;
@@ -145,34 +130,8 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
+<div class="container-fluid px-0">
         <!-- Admin Navigation -->
-        <div class="admin-nav">
-            <ul class="nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.products') }}">
-                        <i class="fas fa-box me-2"></i>Sản phẩm
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.orders') }}">
-                        <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.features') }}">
-                        <i class="fas fa-star me-2"></i>Tính năng
-                    </a>
-                </li>
-            </ul>
-        </div>
-
         <div class="admin-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0">

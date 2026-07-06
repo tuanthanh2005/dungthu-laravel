@@ -1,6 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Quản lý Menu - Admin')
+
+@section('page_title', 'Menu Settings')
 
 @push('styles')
 <style>
@@ -8,17 +10,8 @@
         padding: 40px 0;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
-        margin-top: 70px;
+        margin-top: 0;
     }
-
-    .admin-nav {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
     .admin-nav .nav-link {
         color: #4a5568;
         font-weight: 600;
@@ -212,35 +205,7 @@
 <div class="menu-settings-wrapper">
     <div class="container">
         {{-- Admin Nav --}}
-        <nav class="admin-nav" data-aos="fade-down">
-            <ul class="nav nav-pills justify-content-center flex-wrap">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-home me-2"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.products') }}">
-                        <i class="fas fa-box me-2"></i>Sản phẩm
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.orders') }}">
-                        <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.blogs') }}">
-                        <i class="fas fa-blog me-2"></i>Bài viết
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.menu-settings') }}">
-                        <i class="fas fa-sliders-h me-2"></i>Quản lý Menu
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        
 
         <div class="settings-card" data-aos="fade-up">
             {{-- Header --}}

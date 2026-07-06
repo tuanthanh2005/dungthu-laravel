@@ -1,15 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Quản Lý Blog')
 
+@section('page_title', 'Bài viết')
+
 @push('styles')
     <style>
-        .admin-wrapper {
-            padding: 40px 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            margin-top: 70px;
-        }
 
         .admin-card {
             background: white;
@@ -17,15 +13,7 @@
             padding: 30px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         }
-
-        .admin-nav {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .admin-nav a {
+    .admin-nav a {
             color: white;
             text-decoration: none;
             padding: 10px 20px;
@@ -106,21 +94,8 @@
 @endpush
 
 @section('content')
-    <div class="admin-wrapper">
-        <div class="container">
+    <div class="container-fluid px-0">
             <!-- Navigation -->
-            <div class="admin-nav">
-                <a href="{{ route('admin.dashboard') }}">
-                    <i class="fas fa-chart-line me-2"></i>Dashboard
-                </a>
-                <a href="{{ route('admin.blogs') }}" class="active">
-                    <i class="fas fa-blog me-2"></i>Blog
-                </a>
-                <a href="{{ route('admin.blog-topics') }}">
-                    <i class="fas fa-tags me-2"></i>Chủ đề Blog
-                </a>
-            </div>
-
             <div class="admin-card">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="fw-bold mb-0">

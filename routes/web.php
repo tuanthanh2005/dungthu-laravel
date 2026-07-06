@@ -83,11 +83,14 @@ Route::get('/buff', [BuffController::class, 'index'])->name('buff.index');
 Route::get('/buff/server/{id}', [BuffController::class, 'getServer'])->name('buff.server');
 Route::middleware('auth')->post('/buff/order', [BuffController::class, 'placeOrder'])->name('buff.order');
 
-// VPN & Proxy routes
-Route::get('/timkiem/{tab}', [\App\Http\Controllers\VpnProxyController::class, 'index'])->name('vpn.tab');
+// VPN routes
+Route::get('/vpn', [\App\Http\Controllers\VpnProxyController::class, 'index'])->name('vpn.index');
 Route::get('/vpn-proxy', function() {
-    return redirect()->route('vpn.tab', ['tab' => 'vpn']);
-})->name('vpn.index');
+    return redirect()->route('vpn.index');
+});
+Route::get('/timkiem/{tab}', function() {
+    return redirect()->route('vpn.index');
+});
 
 // Blog routes
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

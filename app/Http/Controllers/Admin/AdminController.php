@@ -135,6 +135,38 @@ class AdminController extends Controller
             ->where('updated_at', '>=', now()->subDays(90))
             ->sum('total_amount');
 
+        // Hàm helper sinh dữ liệu biểu đồ theo số ngày dựa trên thời gian done (completed) của đơn hàng
+        $getChartData = function($days) {
+            $data = [];
+            for ($i = $days - 1; $i >= 0; $i--) {
+                $label = now()->subDays($i)->format('d/m');
+                $data[$label] = 0;
+            }
+
+            $revenue = Order::where('status', 'completed')
+                ->where('updated_at', '>=', now()->subDays($days))
+                ->selectRaw('DATE(updated_at) as date, SUM(total_amount) as total')
+                ->groupBy('date')
+                ->get();
+
+            foreach ($revenue as $row) {
+                $label = \Carbon\Carbon::parse($row->date)->format('d/m');
+                if (isset($data[$label])) {
+                    $data[$label] = (float)$row->total;
+                }
+            }
+            return [
+                'labels' => array_keys($data),
+                'values' => array_values($data),
+            ];
+        };
+
+        $chart5Days = $getChartData(5);
+        $chart10Days = $getChartData(10);
+        $chart30Days = $getChartData(30);
+        $chart60Days = $getChartData(60);
+        $chart90Days = $getChartData(90);
+
         // Affiliate stats
         $pendingAffCount = Affiliate::where('status', 'pending')->count();
         $pendingAffInvoiceCount = AffiliateInvoice::where('status', 'pending')->count();
@@ -154,7 +186,12 @@ class AdminController extends Controller
             'revenue90Days',
             'pendingAffCount',
             'pendingAffInvoiceCount',
-            'pendingAffWithdrawCount'
+            'pendingAffWithdrawCount',
+            'chart5Days',
+            'chart10Days',
+            'chart30Days',
+            'chart60Days',
+            'chart90Days'
         ));
     }
 

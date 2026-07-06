@@ -1,15 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Quản lý Sản phẩm - Admin')
 
+@section('page_title', 'Sản phẩm')
+
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
 
     .admin-card {
         background: white;
@@ -24,15 +20,6 @@
         object-fit: cover;
         border-radius: 10px;
     }
-
-    .admin-nav {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
     .admin-nav .nav-link {
         color: #4a5568;
         font-weight: 600;
@@ -164,60 +151,7 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
-        <!-- Admin Navigation -->
-        <nav class="admin-nav" data-aos="fade-down">
-            <ul class="nav nav-pills justify-content-center flex-nowrap overflow-auto pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
-                <style>ul::-webkit-scrollbar { display: none; }</style>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-home me-2"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.products') }}">
-                        <i class="fas fa-box me-2"></i>Sản phẩm
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.categories') }}">
-                        <i class="fas fa-list me-2"></i>Danh mục
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.orders') }}">
-                        <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript:void(0)" title="Tính năng sắp có">
-                        <i class="fas fa-users me-2"></i>Người dùng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript:void(0)" title="Tính năng sắp có">
-                        <i class="fas fa-blog me-2"></i>Bài viết
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.features') }}">
-                        <i class="fas fa-star me-2"></i>Tính năng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.abandoned-carts') }}">
-                        <i class="fas fa-shopping-basket me-2"></i>Gio bo quen
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.google-indexing.index') }}">
-                        <i class="fab fa-google me-2"></i>Google Indexing
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
+<div class="container-fluid px-0">
         <!-- Products Management -->
         <div class="admin-card" data-aos="fade-up">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">

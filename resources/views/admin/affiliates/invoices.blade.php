@@ -1,10 +1,9 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Duyệt hóa đơn CTV | Admin')
 
 @push('styles')
 <style>
-    .admin-wrapper { padding: 40px 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin-top: 70px; }
     .admin-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
     .table th { background: #f8fafc; border: none; color: #4a5568; font-weight: 700; text-transform: uppercase; font-size: 13px; }
     .badge-status { padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
@@ -15,8 +14,7 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
+<div class="container-fluid px-0">
         <!-- Sub Nav -->
         <div class="mb-4">
             <div class="d-flex gap-2">

@@ -1,477 +1,566 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Dashboard Admin')
+@section('title', 'Tổng quan Admin')
+@section('page_title', 'Dashboard')
 
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
+    /* Premium Stats Deck */
+    .stat-card-premium {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
 
-    .stats-card {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-    }
-
-    .stats-card:hover {
+    .stat-card-premium:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     }
 
-    .stats-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 15px;
+    .stat-icon-wrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        transition: all 0.3s;
+    }
+
+    .stat-card-premium:hover .stat-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .stat-card-premium.products .stat-icon-wrapper {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+    }
+    .stat-card-premium.orders .stat-icon-wrapper {
+        background: rgba(245, 87, 108, 0.1);
+        color: #f5576c;
+    }
+    .stat-card-premium.users .stat-icon-wrapper {
+        background: rgba(79, 172, 254, 0.1);
+        color: #4facfe;
+    }
+    .stat-card-premium.blogs .stat-icon-wrapper {
+        background: rgba(67, 233, 123, 0.1);
+        color: #2ecc71;
+    }
+
+    .stat-card-premium .value {
         font-size: 32px;
-        margin-bottom: 15px;
+        font-weight: 800;
+        color: #1a1a2e;
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
     }
 
-    .stats-icon.products {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+    .stat-card-premium .label {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .stats-icon.orders {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-    }
-
-    .stats-icon.users {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: white;
-    }
-
-    .stats-icon.blogs {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        color: white;
-    }
-
-    .stats-icon.revenue {
-        background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-        color: white;
-    }
-
-    .revenue-card {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-    }
-
-    .revenue-locked-overlay {
+    .stat-card-premium .sub-badge {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
+        top: 24px;
+        right: 24px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 20px;
+    }
+
+    /* Revenue & Chart Section */
+    .revenue-card-premium {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        position: relative;
+        min-height: 400px;
+    }
+
+    .revenue-locked-overlay-new {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        z-index: 100;
+        border-radius: 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        z-index: 10;
-        border-radius: 20px;
-        transition: all 0.5s ease;
+        padding: 40px;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .revenue-locked-overlay.unlocked {
+    .revenue-locked-overlay-new.unlocked {
         opacity: 0;
         pointer-events: none;
-        transform: scale(1.1);
+        transform: scale(0.95);
     }
 
-    .revenue-filter {
-        display: none;
-        margin-top: 15px;
-    }
-
-    .revenue-filter.show {
+    .lock-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(102, 126, 234, 0.1);
         display: flex;
+        align-items: center;
         justify-content: center;
-        gap: 10px;
+        font-size: 32px;
+        color: #667eea;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.15);
+        animation: pulseLock 2s infinite;
     }
 
-    .filter-btn {
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: 1px solid #e2e8f0;
-        background: white;
-        color: #718096;
+    @keyframes pulseLock {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(102, 126, 234, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
     }
 
-    .filter-btn.active {
-        background: #667eea;
-        color: white;
+    /* Quick Actions */
+    .action-grid-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 16px;
+        border: 1px solid rgba(0,0,0,0.04);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-decoration: none;
+        color: #374151;
+        transition: all 0.25s;
+    }
+
+    .action-grid-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
         border-color: #667eea;
+        color: #667eea;
     }
 
-    .stats-number {
-        font-size: 42px;
-        font-weight: 700;
-        color: #2d3748;
-        margin: 10px 0;
-    }
-
-    .stats-label {
-        font-size: 16px;
-        color: #718096;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .admin-card {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    }
-
-    .admin-nav {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .admin-nav .nav-link {
-        color: #4a5568;
-        font-weight: 600;
-        padding: 12px 24px;
+    .action-grid-card .icon-box {
+        width: 44px;
+        height: 44px;
         border-radius: 10px;
-        transition: all 0.3s ease;
-        margin: 0 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        background: rgba(102,126,234,0.08);
+        color: #667eea;
+        flex-shrink: 0;
     }
 
-    .admin-nav .nav-link:hover {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+    /* Pending Tasks / Notification Center */
+    .pending-feed {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
 
-    .admin-nav .nav-link.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+    .pending-feed-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .pending-feed-item:last-child {
+        border-bottom: none;
+    }
+
+    .pending-feed-item .icon-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    /* Responsive adjustments */
+    .chart-container {
+        position: relative;
+        height: 280px;
+        width: 100%;
     }
 </style>
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
-        <!-- Admin Navigation -->
-        <nav class="admin-nav" data-aos="fade-down">
-            <ul class="nav nav-pills justify-content-center flex-wrap">
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-home me-2"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.products') }}">
-                        <i class="fas fa-box me-2"></i>Sản phẩm
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.categories') }}">
-                        <i class="fas fa-list me-2"></i>Danh mục
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.products', ['flash_sale' => 1]) }}">
-                        <i class="fas fa-bolt me-2"></i>Flash Sale
-                    </a>
-                </li>
+<div class="container-fluid px-0">
 
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.orders') }}">
-                        <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-                        @if(($pendingOrdersCount ?? 0) > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                                {{ $pendingOrdersCount }}
-                                <span class="visually-hidden">đơn hàng chờ xử lý</span>
-                            </span>
-                        @endif
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.users') }}">
-                        <i class="fas fa-users me-2"></i>Người dùng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.blogs') }}">
-                        <i class="fas fa-blog me-2"></i>Blog
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.card-exchanges') }}">
-                        <i class="fas fa-credit-card me-2"></i>Đổi thẻ cào
-                        @if(($pendingCardExchangeCount ?? 0) > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                                {{ $pendingCardExchangeCount }}
-                                <span class="visually-hidden">yêu cầu đổi thẻ chờ xử lý</span>
-                            </span>
-                        @endif
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.chat.index') }}">
-                        <i class="fas fa-comments me-2"></i>Chat
-                        @if(($unreadChatCount ?? 0) > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                                {{ $unreadChatCount }}
-                                <span class="visually-hidden">tin nhắn chưa đọc</span>
-                            </span>
-                        @endif
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative @if(request()->routeIs('admin.affiliates.*')) active @endif" href="{{ route('admin.affiliates.index') }}">
-                        <i class="fas fa-handshake me-2"></i>Cộng tác viên
-                        @if(($pendingAffCount ?? 0) > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                                {{ $pendingAffCount }}
-                            </span>
-                        @endif
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.abandoned-carts') }}">
-                        <i class="fas fa-shopping-basket me-2"></i>Giỏ bỏ quên
-                        @if(($abandonedCartsCount ?? 0) > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info"
-                                  style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                                {{ $abandonedCartsCount }}
-                                <span class="visually-hidden">giỏ hàng bị bỏ quên</span>
-                            </span>
-                        @endif
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link" href="javascript:void(0)" data-url="{{ route('admin.preorders') }}">
-                        <i class="fas fa-hourglass-half me-2"></i>Pre-orders
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link @if(request()->routeIs('admin.seo-keywords*')) active @endif" href="javascript:void(0)" data-url="{{ route('admin.seo-keywords') }}">
-                        <i class="fas fa-search me-2"></i>Từ khóa SEO
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative protected-link @if(request()->routeIs('admin.blog-topics*')) active @endif" href="javascript:void(0)" data-url="{{ route('admin.blog-topics') }}">
-                        <i class="fas fa-tags me-2"></i>Chủ đề Blog
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.google-indexing.index') }}">
-                        <i class="fab fa-google me-2"></i>Google Indexing
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link protected-link" href="javascript:void(0)" data-url="{{ route('admin.system-notifications') }}">
-                        <i class="fas fa-bullhorn me-2"></i>Thông báo hệ thống
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="javascript:void(0)" onclick="adminLockManual()">
-                        <i class="fas fa-lock me-2"></i>Khóa Admin
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- Statistics Cards -->
-        <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="stats-card text-center">
-                    <div class="stats-icon products mx-auto">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div class="stats-number">{{ $stats['products'] }}</div>
-                    <div class="stats-label">Sản phẩm</div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="stats-card text-center">
-                    <div class="stats-icon orders mx-auto">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                    <div class="stats-number">{{ $stats['orders'] }}</div>
-                    <div class="stats-label">Đơn hàng</div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="stats-card text-center">
-                    <div class="stats-icon users mx-auto">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stats-number">{{ $stats['users'] }}</div>
-                    <div class="stats-label">Người dùng</div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
-                <div class="stats-card text-center">
-                    <div class="stats-icon blogs mx-auto">
-                        <i class="fas fa-blog"></i>
-                    </div>
-                    <div class="stats-number">{{ $stats['blogs'] }}</div>
-                    <div class="stats-label">Bài viết</div>
-                </div>
-            </div>
-
-            <div class="col-lg-12 mb-4" data-aos="fade-up" data-aos-delay="500">
-                <div class="revenue-card text-center">
-                    <!-- Locked Overlay -->
-                    <div id="revenue-overlay" class="revenue-locked-overlay">
-                        <i class="fas fa-lock fa-3x text-primary mb-3"></i>
-                        <h5 class="fw-bold mb-3">Thông tin bảo mật</h5>
-                        <div class="input-group mb-2" style="max-width: 250px;">
-                            <input type="password" id="revenue-pass" class="form-control rounded-pill-start" placeholder="Nhập mật khẩu...">
-                            <button class="btn btn-primary rounded-pill-end" onclick="checkRevenuePass()">
-                                <i class="fas fa-key"></i>
-                            </button>
-                        </div>
-                        <small class="text-muted">Nhập mật khẩu để xem doanh thu</small>
-                    </div>
-
-                    <!-- Content (Hidden initially) -->
-                    <div class="stats-icon revenue mx-auto">
-                        <i class="fas fa-hand-holding-usd"></i>
-                    </div>
-                    <div id="revenue-display" class="stats-number">
-                        <span id="revenue-val">{{ number_format($revenue30Days, 0, ',', '.') }}</span>đ
-                    </div>
-                    <div class="stats-label">Tổng doanh thu thực tế</div>
-                    
-                    <!-- Filters -->
-                    <div id="revenue-filter-box" class="revenue-filter show">
-                        <div class="filter-btn active" onclick="filterRevenue(30, this)">30 Ngày</div>
-                        <div class="filter-btn" onclick="filterRevenue(10, this)">10 Ngày</div>
-                        <div class="filter-btn" onclick="filterRevenue(5, this)">5 Ngày</div>
-                        <div class="filter-btn" onclick="filterRevenue(60, this)">60 Ngày</div>
-                        <div class="filter-btn" onclick="filterRevenue(90, this)">90 Ngày</div>
-                    </div>
-                </div>
-            </div>
+    <!-- Section Title -->
+    <div class="admin-page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Xin chào, {{ auth()->user()->name ?? 'Admin' }}. Dưới đây là thống kê vận hành hệ thống.</p>
         </div>
-
-        <!-- Quick Actions -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="admin-card">
-                    <h4 class="fw-bold mb-4">
-                        <i class="fas fa-bolt text-warning me-2"></i>Thao tác nhanh
-                    </h4>
-                    <div class="row g-3">
-                        <div class="col-md-3 col-sm-6">
-                            <a href="javascript:void(0)" data-url="{{ route('admin.products.create') }}" class="btn btn-outline-primary w-100 py-3 rounded-3 protected-link">
-                                <i class="fas fa-plus-circle d-block fs-3 mb-2"></i>
-                                Thêm sản phẩm
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="javascript:void(0)" data-url="{{ route('admin.products') }}" class="btn btn-outline-success w-100 py-3 rounded-3 protected-link">
-                                <i class="fas fa-list d-block fs-3 mb-2"></i>
-                                Quản lý sản phẩm
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="javascript:void(0)" class="btn btn-outline-info w-100 py-3 rounded-3" title="Tính năng sắp có">
-                                <i class="fas fa-chart-bar d-block fs-3 mb-2"></i>
-                                Xem báo cáo
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="{{ route('admin.menu-settings') }}" class="btn btn-outline-danger w-100 py-3 rounded-3">
-                                <i class="fas fa-cog d-block fs-3 mb-2"></i>
-                                Cài đặt
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div>
+            <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
+                <i class="fas fa-sync-alt me-1"></i> Làm mới dữ liệu
+            </button>
         </div>
-
-        <!-- Latest Orders -->
-        @if(isset($latestOrders) && $latestOrders->count() > 0)
-        <div class="admin-card" data-aos="fade-up">
-            <h4 class="fw-bold mb-4">
-                <i class="fas fa-shopping-cart text-primary me-2"></i>Đơn hàng mới nhất
-            </h4>
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Mã đơn</th>
-                            <th>Khách hàng</th>
-                            <th>Tổng tiền</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày đặt</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($latestOrders as $order)
-                        <tr>
-                            <td><strong>#{{ $order->id }}</strong></td>
-                            <td>{{ $order->user->name ?? 'admin' }}</td>
-                            <td><strong class="text-primary">{{ number_format($order->total_amount, 0, ',', '.') }}đ</strong></td>
-                            <td>
-                                @if($order->status === 'pending')
-                                    <span class="badge bg-warning text-dark">Chờ xử lý</span>
-                                @elseif($order->status === 'completed')
-                                    <span class="badge bg-success">Hoàn thành</span>
-                                @else
-                                    <span class="badge bg-danger">Đã hủy</span>
-                                @endif
-                            </td>
-                            <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        @else
-        <div class="admin-card text-center py-5" data-aos="fade-up">
-            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
-            <h5 class="text-muted">Chưa có đơn hàng nào</h5>
-            <p class="text-muted">Đơn hàng mới sẽ hiển thị ở đây</p>
-        </div>
-        @endif
     </div>
+
+    <!-- Stats summary deck -->
+    <div class="row mb-4">
+        <!-- Products -->
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="stat-card-premium products">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="value">{{ number_format($stats['products']) }}</div>
+                <div class="label">Sản phẩm</div>
+                <span class="sub-badge bg-primary-subtle text-primary">Active</span>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="stat-card-premium orders">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="value">{{ number_format($stats['orders']) }}</div>
+                <div class="label">Đơn hàng</div>
+                @if(isset($pendingOrdersCount) && $pendingOrdersCount > 0)
+                    <span class="sub-badge bg-warning text-dark">{{ $pendingOrdersCount }} Chờ xử lý</span>
+                @else
+                    <span class="sub-badge bg-success-subtle text-success">Hoàn tất</span>
+                @endif
+            </div>
+        </div>
+
+        <!-- Users -->
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="stat-card-premium users">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="value">{{ number_format($stats['users']) }}</div>
+                <div class="label">Người dùng</div>
+                @if(isset($pendingAffCount) && $pendingAffCount > 0)
+                    <span class="sub-badge bg-info-subtle text-info">{{ $pendingAffCount }} CTV mới</span>
+                @else
+                    <span class="sub-badge bg-secondary-subtle text-muted">Thành viên</span>
+                @endif
+            </div>
+        </div>
+
+        <!-- Blogs -->
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="stat-card-premium blogs">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-blog"></i>
+                </div>
+                <div class="value">{{ number_format($stats['blogs']) }}</div>
+                <div class="label">Bài viết</div>
+                <span class="sub-badge bg-success-subtle text-success">Blogs</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chart & Tasks Grid -->
+    <div class="row mb-4">
+        <!-- Revenue Line Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="revenue-card-premium">
+                <!-- Locked Overlay -->
+                <div id="revenue-overlay" class="revenue-locked-overlay-new">
+                    <div class="lock-circle">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Thông tin tài chính</h5>
+                    <p class="text-muted text-center mb-4" style="max-width: 320px;">Vui lòng nhập mã bảo mật để xem báo cáo doanh thu và biểu đồ tăng trưởng.</p>
+                    <div class="input-group" style="max-width: 280px; box-shadow: 0 4px 12px rgba(102,126,234,0.15); border-radius: 30px; overflow: hidden;">
+                        <input type="password" id="revenue-pass" class="form-control border-0 px-3" placeholder="Mã bảo mật (PIN)..." style="height: 46px;">
+                        <button class="btn btn-primary border-0 px-4" onclick="checkRevenuePass()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-key"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Unlocked Chart Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div>
+                        <h4 class="admin-card-title mb-1">
+                            <i class="fas fa-chart-line text-primary me-2"></i>Doanh thu & Xu hướng bán hàng
+                        </h4>
+                        <p class="text-muted mb-0" style="font-size:12.5px;">Tổng tiền thực thu từ các đơn hàng thành công</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-end">
+                            <span class="text-muted d-block" style="font-size: 11px; text-transform: uppercase;">Doanh thu lọc</span>
+                            <span class="fw-bold text-primary" style="font-size: 18px;"><span id="revenue-val">{{ number_format($revenue30Days, 0, ',', '.') }}</span>đ</span>
+                        </div>
+                        <div id="revenue-filter-box" class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn active" onclick="filterRevenue(30, this)">30 Ngày</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn" onclick="filterRevenue(10, this)">10 Ngày</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn" onclick="filterRevenue(5, this)">5 Ngày</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn" onclick="filterRevenue(60, this)">60 Ngày</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn" onclick="filterRevenue(90, this)">90 Ngày</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Canvas -->
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Operations / Tasks Center -->
+        <div class="col-lg-4 mb-4">
+            <div class="admin-card" style="height: 100%; display: flex; flex-direction: column;">
+                <div class="admin-card-header mb-3">
+                    <h4 class="admin-card-title">
+                        <i class="fas fa-bell text-danger me-2"></i>Yêu cầu cần xử lý
+                    </h4>
+                    <span class="badge bg-danger-subtle text-danger rounded-pill px-2">Live</span>
+                </div>
+                <div style="flex: 1;">
+                    <ul class="pending-feed">
+                        <!-- Chat messages -->
+                        <li class="pending-feed-item">
+                            <div class="icon-circle bg-primary-subtle text-primary">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-semibold" style="font-size:14px;">Tin nhắn khách hàng</h6>
+                                <p class="text-muted mb-0" style="font-size:12px;">Đang chờ admin trả lời</p>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-danger rounded-pill" id="unread-chat-badge">{{ $unreadChatCount ?? 0 }}</span>
+                            </div>
+                        </li>
+
+                        <!-- Pending Orders -->
+                        <li class="pending-feed-item">
+                            <div class="icon-circle bg-warning-subtle text-warning">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-semibold" style="font-size:14px;">Đơn hàng chờ duyệt</h6>
+                                <p class="text-muted mb-0" style="font-size:12px;">Cần xác nhận giao hàng</p>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ route('admin.orders') }}" class="badge bg-warning text-dark rounded-pill text-decoration-none">
+                                    {{ $pendingOrdersCount ?? 0 }} duyệt
+                                </a>
+                            </div>
+                        </li>
+
+                        <!-- Card Exchanges -->
+                        <li class="pending-feed-item">
+                            <div class="icon-circle bg-info-subtle text-info">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-semibold" style="font-size:14px;">Đổi thẻ cào chờ duyệt</h6>
+                                <p class="text-muted mb-0" style="font-size:12px;">Yêu cầu rút tiền/đổi thẻ</p>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ route('admin.card-exchanges') }}" class="badge bg-info text-white rounded-pill text-decoration-none">
+                                    {{ $pendingCardExchangeCount ?? 0 }} thẻ
+                                </a>
+                            </div>
+                        </li>
+
+                        <!-- Abandoned Carts -->
+                        <li class="pending-feed-item">
+                            <div class="icon-circle bg-secondary-subtle text-muted">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-semibold" style="font-size:14px;">Giỏ hàng bị bỏ quên</h6>
+                                <p class="text-muted mb-0" style="font-size:12px;">Khách chưa hoàn tất thanh toán</p>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ route('admin.abandoned-carts') }}" class="badge bg-secondary text-dark rounded-pill text-decoration-none">
+                                    {{ $abandonedCartsCount ?? 0 }} giỏ
+                                </a>
+                            </div>
+                        </li>
+
+                        <!-- Affiliate Invoices -->
+                        <li class="pending-feed-item">
+                            <div class="icon-circle bg-success-subtle text-success">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-semibold" style="font-size:14px;">Rút tiền CTV chờ duyệt</h6>
+                                <p class="text-muted mb-0" style="font-size:12px;">Yêu cầu thanh toán hoa hồng</p>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ route('admin.affiliates.index') }}" class="badge bg-success text-white rounded-pill text-decoration-none">
+                                    {{ $pendingAffWithdrawCount ?? 0 }} duyệt
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Deck -->
+    <div class="admin-card mb-4">
+        <h4 class="admin-card-title mb-4">
+            <i class="fas fa-bolt text-warning me-2"></i>Thao tác nhanh hệ thống
+        </h4>
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-6">
+                <a href="javascript:void(0)" data-url="{{ route('admin.products.create') }}" class="action-grid-card protected-link">
+                    <div class="icon-box">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size:14px;">Thêm sản phẩm</div>
+                        <small class="text-muted" style="font-size:11px;">Đăng bán mặt hàng mới</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="javascript:void(0)" data-url="{{ route('admin.products') }}" class="action-grid-card protected-link">
+                    <div class="icon-box">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size:14px;">Quản lý kho hàng</div>
+                        <small class="text-muted" style="font-size:11px;">Sửa giá, số lượng</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="{{ route('admin.preorders') }}" class="action-grid-card">
+                    <div class="icon-box">
+                        <i class="fas fa-hourglass"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size:14px;">Xem Pre-orders</div>
+                        <small class="text-muted" style="font-size:11px;">Người dùng chờ hàng</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="{{ route('admin.menu-settings') }}" class="action-grid-card">
+                    <div class="icon-box">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size:14px;">Cài đặt Menu</div>
+                        <small class="text-muted" style="font-size:11px;">Tùy chỉnh danh mục</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Orders Table -->
+    @if(isset($latestOrders) && $latestOrders->count() > 0)
+    <div class="admin-card" data-aos="fade-up">
+        <div class="admin-card-header mb-4">
+            <h4 class="admin-card-title">
+                <i class="fas fa-shopping-bag text-primary me-2"></i>Đơn hàng mới nhận
+            </h4>
+            <a href="{{ route('admin.orders') }}" class="btn btn-link btn-sm text-decoration-none">Xem toàn bộ</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle admin-table">
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Thời gian</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($latestOrders as $order)
+                    <tr>
+                        <td>
+                            <strong>#{{ $order->id }}</strong>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:28px; height:28px; border-radius:50%; background: #e0e6ed; color:#475569; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">
+                                    {{ strtoupper(substr($order->user->name ?? 'K', 0, 1)) }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{ $order->user->name ?? 'Khách vãng lai' }}</div>
+                                    <small class="text-muted" style="font-size:11px;">{{ $order->user->email ?? '' }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size:13px;">{{ $order->created_at->format('d/m/Y') }}</div>
+                            <small class="text-muted" style="font-size:11px;">{{ $order->created_at->format('H:i') }}</small>
+                        </td>
+                        <td>
+                            <strong class="text-primary">{{ number_format($order->total_amount, 0, ',', '.') }}đ</strong>
+                        </td>
+                        <td>
+                            @if($order->status === 'pending')
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1" style="border-radius:12px;">Chờ xử lý</span>
+                            @elseif($order->status === 'completed')
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="border-radius:12px;">Hoàn thành</span>
+                            @else
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1" style="border-radius:12px;">Đã hủy</span>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3" style="font-size:12px;">Chi tiết</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @else
+    <div class="admin-card text-center py-5" data-aos="fade-up">
+        <div class="mb-3">
+            <i class="fas fa-shopping-cart fa-3x text-muted opacity-40"></i>
+        </div>
+        <h5 class="text-muted fw-semibold">Chưa có đơn hàng nào</h5>
+        <p class="text-muted" style="font-size:13px;">Hệ thống chưa ghi nhận đơn hàng phát sinh mới.</p>
+    </div>
+    @endif
+
 </div>
 @endsection
 
 @push('scripts')
-<script>
-    AOS.init({ duration: 800, once: true });
+<!-- Load Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script>
     const revenues = {
         5: '{{ number_format($revenue5Days, 0, ",", ".") }}',
         10: '{{ number_format($revenue10Days, 0, ",", ".") }}',
@@ -480,12 +569,116 @@
         90: '{{ number_format($revenue90Days, 0, ",", ".") }}'
     };
 
+    const chartData = {
+        5: {
+            labels: @json($chart5Days['labels']),
+            values: @json($chart5Days['values'])
+        },
+        10: {
+            labels: @json($chart10Days['labels']),
+            values: @json($chart10Days['values'])
+        },
+        30: {
+            labels: @json($chart30Days['labels']),
+            values: @json($chart30Days['values'])
+        },
+        60: {
+            labels: @json($chart60Days['labels']),
+            values: @json($chart60Days['values'])
+        },
+        90: {
+            labels: @json($chart90Days['labels']),
+            values: @json($chart90Days['values'])
+        }
+    };
+
+    let salesChart = null;
+    let currentDays = 30; // default
+
+    function initChart() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        
+        // Gradient fill
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(102, 126, 234, 0.4)');
+        gradient.addColorStop(1, 'rgba(102, 126, 234, 0.01)');
+
+        salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData[currentDays].labels,
+                datasets: [{
+                    label: 'Doanh thu (đ)',
+                    data: chartData[currentDays].values,
+                    backgroundColor: gradient,
+                    borderColor: '#667eea',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#667eea',
+                    pointBorderWidth: 2,
+                    pointRadius: currentDays > 30 ? 2 : 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5], color: '#f0f2f5' },
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000).toFixed(1) + 'M';
+                                } else if (value >= 1000) {
+                                    return (value / 1000).toFixed(0) + 'k';
+                                }
+                                return value;
+                            },
+                            font: { size: 10 }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { 
+                            font: { size: 10 },
+                            maxRotation: 45,
+                            minRotation: 0,
+                            callback: function(val, index) {
+                                const labels = chartData[currentDays].labels;
+                                if (currentDays === 90) {
+                                    return index % 10 === 0 ? labels[index] : '';
+                                } else if (currentDays === 60) {
+                                    return index % 5 === 0 ? labels[index] : '';
+                                } else if (currentDays === 30) {
+                                    return index % 3 === 0 ? labels[index] : '';
+                                }
+                                return labels[index];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     function checkRevenuePass() {
         const pass = document.getElementById('revenue-pass').value;
         if (pass === '113') {
             unlockEverything();
         } else {
-            alert('Mật khẩu không chính xác!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi bảo mật',
+                text: 'Mật khẩu PIN không chính xác!',
+                confirmButtonColor: '#e74c3c'
+            });
             document.getElementById('revenue-pass').value = '';
         }
     }
@@ -494,6 +687,9 @@
         document.getElementById('revenue-overlay').classList.add('unlocked');
         sessionStorage.setItem('revenue_unlocked', 'true');
         sessionStorage.setItem('admin_unlocked', 'true');
+        
+        // Render chart when unlocked
+        setTimeout(initChart, 200);
     }
 
     // Protection for other links
@@ -505,13 +701,25 @@
             if (sessionStorage.getItem('admin_unlocked') === 'true') {
                 window.location.href = url;
             } else {
-                const pass = prompt('Đây là khu vực bảo mật. Vui lòng nhập mật khẩu để tiếp tục:');
-                if (pass === '113') {
-                    unlockEverything();
-                    window.location.href = url;
-                } else if (pass !== null) {
-                    alert('Mật khẩu không chính xác!');
-                }
+                Swal.fire({
+                    title: 'Xác thực tài chính',
+                    text: 'Khu vực bảo mật. Vui lòng nhập mã PIN bảo mật:',
+                    input: 'password',
+                    inputAttributes: { maxlength: 3, pattern: '[0-9]{3}' },
+                    showCancelButton: true,
+                    confirmButtonText: 'Xác thực',
+                    cancelButtonText: 'Hủy',
+                    confirmButtonColor: '#667eea',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (result.value === '113') {
+                            unlockEverything();
+                            window.location.href = url;
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Lỗi', text: 'PIN không chính xác.' });
+                        }
+                    }
+                });
             }
         });
     });
@@ -524,25 +732,28 @@
     });
 
     function filterRevenue(days, btn) {
-        // Update display
+        currentDays = days;
+
+        // Update display value
         document.getElementById('revenue-val').innerText = revenues[days];
         
-        // Update active button
+        // Update active button classes
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+
+        // Update chart dynamically
+        if (salesChart) {
+            salesChart.data.labels = chartData[days].labels;
+            salesChart.data.datasets[0].data = chartData[days].values;
+            salesChart.data.datasets[0].pointRadius = days > 30 ? 2 : 4;
+            salesChart.update();
+        }
     }
 
     // Check if previously unlocked
     if (sessionStorage.getItem('revenue_unlocked') === 'true' || sessionStorage.getItem('admin_unlocked') === 'true') {
         document.getElementById('revenue-overlay').classList.add('unlocked');
-    }
-
-    function adminLockManual() {
-        if (confirm('Bạn có muốn khóa lại các khu vực bảo mật không?')) {
-            sessionStorage.removeItem('admin_unlocked');
-            sessionStorage.removeItem('revenue_unlocked');
-            window.location.href = "{{ route('admin.lock') }}";
-        }
+        setTimeout(initChart, 100);
     }
 </script>
 @endpush

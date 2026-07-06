@@ -1,15 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Quản Lý Đổi Thẻ Cào')
 
+@section('page_title', 'Đổi thẻ cào')
+
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
 
     .admin-card {
         background: white;
@@ -17,14 +13,6 @@
         padding: 30px;
         box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
-
-    .admin-nav {
-        background: rgba(255,255,255,0.1);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 30px;
-    }
-
     .admin-nav a {
         color: white;
         text-decoration: none;
@@ -69,30 +57,8 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
+<div class="container-fluid px-0">
         <!-- Navigation -->
-        <div class="admin-nav">
-            <a href="{{ route('admin.dashboard') }}">
-                <i class="fas fa-chart-line me-2"></i>Dashboard
-            </a>
-            <a href="{{ route('admin.products') }}">
-                <i class="fas fa-box me-2"></i>Sản phẩm
-            </a>
-            <a href="{{ route('admin.orders') }}">
-                <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-            </a>
-            <a href="{{ route('admin.users') }}">
-                <i class="fas fa-users me-2"></i>Người dùng
-            </a>
-            <a href="{{ route('admin.blogs') }}">
-                <i class="fas fa-blog me-2"></i>Bài viết
-            </a>
-            <a href="{{ route('admin.card-exchanges') }}" class="active">
-                <i class="fas fa-credit-card me-2"></i>Đổi thẻ cào
-            </a>
-        </div>
-
         <div class="admin-card">
             <h3 class="fw-bold mb-4">
                 <i class="fas fa-credit-card text-primary me-2"></i>Quản Lý Đổi Thẻ Cào

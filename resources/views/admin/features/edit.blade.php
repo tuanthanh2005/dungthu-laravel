@@ -1,15 +1,9 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Sửa Tính Năng Nổi Bật - Admin')
 
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
 
     .admin-card {
         background: white;
@@ -114,8 +108,7 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
+<div class="container-fluid px-0">
         <div class="admin-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0">

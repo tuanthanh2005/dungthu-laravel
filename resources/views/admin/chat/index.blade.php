@@ -1,6 +1,8 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Quản Lý Chat')
+
+@section('page_title', 'Chat')
 
 @push('styles')
 <style>

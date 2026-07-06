@@ -1,15 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.admin')
 
 @section('title', 'Giỏ hàng bỏ quên - Admin')
 
+@section('page_title', 'Giỏ bỏ quên')
+
 @push('styles')
 <style>
-    .admin-wrapper {
-        padding: 40px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        margin-top: 70px;
-    }
 
     .admin-card {
         background: white;
@@ -17,15 +13,6 @@
         padding: 30px;
         box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
-
-    .admin-nav {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
     .admin-nav .nav-link {
         color: #4a5568;
         font-weight: 600;
@@ -85,53 +72,8 @@
 @endpush
 
 @section('content')
-<div class="admin-wrapper">
-    <div class="container">
-        <nav class="admin-nav" data-aos="fade-down">
-            <ul class="nav nav-pills justify-content-center flex-wrap">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-home me-2"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.products') }}">
-                        <i class="fas fa-box me-2"></i>Sản phẩm
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.orders') }}">
-                        <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.users') }}">
-                        <i class="fas fa-users me-2"></i>Người dùng
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.blogs') }}">
-                        <i class="fas fa-blog me-2"></i>Bài viết
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.card-exchanges') }}">
-                        <i class="fas fa-credit-card me-2"></i>Đổi thẻ cào
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.chat.index') }}">
-                        <i class="fas fa-comments me-2"></i>Chat
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.abandoned-carts') }}">
-                        <i class="fas fa-shopping-basket me-2"></i>Giỏ bỏ quên
-                    </a>
-                </li>
-            </ul>
-        </nav>
+<div class="container-fluid px-0">
+        
 
         <div class="admin-card">
             <h4 class="fw-bold mb-4">

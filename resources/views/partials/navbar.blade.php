@@ -23,43 +23,43 @@
         </a>
 
         {{-- Desktop Nav Links --}}
-        <div class="d-none d-xl-flex align-items-center gap-2 mx-auto desktop-nav-links" style="font-size: 14.5px;">
+        <div class="d-none d-xl-flex align-items-center gap-2 mx-auto desktop-nav-links" style="font-size: 14px;">
             @if($menuHome)
             <a href="{{ route('home') }}" class="nav-text-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                {{ __('Trang chủ') }}
+                <i class="fa-solid fa-house me-1"></i>{{ __('Trang chủ') }}
             </a>
             @endif
             @if($menuShop)
             <a href="{{ route('shop') }}" class="nav-text-link {{ request()->routeIs('shop') ? 'active' : '' }}">
-                {{ __('Cửa hàng') }}
+                <i class="fa-solid fa-shop me-1"></i>{{ __('Cửa hàng') }}
             </a>
             @endif
             <a href="{{ route('vpn.index') }}" class="nav-text-link {{ request()->routeIs('vpn.*') ? 'active' : '' }}" style="color: #00bcd4; font-weight: 700;">
-                <i class="fa-solid fa-network-wired me-1"></i>{{ __('VPN & Proxy') }}
+                <i class="fa-solid fa-network-wired me-1"></i>{{ __('VPN') }}
             </a>
             @if($menuBuff)
             <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}" style="color: #ff5e00; font-weight: 700;">
-                {{ __('Dịch Vụ MXH') }}
+                <i class="fa-solid fa-rocket me-1"></i>{{ __('Buff MXH') }}
             </a>
             @endif
             @if($menuWebdesign)
             <a href="{{ route('web-design') }}" class="nav-text-link {{ request()->routeIs('web-design') ? 'active' : '' }}">
-                {{ __('Thiết Kế Website') }}
+                <i class="fa-solid fa-code me-1"></i>{{ __('Thiết kế Web') }}
             </a>
             @endif
             @if($menuCardExchange)
             <a href="{{ route('card-exchange.index') }}" class="nav-text-link {{ request()->routeIs('card-exchange.*') ? 'active' : '' }}">
-                {{ __('Đổi Thẻ Cào') }}
+                <i class="fa-solid fa-credit-card me-1"></i>{{ __('Đổi thẻ') }}
             </a>
             @endif
             @if($menuBlog)
             <a href="{{ route('blog.index') }}" class="nav-text-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">
-                {{ __('Blog') }}
+                <i class="fa-solid fa-newspaper me-1"></i>{{ __('Blog') }}
             </a>
             @endif
             @if($menuCommunity)
             <a href="{{ route('community.index') }}" class="nav-text-link {{ request()->routeIs('community.*') ? 'active' : '' }}">
-                {{ __('Cộng đồng') }}
+                <i class="fa-solid fa-users me-1"></i>{{ __('Cộng đồng') }}
             </a>
             @endif
             @if($menuMinigame)
@@ -69,11 +69,11 @@
             @endif
             @if($menuZaloGroup)
             <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" class="nav-text-link fw-bold" style="color: #0068ff;">
-                {{ __('Nhóm Zalo') }}
+                <i class="fa-solid fa-comment-dots me-1"></i>{{ __('Nhóm Zalo') }}
             </a>
             @endif
             <a href="javascript:void(0)" class="nav-text-link" data-bs-toggle="modal" data-bs-target="#quickContactModal">
-                {{ __('Liên hệ') }}
+                <i class="fa-solid fa-headset me-1"></i>{{ __('Liên hệ') }}
             </a>
         </div>
 
@@ -89,7 +89,7 @@
                 @if($menuShop)
                     <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>{{ __('Cửa hàng') }}</a></li>
                 @endif
-                <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN & Proxy') }}</a></li>
+                <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN') }}</a></li>
                 @if($menuBuff)
                     <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fa-solid fa-rocket me-2"></i>{{ __('Dịch Vụ MXH') }}</a></li>
                 @endif
@@ -116,27 +116,20 @@
             </ul>
         </div>
 
-        {{-- Search Bar (desktop) --}}
-        <div class="d-none d-xl-flex search-bar-wrap align-items-center ms-auto me-3" style="max-width: 250px;">
-            <form class="search-bar-inner w-100" action="{{ route('shop') }}" method="GET" style="border: 1.5px solid #ff5e00; background-color: #fff;">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" name="search" class="search-input w-100" 
-                       placeholder="{{ __('Tìm kiếm sản phẩm...') }}"
-                       value="{{ request('search') }}">
-            </form>
-        </div>
+        {{-- Search Icon (desktop) --}}
+        <button class="nav-icon-btn d-none d-xl-flex ms-auto me-3" type="button" data-bs-toggle="modal" data-bs-target="#searchProductsModal" aria-label="{{ __('Tìm kiếm') }}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
 
         {{-- Right Actions --}}
         <div class="d-flex align-items-center gap-2 gap-sm-3">
             {{-- Language Switcher --}}
             <div class="dropdown">
-                <button class="nav-icon-btn d-flex align-items-center justify-content-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="padding: 6px 12px; font-size: 14px; border-radius: 20px;">
+                <button class="nav-icon-btn d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;">
                     @if(app()->getLocale() === 'en')
                         <img src="https://flagcdn.com/w40/us.png" width="20" alt="US" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); display: inline-block;">
-                        <span class="d-none d-md-inline ms-1 fw-bold" style="font-size: 12px;">EN</span>
                     @else
                         <img src="https://flagcdn.com/w40/vn.png" width="20" alt="VN" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); display: inline-block;">
-                        <span class="d-none d-md-inline ms-1 fw-bold" style="font-size: 12px;">VI</span>
                     @endif
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 140px; border: none; border-radius: 12px;">
@@ -206,7 +199,7 @@
                         @endif
                         <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>{{ __('Trang chủ') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>{{ __('Cửa hàng') }}</a></li>
-                        <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN & Proxy') }}</a></li>
+                        <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>{{ __('Blog') }}</a></li>
                         <li><hr class="dropdown-divider"></li>
                         
@@ -423,3 +416,63 @@
         transform: scale(1.05);
     }
 </style>
+
+{{-- Search Products Modal --}}
+<div class="modal fade" id="searchProductsModal" tabindex="-1" aria-labelledby="searchProductsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden; background: #ffffff;">
+            {{-- Header --}}
+            <div class="modal-header border-0 text-white px-4 py-3 position-relative d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%);">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2 mb-0" id="searchProductsModalLabel" style="font-size: 17px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    {{ __('Tìm kiếm sản phẩm') }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8; filter: invert(1) grayscale(1) brightness(2);"></button>
+            </div>
+            
+            {{-- Body --}}
+            <div class="modal-body p-4" style="background-color: #f8f9fa;">
+                <form action="{{ route('shop') }}" method="GET">
+                    <div class="input-group mb-3 shadow-sm" style="border-radius: 25px; overflow: hidden; border: 1.5px solid #ff5e00;">
+                        <span class="input-group-text bg-white border-0 ps-3" style="color: #9ca3af;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control border-0 py-2" 
+                               placeholder="{{ __('Nhập tên sản phẩm để tìm...') }}" 
+                               style="font-size: 14.5px; outline: none; box-shadow: none; background-color: #fff;" 
+                               required 
+                               id="searchModalInput">
+                        <button class="btn btn-primary border-0 px-4 fw-bold" type="submit" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%);">
+                            {{ __('Tìm kiếm') }}
+                        </button>
+                    </div>
+                </form>
+                
+                {{-- Fast tags --}}
+                <div class="ps-2 text-start">
+                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">{{ __('Gợi ý:') }}</span>
+                    <a href="{{ route('shop', ['search' => 'gpt']) }}" class="badge bg-white text-secondary text-decoration-none px-2 py-1.5 ms-1 border" style="font-size: 11px; border-radius: 12px;">gpt</a>
+                    <a href="{{ route('shop', ['search' => 'gemini']) }}" class="badge bg-white text-secondary text-decoration-none px-2 py-1.5 ms-1 border" style="font-size: 11px; border-radius: 12px;">gemini</a>
+                    <a href="{{ route('shop', ['search' => 'cursor']) }}" class="badge bg-white text-secondary text-decoration-none px-2 py-1.5 ms-1 border" style="font-size: 11px; border-radius: 12px;">cursor</a>
+                    <a href="{{ route('shop', ['search' => 'antigravity']) }}" class="badge bg-white text-secondary text-decoration-none px-2 py-1.5 ms-1 border" style="font-size: 11px; border-radius: 12px;">antigravity</a>
+                    <a href="{{ route('shop', ['search' => 'grok']) }}" class="badge bg-white text-secondary text-decoration-none px-2 py-1.5 ms-1 border" style="font-size: 11px; border-radius: 12px;">grok</a>
+                    <a href="{{ route('shop', ['search' => 'capcut']) }}" class="badge bg-white text-secondary text-decoration-none px-2 py-1.5 ms-1 border" style="font-size: 11px; border-radius: 12px;">capcut</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchModalEl = document.getElementById('searchProductsModal');
+        if (searchModalEl) {
+            searchModalEl.addEventListener('shown.bs.modal', function () {
+                const searchInput = document.getElementById('searchModalInput');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            });
+        }
+    });
+</script>

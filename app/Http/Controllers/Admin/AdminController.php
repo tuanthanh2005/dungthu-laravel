@@ -1647,13 +1647,20 @@ class AdminController extends Controller
         // Lấy chi tiết các lượt đăng ký (nếu có tham số filter theo keyword)
         $filterKeyword = $request->input('keyword');
         $preorders = null;
+        $matchedProduct = null;
         if ($filterKeyword) {
             $preorders = \App\Models\PreOrder::where('keyword', $filterKeyword)
                 ->orderByDesc('created_at')
                 ->paginate(30);
+
+            // Tìm sản phẩm khớp với keyword
+            $matchedProduct = \App\Models\Product::where('slug', $filterKeyword)->first();
+            if (!$matchedProduct) {
+                $matchedProduct = \App\Models\Product::where('slug', 'like', '%' . $filterKeyword . '%')->first();
+            }
         }
 
-        return view('admin.preorders.index', compact('keywords', 'preorders', 'filterKeyword'));
+        return view('admin.preorders.index', compact('keywords', 'preorders', 'filterKeyword', 'matchedProduct'));
     }
 
     /**
@@ -1665,6 +1672,91 @@ class AdminController extends Controller
         $preorder->delete();
         return redirect()->back()->with('success', 'Xóa lượt đăng ký thành công!');
     }
+
+    /**
+     * Gửi email thông báo hàng đã có cho 1 lượt đăng ký pre-order
+     */
+    public function notifyPreorder($id)
+    {
+        $preorder = \App\Models\PreOrder::findOrFail($id);
+
+        // Tìm sản phẩm khớp với keyword
+        $product = \App\Models\Product::where('slug', $preorder->keyword)->first();
+        if (!$product) {
+            $product = \App\Models\Product::where('slug', 'like', '%' . $preorder->keyword . '%')->first();
+        }
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm phù hợp với từ khóa "' . $preorder->keyword . '". Vui lòng tạo sản phẩm trước.');
+        }
+
+        try {
+            Mail::to($preorder->email)->send(new \App\Mail\PreOrderAvailableMail($preorder, $product));
+            
+            $preorder->status = 'notified';
+            $preorder->save();
+
+            return redirect()->back()->with('success', 'Đã gửi email thông báo thành công cho ' . $preorder->email . '!');
+        } catch (\Exception $e) {
+            \Log::error('Error sending preorder notification to ' . $preorder->email . ': ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi gửi email: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Gửi email thông báo hàng đã có cho tất cả lượt đăng ký pre-order đang chờ của keyword
+     */
+    public function notifyPreordersByKeyword(Request $request)
+    {
+        $request->validate([
+            'keyword' => 'required|string',
+        ]);
+
+        $keyword = $request->keyword;
+
+        // Tìm các lượt đăng ký pre-order đang chờ
+        $preorders = \App\Models\PreOrder::where('keyword', $keyword)
+            ->where('status', 'pending')
+            ->get();
+
+        if ($preorders->isEmpty()) {
+            return redirect()->back()->with('info', 'Không có khách hàng nào đang chờ thông báo cho từ khóa này.');
+        }
+
+        // Tìm sản phẩm khớp với keyword
+        $product = \App\Models\Product::where('slug', $keyword)->first();
+        if (!$product) {
+            $product = \App\Models\Product::where('slug', 'like', '%' . $keyword . '%')->first();
+        }
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm phù hợp với từ khóa này. Vui lòng tạo sản phẩm trước.');
+        }
+
+        $successCount = 0;
+        $failCount = 0;
+
+        foreach ($preorders as $preorder) {
+            try {
+                Mail::to($preorder->email)->send(new \App\Mail\PreOrderAvailableMail($preorder, $product));
+                
+                $preorder->status = 'notified';
+                $preorder->save();
+                
+                $successCount++;
+            } catch (\Exception $e) {
+                \Log::error('Error sending preorder notification to ' . $preorder->email . ': ' . $e->getMessage());
+                $failCount++;
+            }
+        }
+
+        if ($failCount > 0) {
+            return redirect()->back()->with('success', "Đã gửi email thành công tới {$successCount} khách hàng (Thất bại {$failCount}).");
+        }
+
+        return redirect()->back()->with('success', "Đã gửi email thông báo thành công tới tất cả {$successCount} khách hàng đang chờ!");
+    }
+
 
     /**
      * Danh sách các từ khóa SEO

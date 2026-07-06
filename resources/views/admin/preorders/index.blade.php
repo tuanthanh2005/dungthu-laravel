@@ -142,6 +142,27 @@
             </ul>
         </nav>
 
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 15px;">
+                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 15px;">
+                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('info'))
+            <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 15px;">
+                <i class="fas fa-info-circle me-2"></i>{{ session('info') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="row">
             <!-- Left Column: Keywords and Stats -->
             <div class="col-lg-5 col-md-12">
@@ -203,6 +224,61 @@
                             <span class="badge bg-success">{{ $preorders->total() }} email</span>
                         </div>
 
+                        <!-- Matching Product Alert/Status -->
+                        <div class="mb-4">
+                            @if($matchedProduct)
+                                <div class="alert alert-success border-0 shadow-sm d-flex flex-wrap align-items-center justify-content-between p-3 mb-0" style="border-radius: 15px;">
+                                    <div class="d-flex align-items-center me-3 mb-2 mb-sm-0">
+                                        @if($matchedProduct->image)
+                                            <img src="{{ Str::startsWith($matchedProduct->image, ['http://', 'https://']) ? $matchedProduct->image : url($matchedProduct->image) }}" alt="{{ $matchedProduct->name }}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #d1e7dd;">
+                                        @else
+                                            <div class="rounded me-3 bg-success d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                                                <i class="fas fa-box"></i>
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-success" style="font-size: 0.95rem;">Sản phẩm liên kết sẵn sàng</h6>
+                                            <p class="mb-0 text-dark fw-semibold" style="font-size: 0.85rem;">
+                                                {{ $matchedProduct->name }} <span class="text-danger">({{ $matchedProduct->formatted_price }})</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    @php
+                                        // Count pending preorders for this keyword
+                                        $pendingCount = \App\Models\PreOrder::where('keyword', $filterKeyword)->where('status', 'pending')->count();
+                                    @endphp
+                                    
+                                    @if($pendingCount > 0)
+                                        <form action="{{ route('admin.preorders.notify-keyword') }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn gửi email thông báo hàng đã có cho TẤT CẢ {{ $pendingCount }} khách hàng đang chờ của từ khóa này?');">
+                                            @csrf
+                                            <input type="hidden" name="keyword" value="{{ $filterKeyword }}">
+                                            <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 py-2 fw-bold text-white border-0" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);">
+                                                <i class="fas fa-paper-plane me-1"></i> Gửi thông báo tất cả ({{ $pendingCount }})
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button class="btn btn-secondary btn-sm rounded-pill px-3 py-2 fw-bold text-white" disabled style="cursor: not-allowed;">
+                                            <i class="fas fa-check-double me-1"></i> Đã thông báo hết
+                                        </button>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="alert alert-warning border-0 shadow-sm p-3 mb-0" style="border-radius: 15px; background-color: #fffaf0; border-left: 4px solid #dd6b20 !important;">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-exclamation-triangle fa-2x text-warning me-3 mt-1"></i>
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-warning" style="color: #dd6b20 !important;">Chưa có sản phẩm phù hợp</h6>
+                                            <p class="mb-0 text-muted" style="font-size: 0.85rem; line-height: 1.5;">
+                                                Không tìm thấy sản phẩm có slug trùng khớp hoặc chứa từ khóa <strong>"{{ $filterKeyword }}"</strong>.<br>
+                                                Vui lòng tạo sản phẩm có slug là <strong>"{{ $filterKeyword }}"</strong> để kích hoạt tính năng gửi thông báo.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
                         @if($preorders->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
@@ -212,7 +288,7 @@
                                         <th>Email</th>
                                         <th>Trạng thái</th>
                                         <th>Ngày đăng ký</th>
-                                        <th class="text-end">Hành động</th>
+                                        <th class="text-end" style="min-width: 180px;">Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -231,13 +307,37 @@
                                             {{ $po->created_at->format('d/m/Y H:i') }}
                                         </td>
                                         <td class="text-end">
-                                            <form action="{{ route('admin.preorders.delete', $po->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lượt đăng ký này?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Xóa">
-                                                    <i class="fas fa-trash"></i> Xóa
-                                                </button>
-                                            </form>
+                                            <div class="d-flex align-items-center justify-content-end gap-2">
+                                                @if($matchedProduct)
+                                                    @if($po->status === 'pending')
+                                                        <form action="{{ route('admin.preorders.notify', $po->id) }}" method="POST" class="m-0">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 py-1" style="font-size: 0.75rem; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none;">
+                                                                <i class="fas fa-paper-plane me-1"></i> Gửi thông báo
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <form action="{{ route('admin.preorders.notify', $po->id) }}" method="POST" class="m-0">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-size: 0.75rem;" title="Gửi lại thông báo">
+                                                                <i class="fas fa-redo me-1"></i> Gửi lại
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                @else
+                                                    <button class="btn btn-sm btn-secondary rounded-pill px-3 py-1" style="font-size: 0.75rem; cursor: not-allowed; opacity: 0.6;" disabled title="Vui lòng tạo sản phẩm trước">
+                                                        <i class="fas fa-ban me-1"></i> Gửi thông báo
+                                                    </button>
+                                                @endif
+                                                
+                                                <form action="{{ route('admin.preorders.delete', $po->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lượt đăng ký này?');" class="m-0">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Xóa" style="text-decoration: none;">
+                                                        <i class="fas fa-trash"></i> Xóa
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach

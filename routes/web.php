@@ -324,6 +324,9 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // Pre-orders Management
     Route::get('/preorders', [AdminController::class, 'preorders'])->name('admin.preorders');
     Route::delete('/preorders/{id}', [AdminController::class, 'deletePreorder'])->name('admin.preorders.delete');
+    Route::post('/preorders/{id}/notify', [AdminController::class, 'notifyPreorder'])->name('admin.preorders.notify');
+    Route::post('/preorders/notify-keyword', [AdminController::class, 'notifyPreordersByKeyword'])->name('admin.preorders.notify-keyword');
+
 
     // SEO Keywords Management
     Route::get('/seo-keywords', [AdminController::class, 'seoKeywords'])->name('admin.seo-keywords');

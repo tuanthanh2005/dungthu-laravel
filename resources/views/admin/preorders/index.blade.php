@@ -224,59 +224,68 @@
                             <span class="badge bg-success">{{ $preorders->total() }} email</span>
                         </div>
 
-                        <!-- Matching Product Alert/Status -->
+                        <!-- Matching Product Alert/Status & Manual Selector -->
                         <div class="mb-4">
-                            @if($matchedProduct)
-                                <div class="alert alert-success border-0 shadow-sm d-flex flex-wrap align-items-center justify-content-between p-3 mb-0" style="border-radius: 15px;">
-                                    <div class="d-flex align-items-center me-3 mb-2 mb-sm-0">
-                                        @if($matchedProduct->image)
-                                            <img src="{{ Str::startsWith($matchedProduct->image, ['http://', 'https://']) ? $matchedProduct->image : url($matchedProduct->image) }}" alt="{{ $matchedProduct->name }}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #d1e7dd;">
-                                        @else
-                                            <div class="rounded me-3 bg-success d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; font-size: 1.25rem;">
-                                                <i class="fas fa-box"></i>
-                                            </div>
-                                        @endif
+                            <div class="card p-3 border-0 shadow-sm mb-3" style="border-radius: 15px; background: #f8fafc; border: 1px solid #edf2f7 !important;">
+                                <label class="form-label fw-bold text-dark mb-2" style="font-size: 0.95rem;">
+                                    <i class="fas fa-link text-primary me-1"></i> Liên kết sản phẩm để gửi email:
+                                </label>
+                                <select class="form-select rounded-pill px-3" id="manual-product-select" style="font-size: 0.9rem; border-color: #cbd5e0;">
+                                    <option value="">-- Chọn sản phẩm để liên kết --</option>
+                                    @foreach($allProducts as $p)
+                                        <option value="{{ $p->id }}" 
+                                            @if($matchedProduct && $matchedProduct->id === $p->id) selected @endif
+                                            data-image="{{ $p->image ? (Str::startsWith($p->image, ['http://', 'https://']) ? $p->image : url($p->image)) : '' }}"
+                                            data-name="{{ $p->name }}"
+                                            data-price="{{ $p->formatted_price }}"
+                                        >
+                                            {{ $p->name }} ({{ $p->formatted_price }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                
+                                <!-- Preview of selected product -->
+                                <div id="product-preview-box" class="mt-3 p-3 bg-white rounded border d-none" style="border-radius: 12px !important; border-color: #e2e8f0 !important;">
+                                    <div class="d-flex align-items-center">
+                                        <img id="preview-product-img" src="" alt="" class="rounded me-3 d-none" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                        <div id="preview-product-no-img" class="rounded me-3 bg-secondary text-white d-none" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                                            <i class="fas fa-box"></i>
+                                        </div>
                                         <div>
-                                            <h6 class="fw-bold mb-1 text-success" style="font-size: 0.95rem;">Sản phẩm liên kết sẵn sàng</h6>
-                                            <p class="mb-0 text-dark fw-semibold" style="font-size: 0.85rem;">
-                                                {{ $matchedProduct->name }} <span class="text-danger">({{ $matchedProduct->formatted_price }})</span>
-                                            </p>
+                                            <h6 class="fw-bold mb-1 text-primary" id="preview-product-title" style="font-size: 0.9rem;">Sản phẩm đã chọn</h6>
+                                            <p class="mb-0 text-danger fw-bold" id="preview-product-price" style="font-size: 0.85rem;"></p>
                                         </div>
                                     </div>
-                                    
-                                    @php
-                                        // Count pending preorders for this keyword
-                                        $pendingCount = \App\Models\PreOrder::where('keyword', $filterKeyword)->where('status', 'pending')->count();
-                                    @endphp
+                                </div>
+                                
+                                <!-- Warning alert if no product is selected -->
+                                <div id="product-warning-alert" class="alert alert-warning border-0 p-2 mt-3 mb-0 d-none" style="border-radius: 10px; font-size: 0.8rem; background-color: #fffaf0; color: #dd6b20;">
+                                    <i class="fas fa-exclamation-triangle me-1"></i> Chưa chọn sản phẩm. Các nút gửi thông báo sẽ bị khóa.
+                                </div>
+                            </div>
+
+                            @php
+                                // Count pending preorders for this keyword
+                                $pendingCount = \App\Models\PreOrder::where('keyword', $filterKeyword)->where('status', 'pending')->count();
+                            @endphp
+
+                            <div class="d-flex justify-content-end align-items-center">
+                                <form id="notify-all-form" action="{{ route('admin.preorders.notify-keyword') }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn gửi email thông báo hàng đã có cho TẤT CẢ khách hàng đang chờ của từ khóa này?');" class="m-0">
+                                    @csrf
+                                    <input type="hidden" name="keyword" value="{{ $filterKeyword }}">
+                                    <input type="hidden" name="product_id" class="selected-product-id" value="{{ $matchedProduct ? $matchedProduct->id : '' }}">
                                     
                                     @if($pendingCount > 0)
-                                        <form action="{{ route('admin.preorders.notify-keyword') }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn gửi email thông báo hàng đã có cho TẤT CẢ {{ $pendingCount }} khách hàng đang chờ của từ khóa này?');">
-                                            @csrf
-                                            <input type="hidden" name="keyword" value="{{ $filterKeyword }}">
-                                            <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 py-2 fw-bold text-white border-0" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);">
-                                                <i class="fas fa-paper-plane me-1"></i> Gửi thông báo tất cả ({{ $pendingCount }})
-                                            </button>
-                                        </form>
+                                        <button type="submit" class="btn btn-success btn-sm rounded-pill px-4 py-2 fw-bold text-white border-0 notify-btn" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);">
+                                            <i class="fas fa-paper-plane me-1"></i> Gửi thông báo tất cả ({{ $pendingCount }})
+                                        </button>
                                     @else
-                                        <button class="btn btn-secondary btn-sm rounded-pill px-3 py-2 fw-bold text-white" disabled style="cursor: not-allowed;">
+                                        <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4 py-2 fw-bold text-white" disabled style="cursor: not-allowed; opacity: 0.6;">
                                             <i class="fas fa-check-double me-1"></i> Đã thông báo hết
                                         </button>
                                     @endif
-                                </div>
-                            @else
-                                <div class="alert alert-warning border-0 shadow-sm p-3 mb-0" style="border-radius: 15px; background-color: #fffaf0; border-left: 4px solid #dd6b20 !important;">
-                                    <div class="d-flex align-items-start">
-                                        <i class="fas fa-exclamation-triangle fa-2x text-warning me-3 mt-1"></i>
-                                        <div>
-                                            <h6 class="fw-bold mb-1 text-warning" style="color: #dd6b20 !important;">Chưa có sản phẩm phù hợp</h6>
-                                            <p class="mb-0 text-muted" style="font-size: 0.85rem; line-height: 1.5;">
-                                                Không tìm thấy sản phẩm có slug trùng khớp hoặc chứa từ khóa <strong>"{{ $filterKeyword }}"</strong>.<br>
-                                                Vui lòng tạo sản phẩm có slug là <strong>"{{ $filterKeyword }}"</strong> để kích hoạt tính năng gửi thông báo.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
+                                </form>
+                            </div>
                         </div>
 
                         @if($preorders->count() > 0)
@@ -308,27 +317,20 @@
                                         </td>
                                         <td class="text-end">
                                             <div class="d-flex align-items-center justify-content-end gap-2">
-                                                @if($matchedProduct)
+                                                <form action="{{ route('admin.preorders.notify', $po->id) }}" method="POST" class="m-0 notify-single-form">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" class="selected-product-id" value="{{ $matchedProduct ? $matchedProduct->id : '' }}">
+                                                    
                                                     @if($po->status === 'pending')
-                                                        <form action="{{ route('admin.preorders.notify', $po->id) }}" method="POST" class="m-0">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 py-1" style="font-size: 0.75rem; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none;">
-                                                                <i class="fas fa-paper-plane me-1"></i> Gửi thông báo
-                                                            </button>
-                                                        </form>
+                                                        <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 py-1 notify-btn notify-single-btn" style="font-size: 0.75rem; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none;">
+                                                            <i class="fas fa-paper-plane me-1"></i> Gửi thông báo
+                                                        </button>
                                                     @else
-                                                        <form action="{{ route('admin.preorders.notify', $po->id) }}" method="POST" class="m-0">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-size: 0.75rem;" title="Gửi lại thông báo">
-                                                                <i class="fas fa-redo me-1"></i> Gửi lại
-                                                            </button>
-                                                        </form>
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 notify-btn" style="font-size: 0.75rem;" title="Gửi lại thông báo">
+                                                            <i class="fas fa-redo me-1"></i> Gửi lại
+                                                        </button>
                                                     @endif
-                                                @else
-                                                    <button class="btn btn-sm btn-secondary rounded-pill px-3 py-1" style="font-size: 0.75rem; cursor: not-allowed; opacity: 0.6;" disabled title="Vui lòng tạo sản phẩm trước">
-                                                        <i class="fas fa-ban me-1"></i> Gửi thông báo
-                                                    </button>
-                                                @endif
+                                                </form>
                                                 
                                                 <form action="{{ route('admin.preorders.delete', $po->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lượt đăng ký này?');" class="m-0">
                                                     @csrf
@@ -399,5 +401,75 @@
             window.location.href = "{{ route('admin.lock') }}";
         }
     }
+
+    // Xử lý chọn sản phẩm liên kết thủ công cho Preorder
+    document.addEventListener('DOMContentLoaded', function() {
+        const productSelect = document.getElementById('manual-product-select');
+        const previewBox = document.getElementById('product-preview-box');
+        const previewImg = document.getElementById('preview-product-img');
+        const previewNoImg = document.getElementById('preview-product-no-img');
+        const previewTitle = document.getElementById('preview-product-title');
+        const previewPrice = document.getElementById('preview-product-price');
+        const warningAlert = document.getElementById('product-warning-alert');
+        const notifyBtns = document.querySelectorAll('.notify-btn');
+
+        function updateProductSelection() {
+            if (!productSelect) return;
+            
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const productId = productSelect.value;
+
+            // Cập nhật giá trị hidden fields
+            document.querySelectorAll('.selected-product-id').forEach(input => {
+                input.value = productId;
+            });
+
+            if (productId) {
+                // Hiển thị preview
+                const name = selectedOption.getAttribute('data-name');
+                const price = selectedOption.getAttribute('data-price');
+                const image = selectedOption.getAttribute('data-image');
+
+                previewTitle.textContent = name;
+                previewPrice.textContent = price;
+
+                if (image) {
+                    previewImg.src = image;
+                    previewImg.classList.remove('d-none');
+                    previewNoImg.classList.add('d-none');
+                } else {
+                    previewImg.classList.add('d-none');
+                    previewNoImg.classList.remove('d-none');
+                }
+
+                previewBox.classList.remove('d-none');
+                warningAlert.classList.add('d-none');
+
+                // Bật các nút gửi thông báo
+                notifyBtns.forEach(btn => {
+                    btn.removeAttribute('disabled');
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                });
+            } else {
+                // Ẩn preview, hiện cảnh báo
+                previewBox.classList.add('d-none');
+                warningAlert.classList.remove('d-none');
+
+                // Tắt các nút gửi thông báo
+                notifyBtns.forEach(btn => {
+                    btn.setAttribute('disabled', 'true');
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                });
+            }
+        }
+
+        if (productSelect) {
+            productSelect.addEventListener('change', updateProductSelection);
+            // Chạy lần đầu để thiết lập trạng thái ban đầu dựa trên matchedProduct
+            updateProductSelection();
+        }
+    });
 </script>
 @endpush

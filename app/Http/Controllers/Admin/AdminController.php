@@ -1660,7 +1660,10 @@ class AdminController extends Controller
             }
         }
 
-        return view('admin.preorders.index', compact('keywords', 'preorders', 'filterKeyword', 'matchedProduct'));
+        // Lấy danh sách tất cả sản phẩm cho dropdown chọn thủ công
+        $allProducts = \App\Models\Product::orderBy('name')->get();
+
+        return view('admin.preorders.index', compact('keywords', 'preorders', 'filterKeyword', 'matchedProduct', 'allProducts'));
     }
 
     /**
@@ -1676,18 +1679,25 @@ class AdminController extends Controller
     /**
      * Gửi email thông báo hàng đã có cho 1 lượt đăng ký pre-order
      */
-    public function notifyPreorder($id)
+    public function notifyPreorder(Request $request, $id)
     {
         $preorder = \App\Models\PreOrder::findOrFail($id);
 
-        // Tìm sản phẩm khớp với keyword
-        $product = \App\Models\Product::where('slug', $preorder->keyword)->first();
-        if (!$product) {
-            $product = \App\Models\Product::where('slug', 'like', '%' . $preorder->keyword . '%')->first();
+        $product = null;
+        if ($request->filled('product_id')) {
+            $product = \App\Models\Product::find($request->product_id);
         }
 
         if (!$product) {
-            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm phù hợp với từ khóa "' . $preorder->keyword . '". Vui lòng tạo sản phẩm trước.');
+            // Tìm sản phẩm khớp với keyword
+            $product = \App\Models\Product::where('slug', $preorder->keyword)->first();
+            if (!$product) {
+                $product = \App\Models\Product::where('slug', 'like', '%' . $preorder->keyword . '%')->first();
+            }
+        }
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm phù hợp. Vui lòng tạo sản phẩm hoặc chọn sản phẩm thủ công.');
         }
 
         try {
@@ -1723,14 +1733,21 @@ class AdminController extends Controller
             return redirect()->back()->with('info', 'Không có khách hàng nào đang chờ thông báo cho từ khóa này.');
         }
 
-        // Tìm sản phẩm khớp với keyword
-        $product = \App\Models\Product::where('slug', $keyword)->first();
-        if (!$product) {
-            $product = \App\Models\Product::where('slug', 'like', '%' . $keyword . '%')->first();
+        $product = null;
+        if ($request->filled('product_id')) {
+            $product = \App\Models\Product::find($request->product_id);
         }
 
         if (!$product) {
-            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm phù hợp với từ khóa này. Vui lòng tạo sản phẩm trước.');
+            // Tìm sản phẩm khớp với keyword
+            $product = \App\Models\Product::where('slug', $keyword)->first();
+            if (!$product) {
+                $product = \App\Models\Product::where('slug', 'like', '%' . $keyword . '%')->first();
+            }
+        }
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm phù hợp. Vui lòng tạo sản phẩm hoặc chọn sản phẩm thủ công.');
         }
 
         $successCount = 0;
@@ -1756,6 +1773,7 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', "Đã gửi email thông báo thành công tới tất cả {$successCount} khách hàng đang chờ!");
     }
+
 
 
     /**

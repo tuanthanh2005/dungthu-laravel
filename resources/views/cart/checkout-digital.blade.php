@@ -358,6 +358,13 @@
                             </button>
                         </div>
 
+                        <!-- Single Compact Confirmation Button -->
+                        <div class="px-2 mb-3">
+                            <button type="button" class="btn btn-warning w-100 py-2 rounded-pill fw-bold shadow-sm pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border: none; color: #fff; font-size: 0.95rem;">
+                                <i class="fas fa-check-circle me-2 animate-bounce"></i>{{ __('Xác nhận đã thanh toán') }}
+                            </button>
+                        </div>
+
                         @if(app()->getLocale() !== 'en')
                         <!-- PANEL 1: VietQR -->
                         <div id="vietqr-panel" class="payment-tab-content active">
@@ -372,13 +379,6 @@
                                      class="img-fluid"
                                      id="qr-code-image"
                                      style="max-width: 250px;">
-                            </div>
-
-                            <!-- Nút Xác nhận đã chuyển khoản -->
-                            <div class="px-2 mb-3">
-                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
-                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
-                                </button>
                             </div>
 
                             <div class="payment-info">
@@ -439,13 +439,6 @@
                                      style="max-width: 220px;">
                             </div>
 
-                            <!-- Nút Xác nhận đã chuyển khoản -->
-                            <div class="px-2 mb-3">
-                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
-                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
-                                </button>
-                            </div>
-
                             <div class="payment-info text-start">
                                 <h5 class="fw-bold mb-3 text-center">{{ __('Thông tin ví nhận tiền / Wallet Details') }}</h5>
                                 <div class="mb-3">
@@ -486,13 +479,6 @@
                                      style="max-width: 220px;">
                             </div>
 
-                            <!-- Nút Xác nhận đã chuyển khoản -->
-                            <div class="px-2 mb-3">
-                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
-                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
-                                </button>
-                            </div>
-
                             <div class="payment-info text-start">
                                 <h5 class="fw-bold mb-3 text-center">{{ __('Thông tin tài khoản / Account Details') }}</h5>
                                 <div class="mb-3">
@@ -531,13 +517,6 @@
                                      alt="PayPal QR" 
                                      class="img-fluid"
                                      style="max-width: 220px;">
-                            </div>
-
-                            <!-- Nút Xác nhận đã chuyển khoản -->
-                            <div class="px-2 mb-3">
-                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
-                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
-                                </button>
                             </div>
 
                             <div class="payment-info text-start">

@@ -306,15 +306,6 @@
             }
         }, { passive: false });
 
-        // 3. Chặn click đúp nhanh để zoom (Double tap to zoom)
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
     </script>
 
 @stack('scripts')

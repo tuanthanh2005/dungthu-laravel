@@ -358,12 +358,6 @@
                             </button>
                         </div>
 
-                        <!-- Single Compact Confirmation Button -->
-                        <div class="px-2 mb-3">
-                            <button type="button" class="btn btn-warning w-100 py-2 rounded-pill fw-bold shadow-sm pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border: none; color: #fff; font-size: 0.95rem;">
-                                <i class="fas fa-check-circle me-2 animate-bounce"></i>{{ __('Xác nhận đã thanh toán') }}
-                            </button>
-                        </div>
 
                         @if(app()->getLocale() !== 'en')
                         <!-- PANEL 1: VietQR -->
@@ -379,6 +373,12 @@
                                      class="img-fluid"
                                      id="qr-code-image"
                                      style="max-width: 250px;">
+                            </div>
+
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning w-100 py-2 rounded-pill fw-bold shadow-sm pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border: none; color: #fff; font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle me-2 animate-bounce"></i>{{ __('Xác nhận đã thanh toán') }}
+                                </button>
                             </div>
 
                             <div class="payment-info">
@@ -439,6 +439,12 @@
                                      style="max-width: 220px;">
                             </div>
 
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning w-100 py-2 rounded-pill fw-bold shadow-sm pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border: none; color: #fff; font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle me-2 animate-bounce"></i>{{ __('Xác nhận đã thanh toán') }}
+                                </button>
+                            </div>
+
                             <div class="payment-info text-start">
                                 <h5 class="fw-bold mb-3 text-center">{{ __('Thông tin ví nhận tiền / Wallet Details') }}</h5>
                                 <div class="mb-3">
@@ -479,6 +485,12 @@
                                      style="max-width: 220px;">
                             </div>
 
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning w-100 py-2 rounded-pill fw-bold shadow-sm pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border: none; color: #fff; font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle me-2 animate-bounce"></i>{{ __('Xác nhận đã thanh toán') }}
+                                </button>
+                            </div>
+
                             <div class="payment-info text-start">
                                 <h5 class="fw-bold mb-3 text-center">{{ __('Thông tin tài khoản / Account Details') }}</h5>
                                 <div class="mb-3">
@@ -517,6 +529,12 @@
                                      alt="PayPal QR" 
                                      class="img-fluid"
                                      style="max-width: 220px;">
+                            </div>
+
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning w-100 py-2 rounded-pill fw-bold shadow-sm pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border: none; color: #fff; font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle me-2 animate-bounce"></i>{{ __('Xác nhận đã thanh toán') }}
+                                </button>
                             </div>
 
                             <div class="payment-info text-start">
@@ -577,9 +595,6 @@
 
 
 
-                        <button type="button" class="btn btn-warning btn-lg px-5 rounded-pill shadow-lg" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal">
-                            <i class="fas fa-check-circle me-2"></i>{{ __('Xác nhận đã thanh toán') }}
-                        </button>
                     </div>
                 </div>
             </div>

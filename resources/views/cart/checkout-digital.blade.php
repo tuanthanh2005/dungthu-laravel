@@ -195,6 +195,23 @@
     .btn-confirm-ok:active {
         transform: translateY(1px);
     }
+    .pulse-orange-btn {
+        animation: pulseOrange 2s infinite;
+    }
+    @keyframes pulseOrange {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(255, 159, 0, 0.6);
+        }
+        70% {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 15px rgba(255, 159, 0, 0);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(255, 159, 0, 0);
+        }
+    }
 </style>
 @endpush
 
@@ -357,28 +374,50 @@
                                      style="max-width: 250px;">
                             </div>
 
+                            <!-- Nút Xác nhận đã chuyển khoản -->
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
+                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
+                                </button>
+                            </div>
+
                             <div class="payment-info">
                                 <h5 class="fw-bold mb-3">{{ __('Thông tin chuyển khoản') }}</h5>
                                 <div class="row g-3 text-start">
-                                    <div class="col-6">
+                                    <div class="col-12 col-sm-6">
                                         <small class="opacity-75">{{ __('Ngân hàng:') }}</small>
-                                        <div class="fw-bold">{{ config('services.vietqr.bank_name') }}</div>
+                                        <div class="fw-bold text-white mt-1" style="font-size: 0.95rem;">{{ config('services.vietqr.bank_name') }}</div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-sm-6">
                                         <small class="opacity-75">{{ __('Số tài khoản:') }}</small>
-                                        <div class="fw-bold">{{ config('services.vietqr.account_number') }}</div>
+                                        <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-2 rounded mt-1">
+                                            <span class="fw-bold text-white text-break" style="font-size: 0.95rem;">{{ config('services.vietqr.account_number') }}</span>
+                                            <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('{{ config('services.vietqr.account_number') }}', this)" style="font-size: 0.75rem; padding: 2px 6px;">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-sm-6">
                                         <small class="opacity-75">{{ __('Chủ tài khoản:') }}</small>
-                                        <div class="fw-bold">{{ config('services.vietqr.account_name') }}</div>
+                                        <div class="fw-bold text-white mt-1" style="font-size: 0.95rem;">{{ config('services.vietqr.account_name') }}</div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-sm-6">
                                         <small class="opacity-75">{{ __('Số tiền:') }}</small>
-                                        <div class="fw-bold text-warning" id="transfer-amount-display">{{ $formatPrice($finalTotal ?? $total ?? 0) }}</div>
+                                        <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-2 rounded mt-1">
+                                            <span class="fw-bold text-warning text-break" style="font-size: 0.95rem;" id="transfer-amount-display">{{ $formatPrice($finalTotal ?? $total ?? 0) }}</span>
+                                            <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('{{ $finalTotal ?? $total ?? 0 }}', this)" style="font-size: 0.75rem; padding: 2px 6px;">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="col-12">
-                                        <small class="opacity-75">{{ __('Nội dung:') }}</small>
-                                        <div class="fw-bold">{{ config('services.vietqr.add_info') }} {{ $orderCode }}</div>
+                                        <small class="opacity-75">{{ __('Nội dung chuyển khoản:') }}</small>
+                                        <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-2 rounded mt-1">
+                                            <span class="fw-bold text-warning text-break" style="font-size: 0.95rem;">{{ config('services.vietqr.add_info') }} {{ $orderCode }}</span>
+                                            <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('{{ config('services.vietqr.add_info') }} {{ $orderCode }}', this)" style="font-size: 0.75rem; padding: 2px 6px;">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -398,6 +437,13 @@
                                      alt="Crypto QR" 
                                      class="img-fluid"
                                      style="max-width: 220px;">
+                            </div>
+
+                            <!-- Nút Xác nhận đã chuyển khoản -->
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
+                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
+                                </button>
                             </div>
 
                             <div class="payment-info text-start">
@@ -440,6 +486,13 @@
                                      style="max-width: 220px;">
                             </div>
 
+                            <!-- Nút Xác nhận đã chuyển khoản -->
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
+                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
+                                </button>
+                            </div>
+
                             <div class="payment-info text-start">
                                 <h5 class="fw-bold mb-3 text-center">{{ __('Thông tin tài khoản / Account Details') }}</h5>
                                 <div class="mb-3">
@@ -478,6 +531,13 @@
                                      alt="PayPal QR" 
                                      class="img-fluid"
                                      style="max-width: 220px;">
+                            </div>
+
+                            <!-- Nút Xác nhận đã chuyển khoản -->
+                            <div class="px-2 mb-3">
+                                <button type="button" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold shadow-lg pulse-orange-btn" data-bs-toggle="modal" data-bs-target="#confirmPaymentModal" style="background: linear-gradient(135deg, #ff9f00 0%, #ff5e00 100%); border: none; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px;">
+                                    <i class="fas fa-check-circle me-2"></i>{{ __('TÔI ĐÃ CHUYỂN KHOẢN XONG (XÁC NHẬN)') }}
+                                </button>
                             </div>
 
                             <div class="payment-info text-start">

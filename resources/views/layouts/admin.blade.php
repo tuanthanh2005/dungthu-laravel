@@ -90,6 +90,7 @@
            class="sidebar-nav-item {{ request()->routeIs('admin.buff.orders*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-list-ol"></i></span>
             <span class="nav-text">Buff Đơn hàng</span>
+            <span class="nav-badge" id="sidebarBuffOrderBadge" style="display: none;">0</span>
         </a>
         <a href="{{ route('admin.buff.services.index') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.buff.services*') ? 'active' : '' }}">
@@ -115,21 +116,25 @@
            class="sidebar-nav-item {{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>
             <span class="nav-text">Đơn hàng</span>
+            <span class="nav-badge" id="sidebarOrderBadge" style="display: none;">0</span>
         </a>
         <a href="{{ route('admin.card-exchanges') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.card-exchanges*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-credit-card"></i></span>
             <span class="nav-text">Đổi thẻ cào</span>
+            <span class="nav-badge" id="sidebarCardExchangeBadge" style="display: none;">0</span>
         </a>
         <a href="{{ route('admin.abandoned-carts') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.abandoned-carts*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-shopping-basket"></i></span>
             <span class="nav-text">Giỏ bỏ quên</span>
+            <span class="nav-badge" id="sidebarAbandonedCartBadge" style="display: none;">0</span>
         </a>
         <a href="{{ route('admin.preorders') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.preorders*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-hourglass-half"></i></span>
             <span class="nav-text">Pre-orders</span>
+            <span class="nav-badge" id="sidebarPreorderBadge" style="display: none;">0</span>
         </a>
 
         <div class="sidebar-divider"></div>
@@ -145,6 +150,7 @@
            class="sidebar-nav-item {{ request()->routeIs('admin.affiliates*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-handshake"></i></span>
             <span class="nav-text">Cộng tác viên</span>
+            <span class="nav-badge" id="sidebarAffiliateBadge" style="display: none;">0</span>
         </a>
 
         <div class="sidebar-divider"></div>
@@ -175,7 +181,9 @@
            class="sidebar-nav-item {{ request()->routeIs('admin.chat*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-comments"></i></span>
             <span class="nav-text">Chat</span>
+            <span class="nav-badge" id="sidebarChatBadge" style="display: none;">0</span>
         </a>
+
         <a href="{{ route('admin.system-notifications') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.system-notifications*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-bullhorn"></i></span>
@@ -488,6 +496,44 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
         }
     }, { passive: false });
 
+</script>
+
+<script>
+    // Fetch and update admin sidebar badges/counters
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateAdminSidebarCounters() {
+            fetch('{{ route('admin.sidebar-counters') }}')
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    function updateBadge(id, count) {
+                        const badge = document.getElementById(id);
+                        if (badge) {
+                            if (count > 0) {
+                                badge.textContent = count;
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                    
+                    updateBadge('sidebarChatBadge', data.unread_chats);
+                    updateBadge('sidebarOrderBadge', data.pending_orders);
+                    updateBadge('sidebarBuffOrderBadge', data.pending_buff_orders);
+                    updateBadge('sidebarCardExchangeBadge', data.pending_card_exchanges);
+                    updateBadge('sidebarAbandonedCartBadge', data.abandoned_carts);
+                    updateBadge('sidebarPreorderBadge', data.pending_preorders);
+                    updateBadge('sidebarAffiliateBadge', data.pending_affiliates_total);
+                })
+                .catch(err => console.error('Error fetching sidebar counters:', err));
+        }
+        
+        updateAdminSidebarCounters();
+        setInterval(updateAdminSidebarCounters, 15000); // refresh every 15 seconds
+    });
 </script>
 
 @stack('scripts')

@@ -1811,6 +1811,40 @@ class AdminController extends Controller
         return redirect()->back()->with('success', "Đã gửi email thông báo thành công tới tất cả {$successCount} khách hàng đang chờ!");
     }
 
+    /**
+     * Get sidebar counters and badges for AJAX
+     */
+    public function sidebarCounters()
+    {
+        $unreadChats = Message::where('is_admin', false)
+            ->where('is_read', false)
+            ->count();
+
+        $pendingOrders = Order::where('status', 'pending')->count();
+
+        $pendingBuffOrders = \App\Models\BuffOrder::where('status', 'paid')->count();
+
+        $pendingCardExchanges = CardExchange::where('status', 'pending')->count();
+
+        $abandonedCarts = AbandonedCart::where('reminder_stage', '<', 3)->count();
+
+        $pendingPreorders = \App\Models\PreOrder::where('status', 'pending')->count();
+
+        $pendingAffiliatesTotal = Affiliate::where('status', 'pending')->count() +
+            AffiliateInvoice::where('status', 'pending')->count() +
+            AffiliateWithdrawal::where('status', 'pending')->count();
+
+        return response()->json([
+            'unread_chats' => $unreadChats,
+            'pending_orders' => $pendingOrders,
+            'pending_buff_orders' => $pendingBuffOrders,
+            'pending_card_exchanges' => $pendingCardExchanges,
+            'abandoned_carts' => $abandonedCarts,
+            'pending_preorders' => $pendingPreorders,
+            'pending_affiliates_total' => $pendingAffiliatesTotal,
+        ]);
+    }
+
 
 
     /**

@@ -469,12 +469,26 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
 
 <!-- Prevent pinch-to-zoom and double-tap zoom via JS -->
 <script>
+    // 1. Chặn pinch-to-zoom khi di chuyển ngón tay (touchmove)
+    document.addEventListener('touchmove', function (event) {
+        // event.scale chỉ có trên iOS Safari
+        if (event.scale !== 1 && event.scale !== undefined) {
+            event.preventDefault();
+        }
+        // Chặn trên các trình duyệt Android/Chrome
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    // 2. Chặn khởi động zoom khi chạm nhiều ngón (touchstart)
     document.addEventListener('touchstart', function (event) {
         if (event.touches.length > 1) {
             event.preventDefault();
         }
     }, { passive: false });
 
+    // 3. Chặn click đúp nhanh để zoom (Double tap to zoom)
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function (event) {
         const now = (new Date()).getTime();

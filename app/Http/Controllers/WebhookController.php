@@ -59,6 +59,13 @@ class WebhookController extends Controller
 
         if ($order) {
             if ($order->status !== 'completed' && $order->status !== 'cancelled') {
+                // Check if the order has expired (5 minutes)
+                if ($order->created_at->diffInMinutes(now()) >= 5) {
+                    $order->update(['status' => 'cancelled']);
+                    Log::warning("SePay Webhook: Rejecting payment for expired order {$orderCode}.");
+                    return response()->json(['success' => false, 'message' => 'Order payment has expired'], 200);
+                }
+
                 // Determine order expected amount. Note: currency conversion might apply
                 $expectedAmount = (float) $order->total_amount;
                 
@@ -85,14 +92,14 @@ class WebhookController extends Controller
             return response()->json(['success' => true, 'message' => 'Order already completed or processed']);
         } else {
             // Order doesn't exist yet (user paid first, then submits the order later)
-            // Store transaction in cache for 30 minutes
+            // Store transaction in cache for 5 minutes (300 seconds)
             Cache::put('sepay_payment_' . $orderCode, [
                 'amount' => $transferAmount,
                 'transaction_id' => $transactionId,
                 'gateway' => $gateway,
                 'reference_code' => $referenceCode,
                 'matched_at' => now()->toIso8601String()
-            ], 1800);
+            ], 300);
 
             Log::info("SePay Webhook: Cached transaction for non-existent order code {$orderCode}. Amount: {$transferAmount}");
             return response()->json(['success' => true, 'message' => 'Payment cached. Waiting for checkout submit.']);
@@ -106,15 +113,33 @@ class WebhookController extends Controller
     {
         $orderCode = strtoupper($orderCode);
 
-        // 1. Check if order exists in DB and is completed
+        // 1. Check if order exists in DB
         $order = Order::where('order_code', $orderCode)->first();
-        if ($order && $order->status === 'completed') {
-            return response()->json(['status' => 'success']);
+        if ($order) {
+            if ($order->status === 'completed') {
+                return response()->json(['status' => 'success']);
+            }
+            // Check 5-minute expiry for pending order
+            if ($order->status === 'pending' && $order->created_at->diffInMinutes(now()) >= 5) {
+                $order->update(['status' => 'cancelled']);
+                return response()->json(['status' => 'expired']);
+            }
+            if ($order->status === 'cancelled') {
+                return response()->json(['status' => 'expired']);
+            }
         }
 
         // 2. Check if transaction is cached
         if (Cache::has('sepay_payment_' . $orderCode)) {
             return response()->json(['status' => 'success']);
+        }
+
+        // 3. Check session expiration if order is not in DB yet
+        if (session('checkout_order_code') === $orderCode) {
+            $checkoutTime = session('checkout_order_time');
+            if ($checkoutTime && (now()->timestamp - $checkoutTime) >= 300) {
+                return response()->json(['status' => 'expired']);
+            }
         }
 
         return response()->json(['status' => 'pending']);
@@ -130,8 +155,25 @@ class WebhookController extends Controller
 
         // 1. Check DB first
         $order = Order::where('order_code', $orderCode)->first();
-        if ($order && $order->status === 'completed') {
-            return response()->json(['status' => 'success', 'message' => 'Đơn hàng đã được thanh toán thành công!']);
+        if ($order) {
+            if ($order->status === 'completed') {
+                return response()->json(['status' => 'success', 'message' => 'Đơn hàng đã được thanh toán thành công!']);
+            }
+            if ($order->status === 'cancelled') {
+                return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán và bị hủy.']);
+            }
+            if ($order->status === 'pending' && $order->created_at->diffInMinutes(now()) >= 5) {
+                $order->update(['status' => 'cancelled']);
+                return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán và bị hủy.']);
+            }
+        } else {
+            // Check session expiration if order is not in DB yet
+            if (session('checkout_order_code') === $orderCode) {
+                $checkoutTime = session('checkout_order_time');
+                if ($checkoutTime && (now()->timestamp - $checkoutTime) >= 300) {
+                    return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán. Vui lòng làm mới trang.']);
+                }
+            }
         }
 
         // 2. Check cache next

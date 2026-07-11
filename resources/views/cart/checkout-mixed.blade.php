@@ -95,6 +95,31 @@
     .copy-btn:hover {
         background: rgba(255, 255, 255, 0.35);
     }
+
+    /* QR Scanner animation */
+    .qr-code-box {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        padding: 10px;
+        background: #fff;
+        border-radius: 8px;
+    }
+    .qr-scanner-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, transparent, #28a745 80%, transparent);
+        box-shadow: 0 0 8px #28a745;
+        animation: scan 3s linear infinite;
+        z-index: 5;
+    }
+    @keyframes scan {
+        0% { top: 0%; }
+        50% { top: 100%; }
+        100% { top: 0%; }
+    }
 </style>
 @endpush
 
@@ -361,7 +386,8 @@
                             <!-- PANEL 1: VietQR -->
                             <div id="vietqr-panel" class="payment-tab-content active">
                                 <h6 class="fw-bold mb-2">{{ __('Thanh toán qua QR Code') }}</h6>
-                                <div class="bg-white p-3 rounded mb-3 position-relative" style="display: inline-block;">
+                                <div class="bg-white p-3 rounded mb-3 position-relative qr-code-box" style="display: inline-block;">
+                                    <div class="qr-scanner-line" id="qr-scanner-line"></div>
                                     <img src="https://img.vietqr.io/image/{{ config('services.vietqr.bank_code') }}-{{ config('services.vietqr.account_number') }}-print2D.png?amount={{ $finalTotal ?? $total ?? 0 }}&addInfo={{ urlencode(config('services.vietqr.add_info') . ' ' . $orderCode) }}&accountName={{ urlencode(config('services.vietqr.account_name')) }}" 
                                          alt="QR Code" 
                                          id="qr-code-image"
@@ -369,6 +395,13 @@
                                     <div id="success-watermark" class="position-absolute top-50 start-50 translate-middle d-none" style="background: rgba(40, 167, 69, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-weight: bold; border: 3px solid white; transform: translate(-50%, -50%) rotate(-10deg) !important; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10; width: max-content;">
                                         <i class="fas fa-check-circle me-2"></i>ĐÃ THANH TOÁN
                                     </div>
+                                    <div id="expired-watermark" class="position-absolute top-50 start-50 translate-middle d-none" style="background: rgba(220, 53, 69, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-weight: bold; border: 3px solid white; transform: translate(-50%, -50%) rotate(-10deg) !important; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10; width: max-content;">
+                                        <i class="fas fa-times-circle me-2"></i>HẾT HẠN
+                                    </div>
+                                </div>
+                                <!-- Đồng hồ đếm ngược 5 phút hết hạn thanh toán -->
+                                <div class="alert alert-danger py-2 mb-3 border-0 rounded text-white text-center" style="background: rgba(220, 53, 69, 0.25); font-size: 0.8rem; margin: 0 10px;">
+                                    <i class="far fa-clock me-2"></i>{{ __('Thời gian thanh toán còn lại: ') }}<strong id="expiry-timer">05:00</strong>
                                 </div>
                                 <!-- Trạng thái quét thanh toán tự động -->
                                 <div id="payment-status-notice" class="alert alert-warning py-2 mb-3 border-0 rounded text-white text-center" style="background: rgba(255, 193, 7, 0.2); font-size: 0.8rem; margin: 0 10px;">
@@ -684,8 +717,10 @@
     const orderCode = '{{ $orderCode }}';
     let checkInterval = null;
     let countdownInterval = null;
+    let expiryInterval = null;
     let paymentVerified = false;
     let secondsLeft = 60;
+    let expirySeconds = 300; // 5 minutes expiration
 
     const submitBtn = document.getElementById('checkout-submit-btn');
     const paymentMethodInput = document.getElementById('payment_method_input');
@@ -734,7 +769,7 @@
         document.getElementById('checkout-step-2').classList.remove('d-none');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Start payment verification & polling
+        // Start payment verification & polling & 5-min timer
         startPaymentVerification();
     });
 
@@ -748,6 +783,7 @@
         // Clear intervals to save resources
         clearInterval(countdownInterval);
         clearInterval(checkInterval);
+        clearInterval(expiryInterval);
     });
 
     function updateSubmitButtonState() {
@@ -755,6 +791,14 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Đã xác nhận thanh toán!';
             submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
+            submitBtn.type = 'button';
+            return;
+        }
+
+        if (expirySeconds <= 0) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Giao dịch đã hết hạn';
+            submitBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #bd2130 100%)';
             submitBtn.type = 'button';
             return;
         }
@@ -796,8 +840,10 @@
 
         // Reset state
         secondsLeft = 60;
+        expirySeconds = 300;
         updateSubmitButtonState();
 
+        // 1. Manual check countdown timer
         if (countdownInterval) clearInterval(countdownInterval);
         countdownInterval = setInterval(() => {
             if (paymentVerified) {
@@ -812,9 +858,55 @@
             }
         }, 1000);
 
-        // Auto polling
+        // 2. Five minutes payment expiration timer
+        const timerEl = document.getElementById('expiry-timer');
+        if (timerEl) {
+            timerEl.textContent = "05:00";
+        }
+        if (expiryInterval) clearInterval(expiryInterval);
+        expiryInterval = setInterval(() => {
+            expirySeconds--;
+            if (expirySeconds <= 0) {
+                handlePaymentExpiry();
+            } else {
+                const mins = Math.floor(expirySeconds / 60).toString().padStart(2, '0');
+                const secs = (expirySeconds % 60).toString().padStart(2, '0');
+                if (timerEl) {
+                    timerEl.textContent = `${mins}:${secs}`;
+                }
+            }
+        }, 1000);
+
+        // 3. Auto polling (runs every 5 seconds)
         if (checkInterval) clearInterval(checkInterval);
-        checkInterval = setInterval(pollPaymentStatus, 2000);
+        checkInterval = setInterval(pollPaymentStatus, 5000);
+    }
+
+    // Handles payment expiration
+    function handlePaymentExpiry() {
+        clearInterval(checkInterval);
+        clearInterval(countdownInterval);
+        clearInterval(expiryInterval);
+        expirySeconds = 0;
+
+        // Show red expired watermark on QR
+        const expiredWatermark = document.getElementById('expired-watermark');
+        if (expiredWatermark) expiredWatermark.classList.remove('d-none');
+
+        // Hide scanner line
+        const scannerLine = document.getElementById('qr-scanner-line');
+        if (scannerLine) scannerLine.classList.add('d-none');
+
+        // Update status notice
+        const statusNotice = document.getElementById('payment-status-notice');
+        if (statusNotice) {
+            statusNotice.className = 'alert alert-danger py-2 mb-3 border-0 rounded text-white text-center';
+            statusNotice.style.background = 'rgba(220, 53, 69, 0.2)';
+            statusNotice.innerHTML = '<i class="fas fa-times-circle me-2 text-danger"></i>Thời gian thanh toán đã hết hạn! Vui lòng quay lại sửa đổi thông tin để làm mới đơn hàng.';
+        }
+
+        // Disable confirm button
+        updateSubmitButtonState();
     }
 
     // Function to handle successful payment auto-trigger
@@ -822,10 +914,15 @@
         paymentVerified = true;
         clearInterval(checkInterval);
         clearInterval(countdownInterval);
+        clearInterval(expiryInterval);
 
         // Show green success watermark on QR
         const watermark = document.getElementById('success-watermark');
         if (watermark) watermark.classList.remove('d-none');
+
+        // Hide scanner line
+        const scannerLine = document.getElementById('qr-scanner-line');
+        if (scannerLine) scannerLine.classList.add('d-none');
 
         // Show status notice success
         const statusNotice = document.getElementById('payment-status-notice');
@@ -844,7 +941,7 @@
         // Auto submit checkout form to complete
         setTimeout(() => {
             const form = document.getElementById('checkout-form');
-            if (form.checkValidity()) {
+            if (form.reportValidity()) {
                 form.submit();
             } else {
                 alert(message || 'Thanh toán của bạn đã được ghi nhận thành công! Vui lòng điền đầy đủ thông tin liên hệ và nhấn Xác nhận đặt hàng.');
@@ -867,6 +964,8 @@
             .then(data => {
                 if (data.status === 'success') {
                     handlePaymentSuccess('Thanh toán thành công! Vui lòng điền thông tin để hoàn tất.');
+                } else if (data.status === 'expired') {
+                    handlePaymentExpiry();
                 }
             })
             .catch(err => console.error('Polling error:', err));
@@ -900,6 +999,9 @@
         .then(data => {
             if (data.status === 'success') {
                 handlePaymentSuccess(data.message);
+            } else if (data.status === 'expired') {
+                handlePaymentExpiry();
+                alert('Đơn hàng của bạn đã hết hạn thanh toán.');
             } else {
                 alert(data.message || 'Không tìm thấy giao dịch. Vui lòng kiểm tra lại.');
                 submitBtn.disabled = false;

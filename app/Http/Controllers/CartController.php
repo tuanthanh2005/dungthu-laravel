@@ -209,8 +209,10 @@ class CartController extends Controller
         $finalTotal = max(0, $total - $discountAmount);
         
         // Generate a unique order code in session to prevent changes on reload
-        if (!session()->has('checkout_order_code')) {
+        $now = now()->timestamp;
+        if (!session()->has('checkout_order_code') || !session()->has('checkout_order_time') || ($now - session('checkout_order_time') >= 300)) {
             session()->put('checkout_order_code', 'DT-' . strtoupper(\Illuminate\Support\Str::random(8)));
+            session()->put('checkout_order_time', $now);
         }
         $orderCode = session('checkout_order_code');
         

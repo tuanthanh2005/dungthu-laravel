@@ -632,7 +632,7 @@
     let paymentVerified = false;
 
     // Countdown and Button activation
-    let secondsLeft = 5;
+    let secondsLeft = 60;
     const submitBtn = document.getElementById('checkout-submit-btn');
     const paymentMethodInput = document.getElementById('payment_method_input');
 

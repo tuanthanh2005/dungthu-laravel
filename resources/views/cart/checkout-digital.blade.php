@@ -386,7 +386,7 @@
                                 </div>
 
                                 <button type="button" id="confirm-payment-btn" class="btn w-100 py-2 rounded-pill fw-bold shadow-sm" disabled style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); border: none; color: #fff; font-size: 0.95rem;">
-                                    <i class="fas fa-sync fa-spin me-2"></i>Kiểm tra thanh toán tự động... (<span id="countdown-sec">5</span>s)
+                                    <i class="fas fa-sync fa-spin me-2"></i>Kiểm tra thanh toán tự động... (<span id="countdown-sec">60</span>s)
                                 </button>
                             </div>
 
@@ -878,7 +878,7 @@
     let paymentVerified = false;
 
     // Countdown and Button activation
-    let secondsLeft = 5;
+    let secondsLeft = 60;
     const confirmBtn = document.getElementById('confirm-payment-btn');
     const countdownSec = document.getElementById('countdown-sec');
 

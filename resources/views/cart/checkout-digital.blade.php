@@ -478,9 +478,9 @@
                                     <span>Hệ thống đang quét giao dịch chuyển khoản tự động...</span>
                                 </div>
 
-                                <button type="button" id="confirm-payment-btn" class="btn w-100 py-2 rounded-pill fw-bold shadow-sm" disabled style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); border: none; color: #fff; font-size: 0.95rem;">
-                                    <i class="fas fa-sync fa-spin me-2"></i>Kiểm tra thanh toán tự động... (<span id="countdown-sec">60</span>s)
-                                </button>
+                                <div id="auto-check-status-badge" class="w-100 py-2 text-center rounded-pill fw-bold shadow-sm text-white" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); font-size: 0.95rem; user-select: none;">
+                                    <i class="fas fa-sync fa-spin me-2"></i>{{ __('Đang kiểm tra thanh toán tự động...') }}
+                                </div>
                             </div>
 
                             <div class="payment-info">
@@ -939,43 +939,19 @@
                 // Update QR image src
                 if (qrImage) {
                     const originalSrc = qrImage.src;
-                    qrImage.src = originalSrc.replace(/amount=\d+/, 'amount=' + data.final_total);
-                }
-            })
-            .catch(err => {
                 console.error(err);
-            })
-            .finally(() => {
-                removeBtn.disabled = false;
             });
         });
-    }
-
-    function showFeedback(msg, className) {
-        feedbackEl.textContent = msg;
-        feedbackEl.className = 'small mt-2 ' + className;
-        feedbackEl.classList.remove('d-none');
-    }
-
-    function formatNumber(num) {
-        const locale = '{{ app()->getLocale() }}';
-        if (locale === 'en') {
-            return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-        return num.toLocaleString('vi-VN') + 'đ';
     }
 
     // SePay Webhook Auto-check and manual polling logic
     const orderCode = '{{ $orderCode }}';
     let checkInterval = null;
-    let countdownInterval = null;
     let expiryInterval = null;
     let paymentVerified = false;
-    let secondsLeft = 60;
     let expirySeconds = 300; // 5 minutes expiration
 
-    const confirmBtn = document.getElementById('confirm-payment-btn');
-    const countdownSec = document.getElementById('countdown-sec');
+    const statusBadge = document.getElementById('auto-check-status-badge');
 
     // Step 1 to Step 2 Transition
     document.getElementById('btn-proceed-payment').addEventListener('click', function(e) {
@@ -1034,7 +1010,7 @@
         document.getElementById('checkout-step-2').classList.remove('d-none');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Start payment verification countdown & polling & 5-min timer
+        // Start payment verification & 5-min timer & polling
         startPaymentVerification();
     });
 
@@ -1046,7 +1022,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         // Clear intervals to save resources
-        clearInterval(countdownInterval);
         clearInterval(checkInterval);
         clearInterval(expiryInterval);
     });
@@ -1056,31 +1031,13 @@
         if (paymentVerified) return;
 
         // Reset state
-        secondsLeft = 60;
         expirySeconds = 300;
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fas fa-sync fa-spin me-2"></i>Kiểm tra thanh toán tự động... (<span id="countdown-sec">60</span>s)';
-        confirmBtn.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+        if (statusBadge) {
+            statusBadge.innerHTML = '<i class="fas fa-sync fa-spin me-2"></i>Đang kiểm tra thanh toán tự động...';
+            statusBadge.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+        }
 
-        // 1. Manual check countdown timer
-        if (countdownInterval) clearInterval(countdownInterval);
-        countdownInterval = setInterval(() => {
-            secondsLeft--;
-            const countSecEl = document.getElementById('countdown-sec');
-            if (countSecEl) {
-                countSecEl.textContent = secondsLeft;
-            }
-            if (secondsLeft <= 0) {
-                clearInterval(countdownInterval);
-                if (!paymentVerified && expirySeconds > 0) {
-                    confirmBtn.disabled = false;
-                    confirmBtn.innerHTML = '<i class="fas fa-search me-2"></i>Kiểm tra Webhook / Xác nhận đã chuyển';
-                    confirmBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
-                }
-            }
-        }, 1000);
-
-        // 2. Five minutes payment expiration timer
+        // 1. Five minutes payment expiration timer
         const timerEl = document.getElementById('expiry-timer');
         if (timerEl) {
             timerEl.textContent = "05:00";
@@ -1099,7 +1056,7 @@
             }
         }, 1000);
 
-        // 3. Auto polling (runs every 5 seconds)
+        // 2. Auto polling (runs every 5 seconds)
         if (checkInterval) clearInterval(checkInterval);
         checkInterval = setInterval(pollPaymentStatus, 5000);
     }
@@ -1107,7 +1064,6 @@
     // Handles payment expiration
     function handlePaymentExpiry() {
         clearInterval(checkInterval);
-        clearInterval(countdownInterval);
         clearInterval(expiryInterval);
 
         // Show red expired watermark on QR
@@ -1126,17 +1082,17 @@
             statusNotice.innerHTML = '<i class="fas fa-times-circle me-2 text-danger"></i>Thời gian thanh toán đã hết hạn! Vui lòng quay lại sửa đổi thông tin để làm mới đơn hàng.';
         }
 
-        // Disable confirm button
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Giao dịch đã hết hạn';
-        confirmBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #bd2130 100%)';
+        // Update status badge
+        if (statusBadge) {
+            statusBadge.innerHTML = '<i class="fas fa-times-circle me-2"></i>Giao dịch đã hết hạn';
+            statusBadge.style.background = 'linear-gradient(135deg, #dc3545 0%, #bd2130 100%)';
+        }
     }
 
     // Function to handle successful payment auto-trigger
     function handlePaymentSuccess(message = '') {
         paymentVerified = true;
         clearInterval(checkInterval);
-        clearInterval(countdownInterval);
         clearInterval(expiryInterval);
 
         // Show green success watermark on QR
@@ -1155,10 +1111,11 @@
             statusNotice.innerHTML = '<i class="fas fa-check-circle me-2 text-success"></i>Thanh toán thành công! Đang tự động tạo đơn hàng...';
         }
 
-        // Disable button completely and show success
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Đã xác nhận thanh toán!';
-        confirmBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
+        // Update status badge to success
+        if (statusBadge) {
+            statusBadge.innerHTML = '<i class="fas fa-check-circle me-2"></i>Đã xác nhận thanh toán!';
+            statusBadge.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
+        }
 
         // Auto submit checkout form to complete
         setTimeout(() => {
@@ -1167,11 +1124,14 @@
                 form.submit();
             } else {
                 alert(message || 'Thanh toán của bạn đã được ghi nhận thành công! Vui lòng điền đầy đủ thông tin liên hệ và nhấn Xác nhận đặt hàng.');
-                // Adjust button to allow final submit
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng ngay';
-                confirmBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
-                confirmBtn.type = 'submit';
+                if (statusBadge) {
+                    statusBadge.innerHTML = '<i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng ngay';
+                    statusBadge.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
+                    statusBadge.style.cursor = 'pointer';
+                    statusBadge.addEventListener('click', () => {
+                        form.submit();
+                    });
+                }
             }
         }, 1500);
     }
@@ -1184,52 +1144,13 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    handlePaymentSuccess('Thanh toán thành công! Vui lòng điền thông tin để hoàn tất.');
+                    handlePaymentSuccess(data.message);
                 } else if (data.status === 'expired') {
                     handlePaymentExpiry();
                 }
             })
             .catch(err => console.error('Polling error:', err));
     }
-
-    // Manual Webhook Verification
-    confirmBtn.addEventListener('click', function(e) {
-        if (confirmBtn.type === 'submit') {
-            return;
-        }
-
-        // Show spinner on button
-        const originalHtml = confirmBtn.innerHTML;
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang kiểm tra giao dịch...';
-
-        fetch(`/api/payment/check-webhook/${orderCode}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                handlePaymentSuccess(data.message);
-            } else if (data.status === 'expired') {
-                handlePaymentExpiry();
-                alert('Đơn hàng của bạn đã hết hạn thanh toán.');
-            } else {
-                alert(data.message || 'Không tìm thấy giao dịch. Vui lòng kiểm tra lại.');
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = originalHtml;
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Có lỗi xảy ra khi kiểm tra giao dịch. Vui lòng thử lại.');
-            confirmBtn.disabled = false;
-            confirmBtn.innerHTML = originalHtml;
-        });
-    });
 </script>
 @endpush
 @endsection

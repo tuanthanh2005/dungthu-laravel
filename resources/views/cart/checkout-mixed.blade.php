@@ -805,19 +805,11 @@
 
         const selectedMethod = paymentMethodInput.value;
         if (selectedMethod === 'vietqr') {
-            if (secondsLeft > 0) {
-                confirmBtnMode = 'countdown';
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `<i class="fas fa-sync fa-spin me-2"></i>Kiểm tra thanh toán tự động... (${secondsLeft}s)`;
-                submitBtn.style.background = '#6c757d';
-                submitBtn.type = 'button';
-            } else {
-                confirmBtnMode = 'webhook';
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-search me-2"></i>Kiểm tra Webhook / Xác nhận đã chuyển';
-                submitBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
-                submitBtn.type = 'button';
-            }
+            confirmBtnMode = 'countdown';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-sync fa-spin me-2"></i>Đang kiểm tra thanh toán tự động...';
+            submitBtn.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+            submitBtn.type = 'button';
         } else {
             confirmBtnMode = 'submit';
             submitBtn.disabled = false;
@@ -839,26 +831,10 @@
         if (paymentVerified) return;
 
         // Reset state
-        secondsLeft = 60;
         expirySeconds = 300;
         updateSubmitButtonState();
 
-        // 1. Manual check countdown timer
-        if (countdownInterval) clearInterval(countdownInterval);
-        countdownInterval = setInterval(() => {
-            if (paymentVerified) {
-                clearInterval(countdownInterval);
-                return;
-            }
-            if (secondsLeft > 0) {
-                secondsLeft--;
-                updateSubmitButtonState();
-            } else {
-                clearInterval(countdownInterval);
-            }
-        }, 1000);
-
-        // 2. Five minutes payment expiration timer
+        // 1. Five minutes payment expiration timer
         const timerEl = document.getElementById('expiry-timer');
         if (timerEl) {
             timerEl.textContent = "05:00";
@@ -877,7 +853,7 @@
             }
         }, 1000);
 
-        // 3. Auto polling (runs every 5 seconds)
+        // 2. Auto polling (runs every 5 seconds)
         if (checkInterval) clearInterval(checkInterval);
         checkInterval = setInterval(pollPaymentStatus, 5000);
     }
@@ -885,7 +861,6 @@
     // Handles payment expiration
     function handlePaymentExpiry() {
         clearInterval(checkInterval);
-        clearInterval(countdownInterval);
         clearInterval(expiryInterval);
         expirySeconds = 0;
 
@@ -913,7 +888,6 @@
     function handlePaymentSuccess(message = '') {
         paymentVerified = true;
         clearInterval(checkInterval);
-        clearInterval(countdownInterval);
         clearInterval(expiryInterval);
 
         // Show green success watermark on QR
@@ -970,51 +944,6 @@
             })
             .catch(err => console.error('Polling error:', err));
     }
-
-    // Submit button event handling for webhook validation
-    submitBtn.addEventListener('click', function(e) {
-        if (confirmBtnMode === 'submit' || submitBtn.type === 'submit') {
-            return;
-        }
-
-        e.preventDefault();
-
-        if (confirmBtnMode === 'countdown') {
-            return;
-        }
-
-        // Show spinner on button
-        const originalHtml = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang kiểm tra giao dịch...';
-
-        fetch(`/api/payment/check-webhook/${orderCode}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                handlePaymentSuccess(data.message);
-            } else if (data.status === 'expired') {
-                handlePaymentExpiry();
-                alert('Đơn hàng của bạn đã hết hạn thanh toán.');
-            } else {
-                alert(data.message || 'Không tìm thấy giao dịch. Vui lòng kiểm tra lại.');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalHtml;
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Có lỗi xảy ra khi kiểm tra giao dịch. Vui lòng thử lại.');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalHtml;
-        });
-    });
 
     // Initialize the button state
     updateSubmitButtonState();

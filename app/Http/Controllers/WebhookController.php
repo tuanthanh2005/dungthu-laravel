@@ -39,12 +39,14 @@ class WebhookController extends Controller
         $gateway = $request->input('gateway', '');
         $referenceCode = $request->input('referenceCode', '');
 
-        // Match order code pattern DT-[A-Z0-9]{8}
+        // Match order code pattern DT-[A-Z0-9]{8} or DT[A-Z0-9]{8}
         $orderCode = null;
-        if (preg_match('/(DT-[A-Z0-9]{8})/i', $content, $matches)) {
-            $orderCode = strtoupper($matches[1]);
-        } elseif (preg_match('/(DT-[A-Z0-9]{8})/i', $code, $matches)) {
-            $orderCode = strtoupper($matches[1]);
+        if (preg_match('/(DT-?[A-Z0-9]{8})/i', $content, $matches)) {
+            $cleanCode = str_replace('-', '', strtoupper($matches[1]));
+            $orderCode = 'DT-' . substr($cleanCode, 2);
+        } elseif (preg_match('/(DT-?[A-Z0-9]{8})/i', $code, $matches)) {
+            $cleanCode = str_replace('-', '', strtoupper($matches[1]));
+            $orderCode = 'DT-' . substr($cleanCode, 2);
         }
 
         if (!$orderCode) {
@@ -186,8 +188,12 @@ class WebhookController extends Controller
                 $content = $tx['transaction_content'] ?? '';
                 $amount = (float) ($tx['amount_in'] ?? 0);
 
+                // Standardize comparison by removing hyphens (banks often strip special characters)
+                $normalizedContent = str_replace('-', '', $content);
+                $normalizedOrderCode = str_replace('-', '', $orderCode);
+
                 // Check if description has the order code
-                if (stripos($content, $orderCode) !== false) {
+                if (stripos($normalizedContent, $normalizedOrderCode) !== false) {
                     Log::info("Manual Check: Found matching transaction on SePay API. TxID: " . ($tx['id'] ?? 'N/A') . ", Amount: {$amount}");
 
                     // Determine amount correctness

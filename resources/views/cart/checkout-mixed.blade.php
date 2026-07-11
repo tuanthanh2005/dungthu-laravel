@@ -106,7 +106,10 @@
                 <h1 class="fw-bold">
                     <i class="fas fa-shopping-cart text-primary me-2"></i>{{ __('Thanh Toán') }}
                 </h1>
-                <p class="text-muted">{{ __('Đơn hàng của bạn bao gồm cả sản phẩm số và sản phẩm vật lý') }}            <!-- Step 1: Customer Details -->
+                <p class="text-muted">{{ __('Đơn hàng của bạn bao gồm cả sản phẩm số và sản phẩm vật lý') }}</p>
+            </div>
+
+            <!-- Step 1: Customer Details -->
             <div class="row justify-content-center" id="checkout-step-1">
                 <div class="col-md-7">
                     <div class="card border-0 shadow-sm mb-4">

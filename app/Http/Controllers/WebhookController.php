@@ -49,7 +49,7 @@ class WebhookController extends Controller
 
         if (!$orderCode) {
             Log::warning('SePay Webhook: Could not parse order code from transaction description: ' . $content);
-            return response()->json(['success' => false, 'message' => 'No order code found'], 400);
+            return response()->json(['success' => false, 'message' => 'No order code found'], 200);
         }
 
         // Find the order
@@ -77,7 +77,7 @@ class WebhookController extends Controller
                     return response()->json(['success' => true, 'message' => 'Order completed successfully']);
                 } else {
                     Log::warning("SePay Webhook: Order {$orderCode} transfer amount {$transferAmount} is lower than expected {$expectedAmount}.");
-                    return response()->json(['success' => false, 'message' => 'Insufficient amount paid'], 400);
+                    return response()->json(['success' => false, 'message' => 'Insufficient amount paid'], 200);
                 }
             }
             return response()->json(['success' => true, 'message' => 'Order already completed or processed']);

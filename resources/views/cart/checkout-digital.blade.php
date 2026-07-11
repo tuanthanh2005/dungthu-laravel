@@ -235,9 +235,9 @@
 
             </div>
 
-            <div class="row g-4">
-                <!-- Thông tin khách hàng -->
-                <div class="col-md-5">
+            <!-- Step 1: Customer Details -->
+            <div class="row justify-content-center" id="checkout-step-1">
+                <div class="col-md-7">
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <h5 class="mb-0 fw-bold">
@@ -333,11 +333,70 @@
                                     </div>
                                 </div>
                             </form>
+
+                            <button type="button" id="btn-proceed-payment" class="btn btn-primary w-100 btn-lg rounded-pill shadow py-3 fw-bold mt-3">
+                                {{ __('Tiến hành thanh toán') }} <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Payment Scanner & Summary -->
+            <div class="row g-4 d-none" id="checkout-step-2">
+                <!-- Summary Card -->
+                <div class="col-md-5">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #1b9aaa 0%, #06d6a0 100%);">
+                            <h5 class="mb-0 fw-bold">
+                                <i class="fas fa-user-check me-2"></i>{{ __('Đơn hàng của bạn') }}
+                            </h5>
+                        </div>
+                        <div class="card-body style-summary" style="font-size: 0.95rem; line-height: 1.6;">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{{ __('Họ và tên:') }}</small>
+                                <strong id="summary-name" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{{ __('Email nhận mã:') }}</small>
+                                <strong id="summary-email" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{{ __('Số điện thoại:') }}</small>
+                                <strong id="summary-phone" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3" id="summary-zalo-wrapper">
+                                <small class="text-muted d-block">{{ __('Số Zalo:') }}</small>
+                                <strong id="summary-zalo" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3" id="summary-facebook-wrapper">
+                                <small class="text-muted d-block">{{ __('Facebook:') }}</small>
+                                <strong id="summary-facebook" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3 d-none" id="summary-boxchat-wrapper">
+                                <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-comment-dots me-1"></i>{{ __('Liên hệ qua Boxchat') }}</span>
+                            </div>
+
+                            <hr>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">{{ __('Đơn hàng ID:') }}</small>
+                                <strong class="text-primary font-monospace">{{ $orderCode }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">{{ __('Tổng tiền cần thanh toán:') }}</small>
+                                <strong class="fs-5 text-danger font-weight-bold" id="summary-total"></strong>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="button" id="btn-back-to-step-1" class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold">
+                                    <i class="fas fa-arrow-left me-2"></i>{{ __('Quay lại sửa thông tin') }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- QR Payment -->
+                <!-- QR Payment Card -->
                 <div class="col-md-7">
                     <div class="qr-payment-card">
                         <!-- Navigation Tabs -->
@@ -875,28 +934,116 @@
     // SePay Webhook Auto-check and manual polling logic
     const orderCode = '{{ $orderCode }}';
     let checkInterval = null;
+    let countdownInterval = null;
     let paymentVerified = false;
-
-    // Countdown and Button activation
     let secondsLeft = 60;
+
     const confirmBtn = document.getElementById('confirm-payment-btn');
     const countdownSec = document.getElementById('countdown-sec');
 
-    const countdownInterval = setInterval(() => {
-        secondsLeft--;
-        if (countdownSec) {
-            countdownSec.textContent = secondsLeft;
+    // Step 1 to Step 2 Transition
+    document.getElementById('btn-proceed-payment').addEventListener('click', function(e) {
+        const name = document.getElementsByName('customer_name')[0].value.trim();
+        const email = document.getElementsByName('customer_email')[0].value.trim();
+        const phone = document.getElementsByName('customer_phone')[0].value.trim();
+        const isUsingBoxchat = document.getElementById('use_boxchat').checked;
+        const zalo = document.getElementsByName('customer_zalo')[0].value.trim();
+        const facebook = document.getElementsByName('customer_facebook')[0].value.trim();
+        const errorDiv = document.getElementById('contact-error');
+
+        // Form HTML5 Validation
+        const form = document.getElementById('checkout-form');
+        if (!form.reportValidity()) {
+            return;
         }
-        if (secondsLeft <= 0) {
-            clearInterval(countdownInterval);
-            if (!paymentVerified) {
-                // Enable button and change text to "Kiểm tra Webhook"
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = '<i class="fas fa-search me-2"></i>Kiểm tra Webhook / Xác nhận đã chuyển';
-                confirmBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
+
+        // Contact info check
+        if (!isUsingBoxchat && !zalo && !facebook) {
+            errorDiv.classList.remove('d-none');
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        } else {
+            errorDiv.classList.add('d-none');
+        }
+
+        // Populate summary fields on Step 2
+        document.getElementById('summary-name').textContent = name;
+        document.getElementById('summary-email').textContent = email;
+        document.getElementById('summary-phone').textContent = phone;
+
+        if (isUsingBoxchat) {
+            document.getElementById('summary-boxchat-wrapper').classList.remove('d-none');
+            document.getElementById('summary-zalo-wrapper').classList.add('d-none');
+            document.getElementById('summary-facebook-wrapper').classList.add('d-none');
+        } else {
+            document.getElementById('summary-boxchat-wrapper').classList.add('d-none');
+            if (zalo) {
+                document.getElementById('summary-zalo').textContent = zalo;
+                document.getElementById('summary-zalo-wrapper').classList.remove('d-none');
+            } else {
+                document.getElementById('summary-zalo-wrapper').classList.add('d-none');
+            }
+            if (facebook) {
+                document.getElementById('summary-facebook').textContent = facebook;
+                document.getElementById('summary-facebook-wrapper').classList.remove('d-none');
+            } else {
+                document.getElementById('summary-facebook-wrapper').classList.add('d-none');
             }
         }
-    }, 1000);
+
+        document.getElementById('summary-total').textContent = document.getElementById('checkout-total-display').textContent;
+
+        // Toggle screens
+        document.getElementById('checkout-step-1').classList.add('d-none');
+        document.getElementById('checkout-step-2').classList.remove('d-none');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Start payment verification countdown & polling
+        startPaymentVerification();
+    });
+
+    // Step 2 to Step 1 Back Navigation
+    document.getElementById('btn-back-to-step-1').addEventListener('click', function() {
+        // Toggle screens
+        document.getElementById('checkout-step-2').classList.add('d-none');
+        document.getElementById('checkout-step-1').classList.remove('d-none');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Clear intervals to save resources
+        clearInterval(countdownInterval);
+        clearInterval(checkInterval);
+    });
+
+    // Starts countdown and polling after step 2 is active
+    function startPaymentVerification() {
+        if (paymentVerified) return;
+
+        // Reset state
+        secondsLeft = 60;
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-sync fa-spin me-2"></i>Kiểm tra thanh toán tự động... (<span id="countdown-sec">60</span>s)';
+        confirmBtn.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+
+        // Timer
+        countdownInterval = setInterval(() => {
+            secondsLeft--;
+            const countSecEl = document.getElementById('countdown-sec');
+            if (countSecEl) {
+                countSecEl.textContent = secondsLeft;
+            }
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                if (!paymentVerified) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-search me-2"></i>Kiểm tra Webhook / Xác nhận đã chuyển';
+                    confirmBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
+                }
+            }
+        }, 1000);
+
+        // Auto polling
+        checkInterval = setInterval(pollPaymentStatus, 2000);
+    }
 
     // Function to handle successful payment auto-trigger
     function handlePaymentSuccess(message = '') {
@@ -950,9 +1097,6 @@
             })
             .catch(err => console.error('Polling error:', err));
     }
-
-    // Start polling every 2 seconds
-    checkInterval = setInterval(pollPaymentStatus, 2000);
 
     // Manual Webhook Verification
     confirmBtn.addEventListener('click', function(e) {

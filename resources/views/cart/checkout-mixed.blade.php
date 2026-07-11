@@ -106,16 +106,13 @@
                 <h1 class="fw-bold">
                     <i class="fas fa-shopping-cart text-primary me-2"></i>{{ __('Thanh Toán') }}
                 </h1>
-                <p class="text-muted">{{ __('Đơn hàng của bạn bao gồm cả sản phẩm số và sản phẩm vật lý') }}</p>
-            </div>
-
-            <div class="row g-4">
-                <!-- Form -->
+                <p class="text-muted">{{ __('Đơn hàng của bạn bao gồm cả sản phẩm số và sản phẩm vật lý') }}            <!-- Step 1: Customer Details -->
+            <div class="row justify-content-center" id="checkout-step-1">
                 <div class="col-md-7">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-white py-3">
                             <h5 class="mb-0 fw-bold">
-                                <i class="fas fa-user-circle me-2"></i>{{ __('Thông tin của bạn') }}
+                                <i class="fas fa-user-circle me-2 text-primary"></i>{{ __('Thông tin của bạn') }}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -146,7 +143,6 @@
                                     </div>
                                 </div>
                                 
-
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
@@ -179,6 +175,10 @@
                                     </small>
                                 </div>
                             </form>
+
+                            <button type="button" id="btn-proceed-payment" class="btn btn-primary w-100 btn-lg rounded-pill shadow py-3 fw-bold mt-4">
+                                {{ __('Tiến hành thanh toán') }} <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -188,22 +188,73 @@
                             <i class="fas fa-info-circle me-2"></i>{{ __('Hướng dẫn thanh toán') }}
                         </h6>
                         <ol class="mb-0 ps-3">
-                            <li>{{ __('Quét mã QR hoặc chuyển khoản theo thông tin bên phải') }}</li>
                             <li>{{ __('Nhập đầy đủ thông tin và địa chỉ giao hàng') }}</li>
-                            <li>{{ __('Nhấn "Xác nhận đặt hàng"') }}</li>
-                            <li>{{ __('Mã sản phẩm số sẽ được gửi qua email sau khi xác nhận thanh toán') }}</li>
-                            <li>{{ __('Sản phẩm vật lý sẽ được giao trong 3-5 ngày') }}</li>
+                            <li>{{ __('Nhấn "Tiến hành thanh toán"') }}</li>
+                            <li>{{ __('Quét mã QR hoặc chuyển khoản theo thông tin hiển thị') }}</li>
+                            <li>{{ __('Hệ thống sẽ tự động xác nhận đơn hàng sau khi nhận được thanh toán') }}</li>
                         </ol>
                     </div>
                 </div>
+            </div>
 
-                <!-- Order Summary & QR Payment -->
+            <!-- Step 2: Summary & Payment -->
+            <div class="row g-4 d-none" id="checkout-step-2">
+                <!-- Summary Card -->
                 <div class="col-md-5">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #1b9aaa 0%, #06d6a0 100%);">
+                            <h5 class="mb-0 fw-bold">
+                                <i class="fas fa-user-check me-2"></i>{{ __('Thông tin đơn hàng') }}
+                            </h5>
+                        </div>
+                        <div class="card-body" style="font-size: 0.95rem; line-height: 1.6;">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{{ __('Họ và tên người nhận:') }}</small>
+                                <strong id="summary-name" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{{ __('Email:') }}</small>
+                                <strong id="summary-email" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{{ __('Số điện thoại:') }}</small>
+                                <strong id="summary-phone" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3" id="summary-zalo-wrapper">
+                                <small class="text-muted d-block">{{ __('Số Zalo:') }}</small>
+                                <strong id="summary-zalo" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3" id="summary-facebook-wrapper">
+                                <small class="text-muted d-block">{{ __('Facebook:') }}</small>
+                                <strong id="summary-facebook" class="text-dark"></strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">{{ __('Địa chỉ nhận hàng:') }}</small>
+                                <strong id="summary-address" class="text-dark" style="white-space: pre-line;"></strong>
+                            </div>
+
+                            <hr>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">{{ __('Mã giao dịch:') }}</small>
+                                <strong class="text-primary font-monospace">{{ $orderCode }}</strong>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="button" id="btn-back-to-step-1" class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold">
+                                    <i class="fas fa-arrow-left me-2"></i>{{ __('Quay lại sửa thông tin') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Payment Card & Checkout Submit -->
+                <div class="col-md-7">
                     <!-- Đơn hàng -->
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-white py-3">
                             <h5 class="mb-0 fw-bold">
-                                <i class="fas fa-shopping-bag me-2"></i>{{ __('Đơn hàng của bạn') }}
+                                <i class="fas fa-shopping-bag me-2"></i>{{ __('Chi tiết đơn hàng') }}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -360,7 +411,7 @@
                                     <div class="mb-2">
                                         <small class="opacity-75 d-block">{{ __('Địa chỉ ví (Wallet Address):') }}</small>
                                         <div class="d-flex align-items-center justify-content-between mt-1" style="background: rgba(0,0,0,0.2); padding: 5px; border-radius: 5px;">
-                                            <code class="text-warning text-break" style="font-size: 0.8rem; font-family: monospace;">0xB890Ed41f9De4412c2...</code>
+                                            <code class="text-warning text-break" style="font-size: 0.8rem; font-family: monospace;">0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9</code>
                                             <button type="button" class="copy-btn text-nowrap" onclick="copyToClipboard('0xB890Ed41f9De4412c219CaB2254FD8c0Aa56dEE9', this)">
                                                 <i class="fas fa-copy"></i> Copy
                                             </button>
@@ -629,16 +680,72 @@
     // SePay Webhook Auto-check and manual polling logic
     const orderCode = '{{ $orderCode }}';
     let checkInterval = null;
+    let countdownInterval = null;
     let paymentVerified = false;
-
-    // Countdown and Button activation
     let secondsLeft = 60;
+
     const submitBtn = document.getElementById('checkout-submit-btn');
     const paymentMethodInput = document.getElementById('payment_method_input');
-
-    // Keep track of original submit button HTML and type
     const originalSubmitBtnHtml = submitBtn.innerHTML;
     let confirmBtnMode = 'submit'; // 'submit', 'countdown', 'webhook'
+
+    // Step 1 to Step 2 Transition
+    document.getElementById('btn-proceed-payment').addEventListener('click', function(e) {
+        const name = document.getElementsByName('customer_name')[0].value.trim();
+        const email = document.getElementsByName('customer_email')[0].value.trim();
+        const phone = document.getElementsByName('customer_phone')[0].value.trim();
+        const address = document.getElementsByName('customer_address')[0].value.trim();
+        const zalo = document.getElementsByName('customer_zalo')[0].value.trim();
+        const facebook = document.getElementsByName('customer_facebook')[0].value.trim();
+
+        // Form HTML5 Validation
+        const form = document.getElementById('checkout-form');
+        if (!form.reportValidity()) {
+            return;
+        }
+
+        // Populate Step 2 Summary details
+        document.getElementById('summary-name').textContent = name;
+        document.getElementById('summary-email').textContent = email;
+        document.getElementById('summary-phone').textContent = phone;
+        document.getElementById('summary-address').textContent = address;
+
+        const zaloWrapper = document.getElementById('summary-zalo-wrapper');
+        if (zalo) {
+            document.getElementById('summary-zalo').textContent = zalo;
+            zaloWrapper.classList.remove('d-none');
+        } else {
+            zaloWrapper.classList.add('d-none');
+        }
+
+        const facebookWrapper = document.getElementById('summary-facebook-wrapper');
+        if (facebook) {
+            document.getElementById('summary-facebook').textContent = facebook;
+            facebookWrapper.classList.remove('d-none');
+        } else {
+            facebookWrapper.classList.add('d-none');
+        }
+
+        // Toggle screens
+        document.getElementById('checkout-step-1').classList.add('d-none');
+        document.getElementById('checkout-step-2').classList.remove('d-none');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Start payment verification & polling
+        startPaymentVerification();
+    });
+
+    // Step 2 to Step 1 Back Navigation
+    document.getElementById('btn-back-to-step-1').addEventListener('click', function() {
+        // Toggle screens
+        document.getElementById('checkout-step-2').classList.add('d-none');
+        document.getElementById('checkout-step-1').classList.remove('d-none');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Clear intervals to save resources
+        clearInterval(countdownInterval);
+        clearInterval(checkInterval);
+    });
 
     function updateSubmitButtonState() {
         if (paymentVerified) {
@@ -680,18 +787,32 @@
         });
     });
 
-    const countdownInterval = setInterval(() => {
-        if (paymentVerified) {
-            clearInterval(countdownInterval);
-            return;
-        }
-        if (secondsLeft > 0) {
-            secondsLeft--;
-            updateSubmitButtonState();
-        } else {
-            clearInterval(countdownInterval);
-        }
-    }, 1000);
+    // Starts countdown and polling after step 2 is active
+    function startPaymentVerification() {
+        if (paymentVerified) return;
+
+        // Reset state
+        secondsLeft = 60;
+        updateSubmitButtonState();
+
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            if (paymentVerified) {
+                clearInterval(countdownInterval);
+                return;
+            }
+            if (secondsLeft > 0) {
+                secondsLeft--;
+                updateSubmitButtonState();
+            } else {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+
+        // Auto polling
+        if (checkInterval) clearInterval(checkInterval);
+        checkInterval = setInterval(pollPaymentStatus, 2000);
+    }
 
     // Function to handle successful payment auto-trigger
     function handlePaymentSuccess(message = '') {
@@ -747,9 +868,6 @@
             })
             .catch(err => console.error('Polling error:', err));
     }
-
-    // Start polling every 2 seconds
-    checkInterval = setInterval(pollPaymentStatus, 2000);
 
     // Submit button event handling for webhook validation
     submitBtn.addEventListener('click', function(e) {

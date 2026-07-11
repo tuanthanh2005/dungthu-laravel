@@ -58,7 +58,7 @@ class WebhookController extends Controller
         $order = Order::where('order_code', $orderCode)->first();
 
         if ($order) {
-            if ($order->status !== 'completed' && $order->status !== 'cancelled') {
+            if ($order->status !== 'completed' && $order->status !== 'processing' && $order->status !== 'cancelled') {
                 // Check if the order has expired (5 minutes)
                 if ($order->created_at->diffInMinutes(now()) >= 5) {
                     $order->update(['status' => 'cancelled']);
@@ -77,13 +77,13 @@ class WebhookController extends Controller
 
                 // Check if paid amount is at least 95% of expected amount (accounting for small differences)
                 if ($transferAmount >= ($expectedAmount * 0.95)) {
-                    $order->update(['status' => 'completed']);
+                    $order->update(['status' => 'processing']);
                     
                     // Trigger notifications & delivery
                     $this->sendOrderApprovedNotifications($order);
                     
-                    Log::info("SePay Webhook: Order {$orderCode} updated to COMPLETED.");
-                    return response()->json(['success' => true, 'message' => 'Order completed successfully']);
+                    Log::info("SePay Webhook: Order {$orderCode} updated to PROCESSING.");
+                    return response()->json(['success' => true, 'message' => 'Order updated to processing successfully']);
                 } else {
                     Log::warning("SePay Webhook: Order {$orderCode} transfer amount {$transferAmount} is lower than expected {$expectedAmount}.");
                     return response()->json(['success' => false, 'message' => 'Insufficient amount paid'], 200);
@@ -116,7 +116,7 @@ class WebhookController extends Controller
         // 1. Check if order exists in DB
         $order = Order::where('order_code', $orderCode)->first();
         if ($order) {
-            if ($order->status === 'completed') {
+            if ($order->status === 'completed' || $order->status === 'processing') {
                 return response()->json(['status' => 'success']);
             }
             // Check 5-minute expiry for pending order
@@ -156,7 +156,7 @@ class WebhookController extends Controller
         // 1. Check DB first
         $order = Order::where('order_code', $orderCode)->first();
         if ($order) {
-            if ($order->status === 'completed') {
+            if ($order->status === 'completed' || $order->status === 'processing') {
                 return response()->json(['status' => 'success', 'message' => 'Đơn hàng đã được thanh toán thành công!']);
             }
             if ($order->status === 'cancelled') {
@@ -179,7 +179,7 @@ class WebhookController extends Controller
         // 2. Check cache next
         if (Cache::has('sepay_payment_' . $orderCode)) {
             // If order exists in DB but is pending, let's complete it now
-            if ($order && $order->status !== 'completed' && $order->status !== 'cancelled') {
+            if ($order && $order->status !== 'completed' && $order->status !== 'processing' && $order->status !== 'cancelled') {
                 $cached = Cache::get('sepay_payment_' . $orderCode);
                 $expectedAmount = (float) $order->total_amount;
                 if ($order->currency === 'USD') {
@@ -188,11 +188,11 @@ class WebhookController extends Controller
                 }
                 
                 if ($cached['amount'] >= ($expectedAmount * 0.95)) {
-                    $order->update(['status' => 'completed']);
+                    $order->update(['status' => 'processing']);
                     $this->sendOrderApprovedNotifications($order);
                     Cache::forget('sepay_payment_' . $orderCode);
                     Log::info("Manual Check: Resolved order {$orderCode} from Cache.");
-                    return response()->json(['status' => 'success', 'message' => 'Thanh toán thành công!']);
+                    return response()->json(['status' => 'success', 'message' => 'Thanh toán thành công! Đơn hàng đang được xử lý.']);
                 }
             } else {
                 return response()->json(['status' => 'success', 'message' => 'Đã phát hiện giao dịch thành công. Vui lòng nhấn Xác nhận Đặt hàng để hoàn tất.']);
@@ -263,8 +263,8 @@ class WebhookController extends Controller
 
                     // Standardize amount checking
                     if ($amount >= ($expectedAmount * 0.95)) {
-                        if ($order && $order->status !== 'completed' && $order->status !== 'cancelled') {
-                            $order->update(['status' => 'completed']);
+                        if ($order && $order->status !== 'completed' && $order->status !== 'processing' && $order->status !== 'cancelled') {
+                            $order->update(['status' => 'processing']);
                             $this->sendOrderApprovedNotifications($order);
                         } else {
                             // Order not placed yet, cache it

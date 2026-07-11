@@ -329,7 +329,7 @@ class CartController extends Controller
             }
 
             if ($cached['amount'] >= ($expectedAmount * 0.95)) {
-                $orderStatus = 'completed';
+                $orderStatus = 'processing';
                 \Illuminate\Support\Facades\Cache::forget('sepay_payment_' . $orderCode);
                 \Illuminate\Support\Facades\Log::info("CartController: Auto-completing order {$orderCode} from Cache during checkout placement.");
             }
@@ -406,8 +406,8 @@ class CartController extends Controller
             session()->forget('is_new_user');
             session()->forget('checkout_order_code');
             
-            // Gửi email duyệt đơn tự động nếu đơn hàng thành công (completed)
-            if ($orderStatus === 'completed') {
+            // Gửi email duyệt đơn tự động nếu đơn hàng thành công (completed) hoặc đang xử lý (processing)
+            if ($orderStatus === 'completed' || $orderStatus === 'processing') {
                 try {
                     $email = $order->customer_email;
                     if (!$email && $order->user_id) {
@@ -431,6 +431,8 @@ class CartController extends Controller
             
             if ($orderStatus === 'completed') {
                 return redirect()->route('user.orders')->with('success', 'Đặt hàng thành công! Đơn hàng của bạn đã hoàn thành.');
+            } elseif ($orderStatus === 'processing') {
+                return redirect()->route('user.orders')->with('success', 'Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.');
             } else {
                 return redirect()->route('user.orders')->with('success', 'Đặt hàng thành công! Vui lòng chờ admin xác nhận.');
             }

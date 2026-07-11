@@ -276,7 +276,7 @@
                                 <h5 class="mb-0 text-primary" id="checkout-total-display">{{ $formatPrice($finalTotal ?? $total) }}</h5>
                             </div>
                             
-                            <button type="submit" form="checkout-form" class="btn btn-primary w-100 btn-lg rounded-pill shadow">
+                            <button type="submit" form="checkout-form" id="checkout-submit-btn" class="btn btn-primary w-100 btn-lg rounded-pill shadow">
                                 <i class="fas fa-check-circle me-2"></i>{{ __('Xác nhận đặt hàng') }}
                             </button>
                         </div>
@@ -307,11 +307,19 @@
                             <!-- PANEL 1: VietQR -->
                             <div id="vietqr-panel" class="payment-tab-content active">
                                 <h6 class="fw-bold mb-2">{{ __('Thanh toán qua QR Code') }}</h6>
-                                <div class="bg-white p-3 rounded mb-3" style="display: inline-block;">
+                                <div class="bg-white p-3 rounded mb-3 position-relative" style="display: inline-block;">
                                     <img src="https://img.vietqr.io/image/{{ config('services.vietqr.bank_code') }}-{{ config('services.vietqr.account_number') }}-print2D.png?amount={{ $finalTotal ?? $total ?? 0 }}&addInfo={{ urlencode(config('services.vietqr.add_info') . ' ' . $orderCode) }}&accountName={{ urlencode(config('services.vietqr.account_name')) }}" 
                                          alt="QR Code" 
                                          id="qr-code-image"
                                          style="max-width: 200px;">
+                                    <div id="success-watermark" class="position-absolute top-50 start-50 translate-middle d-none" style="background: rgba(40, 167, 69, 0.95); color: white; padding: 10px 20px; border-radius: 20px; font-weight: bold; border: 3px solid white; transform: translate(-50%, -50%) rotate(-10deg) !important; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10; width: max-content;">
+                                        <i class="fas fa-check-circle me-2"></i>ĐÃ THANH TOÁN
+                                    </div>
+                                </div>
+                                <!-- Trạng thái quét thanh toán tự động -->
+                                <div id="payment-status-notice" class="alert alert-warning py-2 mb-3 border-0 rounded text-white text-center" style="background: rgba(255, 193, 7, 0.2); font-size: 0.8rem; margin: 0 10px;">
+                                    <span class="spinner-border spinner-border-sm me-2 text-warning animate-spin" role="status" aria-hidden="true"></span>
+                                    <span>Hệ thống đang quét giao dịch tự động...</span>
                                 </div>
                                 <div class="text-start" style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; font-size: 0.9rem;">
                                     <div class="row g-2">
@@ -617,5 +625,175 @@
         }
         return num.toLocaleString('vi-VN') + 'đ';
     }
+
+    // SePay Webhook Auto-check and manual polling logic
+    const orderCode = '{{ $orderCode }}';
+    let checkInterval = null;
+    let paymentVerified = false;
+
+    // Countdown and Button activation
+    let secondsLeft = 5;
+    const submitBtn = document.getElementById('checkout-submit-btn');
+    const paymentMethodInput = document.getElementById('payment_method_input');
+
+    // Keep track of original submit button HTML and type
+    const originalSubmitBtnHtml = submitBtn.innerHTML;
+    let confirmBtnMode = 'submit'; // 'submit', 'countdown', 'webhook'
+
+    function updateSubmitButtonState() {
+        if (paymentVerified) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Đã xác nhận thanh toán!';
+            submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
+            submitBtn.type = 'button';
+            return;
+        }
+
+        const selectedMethod = paymentMethodInput.value;
+        if (selectedMethod === 'vietqr') {
+            if (secondsLeft > 0) {
+                confirmBtnMode = 'countdown';
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fas fa-sync fa-spin me-2"></i>Kiểm tra thanh toán tự động... (${secondsLeft}s)`;
+                submitBtn.style.background = '#6c757d';
+                submitBtn.type = 'button';
+            } else {
+                confirmBtnMode = 'webhook';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-search me-2"></i>Kiểm tra Webhook / Xác nhận đã chuyển';
+                submitBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
+                submitBtn.type = 'button';
+            }
+        } else {
+            confirmBtnMode = 'submit';
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalSubmitBtnHtml;
+            submitBtn.style.background = ''; // reset to CSS default
+            submitBtn.type = 'submit';
+        }
+    }
+
+    // Tab switching event listener extension
+    document.querySelectorAll('.payment-tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            setTimeout(updateSubmitButtonState, 50);
+        });
+    });
+
+    const countdownInterval = setInterval(() => {
+        if (paymentVerified) {
+            clearInterval(countdownInterval);
+            return;
+        }
+        if (secondsLeft > 0) {
+            secondsLeft--;
+            updateSubmitButtonState();
+        } else {
+            clearInterval(countdownInterval);
+        }
+    }, 1000);
+
+    // Function to handle successful payment auto-trigger
+    function handlePaymentSuccess(message = '') {
+        paymentVerified = true;
+        clearInterval(checkInterval);
+        clearInterval(countdownInterval);
+
+        // Show green success watermark on QR
+        const watermark = document.getElementById('success-watermark');
+        if (watermark) watermark.classList.remove('d-none');
+
+        // Show status notice success
+        const statusNotice = document.getElementById('payment-status-notice');
+        if (statusNotice) {
+            statusNotice.className = 'alert alert-success py-2 mb-3 border-0 rounded text-white text-center';
+            statusNotice.style.background = 'rgba(40, 167, 69, 0.2)';
+            statusNotice.innerHTML = '<i class="fas fa-check-circle me-2 text-success"></i>Thanh toán thành công! Đang tự động tạo đơn hàng...';
+        }
+
+        // Disable button completely and show success
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Đã xác nhận thanh toán!';
+        submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
+        submitBtn.type = 'button';
+
+        // Auto submit checkout form to complete
+        setTimeout(() => {
+            const form = document.getElementById('checkout-form');
+            if (form.checkValidity()) {
+                form.submit();
+            } else {
+                alert(message || 'Thanh toán của bạn đã được ghi nhận thành công! Vui lòng điền đầy đủ thông tin liên hệ và nhấn Xác nhận đặt hàng.');
+                // Adjust button to allow final submit
+                confirmBtnMode = 'submit';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng ngay';
+                submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
+                submitBtn.type = 'submit';
+            }
+        }, 1500);
+    }
+
+    // Polling function
+    function pollPaymentStatus() {
+        if (paymentVerified) return;
+
+        fetch(`/api/payment/check-status/${orderCode}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    handlePaymentSuccess('Thanh toán thành công! Vui lòng điền thông tin để hoàn tất.');
+                }
+            })
+            .catch(err => console.error('Polling error:', err));
+    }
+
+    // Start polling every 2 seconds
+    checkInterval = setInterval(pollPaymentStatus, 2000);
+
+    // Submit button event handling for webhook validation
+    submitBtn.addEventListener('click', function(e) {
+        if (confirmBtnMode === 'submit' || submitBtn.type === 'submit') {
+            return;
+        }
+
+        e.preventDefault();
+
+        if (confirmBtnMode === 'countdown') {
+            return;
+        }
+
+        // Show spinner on button
+        const originalHtml = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang kiểm tra giao dịch...';
+
+        fetch(`/api/payment/check-webhook/${orderCode}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                handlePaymentSuccess(data.message);
+            } else {
+                alert(data.message || 'Không tìm thấy giao dịch. Vui lòng kiểm tra lại.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHtml;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Có lỗi xảy ra khi kiểm tra giao dịch. Vui lòng thử lại.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalHtml;
+        });
+    });
+
+    // Initialize the button state
+    updateSubmitButtonState();
 </script>
 @endpush

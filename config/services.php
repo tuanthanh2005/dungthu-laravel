@@ -74,5 +74,9 @@ return [
         'username' => env('PAYPAL_USERNAME', 'tranthanhtuanmt'),
     ],
 
+    'sepay' => [
+        'key' => env('SEPAY_API_KEY'),
+    ],
+
 ];
 

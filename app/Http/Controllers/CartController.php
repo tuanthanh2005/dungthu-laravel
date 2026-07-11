@@ -305,6 +305,34 @@ class CartController extends Controller
 
         $orderStatus = 'pending';
 
+        // Check if there is a pre-existing transaction matching this order code in cache
+        $orderCode = $request->order_code ?? session('checkout_order_code');
+        if ($orderCode && \Illuminate\Support\Facades\Cache::has('sepay_payment_' . $orderCode)) {
+            $cached = \Illuminate\Support\Facades\Cache::get('sepay_payment_' . $orderCode);
+            // Calculate expected total amount in VND to compare
+            $expectedAmount = 0;
+            foreach ($cart as $details) {
+                $expectedAmount += $details['price'] * $details['quantity'];
+            }
+            if (session()->has('applied_coupon')) {
+                $couponId = session('applied_coupon');
+                $coupon = \App\Models\Coupon::find($couponId);
+                if ($coupon) {
+                    $expectedAmount = max(0, $expectedAmount - (float)$coupon->value);
+                }
+            }
+            if ($isEn) {
+                $rate = (float) \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000);
+                $expectedAmount = $expectedAmount * $rate;
+            }
+
+            if ($cached['amount'] >= ($expectedAmount * 0.95)) {
+                $orderStatus = 'completed';
+                \Illuminate\Support\Facades\Cache::forget('sepay_payment_' . $orderCode);
+                \Illuminate\Support\Facades\Log::info("CartController: Auto-completing order {$orderCode} from Cache during checkout placement.");
+            }
+        }
+
         DB::beginTransaction();
         try {
             // Apply coupon discount if applicable

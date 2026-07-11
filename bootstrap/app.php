@@ -29,9 +29,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
 
         
-        // Exclude CSRF for OAuth callbacks
+        // Exclude CSRF for OAuth callbacks and SePay webhook
         $middleware->validateCsrfTokens(except: [
             'auth/*',
+            'webhook/sepay',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\GoogleIndexingController;
 use App\Http\Controllers\Admin\AdminAffiliateController;
 use App\Http\Controllers\Affiliate\AffiliateAuthController;
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
+use App\Http\Controllers\WebhookController;
 
 Route::get('/change-language/{locale}', function ($locale) {
     if (in_array($locale, ['vi', 'en'])) {
@@ -438,3 +439,8 @@ Route::get('/test-email', function() {
 // Auto-Matching Dynamic SEO Router
 Route::get('/go/{slug}', [\App\Http\Controllers\SeoRouterController::class, 'handle'])->name('seo.router');
 Route::post('/go/{slug}/subscribe', [\App\Http\Controllers\SeoRouterController::class, 'subscribe'])->name('seo.router.subscribe');
+
+// SePay Webhook & Auto-Payment check routes
+Route::post('/webhook/sepay', [WebhookController::class, 'handleSepayWebhook'])->name('payment.webhook.sepay');
+Route::get('/api/payment/check-status/{orderCode}', [WebhookController::class, 'checkStatus'])->name('payment.check-status');
+Route::post('/api/payment/check-webhook/{orderCode}', [WebhookController::class, 'checkWebhook'])->name('payment.check-webhook');

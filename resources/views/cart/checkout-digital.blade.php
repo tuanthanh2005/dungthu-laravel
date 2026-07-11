@@ -464,9 +464,9 @@
                                 <div id="expired-watermark" class="position-absolute top-50 start-50 translate-middle d-none" style="background: rgba(220, 53, 69, 0.95); color: white; padding: 15px 30px; border-radius: 30px; font-weight: bold; border: 4px solid white; transform: translate(-50%, -50%) rotate(-10deg) !important; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10;">
                                     <i class="fas fa-times-circle me-2"></i>HẾT HẠN
                                 </div>
-                             </div>
+                            </div>
 
-                             <div class="px-2 mb-3">
+                            <div class="px-2 mb-3">
                                 <!-- Đồng hồ đếm ngược 5 phút hết hạn thanh toán -->
                                 <div class="alert alert-danger py-2 mb-3 border-0 rounded-pill text-white text-center" style="background: rgba(220, 53, 69, 0.25); font-size: 0.85rem;">
                                     <i class="far fa-clock me-2"></i>{{ __('Thời gian thanh toán còn lại: ') }}<strong id="expiry-timer">05:00</strong>
@@ -939,9 +939,30 @@
                 // Update QR image src
                 if (qrImage) {
                     const originalSrc = qrImage.src;
+                    qrImage.src = originalSrc.replace(/amount=\d+/, 'amount=' + data.final_total);
+                }
+            })
+            .catch(err => {
                 console.error(err);
+            })
+            .finally(() => {
+                removeBtn.disabled = false;
             });
         });
+    }
+
+    function showFeedback(msg, className) {
+        feedbackEl.textContent = msg;
+        feedbackEl.className = 'small mt-2 ' + className;
+        feedbackEl.classList.remove('d-none');
+    }
+
+    function formatNumber(num) {
+        const locale = '{{ app()->getLocale() }}';
+        if (locale === 'en') {
+            return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        return num.toLocaleString('vi-VN') + 'đ';
     }
 
     // SePay Webhook Auto-check and manual polling logic
@@ -1144,7 +1165,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    handlePaymentSuccess(data.message);
+                    handlePaymentSuccess('Thanh toán thành công! Vui lòng điền thông tin để hoàn tất.');
                 } else if (data.status === 'expired') {
                     handlePaymentExpiry();
                 }

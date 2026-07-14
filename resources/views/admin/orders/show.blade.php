@@ -1,4 +1,4 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Chi tiết Đơn hàng #' . $order->id . ' - Admin')
 
@@ -281,6 +281,63 @@
                         </div>
                     </div>
                 @endforeach
+            </div>
+            
+            <!-- Digital Product Manual Delivery Form -->
+            @php
+                $defaultNote = "Chào " . ($order->customer_name ?? 'bạn') . ",\n\nCảm ơn bạn đã ủng hộ DungThu.com. Dưới đây là thông tin bàn giao cho đơn hàng của bạn:\n";
+                foreach($order->orderItems as $item) {
+                    $defaultNote .= "• " . ($item->product->name ?? 'Sản phẩm') . " (SL: " . $item->quantity . ")\n";
+                }
+                $defaultNote .= "\nNếu có bất kỳ câu hỏi nào, vui lòng liên hệ Zalo hoặc Email hỗ trợ bên dưới nhé!";
+            @endphp
+            <div class="info-section mt-4" style="border: 2.5px dashed #667eea; background: #fafbff; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.05);">
+                <h5 class="fw-bold mb-3 text-primary">
+                    <i class="fas fa-paper-plane me-2"></i>🔑 CẤP TÀI KHOẢN &amp; GỬI HÀNG QUA EMAIL
+                </h5>
+                <p class="text-muted" style="font-size: 0.9rem;">Dành cho đơn hàng digital, tài liệu hoặc tài khoản game. Nhập thông tin bàn giao dưới đây để hệ thống tự động gửi email cho khách và đánh dấu đơn hàng là <strong>Hoàn thành</strong>.</p>
+                
+                @if($order->status == 'completed' && ($order->delivery_account || $order->delivery_key || $order->delivery_note))
+                    <div class="alert alert-info py-2 px-3 mb-3" style="font-size: 0.9rem; border-left: 4px solid #17a2b8;">
+                        <i class="fas fa-info-circle me-1"></i> Đơn hàng này đã được bàn giao thông tin trước đó. Bạn có thể cập nhật thông tin mới và gửi lại email bên dưới.
+                    </div>
+                @endif
+
+                <form action="{{ route('admin.orders.deliver', $order) }}" method="POST">
+                    @csrf
+                    <div class="row">
+                        <!-- Tài khoản -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Tài khoản / Account:</label>
+                            <input type="text" name="delivery_account" class="form-control" 
+                                   value="{{ $order->delivery_account }}" 
+                                   placeholder="Ví dụ: taikhoan@gmail.com | matkhau123">
+                            <small class="text-muted">Thông tin đăng nhập tài khoản (nếu có)</small>
+                        </div>
+                        
+                        <!-- KEY / Mã kích hoạt -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">KEY / Mã kích hoạt:</label>
+                            <input type="text" name="delivery_key" class="form-control" 
+                                   value="{{ $order->delivery_key }}" 
+                                   placeholder="Ví dụ: GPT-XXXX-XXXX-XXXX">
+                            <small class="text-muted">Mã kích hoạt, license key hoặc link tải nhanh (nếu có)</small>
+                        </div>
+
+                        <!-- Thông báo / Hướng dẫn -->
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Thông báo &amp; Hướng dẫn sử dụng:</label>
+                            <textarea name="delivery_note" class="form-control" rows="5" placeholder="Ghi chú thêm cho khách hàng...">{{ $order->delivery_note ?? $defaultNote }}</textarea>
+                            <small class="text-muted">Nội dung này hiển thị trực tiếp trong email bàn giao gửi tới khách hàng.</small>
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                            <i class="fas fa-paper-plane me-2"></i>Gửi hàng &amp; Hoàn thành Đơn hàng
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Update Status Form -->

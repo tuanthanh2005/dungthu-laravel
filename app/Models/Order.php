@@ -19,6 +19,9 @@ class Order extends Model
         'coupon_code',
         'discount_amount',
         'order_code',
+        'delivery_account',
+        'delivery_key',
+        'delivery_note',
     ];
 
     protected $casts = [

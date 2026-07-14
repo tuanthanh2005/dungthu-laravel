@@ -19,6 +19,7 @@ use App\Models\AffiliateWithdrawal;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SystemNotificationMail;
 use App\Mail\OrderApprovedMail;
+use App\Mail\OrderDeliveredMail;
 use App\Mail\AbandonedCartReminder;
 use App\Helpers\TelegramHelper;
 use App\Helpers\PathHelper;
@@ -479,6 +480,47 @@ class AdminController extends Controller
         }
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
+    }
+
+    public function deliverOrder(Request $request, Order $order)
+    {
+        $request->validate([
+            'delivery_account' => 'nullable|string',
+            'delivery_key' => 'nullable|string',
+            'delivery_note' => 'nullable|string',
+        ]);
+
+        $oldStatus = $order->status;
+
+        $order->update([
+            'delivery_account' => $request->delivery_account,
+            'delivery_key' => $request->delivery_key,
+            'delivery_note' => $request->delivery_note,
+            'status' => 'completed',
+        ]);
+
+        // Gửi email bàn giao
+        try {
+            $email = $order->customer_email;
+            if (!$email && $order->user_id) {
+                $email = optional($order->user)->email;
+            }
+
+            if ($email) {
+                $order->load('orderItems.product');
+                Mail::to($email)->send(new OrderDeliveredMail($order));
+                \Log::info('Order delivered email sent to ' . $email . ' for order #' . $order->id);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error sending order delivered email for order #' . $order->id . ': ' . $e->getMessage());
+        }
+
+        // Nếu trạng thái cũ chưa phải completed, gửi thông báo Telegram để tránh trùng lặp
+        if ($oldStatus !== 'completed') {
+            $this->sendOrderCompletedTelegram($order);
+        }
+
+        return redirect()->back()->with('success', 'Giao hàng và gửi email thông tin bàn giao thành công!');
     }
 
     /**

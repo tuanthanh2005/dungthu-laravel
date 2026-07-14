@@ -205,6 +205,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
     Route::get('/orders/{order}', [AdminController::class, 'showOrder'])->name('admin.orders.show');
     Route::put('/orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.update-status');
+    Route::post('/orders/{order}/deliver', [AdminController::class, 'deliverOrder'])->name('admin.orders.deliver');
     Route::delete('/orders/{order}', [AdminController::class, 'deleteOrder'])->name('admin.orders.delete');
     
     // User Management

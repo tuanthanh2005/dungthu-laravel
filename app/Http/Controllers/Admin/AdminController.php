@@ -634,8 +634,16 @@ class AdminController extends Controller
         SiteSetting::setValue('flash_sale_enabled', $next);
 
         $message = $next === '1'
-            ? 'ÄÃ£ báº­t Flash Sale toÃ n bá»™.'
-            : 'ÄÃ£ táº¯t Flash Sale toÃ n bá»™.';
+            ? 'Đã bật Flash Sale toàn bộ.'
+            : 'Đã tắt Flash Sale toàn bộ.';
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'enabled' => $next === '1'
+            ]);
+        }
 
         return redirect()->back()->with('success', $message);
     }
@@ -644,6 +652,15 @@ class AdminController extends Controller
     {
         $product->is_flash_sale = !$product->is_flash_sale;
         $product->save();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật Flash Sale thành công!',
+                'value' => $product->is_flash_sale
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Cập nhật Flash Sale thành công!');
     }
 
@@ -651,6 +668,15 @@ class AdminController extends Controller
     {
         $product->is_featured = !$product->is_featured;
         $product->save();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật Nổi bật thành công!',
+                'value' => $product->is_featured
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Cập nhật Nổi bật thành công!');
     }
 
@@ -658,6 +684,15 @@ class AdminController extends Controller
     {
         $product->is_exclusive = !$product->is_exclusive;
         $product->save();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật Độc quyền thành công!',
+                'value' => $product->is_exclusive
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Cập nhật Độc quyền thành công!');
     }
 
@@ -665,6 +700,15 @@ class AdminController extends Controller
     {
         $product->is_combo_ai = !$product->is_combo_ai;
         $product->save();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật Combo AI thành công!',
+                'value' => $product->is_combo_ai
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Cập nhật Combo AI thành công!');
     }
 
@@ -1078,6 +1122,14 @@ class AdminController extends Controller
         }
         
         $product->delete();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Xóa sản phẩm thành công!'
+            ]);
+        }
+
         return redirect()->route('admin.products')->with('success', 'Xóa sản phẩm thành công!');
     }
 

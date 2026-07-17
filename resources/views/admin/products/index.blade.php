@@ -167,10 +167,10 @@
                     </form>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <form action="{{ route('admin.flash-sale.toggle') }}" method="POST" class="d-inline">
+                    <form action="{{ route('admin.flash-sale.toggle') }}" method="POST" class="d-inline ajax-global-toggle-form">
                         @csrf
                         <button type="submit" class="btn {{ $flashSaleEnabled ? 'btn-outline-danger' : 'btn-outline-success' }} rounded-pill px-4">
-                            <i class="fas fa-bolt me-2"></i>{{ $flashSaleEnabled ? 'Tắt' : 'Bật' }} Flash Sale
+                            <i class="fas fa-bolt me-2"></i><span>{{ $flashSaleEnabled ? 'Tắt' : 'Bật' }} Flash Sale</span>
                         </button>
                     </form>
                     <button type="button" class="btn btn-success rounded-pill px-4 btn-submit-all-index" data-url="{{ route('admin.google-indexing.submit-all-products') }}">
@@ -268,10 +268,10 @@
                                 <strong class="text-primary">{{ number_format($product->price, 0, ',', '.') }}đ</strong>
                             </td>
                             <td>
-                                <form action="{{ route('admin.products.toggle-flash-sale', $product) }}" method="POST" class="d-inline">
+                                <form action="{{ route('admin.products.toggle-flash-sale', $product) }}" method="POST" class="d-inline ajax-toggle-form" data-type="flash-sale">
                                     @csrf
                                     <button type="submit" class="btn btn-sm {{ $product->is_flash_sale ? 'btn-danger' : 'btn-outline-danger' }}">
-                                        <i class="fas fa-bolt me-1"></i>{{ $product->is_flash_sale ? 'Đang bật' : 'Bật' }}
+                                        <i class="fas fa-bolt me-1"></i><span>{{ $product->is_flash_sale ? 'Đang bật' : 'Bật' }}</span>
                                     </button>
                                 </form>
                             </td>
@@ -284,19 +284,19 @@
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-1">
-                                    <form action="{{ route('admin.products.toggle-featured', $product) }}" method="POST">
+                                    <form action="{{ route('admin.products.toggle-featured', $product) }}" method="POST" class="ajax-toggle-form" data-type="featured">
                                         @csrf
                                         <button type="submit" class="btn btn-sm w-100 {{ $product->is_featured ? 'btn-warning' : 'btn-outline-warning' }}" style="font-size: 10px; padding: 2px 5px;">
                                             <i class="fas fa-star me-1"></i>Nổi bật
                                         </button>
                                     </form>
-                                    <form action="{{ route('admin.products.toggle-exclusive', $product) }}" method="POST">
+                                    <form action="{{ route('admin.products.toggle-exclusive', $product) }}" method="POST" class="ajax-toggle-form" data-type="exclusive">
                                         @csrf
                                         <button type="submit" class="btn btn-sm w-100 {{ $product->is_exclusive ? 'btn-info' : 'btn-outline-info' }}" style="font-size: 10px; padding: 2px 5px;">
                                             <i class="fas fa-gem me-1"></i>Độc quyền
                                         </button>
                                     </form>
-                                    <form action="{{ route('admin.products.toggle-combo-ai', $product) }}" method="POST">
+                                    <form action="{{ route('admin.products.toggle-combo-ai', $product) }}" method="POST" class="ajax-toggle-form" data-type="combo-ai">
                                         @csrf
                                         <button type="submit" class="btn btn-sm w-100 {{ $product->is_combo_ai ? 'btn-success' : 'btn-outline-success' }}" style="font-size: 10px; padding: 2px 5px;">
                                             <i class="fas fa-robot me-1"></i>Combo AI
@@ -325,8 +325,8 @@
                                     </form>
                                     <form action="{{ route('admin.products.delete', $product) }}" 
                                           method="POST" 
-                                          class="d-inline"
-                                          onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                          class="d-inline ajax-delete-form"
+                                          data-name="{{ $product->name }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger rounded-end" title="Xóa">
@@ -490,5 +490,215 @@
             });
         });
     }
+
+    // AJAX Toggle Forms
+    document.querySelectorAll('.ajax-toggle-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const button = this.querySelector('button[type="submit"]');
+            const type = this.getAttribute('data-type');
+            const url = this.getAttribute('action');
+            const originalContent = button.innerHTML;
+            
+            button.disabled = true;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    // Update UI based on type
+                    if (type === 'flash-sale') {
+                        if (data.value) {
+                            button.className = 'btn btn-sm btn-danger';
+                            button.innerHTML = '<i class="fas fa-bolt me-1"></i><span>Đang bật</span>';
+                        } else {
+                            button.className = 'btn btn-sm btn-outline-danger';
+                            button.innerHTML = '<i class="fas fa-bolt me-1"></i><span>Bật</span>';
+                        }
+                    } else if (type === 'featured') {
+                        if (data.value) {
+                            button.className = 'btn btn-sm w-100 btn-warning';
+                        } else {
+                            button.className = 'btn btn-sm w-100 btn-outline-warning';
+                        }
+                        button.innerHTML = '<i class="fas fa-star me-1"></i>Nổi bật';
+                    } else if (type === 'exclusive') {
+                        if (data.value) {
+                            button.className = 'btn btn-sm w-100 btn-info';
+                        } else {
+                            button.className = 'btn btn-sm w-100 btn-outline-info';
+                        }
+                        button.innerHTML = '<i class="fas fa-gem me-1"></i>Độc quyền';
+                    } else if (type === 'combo-ai') {
+                        if (data.value) {
+                            button.className = 'btn btn-sm w-100 btn-success';
+                        } else {
+                            button.className = 'btn btn-sm w-100 btn-outline-success';
+                        }
+                        button.innerHTML = '<i class="fas fa-robot me-1"></i>Combo AI';
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: data.message || 'Không thể cập nhật trạng thái.'
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+            })
+            .finally(() => {
+                button.disabled = false;
+            });
+        });
+    });
+
+    // AJAX Global Toggle
+    const globalToggleForm = document.querySelector('.ajax-global-toggle-form');
+    if (globalToggleForm) {
+        globalToggleForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const button = this.querySelector('button[type="submit"]');
+            const url = this.getAttribute('action');
+            const originalContent = button.innerHTML;
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    if (data.enabled) {
+                        button.className = 'btn btn-outline-danger rounded-pill px-4';
+                        button.innerHTML = '<i class="fas fa-bolt me-2"></i><span>Tắt Flash Sale</span>';
+                    } else {
+                        button.className = 'btn btn-outline-success rounded-pill px-4';
+                        button.innerHTML = '<i class="fas fa-bolt me-2"></i><span>Bật Flash Sale</span>';
+                    }
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Không thể kết nối đến server.'
+                });
+                button.innerHTML = originalContent;
+            })
+            .finally(() => {
+                button.disabled = false;
+            });
+        });
+    }
+
+    // AJAX Delete Forms
+    document.querySelectorAll('.ajax-delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = this.getAttribute('data-name');
+            const url = this.getAttribute('action');
+            const row = this.closest('tr');
+
+            Swal.fire({
+                title: 'Xác nhận xóa?',
+                text: `Bạn có chắc muốn xóa sản phẩm "${name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Đồng ý xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({
+                            '_method': 'DELETE'
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: data.message,
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                            
+                            // Fade out row
+                            row.style.transition = 'all 0.5s ease';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(20px)';
+                            setTimeout(() => {
+                                row.remove();
+                            }, 500);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại!',
+                                text: data.message || 'Không thể xóa sản phẩm.'
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi kết nối!',
+                            text: 'Không thể kết nối đến server.'
+                        });
+                    });
+                }
+            });
+        });
+    });
 </script>
 @endpush

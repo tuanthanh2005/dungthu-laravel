@@ -34,7 +34,8 @@ class Product extends Model
         'is_combo_ai',
         'is_flash_sale',
         'is_vpn',
-        'duration_months',
+        'duration_value',
+        'duration_type',
     ];
 
     protected $casts = [
@@ -49,7 +50,7 @@ class Product extends Model
         'is_exclusive' => 'boolean',
         'is_combo_ai' => 'boolean',
         'is_flash_sale' => 'boolean',
-        'duration_months' => 'integer',
+        'duration_value' => 'integer',
     ];
 
     public function categoryRelation()

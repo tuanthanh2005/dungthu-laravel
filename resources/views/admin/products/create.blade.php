@@ -399,21 +399,31 @@
 
                 <!-- Thời hạn sản phẩm -->
                 <div class="mb-4">
-                    <label for="duration_months" class="form-label">
+                    <label class="form-label">
                         <i class="fas fa-clock me-2 text-primary"></i>Thời hạn sản phẩm
                     </label>
-                    <select class="form-select @error('duration_months') is-invalid @enderror"
-                            id="duration_months"
-                            name="duration_months">
-                        <option value="">Không có thời hạn</option>
-                        @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}" {{ old('duration_months') == $i ? 'selected' : '' }}>
-                                {{ $i }} tháng ({{ $i * 30 }} ngày)
-                            </option>
-                        @endfor
-                    </select>
-                    <small class="text-muted">Chọn thời hạn để tự động tính ngày hết hạn khi khách hàng mua hàng. Hệ thống sẽ thông báo qua Telegram khi sắp hết hạn.</small>
-                    @error('duration_months')
+                    <div class="input-group">
+                        <input type="number" 
+                               class="form-control @error('duration_value') is-invalid @enderror" 
+                               id="duration_value" 
+                               name="duration_value" 
+                               value="{{ old('duration_value') }}" 
+                               min="1" 
+                               placeholder="Ví dụ: 1, 7, 30...">
+                        <select class="form-select @error('duration_type') is-invalid @enderror" 
+                                id="duration_type" 
+                                name="duration_type" 
+                                style="max-width: 150px;">
+                            <option value="">Không giới hạn</option>
+                            <option value="days" {{ old('duration_type') == 'days' ? 'selected' : '' }}>Ngày</option>
+                            <option value="months" {{ old('duration_type') == 'months' ? 'selected' : '' }}>Tháng</option>
+                        </select>
+                    </div>
+                    <small class="text-muted">Nhập số lượng và chọn đơn vị (Ngày/Tháng). Ví dụ: 30 ngày, 3 tháng. Để trống hoặc chọn "Không giới hạn" nếu dùng vĩnh viễn.</small>
+                    @error('duration_value')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                    @error('duration_type')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>

@@ -214,9 +214,14 @@ class Order extends Model
                 $totalDuration = null;
 
                 // Nếu sản phẩm có thời hạn → tính expiry_date
-                if ($product && $product->duration_months) {
-                    $expiryDate = $startDate->copy()->addMonths($product->duration_months);
-                    $totalDuration = $product->duration_months . ' tháng';
+                if ($product && $product->duration_value && $product->duration_type) {
+                    if ($product->duration_type === 'days') {
+                        $expiryDate = $startDate->copy()->addDays($product->duration_value);
+                        $totalDuration = $product->duration_value . ' ngày';
+                    } elseif ($product->duration_type === 'months') {
+                        $expiryDate = $startDate->copy()->addMonths($product->duration_value);
+                        $totalDuration = $product->duration_value . ' tháng';
+                    }
                 }
 
                 $duration = CustomerDuration::create([

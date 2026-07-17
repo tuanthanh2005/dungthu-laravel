@@ -895,7 +895,8 @@ class AdminController extends Controller
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
             'is_vpn' => $request->has('is_vpn') ? true : false,
-            'duration_months' => $request->duration_months,
+            'duration_value' => $request->duration_value,
+            'duration_type' => $request->duration_type,
         ]);
 
         // Sync features nếu có
@@ -1086,7 +1087,8 @@ class AdminController extends Controller
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
             'is_vpn' => $request->has('is_vpn') ? true : false,
-            'duration_months' => $request->duration_months,
+            'duration_value' => $request->duration_value,
+            'duration_type' => $request->duration_type,
         ]);
 
         // Sync features nếu có

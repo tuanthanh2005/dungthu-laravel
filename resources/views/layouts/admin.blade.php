@@ -136,6 +136,11 @@
             <span class="nav-text">Pre-orders</span>
             <span class="nav-badge" id="sidebarPreorderBadge" style="display: none;">0</span>
         </a>
+        <a href="{{ route('admin.customer-durations') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.customer-durations*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-user-clock"></i></span>
+            <span class="nav-text">Thời hạn khách</span>
+        </a>
 
         <div class="sidebar-divider"></div>
 

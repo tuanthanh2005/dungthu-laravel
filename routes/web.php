@@ -25,6 +25,7 @@ use App\Http\Controllers\BuffOrderController;
 use App\Http\Controllers\Admin\AdminBuffController;
 use App\Http\Controllers\Admin\GoogleIndexingController;
 use App\Http\Controllers\Admin\AdminAffiliateController;
+use App\Http\Controllers\Admin\CustomerDurationController;
 use App\Http\Controllers\Affiliate\AffiliateAuthController;
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\WebhookController;
@@ -79,10 +80,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/buff/{buffOrder}', [BuffOrderController::class, 'detail'])->name('buff.detail');
 });
 
-// Buff routes
-Route::get('/buff', [BuffController::class, 'index'])->name('buff.index');
-Route::get('/buff/server/{id}', [BuffController::class, 'getServer'])->name('buff.server');
-Route::middleware('auth')->post('/buff/order', [BuffController::class, 'placeOrder'])->name('buff.order');
+// Buff routes (Legacy/Unused)
+// Route::get('/buff', [BuffController::class, 'index'])->name('buff.index');
+// Route::get('/buff/server/{id}', [BuffController::class, 'getServer'])->name('buff.server');
+// Route::middleware('auth')->post('/buff/order', [BuffController::class, 'placeOrder'])->name('buff.order');
 
 // VPN routes
 Route::get('/vpn', [\App\Http\Controllers\VpnProxyController::class, 'index'])->name('vpn.index');
@@ -373,6 +374,14 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
         Route::post('/withdrawals/{withdrawal}/approve', [AdminAffiliateController::class, 'approveWithdrawal'])->name('admin.affiliates.withdrawals.approve');
         Route::post('/withdrawals/{withdrawal}/reject', [AdminAffiliateController::class, 'rejectWithdrawal'])->name('admin.affiliates.withdrawals.reject');
     });
+
+    // Customer Durations Management
+    Route::get('/customer-durations', [CustomerDurationController::class, 'index'])->name('admin.customer-durations');
+    Route::get('/customer-durations/create', [CustomerDurationController::class, 'create'])->name('admin.customer-durations.create');
+    Route::post('/customer-durations', [CustomerDurationController::class, 'store'])->name('admin.customer-durations.store');
+    Route::get('/customer-durations/{customerDuration}/edit', [CustomerDurationController::class, 'edit'])->name('admin.customer-durations.edit');
+    Route::put('/customer-durations/{customerDuration}', [CustomerDurationController::class, 'update'])->name('admin.customer-durations.update');
+    Route::delete('/customer-durations/{customerDuration}', [CustomerDurationController::class, 'destroy'])->name('admin.customer-durations.destroy');
 });
 
 // ─── Affiliate (Cộng Tác Viên) Public Routes ─────────────────────────────────

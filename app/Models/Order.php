@@ -42,6 +42,7 @@ class Order extends Model
                 if ($order->user_id) {
                     $order->user()->increment('spin_tickets');
                 }
+                $order->createCustomerDurations();
             }
         });
 
@@ -51,6 +52,7 @@ class Order extends Model
                 if ($order->user_id) {
                     $order->user()->increment('spin_tickets');
                 }
+                $order->createCustomerDurations();
             }
         });
     }
@@ -190,5 +192,34 @@ class Order extends Model
                   ->whereNotIn('category', ['tiktok', 'ebooks']);
             }
         });
+    }
+
+    /**
+     * Tự động tạo thời hạn cho khách hàng khi đơn hàng hoàn thành.
+     */
+    public function createCustomerDurations()
+    {
+        // Tránh lỗi nếu orderItems chưa load
+        $this->loadMissing('orderItems.product');
+        
+        foreach ($this->orderItems as $item) {
+            $exists = CustomerDuration::where('order_id', $this->id)
+                ->where('product_id', $item->product_id)
+                ->exists();
+
+            if (!$exists) {
+                CustomerDuration::create([
+                    'order_id' => $this->id,
+                    'order_code' => $this->order_code ?? ('DH' . $this->id),
+                    'user_id' => $this->user_id,
+                    'customer_name' => $this->customer_name,
+                    'customer_email' => $this->customer_email,
+                    'customer_phone' => $this->customer_phone,
+                    'product_id' => $item->product_id,
+                    'product_name' => optional($item->product)->name ?? 'Sản phẩm #' . $item->product_id,
+                    'start_date' => $this->created_at ?? now(),
+                ]);
+            }
+        }
     }
 }

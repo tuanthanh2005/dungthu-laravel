@@ -1,4 +1,4 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Lịch Sử Mua Hàng - ' . $user->name)
 

@@ -1099,7 +1099,8 @@ class AdminController extends Controller
         // Submit to Google Indexing
         GoogleIndexingService::submitProductSafe($product, 'product_update');
 
-        return redirect()->route('admin.products')->with('success', 'Cập nhật sản phẩm thành công!');
+        $queryParams = request()->only(['page', 'search', 'category', 'flash_sale']);
+        return redirect()->route('admin.products', $queryParams)->with('success', 'Cập nhật sản phẩm thành công!');
     }
 
     public function deleteProduct(Product $product)

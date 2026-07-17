@@ -68,7 +68,7 @@
 <div class="container-fluid px-0">
         <div class="admin-card" data-aos="fade-up">
             <div class="mb-4">
-                <a href="{{ route('admin.products') }}" class="btn btn-outline-secondary rounded-pill mb-3">
+                <a href="{{ route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])) }}" class="btn btn-outline-secondary rounded-pill mb-3">
                     <i class="fas fa-arrow-left me-2"></i>Quay lại
                 </a>
                 <h3 class="fw-bold mb-0">
@@ -97,7 +97,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products.update', array_merge(['product' => $product->id], request()->only(['page', 'search', 'category', 'flash_sale']))) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 

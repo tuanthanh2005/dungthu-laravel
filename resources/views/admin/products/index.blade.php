@@ -306,7 +306,7 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.products.edit', $product) }}" 
+                                    <a href="{{ route('admin.products.edit', array_merge(['product' => $product->id], request()->only(['page', 'search', 'category', 'flash_sale']))) }}" 
                                        class="btn btn-sm btn-outline-primary rounded-start"
                                        title="Chỉnh sửa">
                                         <i class="fas fa-edit"></i>

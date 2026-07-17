@@ -163,7 +163,7 @@
                                     <h5>Index Tất Cả Sản Phẩm</h5>
                                     <p class="text-muted small">Gửi toàn bộ sản phẩm hiện có trên website lên Google Indexing API.</p>
                                 </div>
-                                <button type="button" class="btn btn-primary rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all-products') }}" data-type="Sản phẩm">
+                                <button type="button" class="btn btn-primary rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all-products', [], false) }}" data-type="Sản phẩm">
                                     <i class="fab fa-google me-2"></i>Bắt đầu gửi
                                 </button>
                             </div>
@@ -177,7 +177,7 @@
                                     <h5>Index Tất Cả Danh Mục</h5>
                                     <p class="text-muted small">Gửi tất cả các danh mục lọc sản phẩm hoạt động lên Google Indexing API.</p>
                                 </div>
-                                <button type="button" class="btn btn-success text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all-categories') }}" data-type="Danh mục">
+                                <button type="button" class="btn btn-success text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all-categories', [], false) }}" data-type="Danh mục">
                                     <i class="fab fa-google me-2"></i>Bắt đầu gửi
                                 </button>
                             </div>
@@ -191,7 +191,7 @@
                                     <h5>Index Từ Khóa SEO</h5>
                                     <p class="text-muted small">Gửi tất cả các trang đích (landing pages) từ khóa SEO đang hoạt động lên Google.</p>
                                 </div>
-                                <button type="button" class="btn btn-warning text-dark rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.seo-keywords.submit-all') }}" data-type="Từ khóa SEO">
+                                <button type="button" class="btn btn-warning text-dark rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.seo-keywords.submit-all', [], false) }}" data-type="Từ khóa SEO">
                                     <i class="fab fa-google me-2"></i>Bắt đầu gửi
                                 </button>
                             </div>
@@ -205,7 +205,7 @@
                                     <h5>Index Tất Cả Blog</h5>
                                     <p class="text-muted small">Gửi toàn bộ bài viết (blog) đã xuất bản lên Google Indexing API.</p>
                                 </div>
-                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all') }}" data-type="Blog">
+                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}" data-type="Blog">
                                     <i class="fab fa-google me-2"></i>Bắt đầu gửi
                                 </button>
                             </div>
@@ -219,7 +219,7 @@
                                     <h5>Index Trang Proxy & VPN</h5>
                                     <p class="text-muted small">Gửi các trang đích danh sách Proxy và VPN lên Google Indexing API.</p>
                                 </div>
-                                <button type="button" class="btn btn-info text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all-proxies') }}" data-type="Proxy & VPN">
+                                <button type="button" class="btn btn-info text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all-proxies', [], false) }}" data-type="Proxy & VPN">
                                     <i class="fab fa-google me-2"></i>Bắt đầu gửi
                                 </button>
                             </div>
@@ -312,7 +312,7 @@
         tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Đang tải...</td></tr>';
         document.getElementById('pagination-container').innerHTML = '';
 
-        fetch('{{ route("admin.google-indexing.recent") }}?minutes=1440&limit=500', {
+        fetch('{{ route("admin.google-indexing.recent", [], false) }}?minutes=1440&limit=500', {
             headers: {
                 'Accept': 'application/json'
             }
@@ -437,7 +437,7 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
 
-        fetch('{{ route("admin.google-indexing.submit-url") }}', {
+        fetch('{{ route("admin.google-indexing.submit-url", [], false) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

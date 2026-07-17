@@ -1,4 +1,4 @@
-extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Cấu hình & Lập chỉ mục Google Indexing')
 

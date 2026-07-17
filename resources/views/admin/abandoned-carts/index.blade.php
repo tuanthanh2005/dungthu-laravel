@@ -1,4 +1,4 @@
-extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Giỏ hàng bỏ quên - Admin')
 

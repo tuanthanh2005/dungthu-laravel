@@ -1,4 +1,4 @@
-﻿@extends('layouts.admin')
+extends('layouts.admin')
 
 @section('title', 'Chi tiết Cộng tác viên | Admin')
 

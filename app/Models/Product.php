@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -34,6 +34,7 @@ class Product extends Model
         'is_combo_ai',
         'is_flash_sale',
         'is_vpn',
+        'duration_months',
     ];
 
     protected $casts = [
@@ -48,6 +49,7 @@ class Product extends Model
         'is_exclusive' => 'boolean',
         'is_combo_ai' => 'boolean',
         'is_flash_sale' => 'boolean',
+        'duration_months' => 'integer',
     ];
 
     public function categoryRelation()

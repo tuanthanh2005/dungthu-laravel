@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -851,6 +851,7 @@ class AdminController extends Controller
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
             'is_vpn' => $request->has('is_vpn') ? true : false,
+            'duration_months' => $request->duration_months,
         ]);
 
         // Sync features nếu có
@@ -1041,6 +1042,7 @@ class AdminController extends Controller
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
             'is_vpn' => $request->has('is_vpn') ? true : false,
+            'duration_months' => $request->duration_months,
         ]);
 
         // Sync features nếu có

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Thêm Sản phẩm - Admin')
 
@@ -396,6 +396,28 @@
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <!-- Thời hạn sản phẩm -->
+                <div class="mb-4">
+                    <label for="duration_months" class="form-label">
+                        <i class="fas fa-clock me-2 text-primary"></i>Thời hạn sản phẩm
+                    </label>
+                    <select class="form-select @error('duration_months') is-invalid @enderror"
+                            id="duration_months"
+                            name="duration_months">
+                        <option value="">Không có thời hạn</option>
+                        @for ($i = 1; $i <= 12; $i++)
+                            <option value="{{ $i }}" {{ old('duration_months') == $i ? 'selected' : '' }}>
+                                {{ $i }} tháng ({{ $i * 30 }} ngày)
+                            </option>
+                        @endfor
+                    </select>
+                    <small class="text-muted">Chọn thời hạn để tự động tính ngày hết hạn khi khách hàng mua hàng. Hệ thống sẽ thông báo qua Telegram khi sắp hết hạn.</small>
+                    @error('duration_months')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
 
                 <!-- Image Upload -->
                 <div class="mb-4">

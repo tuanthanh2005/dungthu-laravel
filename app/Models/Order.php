@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -208,7 +208,18 @@ class Order extends Model
                 ->exists();
 
             if (!$exists) {
-                CustomerDuration::create([
+                $product = $item->product;
+                $startDate = now();
+                $expiryDate = null;
+                $totalDuration = null;
+
+                // Nếu sản phẩm có thời hạn → tính expiry_date
+                if ($product && $product->duration_months) {
+                    $expiryDate = $startDate->copy()->addMonths($product->duration_months);
+                    $totalDuration = $product->duration_months . ' tháng';
+                }
+
+                $duration = CustomerDuration::create([
                     'order_id' => $this->id,
                     'order_code' => $this->order_code ?? ('DH' . $this->id),
                     'user_id' => $this->user_id,
@@ -216,10 +227,41 @@ class Order extends Model
                     'customer_email' => $this->customer_email,
                     'customer_phone' => $this->customer_phone,
                     'product_id' => $item->product_id,
-                    'product_name' => optional($item->product)->name ?? 'Sản phẩm #' . $item->product_id,
-                    'start_date' => $this->created_at ?? now(),
+                    'product_name' => optional($product)->name ?? 'Sản phẩm #' . $item->product_id,
+                    'total_duration' => $totalDuration,
+                    'start_date' => $startDate,
+                    'expiry_date' => $expiryDate,
                 ]);
+
+                // Gửi Telegram thông báo cho admin
+                if ($expiryDate) {
+                    $this->sendDurationTelegramNotification($duration, $product);
+                }
             }
+        }
+    }
+
+    /**
+     * Gửi thông báo Telegram khi tạo thời hạn dịch vụ mới.
+     */
+    private function sendDurationTelegramNotification($duration, $product)
+    {
+        try {
+            $message = "📋 <b>THỜI HẠN DỊCH VỤ MỚI</b>\n";
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+            $message .= "👤 <b>Khách hàng:</b> " . $duration->customer_name . "\n";
+            $message .= "📧 <b>Email:</b> " . $duration->customer_email . "\n";
+            $message .= "📱 <b>SĐT:</b> " . ($duration->customer_phone ?? 'N/A') . "\n\n";
+            $message .= "📦 <b>Sản phẩm:</b> " . $duration->product_name . "\n";
+            $message .= "🔖 <b>Mã đơn:</b> " . $duration->order_code . "\n";
+            $message .= "⏱ <b>Thời hạn:</b> " . $duration->total_duration . "\n";
+            $message .= "📅 <b>Bắt đầu:</b> " . $duration->start_date->format('d/m/Y') . "\n";
+            $message .= "📅 <b>Hết hạn:</b> " . $duration->expiry_date->format('d/m/Y') . "\n\n";
+            $message .= "✅ <i>Đã cấp phát thời hạn dịch vụ tự động!</i>";
+
+            \App\Helpers\TelegramHelper::sendMessage($message);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Telegram duration notification error: ' . $e->getMessage());
         }
     }
 }

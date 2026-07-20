@@ -20,16 +20,18 @@ class WebhookController extends Controller
     {
         Log::info('SePay Webhook received: ', $request->all());
 
-        // Validate Authorization header if configured
-        $authHeader = $request->header('Authorization');
+        // Validate Authorization token from query parameter to avoid Apache/Nginx header stripping
+        $token = $request->query('token');
         $apiKey = config('services.sepay.key');
 
-        if ($authHeader && $apiKey) {
-            // SePay sends Authorization header, check if it contains the API Key
-            if (!str_contains($authHeader, $apiKey)) {
-                Log::warning('SePay Webhook Unauthorized access attempt.');
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
+        if (!$apiKey) {
+            Log::error('SePay Webhook: API Key is not configured in site settings or .env.');
+            return response()->json(['message' => 'System configuration error'], 500);
+        }
+
+        if (!$token || $token !== $apiKey) {
+            Log::warning('SePay Webhook Unauthorized access attempt (Token mismatch or missing).');
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         $content = $request->input('content', '');

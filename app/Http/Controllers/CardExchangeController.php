@@ -29,6 +29,15 @@ class CardExchangeController extends Controller
             return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để đổi thẻ cào');
         }
 
+        // Giới hạn đổi thẻ tối đa 5 lần mỗi ngày
+        $todayExchangesCount = CardExchange::where('user_id', Auth::id())
+            ->whereDate('created_at', \Carbon\Carbon::today())
+            ->count();
+
+        if ($todayExchangesCount >= 5) {
+            return redirect()->back()->with('error', 'Bạn đã đạt giới hạn đổi thẻ tối đa 5 lần trong một ngày. Vui lòng quay lại vào ngày mai!');
+        }
+
         $request->validate([
             'card_type' => 'required|in:Viettel,Mobifone,Vinaphone,Garena,Vcoin,Zing',
             'card_serial' => 'required|string|min:10|max:20',

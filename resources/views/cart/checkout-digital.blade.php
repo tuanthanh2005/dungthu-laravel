@@ -274,38 +274,50 @@
                                 @csrf
                                 <input type="hidden" name="payment_method" id="payment_method_input" value="{{ app()->getLocale() === 'en' ? 'crypto' : 'vietqr' }}">
                                 <input type="hidden" name="order_code" value="{{ $orderCode }}">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-user-circle me-2 text-primary"></i>{{ __('Họ và tên') }}
-                                    </label>
-                                    <input type="text" class="form-control form-control-lg" name="customer_name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-envelope me-2 text-primary"></i>Email
-                                    </label>
-                                    <input type="email" class="form-control form-control-lg" name="customer_email" required>
-                                    <small class="text-muted">{{ __('Mã kích hoạt sẽ được gửi qua email') }}</small>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-phone me-2 text-primary"></i>{{ __('Số điện thoại') }}
-                                    </label>
-                                    <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-user-circle me-2 text-primary"></i>{{ __('Họ và tên') }}
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" name="customer_name" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-phone me-2 text-primary"></i>{{ __('Số điện thoại') }}
+                                        </label>
+                                        <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
+                                    </div>
                                 </div>
 
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-danger fw-normal" id="zalo-label">{{ __('(Bắt buộc nếu không có Facebook)') }}</small>
-                                    </label>
-                                    <input type="text" class="form-control form-control-lg contact-input" name="customer_zalo" placeholder="{{ __('Nhập số Zalo của bạn') }}">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-envelope me-2 text-primary"></i>Email
+                                        </label>
+                                        <input type="email" class="form-control form-control-lg" name="customer_email" required>
+                                        <small class="text-muted">{{ __('Mã kích hoạt sẽ được gửi qua email') }}</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-edit me-2 text-primary"></i>{{ __('Email cần nâng cấp hoặc ghi chú (không bắt buộc)') }}
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" name="upgrade_email_or_note" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}">
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">
-                                        <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-danger fw-normal" id="facebook-label">{{ __('(Bắt buộc nếu không có Zalo)') }}</small>
-                                    </label>
-                                    <input type="url" class="form-control form-control-lg contact-input" name="customer_facebook" placeholder="{{ __('Ví dụ: https://facebook.com/username') }}">
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-comment-dots me-2 text-primary"></i>Zalo <small class="text-danger fw-normal" id="zalo-label">{{ __('(Bắt buộc nếu không có Facebook)') }}</small>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg contact-input" name="customer_zalo" placeholder="{{ __('Nhập số Zalo của bạn') }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">
+                                            <i class="fab fa-facebook me-2 text-primary"></i>Link Facebook <small class="text-danger fw-normal" id="facebook-label">{{ __('(Bắt buộc nếu không có Zalo)') }}</small>
+                                        </label>
+                                        <input type="url" class="form-control form-control-lg contact-input" name="customer_facebook" placeholder="{{ __('Ví dụ: https://facebook.com/username') }}">
+                                    </div>
                                 </div>
 
                                 <div class="form-check mb-3">
@@ -317,13 +329,6 @@
 
                                 <div id="contact-error" class="alert alert-danger py-2 mb-3 d-none" style="font-size: 13px;">
                                     <i class="fas fa-exclamation-triangle me-2"></i>{{ __('Vui lòng để lại ít nhất 1 thông tin liên hệ hoặc chọn "Tự liên hệ qua Boxchat"!') }}
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">
-                                        <i class="fas fa-edit me-2 text-primary"></i>{{ __('Email cần nâng cấp hoặc ghi chú (không bắt buộc)') }}
-                                    </label>
-                                    <input type="text" class="form-control form-control-lg" name="upgrade_email_or_note" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}">
                                 </div>
 
                                 <!-- Mã giảm giá -->

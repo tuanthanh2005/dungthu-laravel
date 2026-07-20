@@ -220,9 +220,9 @@
             <div class="form-group @error('admin_pin') has-error @enderror">
                 <label class="form-label">Mã Xác Nhận <span style="color: #dc3545;">*</span></label>
                 <input type="text" name="admin_pin" class="form-control"
-                    placeholder="Nhập 3 chữ số xác nhận"
-                    maxlength="3" pattern="\d{3}" required
-                    style="font-size: 1.2rem; letter-spacing: 0.5rem; text-align: center;">
+                    placeholder="Nhập 8 chữ số xác nhận"
+                    maxlength="8" pattern="\d{8}" required
+                    style="font-size: 1.2rem; letter-spacing: 0.2rem; text-align: center;">
                 @error('admin_pin')
                     <div class="error-message">{{ $message }}</div>
                 @enderror

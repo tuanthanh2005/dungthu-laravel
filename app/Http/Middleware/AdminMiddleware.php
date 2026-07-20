@@ -15,19 +15,19 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (!auth()->check() || auth()->user()->role !== 'superadmin_1') {
             return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập!');
         }
 
-        // Require 3-digit PIN for admin write actions (POST/PUT/PATCH/DELETE)
+        // Require 8-digit PIN for admin write actions (POST/PUT/PATCH/DELETE)
         $method = strtoupper($request->getMethod());
         if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
             $pin = $request->input('admin_pin');
-            if (!is_string($pin) || !preg_match('/^\d{3}$/', $pin)) {
-                return $this->deny($request, 'Vui lòng nhập mã xác nhận đúng 3 số.');
+            if (!is_string($pin) || !preg_match('/^\d{8}$/', $pin)) {
+                return $this->deny($request, 'Vui lòng nhập mã xác nhận đúng 8 số.');
             }
 
-            $expected = (string) config('admin.action_pin', '999');
+            $expected = (string) config('admin.action_pin', '12112004');
             if ($pin !== $expected) {
                 return $this->deny($request, 'Sai mã xác nhận. Vui lòng thử lại.');
             }

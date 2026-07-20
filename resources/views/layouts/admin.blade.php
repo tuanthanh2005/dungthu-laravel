@@ -448,9 +448,9 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
 
         Swal.fire({
             title: @json(__('Xác nhận thao tác')),
-            text: @json(__('Nhập mã PIN 3 số để xác nhận:')),
+            text: @json(__('Nhập mã PIN 8 số để xác nhận:')),
             input: 'password',
-            inputAttributes: { maxlength: 3, pattern: '[0-9]{3}', inputmode: 'numeric' },
+            inputAttributes: { maxlength: 8, pattern: '[0-9]{8}', inputmode: 'numeric' },
             showCancelButton: true,
             confirmButtonText: @json(__('Xác nhận')),
             cancelButtonText: @json(__('Hủy')),
@@ -458,8 +458,8 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
         }).then((result) => {
             if (!result.isConfirmed) return;
             const pin = result.value;
-            if (!/^\d{3}$/.test(pin)) {
-                Swal.fire({ icon: 'error', title: @json(__('Lỗi')), text: @json(__('Mã PIN phải đúng 3 số.')) });
+            if (!/^\d{8}$/.test(pin)) {
+                Swal.fire({ icon: 'error', title: @json(__('Lỗi')), text: @json(__('Mã PIN phải đúng 8 số.')) });
                 return;
             }
             let input = form.querySelector('input[name="admin_pin"]');

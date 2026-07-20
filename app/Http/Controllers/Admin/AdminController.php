@@ -332,14 +332,14 @@ class AdminController extends Controller
     public function updateUserRole(Request $request, User $user)
     {
         $request->validate([
-            'role' => 'required|in:user,admin,moderator',
+            'role' => 'required|in:user,superadmin_1,moderator',
         ], [
             'role.required' => 'Quyền không được để trống',
             'role.in' => 'Quyền không hợp lệ',
         ]);
 
-        // Prevent users from removing their own admin role
-        if (auth()->id() === $user->id && $request->role !== 'admin') {
+        // Prevent users from removing their own superadmin_1 role
+        if (auth()->id() === $user->id && $request->role !== 'superadmin_1') {
             return response()->json([
                 'success' => false,
                 'message' => 'Không thể thay đổi quyền của chính mình'
@@ -1747,7 +1747,7 @@ class AdminController extends Controller
             'pin' => 'required',
         ]);
 
-        if ($request->pin === '113') {
+        if ($request->pin === '162004') {
             session(['admin_unlocked' => true]);
             
             // Check for previous intended URL or dashboard

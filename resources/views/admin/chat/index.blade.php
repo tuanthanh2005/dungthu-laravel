@@ -478,7 +478,7 @@ function sendAdminMessage() {
     })
     .then(async (res) => {
         if (res.status === 403) {
-            const pin = window.prompt('Nhập mã xác nhận (3 số) để tiếp tục:');
+            const pin = window.prompt('Nhập mã xác nhận (8 số) để tiếp tục:');
             if (pin === null) throw new Error('Bị hủy');
             formData.set('admin_pin', pin);
             return fetch(`/admin/chat/reply/${selectedId}`, {

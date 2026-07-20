@@ -175,7 +175,7 @@
                             <div class="fw-bold text-sm">{{ Auth::user()->name }}</div>
                             <div class="text-muted" style="font-size:0.78rem;">{{ Auth::user()->email }}</div>
                         </li>
-                        @if(Auth::user()->role === 'admin')
+                        @if(Auth::user()->role === 'superadmin_1')
                             <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>{{ __('Dashboard Admin') }}</a></li>
                             <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>{{ __('Quản lý Menu') }}</a></li>
                             <li><a class="dropdown-item" href="{{ route('admin.proxies') }}"><i class="fas fa-network-wired me-2 text-info"></i>{{ __('Quản lý Proxy') }}</a></li>

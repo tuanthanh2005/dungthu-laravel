@@ -136,7 +136,7 @@ class ChatController extends Controller
     // Admin: Tổng số tin nhắn chưa đọc từ khách hàng
     public function adminUnreadCount()
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->role !== 'superadmin_1') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -150,7 +150,7 @@ class ChatController extends Controller
     // Admin: Xem danh sách users/affiliates có tin nhắn
     public function adminIndex()
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->role !== 'superadmin_1') {
             abort(403);
         }
 
@@ -210,7 +210,7 @@ class ChatController extends Controller
 
         $recentChats = $recentChats->sortByDesc('last_message_at');
 
-        $allUsers = User::where('role', '!=', 'admin')->orderBy('name')->get();
+        $allUsers = User::where('role', '!=', 'superadmin_1')->orderBy('name')->get();
         $allAffiliates = \App\Models\Affiliate::orderBy('name')->get();
 
         return view('admin.chat.index', compact('recentChats', 'allUsers', 'allAffiliates'));
@@ -219,7 +219,7 @@ class ChatController extends Controller
     // Admin: Xem tin nhắn của một user/affiliate
     public function adminMessages($id)
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->role !== 'superadmin_1') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -252,7 +252,7 @@ class ChatController extends Controller
     // Admin: Gửi tin nhắn cho user/affiliate
     public function adminReply(Request $request, $id)
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->role !== 'superadmin_1') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 

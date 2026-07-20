@@ -44,8 +44,8 @@ class CheckMenuEnabled
             return $next($request);
         }
 
-        // Admin bypass — admin always has full access
-        if ($request->user() && $request->user()->role === 'admin') {
+        // Admin bypass — superadmin_1 always has full access
+        if ($request->user() && $request->user()->role === 'superadmin_1') {
             return $next($request);
         }
 

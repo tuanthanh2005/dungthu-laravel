@@ -15,15 +15,8 @@ class AdminRouteLock
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Các route được miễn trừ (Dashboard, Blog, và trang xác thực)
+        // Các route được miễn trừ (Chỉ trang xác thực)
         $allowedRoutes = [
-            'admin.dashboard',
-            'admin.blogs',
-            'admin.blogs.create',
-            'admin.blogs.store',
-            'admin.blogs.edit',
-            'admin.blogs.update',
-            'admin.blogs.delete',
             'admin.verify-pin',
             'admin.verify-pin.post'
         ];

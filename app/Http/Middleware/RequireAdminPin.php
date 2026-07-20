@@ -16,11 +16,11 @@ class RequireAdminPin
         }
 
         $pin = $request->input('admin_pin');
-        if (!is_string($pin) || !preg_match('/^\d{3}$/', $pin)) {
-            return $this->deny($request, 'Vui lòng nhập mã xác nhận đúng 3 số.');
+        if (!is_string($pin) || !preg_match('/^\d{8}$/', $pin)) {
+            return $this->deny($request, 'Vui lòng nhập mã xác nhận đúng 8 số.');
         }
 
-        $expected = (string) config('admin.action_pin', '999');
+        $expected = (string) config('admin.action_pin', '12112004');
         if ($pin !== $expected) {
             return $this->deny($request, 'Sai mã xác nhận. Vui lòng thử lại.');
         }

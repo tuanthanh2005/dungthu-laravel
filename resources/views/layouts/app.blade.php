@@ -161,10 +161,10 @@
 
                 e.preventDefault();
 
-                const pin = window.prompt(@json(__('Nhập mã xác nhận để thực hiện thao tác')));
+                const pin = window.prompt(@json(__('Nhập mã xác nhận 8 số để thực hiện thao tác')));
                 if (pin === null) return;
-                if (!/^\d{3}$/.test(pin)) {
-                    alert(@json(__('Mã xác nhận phải đúng 3 số.')));
+                if (!/^\d{8}$/.test(pin)) {
+                    alert(@json(__('Mã xác nhận phải đúng 8 số.')));
                     return;
                 }
 

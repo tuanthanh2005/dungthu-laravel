@@ -118,9 +118,9 @@ Route::get('/community/{post:slug}', [CommunityPostController::class, 'show'])->
 
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Password Reset Routes
@@ -173,7 +173,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->prefix('chat')->group(function () {
     Route::get('/', [ChatController::class, 'showChat'])->name('chat.index');
     Route::get('/messages', [ChatController::class, 'index'])->name('chat.messages');
-    Route::post('/send', [ChatController::class, 'store'])->name('chat.send');
+    Route::post('/send', [ChatController::class, 'store'])->middleware('throttle:10,1')->name('chat.send');
     Route::get('/new', [ChatController::class, 'getNewMessages'])->name('chat.new');
     Route::get('/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
     Route::post('/mark-read', [ChatController::class, 'markRead'])->name('chat.mark-read');
@@ -387,9 +387,9 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
 // ─── Affiliate (Cộng Tác Viên) Public Routes ─────────────────────────────────
 Route::prefix('cong-tac-vien')->group(function () {
     Route::get('/dang-nhap', [AffiliateAuthController::class, 'showLogin'])->name('affiliate.login');
-    Route::post('/dang-nhap', [AffiliateAuthController::class, 'login'])->name('affiliate.login.post');
+    Route::post('/dang-nhap', [AffiliateAuthController::class, 'login'])->middleware('throttle:10,1')->name('affiliate.login.post');
     Route::get('/dang-ky', [AffiliateAuthController::class, 'showRegister'])->name('affiliate.register');
-    Route::post('/dang-ky', [AffiliateAuthController::class, 'register'])->name('affiliate.register.post');
+    Route::post('/dang-ky', [AffiliateAuthController::class, 'register'])->middleware('throttle:5,1')->name('affiliate.register.post');
     Route::post('/dang-xuat', [AffiliateAuthController::class, 'logout'])->name('affiliate.logout');
 
     // Status pages (accessible when logged in but not approved)
@@ -453,4 +453,4 @@ Route::post('/go/{slug}/subscribe', [\App\Http\Controllers\SeoRouterController::
 // SePay Webhook & Auto-Payment check routes
 Route::post('/webhook/sepay', [WebhookController::class, 'handleSepayWebhook'])->name('payment.webhook.sepay');
 Route::get('/api/payment/check-status/{orderCode}', [WebhookController::class, 'checkStatus'])->name('payment.check-status');
-Route::post('/api/payment/check-webhook/{orderCode}', [WebhookController::class, 'checkWebhook'])->name('payment.check-webhook');
+Route::post('/api/payment/check-webhook/{orderCode}', [WebhookController::class, 'checkWebhook'])->middleware('throttle:10,1')->name('payment.check-webhook');

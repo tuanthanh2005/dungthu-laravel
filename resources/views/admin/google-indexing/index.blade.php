@@ -137,7 +137,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="input-pin" class="form-label fw-bold">Mã xác nhận (PIN Admin):</label>
-                                <input type="password" id="input-pin" class="form-control px-3 py-2 rounded-3" placeholder="Mã PIN 3 số" required maxlength="3">
+                                <input type="password" id="input-pin" class="form-control px-3 py-2 rounded-3" placeholder="Mã PIN 8 số" required maxlength="8">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm w-100 mt-2 btn-submit-url">
@@ -429,8 +429,8 @@
         const submitBtn = document.querySelector('.btn-submit-url');
         const originalHtml = submitBtn.innerHTML;
 
-        if (!/^\d{3}$/.test(pinInput)) {
-            alert('Mã xác nhận phải đúng 3 số.');
+        if (!/^\d{8}$/.test(pinInput)) {
+            alert('Mã xác nhận phải đúng 8 số.');
             return;
         }
 
@@ -516,10 +516,10 @@
     });
 
     function executeBulkIndex(url, typeText, button, originalHtml) {
-        const pin = window.prompt(`Nhập mã xác nhận (PIN admin) để gửi INDEX HÀNG LOẠT ${typeText} lên Google:`);
+        const pin = window.prompt(`Nhập mã xác nhận (PIN admin 8 số) để gửi INDEX HÀNG LOẠT ${typeText} lên Google:`);
         if (pin === null) return;
-        if (!/^\d{3}$/.test(pin)) {
-            alert('Mã xác nhận phải đúng 3 số.');
+        if (!/^\d{8}$/.test(pin)) {
+            alert('Mã xác nhận phải đúng 8 số.');
             return;
         }
 

@@ -406,7 +406,7 @@ function generateVoucher() {
         .then(async response => {
             if (response.status === 403) {
                 const err = await response.json();
-                const pin = window.prompt(err.message || 'Nhập mã xác nhận (3 số) để tiếp tục:');
+                const pin = window.prompt(err.message || 'Nhập mã xác nhận (8 số) để tiếp tục:');
                 if (pin !== null) {
                     doFetch(pin);
                 }
@@ -500,7 +500,7 @@ function awardTickets(userId, userName, currentTickets) {
                 .then(async response => {
                     if (response.status === 403) {
                         const err = await response.json();
-                        const pin = window.prompt(err.message || 'Nhập mã xác nhận (3 số) để tiếp tục:');
+                        const pin = window.prompt(err.message || 'Nhập mã xác nhận (8 số) để tiếp tục:');
                         if (pin !== null) {
                             doFetch(pin);
                         }
@@ -575,7 +575,7 @@ function updateUserRole(selectElement) {
         .then(async response => {
             if (response.status === 403) {
                 const err = await response.json();
-                const pin = window.prompt(err.message || 'Nhập mã xác nhận (3 số) để tiếp tục:');
+                const pin = window.prompt(err.message || 'Nhập mã xác nhận (8 số) để tiếp tục:');
                 if (pin !== null) {
                     doFetch(pin);
                 } else {

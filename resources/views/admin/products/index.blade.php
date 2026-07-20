@@ -371,10 +371,10 @@
             const button = this;
             const originalHtml = button.innerHTML;
             
-            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi Index lên Google:');
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin 8 số) để gửi Index lên Google:');
             if (pin === null) return;
-            if (!/^\d{3}$/.test(pin)) {
-                alert('Mã xác nhận phải đúng 3 số.');
+            if (!/^\d{8}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 8 số.');
                 return;
             }
 
@@ -435,10 +435,10 @@
             const button = this;
             const originalHtml = button.innerHTML;
             
-            const pin = window.prompt('Nhập mã xác nhận (PIN admin) để gửi INDEX HÀNG LOẠT tất cả sản phẩm lên Google:');
+            const pin = window.prompt('Nhập mã xác nhận (PIN admin 8 số) để gửi INDEX HÀNG LOẠT tất cả sản phẩm lên Google:');
             if (pin === null) return;
-            if (!/^\d{3}$/.test(pin)) {
-                alert('Mã xác nhận phải đúng 3 số.');
+            if (!/^\d{8}$/.test(pin)) {
+                alert('Mã xác nhận phải đúng 8 số.');
                 return;
             }
 

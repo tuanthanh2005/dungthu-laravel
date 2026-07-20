@@ -162,6 +162,9 @@
                 padding: 25px 20px;
             }
         }
+        .grecaptcha-badge {
+            visibility: hidden;
+        }
     </style>
 @endpush
 
@@ -235,6 +238,12 @@
                     {{ __('Tạo Tài Khoản') }}
                 </button>
             </form>
+
+            @if(config('services.recaptcha.site_key'))
+                <div class="text-center mt-2 text-muted" style="font-size: 9px; line-height: 1.2;">
+                    Trang web được bảo vệ bởi reCAPTCHA và <a href="https://policies.google.com/privacy" target="_blank" class="text-muted text-decoration-underline">Chính sách bảo mật</a> & <a href="https://policies.google.com/terms" target="_blank" class="text-muted text-decoration-underline">Điều khoản dịch vụ</a> của Google.
+                </div>
+            @endif
 
             <p class="login-text">
                 {{ __('Đã có tài khoản?') }} <a href="{{ route('login') }}">{{ __('Đăng nhập ngay') }}</a>

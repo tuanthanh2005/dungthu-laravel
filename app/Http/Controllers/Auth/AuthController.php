@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -56,11 +57,35 @@ class AuthController extends Controller
     // Xử lý register
     public function register(Request $request)
     {
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+        ];
+
+        if (config('services.recaptcha.secret_key')) {
+            $rules['g-recaptcha-response'] = 'required|string';
+        }
+
+        $request->validate($rules, [
+            'g-recaptcha-response.required' => 'Vui lòng xác minh bạn không phải là robot.',
         ]);
+
+        if (config('services.recaptcha.secret_key')) {
+            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => config('services.recaptcha.secret_key'),
+                'response' => $request->input('g-recaptcha-response'),
+                'remoteip' => $request->ip(),
+            ]);
+
+            $responseData = $response->json();
+
+            if (!($responseData['success'] ?? false) || ($responseData['score'] ?? 0) < 0.5) {
+                return back()->withErrors([
+                    'email' => 'Hệ thống phát hiện nghi vấn bot. Vui lòng tải lại trang hoặc thử lại.',
+                ])->withInput();
+            }
+        }
 
         $user = User::create([
             'name' => $request->name,

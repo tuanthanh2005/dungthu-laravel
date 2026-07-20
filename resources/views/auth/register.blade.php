@@ -189,8 +189,11 @@
                 </div>
             @endif
 
-            <form action="{{ route('register.post') }}" method="POST">
+            <form action="{{ route('register.post') }}" method="POST" id="registerForm">
                 @csrf
+                @if(config('services.recaptcha.site_key'))
+                    <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                @endif
 
                 <div class="form-group">
                     <div class="form-input-wrapper">
@@ -278,4 +281,20 @@
         </div>
     </div>
 </div>
+@if(config('services.recaptcha.site_key'))
+    @push('scripts')
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+        <script>
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'register'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        document.getElementById('registerForm').submit();
+                    });
+                });
+            });
+        </script>
+    @endpush
+@endif
 @endsection

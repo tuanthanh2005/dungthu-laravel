@@ -48,7 +48,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="upgrade_email_or_note" class="form-label">{{ __('Email cần nâng cấp hoặc ghi chú (không bắt buộc)') }}</label>
-                            <input type="text" class="form-control" id="upgrade_email_or_note" name="upgrade_email_or_note" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}">
+                            <textarea class="form-control" id="upgrade_email_or_note" name="upgrade_email_or_note" rows="2" style="resize: none;" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}"></textarea>
                         </div>
                     </form>
                 </div>

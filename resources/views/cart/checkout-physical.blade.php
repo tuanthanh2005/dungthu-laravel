@@ -110,7 +110,7 @@
                                     <label class="form-label fw-bold">
                                         <i class="fas fa-edit me-2 text-primary"></i>{{ __('Email cần nâng cấp hoặc ghi chú (không bắt buộc)') }}
                                     </label>
-                                    <input type="text" class="form-control form-control-lg" name="upgrade_email_or_note" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}">
+                                    <textarea class="form-control form-control-lg" name="upgrade_email_or_note" rows="2" style="resize: none;" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}"></textarea>
                                 </div>
 
                                 <div class="alert alert-success">

@@ -173,7 +173,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->prefix('chat')->group(function () {
     Route::get('/', [ChatController::class, 'showChat'])->name('chat.index');
     Route::get('/messages', [ChatController::class, 'index'])->name('chat.messages');
-    Route::post('/send', [ChatController::class, 'store'])->middleware('throttle:10,1')->name('chat.send');
+    Route::post('/send', [ChatController::class, 'store'])->middleware('throttle:60,1')->name('chat.send');
     Route::get('/new', [ChatController::class, 'getNewMessages'])->name('chat.new');
     Route::get('/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread-count');
     Route::post('/mark-read', [ChatController::class, 'markRead'])->name('chat.mark-read');

@@ -704,7 +704,11 @@ document.addEventListener('DOMContentLoaded', function () {
             body: formData
         })
         .then(res => {
-            if (!res.ok) throw new Error('Server error: ' + res.status);
+            if (!res.ok) {
+                return res.json().then(data => {
+                    throw new Error(data.error || 'Server error: ' + res.status);
+                });
+            }
             return res.json();
         })
         .then(data => {
@@ -713,13 +717,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 clearImagePreview();
                 appendMessage(data);
                 lastId = Math.max(lastId, data.id);
+                
+                // Bắt đầu đếm ngược thời gian chờ 10 giây chống spam
+                let cooldown = 10;
+                sendBtn.disabled = true;
+                chatInput.disabled = true;
+                const originalPlaceholder = chatInput.placeholder;
+                
+                sendBtn.innerHTML = `<span style="font-size: 11px; font-weight: bold;">${cooldown}s</span>`;
+                chatInput.placeholder = `Vui lòng đợi ${cooldown} giây...`;
+                
+                let interval = setInterval(() => {
+                    cooldown--;
+                    if (cooldown <= 0) {
+                        clearInterval(interval);
+                        sendBtn.disabled = false;
+                        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                        chatInput.disabled = false;
+                        chatInput.placeholder = originalPlaceholder;
+                        chatInput.focus();
+                    } else {
+                        sendBtn.innerHTML = `<span style="font-size: 11px; font-weight: bold;">${cooldown}s</span>`;
+                        chatInput.placeholder = `Vui lòng đợi ${cooldown} giây...`;
+                    }
+                }, 1000);
             }
         })
         .catch(err => {
             console.error('Send error:', err);
-            alert(@json(__('Lỗi gửi tin nhắn: ')) + err.message);
-        })
-        .finally(() => {
+            alert(err.message || 'Không thể gửi tin nhắn, vui lòng thử lại.');
+            
+            // Kích hoạt lại nút nếu bị lỗi
             sendBtn.disabled = false;
             sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             chatInput.focus();

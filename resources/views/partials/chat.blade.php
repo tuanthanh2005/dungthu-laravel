@@ -1376,8 +1376,8 @@ function sendUserMessage(event) {
             _appendUserMsg(data, false);
             lastUserMessageId = Math.max(lastUserMessageId, data.id);
             
-            // Bắt đầu đếm ngược thời gian chờ 3 giây chống spam
-            let cooldown = 3;
+            // Bắt đầu đếm ngược thời gian chờ 10 giây chống spam
+            let cooldown = 10;
             sendBtn.disabled = true;
             input.disabled = true;
             const originalPlaceholder = input.placeholder;

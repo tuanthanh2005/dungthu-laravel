@@ -262,7 +262,7 @@
 
             <!-- Step 1: Customer Details -->
             <div class="row justify-content-center" id="checkout-step-1">
-                <div class="col-md-7">
+                <div class="col-md-9">
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <h5 class="mb-0 fw-bold">

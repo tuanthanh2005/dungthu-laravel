@@ -21,37 +21,15 @@ class WebhookController extends Controller
         Log::info('SePay Webhook received: ', $request->all());
 
         // Validate Authorization header if configured
-        $authHeader = $request->header('Authorization')
-            ?? $request->server('HTTP_AUTHORIZATION')
-            ?? $request->server('REDIRECT_HTTP_AUTHORIZATION')
-            ?? $_SERVER['HTTP_AUTHORIZATION']
-            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
-            ?? null;
+        $authHeader = $request->header('Authorization');
         $apiKey = config('services.sepay.key');
 
-        Log::info('SePay Webhook Auth Check:', [
-            'has_header' => !empty($authHeader),
-            'header' => $authHeader,
-            'config_key_exists' => !empty($apiKey),
-            'config_key_preview' => $apiKey ? substr($apiKey, 0, 8) . '...' : 'none'
-        ]);
-
-        if (!$apiKey) {
-            Log::error('SePay Webhook: API Key is not configured.');
-            return response()->json(['message' => 'System configuration error'], 500);
-        }
-
-        if (!$authHeader || !str_contains($authHeader, $apiKey)) {
-            Log::warning('SePay Webhook Unauthorized access attempt. Header: ' . ($authHeader ?? 'None'));
-            return response()->json([
-                'message' => 'Unauthorized',
-                'debug' => [
-                    'has_header' => !empty($authHeader),
-                    'header_received' => $authHeader,
-                    'key_expected_preview' => $apiKey ? substr($apiKey, 0, 8) . '...' : 'none',
-                    'all_headers_received' => array_keys($request->headers->all()),
-                ]
-            ], 401);
+        if ($authHeader && $apiKey) {
+            // SePay sends Authorization header, check if it contains the API Key
+            if (!str_contains($authHeader, $apiKey)) {
+                Log::warning('SePay Webhook Unauthorized access attempt.');
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
         }
 
         $content = $request->input('content', '');
@@ -178,17 +156,6 @@ class WebhookController extends Controller
         // 1. Check DB first
         $order = Order::where('order_code', $orderCode)->first();
         if ($order) {
-            // Validate ownership / session
-            if ($order->user_id) {
-                if (!auth()->check() || auth()->id() !== $order->user_id) {
-                    return response()->json(['status' => 'pending', 'message' => 'Bạn không có quyền thực hiện hành động này.'], 403);
-                }
-            } else {
-                if (session('checkout_order_code') !== $orderCode) {
-                    return response()->json(['status' => 'pending', 'message' => 'Đơn hàng không thuộc phiên làm việc hiện tại.'], 403);
-                }
-            }
-
             if ($order->status === 'completed' || $order->status === 'processing') {
                 return response()->json(['status' => 'success', 'message' => 'Đơn hàng đã được thanh toán thành công!']);
             }
@@ -201,12 +168,11 @@ class WebhookController extends Controller
             }
         } else {
             // Check session expiration if order is not in DB yet
-            if (session('checkout_order_code') !== $orderCode) {
-                return response()->json(['status' => 'pending', 'message' => 'Bạn không có quyền thực hiện hành động này.'], 403);
-            }
-            $checkoutTime = session('checkout_order_time');
-            if ($checkoutTime && (now()->timestamp - $checkoutTime) >= 300) {
-                return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán. Vui lòng làm mới trang.']);
+            if (session('checkout_order_code') === $orderCode) {
+                $checkoutTime = session('checkout_order_time');
+                if ($checkoutTime && (now()->timestamp - $checkoutTime) >= 300) {
+                    return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán. Vui lòng làm mới trang.']);
+                }
             }
         }
 

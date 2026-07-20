@@ -24,6 +24,13 @@ class WebhookController extends Controller
         $authHeader = $request->header('Authorization');
         $apiKey = config('services.sepay.key');
 
+        Log::info('SePay Webhook Auth Check:', [
+            'has_header' => !empty($authHeader),
+            'header' => $authHeader,
+            'config_key_exists' => !empty($apiKey),
+            'config_key_preview' => $apiKey ? substr($apiKey, 0, 8) . '...' : 'none'
+        ]);
+
         if (!$apiKey) {
             Log::error('SePay Webhook: API Key is not configured.');
             return response()->json(['message' => 'System configuration error'], 500);

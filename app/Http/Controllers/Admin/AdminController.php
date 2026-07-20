@@ -581,7 +581,11 @@ class AdminController extends Controller
         $message .= "👤 <b>KHÁCH HÀNG</b>\n";
         $message .= "• Họ tên: <b>" . $order->customer_name . "</b>\n";
         $message .= "• Email: <b>" . $order->customer_email . "</b>\n";
-        $message .= "• SĐT: <b>" . $order->customer_phone . "</b>\n\n";
+        $message .= "• SĐT: <b>" . $order->customer_phone . "</b>\n";
+        if ($order->customer_address && !in_array($order->customer_address, ['Sản phẩm số - không cần giao hàng', 'Digital product - no shipping required'])) {
+            $message .= "• Chi tiết/Địa chỉ: <b>" . $order->customer_address . "</b>\n";
+        }
+        $message .= "\n";
 
         // Sản phẩm
         $message .= "🛒 <b>SẢN PHẨM</b>\n";

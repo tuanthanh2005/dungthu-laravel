@@ -319,6 +319,13 @@
                                     <i class="fas fa-exclamation-triangle me-2"></i>{{ __('Vui lòng để lại ít nhất 1 thông tin liên hệ hoặc chọn "Tự liên hệ qua Boxchat"!') }}
                                 </div>
 
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-edit me-2 text-primary"></i>{{ __('Email cần nâng cấp hoặc ghi chú (không bắt buộc)') }}
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" name="upgrade_email_or_note" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}">
+                                </div>
+
                                 <!-- Mã giảm giá -->
                                 <div class="card bg-light border-0 rounded-3 p-3 mb-3 text-dark">
                                     <label class="form-label fw-bold mb-2">

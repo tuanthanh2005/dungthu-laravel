@@ -21,6 +21,12 @@ class AdminMiddleware
 
         // Require 8-digit PIN for admin write actions (POST/PUT/PATCH/DELETE)
         $method = strtoupper($request->getMethod());
+        
+        // Block all DELETE requests temporarily for security
+        if ($method === 'DELETE') {
+            return $this->deny($request, 'Chức năng xóa dữ liệu tạm thời bị khóa vì lý do bảo mật!');
+        }
+
         if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
             $pin = $request->input('admin_pin');
             if (!is_string($pin) || !preg_match('/^\d{8}$/', $pin)) {

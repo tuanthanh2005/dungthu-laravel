@@ -273,6 +273,9 @@ class CartController extends Controller
         if ($request->filled('customer_facebook')) {
             $customerAddress .= "\nFacebook: " . $request->customer_facebook;
         }
+        if ($request->filled('upgrade_email_or_note')) {
+            $customerAddress .= "\n" . ($isEn ? 'Upgrade Email/Note: ' : 'Email cần nâng cấp/Ghi chú: ') . $request->upgrade_email_or_note;
+        }
         if ($request->filled('payment_method')) {
             $pm = $request->payment_method;
             if ($pm === 'crypto') {

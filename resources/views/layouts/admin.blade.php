@@ -28,6 +28,24 @@
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
     @stack('styles')
+    
+    <!-- Tạm thời ẩn tất cả các nút/form xóa để tránh bị hack xóa dữ liệu -->
+    <style>
+        form[action*="delete"], 
+        form[action*="destroy"], 
+        .btn-danger, 
+        .btn-outline-danger, 
+        .btn-delete,
+        .ajax-delete-form,
+        button[title*="Xóa"],
+        button[title*="Delete"],
+        a[title*="Xóa"],
+        a[title*="Delete"],
+        i.fa-trash,
+        i.fa-trash-alt {
+            display: none !important;
+        }
+    </style>
 </head>
 <body class="admin-body">
 

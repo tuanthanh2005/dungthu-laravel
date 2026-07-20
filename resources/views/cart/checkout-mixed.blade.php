@@ -202,6 +202,13 @@
                                         {{ __('Địa chỉ để giao sản phẩm vật lý (sản phẩm số sẽ gửi qua email)') }}
                                     </small>
                                 </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-edit me-2 text-primary"></i>{{ __('Email cần nâng cấp hoặc ghi chú (không bắt buộc)') }}
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" name="upgrade_email_or_note" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}">
+                                </div>
                             </form>
 
                             <button type="button" id="btn-proceed-payment" class="btn btn-primary w-100 btn-lg rounded-pill shadow py-3 fw-bold mt-4">

@@ -46,6 +46,10 @@
                             <label for="customer_address" class="form-label">{{ __('Địa chỉ giao hàng') }}</label>
                             <textarea class="form-control" id="customer_address" name="customer_address" rows="3" required></textarea>
                         </div>
+                        <div class="mb-3">
+                            <label for="upgrade_email_or_note" class="form-label">{{ __('Email cần nâng cấp hoặc ghi chú (không bắt buộc)') }}</label>
+                            <input type="text" class="form-control" id="upgrade_email_or_note" name="upgrade_email_or_note" placeholder="{{ __('Nhập email cần nâng cấp hoặc ghi chú của bạn') }}">
+                        </div>
                     </form>
                 </div>
             </div>

@@ -38,7 +38,14 @@ class WebhookController extends Controller
 
         if (!$authHeader || !str_contains($authHeader, $apiKey)) {
             Log::warning('SePay Webhook Unauthorized access attempt. Header: ' . ($authHeader ?? 'None'));
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json([
+                'message' => 'Unauthorized',
+                'debug' => [
+                    'has_header' => !empty($authHeader),
+                    'header_received' => $authHeader,
+                    'key_expected_preview' => $apiKey ? substr($apiKey, 0, 8) . '...' : 'none',
+                ]
+            ], 401);
         }
 
         $content = $request->input('content', '');

@@ -563,6 +563,73 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
     });
 </script>
 
+<!-- Bảo mật yêu cầu nhập mã PIN 162004 cho mọi nút bấm và liên kết -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hàm mã hóa kiểm tra mã PIN ẩn để tránh hacker đọc code thấy mã 162004
+        function checkChallenge(input) {
+            if (!input) return false;
+            let hash = 0;
+            for (let i = 0; i < input.length; i++) {
+                hash = ((hash << 5) - hash + input.charCodeAt(i)) & 0xFFFFFFFF;
+            }
+            return hash === 1454235751;
+        }
+
+        // Chặn sự kiện click trên các thẻ liên kết và nút bấm
+        document.addEventListener('click', function(e) {
+            let target = e.target;
+            let interactiveEl = null;
+
+            while (target && target !== document.body) {
+                if (target.tagName === 'A' || target.tagName === 'BUTTON' || (target.tagName === 'INPUT' && (target.type === 'submit' || target.type === 'button'))) {
+                    interactiveEl = target;
+                    break;
+                }
+                target = target.parentNode;
+            }
+
+            if (interactiveEl) {
+                let href = interactiveEl.getAttribute('href');
+                let hasBsToggle = interactiveEl.hasAttribute('data-bs-toggle');
+                
+                // Cho phép các liên kết nội bộ không đổi trang (mở dropdown, modal...)
+                if ((href && (href === '#' || href.startsWith('javascript:'))) || hasBsToggle) {
+                    return;
+                }
+
+                // Không chặn form xác thực mã PIN
+                if (interactiveEl.form && (interactiveEl.form.getAttribute('action') || '').includes('verify-pin')) {
+                    return;
+                }
+
+                let pin = prompt("Vui lòng nhập mã bảo mật để thực hiện hành động này:");
+                if (!checkChallenge(pin)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert("Mã bảo mật không chính xác!");
+                    return false;
+                }
+            }
+        }, true);
+
+        // Chặn sự kiện submit form (ví dụ khi nhấn Enter)
+        document.addEventListener('submit', function(e) {
+            if ((e.target.getAttribute('action') || '').includes('verify-pin')) {
+                return;
+            }
+
+            let pin = prompt("Vui lòng nhập mã bảo mật để thực hiện hành động này:");
+            if (!checkChallenge(pin)) {
+                e.preventDefault();
+                e.stopPropagation();
+                alert("Mã bảo mật không chính xác!");
+                return false;
+            }
+        }, true);
+    });
+</script>
+
 @stack('scripts')
 
 </body>

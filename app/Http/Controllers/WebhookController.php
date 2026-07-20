@@ -21,7 +21,12 @@ class WebhookController extends Controller
         Log::info('SePay Webhook received: ', $request->all());
 
         // Validate Authorization header if configured
-        $authHeader = $request->header('Authorization');
+        $authHeader = $request->header('Authorization')
+            ?? $request->server('HTTP_AUTHORIZATION')
+            ?? $request->server('REDIRECT_HTTP_AUTHORIZATION')
+            ?? $_SERVER['HTTP_AUTHORIZATION']
+            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+            ?? null;
         $apiKey = config('services.sepay.key');
 
         Log::info('SePay Webhook Auth Check:', [
@@ -44,6 +49,7 @@ class WebhookController extends Controller
                     'has_header' => !empty($authHeader),
                     'header_received' => $authHeader,
                     'key_expected_preview' => $apiKey ? substr($apiKey, 0, 8) . '...' : 'none',
+                    'all_headers_received' => array_keys($request->headers->all()),
                 ]
             ], 401);
         }

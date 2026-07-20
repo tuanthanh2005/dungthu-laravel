@@ -57,7 +57,11 @@ class ChatController extends Controller
             ->first();
 
         if ($lastMessage) {
-            $secondsSinceLast = now()->diffInSeconds($lastMessage->created_at);
+            $secondsSinceLast = now()->timestamp - $lastMessage->created_at->timestamp;
+            if ($secondsSinceLast < 0) {
+                $secondsSinceLast = 0;
+            }
+            
             if ($secondsSinceLast < 10) {
                 return response()->json(['error' => 'Bạn đang gửi tin nhắn quá nhanh. Vui lòng đợi ' . (10 - $secondsSinceLast) . ' giây.'], 429);
             }

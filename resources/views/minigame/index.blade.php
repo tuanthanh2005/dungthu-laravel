@@ -425,7 +425,9 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
+    const locale = '{{ app()->getLocale() }}';
     let isSpinning = false;
+    let currentRotation = 0;
 
     document.getElementById('spinBtn').addEventListener('click', function() {
         if (isSpinning) return;
@@ -466,12 +468,23 @@
             const luckyWheel = document.getElementById('luckyWheel');
 
             // 6 segments, each is 60 degrees.
+            const targetAngle = 240 - (prizeIndex * 60);
+            
+            // Calculate additional rotation from current position
+            const currentModulo = currentRotation % 360;
+            let additionalRotation = (360 * 5) + (targetAngle - currentModulo);
+            if (targetAngle < currentModulo) {
+                additionalRotation += 360;
+            }
+            
             const randomOffset = Math.floor(Math.random() * 24) - 12; // ±12 degrees variation for visual realism
-            const targetDegree = (360 * 5) + 240 - (prizeIndex * 60) + randomOffset;
+            additionalRotation += randomOffset;
+            
+            currentRotation += additionalRotation;
             
             // Apply spin animation
             luckyWheel.style.transition = 'transform 5s cubic-bezier(0.1, 0.8, 0.15, 1)';
-            luckyWheel.style.transform = `rotate(${targetDegree}deg)`;
+            luckyWheel.style.transform = `rotate(${currentRotation}deg)`;
 
             setTimeout(() => {
                 // Animation completed!
@@ -542,13 +555,6 @@
                     </td>
                     <td><span class="badge-status badge-unused">${unusedText}</span></td>
                 `;
-
-                // Reset wheel transition and angle quickly to allow another spin smoothly
-                setTimeout(() => {
-                    luckyWheel.style.transition = 'none';
-                    // Modulo to keep visual rotation state
-                    luckyWheel.style.transform = `rotate(${targetDegree % 360}deg)`;
-                }, 500);
 
             }, 5100);
         })

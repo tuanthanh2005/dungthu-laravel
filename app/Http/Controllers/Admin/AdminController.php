@@ -332,11 +332,18 @@ class AdminController extends Controller
     public function updateUserRole(Request $request, User $user)
     {
         $request->validate([
-            'role' => 'required|in:user,superadmin_1,moderator',
+            'role' => 'required|in:user,moderator',
         ], [
             'role.required' => 'Quyền không được để trống',
-            'role.in' => 'Quyền không hợp lệ',
+            'role.in' => 'Quyền không hợp lệ hoặc nâng quyền Admin đã bị khóa bằng code (chỉ cấp qua SQL)',
         ]);
+
+        if ($request->role === 'superadmin_1') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nâng quyền Admin bằng code/giao diện đã bị vô hiệu hóa vì lý do bảo mật. Vui lòng cấp quyền trực tiếp trong Database SQL server.'
+            ], 403);
+        }
 
         // Prevent users from removing their own superadmin_1 role
         if (auth()->id() === $user->id && $request->role !== 'superadmin_1') {

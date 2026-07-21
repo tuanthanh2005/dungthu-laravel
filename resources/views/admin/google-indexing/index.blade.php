@@ -198,25 +198,31 @@
                             </div>
                         </div>
                         
-                        <!-- Bulk Blogs -->
+                        <!-- Bulk Blogs (130 Latest) -->
                         <div class="col-md-6 col-lg-3">
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
                                     <i class="fas fa-blog fs-1 text-danger mb-3"></i>
-                                    <h5>Index Bài Viết Blog</h5>
-                                    <p class="text-muted small">Lựa chọn phạm vi bài viết (blog) muốn gửi lên Google Indexing API.</p>
+                                    <h5>Index 130 Blog Mới Nhất</h5>
+                                    <p class="text-muted small">Gửi 130 bài viết gần đây nhất (từ bài 1 đến 130) lên Google Indexing API.</p>
                                 </div>
-                                <div class="d-flex flex-column gap-2 mt-3">
-                                    <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index-custom" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=0" data-label="130 bài Blog mới nhất (1-130)">
-                                        <i class="fab fa-google me-1"></i>130 bài mới nhất (1 - 130)
-                                    </button>
-                                    <button type="button" class="btn btn-outline-danger rounded-pill w-100 btn-bulk-index-custom" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=130" data-label="130 bài Blog trước đó (131-260)">
-                                        <i class="fab fa-google me-1"></i>130 bài trước đó (131 - 260)
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-link text-muted text-decoration-none btn-bulk-index-custom" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}" data-label="toàn bộ Blog">
-                                        Index toàn bộ Blog
-                                    </button>
+                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=0" data-label="130 bài Blog mới nhất (1-130)">
+                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (1-130)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Bulk Blogs (130 Previous) -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="console-card text-center d-flex flex-column justify-content-between">
+                                <div>
+                                    <i class="fas fa-history fs-1 text-secondary mb-3"></i>
+                                    <h5>Index 130 Blog Trước Đó</h5>
+                                    <p class="text-muted small">Gửi 130 bài viết tiếp theo (từ bài 131 đến 260 - dành cho các bài cũ bị mất chỉ mục).</p>
                                 </div>
+                                <button type="button" class="btn btn-secondary text-white rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=130" data-label="130 bài Blog trước đó (131-260)">
+                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (131-260)
+                                </button>
                             </div>
                         </div>
                         

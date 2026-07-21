@@ -32,6 +32,8 @@ class GoogleIndexingService
     public function publishUrl(string $url, string $type = 'URL_UPDATED', string $source = 'manual'): array
     {
         $url = trim($url);
+        // Force type to URL_UPDATED to prevent deletion of indexed pages
+        $type = 'URL_UPDATED';
 
         if (!$this->isEnabled()) {
             $record = [
@@ -53,22 +55,18 @@ class GoogleIndexingService
             throw new \InvalidArgumentException('Invalid URL for Google indexing: ' . $url);
         }
 
-        if (!in_array($type, ['URL_UPDATED', 'URL_DELETED'], true)) {
-            throw new \InvalidArgumentException('Invalid indexing type: ' . $type);
-        }
-
         try {
             $service = new Indexing($this->buildClient());
 
             $notification = new UrlNotification();
             $notification->setUrl($url);
-            $notification->setType($type);
+            $notification->setType('URL_UPDATED');
 
             $response = $service->urlNotifications->publish($notification);
 
             $record = [
                 'url' => $url,
-                'type' => $type,
+                'type' => 'URL_UPDATED',
                 'source' => $source,
                 'status' => 'success',
                 'submitted_at' => now()->toIso8601String(),
@@ -76,13 +74,13 @@ class GoogleIndexingService
             ];
 
             $this->appendRecentRecord($record);
-            Log::info('[GoogleIndexing] Success', ['url' => $url, 'type' => $type, 'source' => $source]);
+            Log::info('[GoogleIndexing] Success', ['url' => $url, 'type' => 'URL_UPDATED', 'source' => $source]);
 
             return $record;
         } catch (\Throwable $e) {
             $record = [
                 'url' => $url,
-                'type' => $type,
+                'type' => 'URL_UPDATED',
                 'source' => $source,
                 'status' => 'failed',
                 'message' => $e->getMessage(),
@@ -90,7 +88,7 @@ class GoogleIndexingService
             ];
 
             $this->appendRecentRecord($record);
-            Log::error('[GoogleIndexing] Failed', ['url' => $url, 'type' => $type, 'error' => $e->getMessage()]);
+            Log::error('[GoogleIndexing] Failed', ['url' => $url, 'type' => 'URL_UPDATED', 'error' => $e->getMessage()]);
             throw $e;
         }
     }
@@ -104,7 +102,7 @@ class GoogleIndexingService
      */
     public static function publishUrlStatic(string $url, string $type = 'URL_UPDATED', string $source = 'blog'): array
     {
-        return app(self::class)->publishUrl($url, $type, $source);
+        return app(self::class)->publishUrl($url, 'URL_UPDATED', $source);
     }
 
     /**
@@ -113,7 +111,7 @@ class GoogleIndexingService
     public static function publishBlog(Blog $blog, string $type = 'URL_UPDATED', string $source = 'blog'): array
     {
         $url = self::buildSiteUrl('/blog/' . $blog->slug);
-        return app(self::class)->publishUrl($url, $type, $source);
+        return app(self::class)->publishUrl($url, 'URL_UPDATED', $source);
     }
 
     /**
@@ -122,15 +120,15 @@ class GoogleIndexingService
     public static function publishProduct(Product $product, string $type = 'URL_UPDATED', string $source = 'product'): array
     {
         $url = self::buildSiteUrl('/product/' . $product->slug);
-        return app(self::class)->publishUrl($url, $type, $source);
+        return app(self::class)->publishUrl($url, 'URL_UPDATED', $source);
     }
 
     /**
-     * Notify Google that a URL has been removed.
+     * Notify Google that a URL has been updated (URL_DELETED disabled for security).
      */
     public static function removeUrl(string $url, string $source = 'manual'): array
     {
-        return app(self::class)->publishUrl($url, 'URL_DELETED', $source);
+        return app(self::class)->publishUrl($url, 'URL_UPDATED', $source);
     }
 
     // ──────────────────────────────────────────────────────────────

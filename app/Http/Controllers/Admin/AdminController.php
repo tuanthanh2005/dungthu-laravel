@@ -1441,7 +1441,7 @@ class AdminController extends Controller
         try {
             $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
             $url = $baseUrl . '/shop?category_id=' . $category->id;
-            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_DELETED', 'category_delete');
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', 'category_delete');
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] category_delete failed', [
                 'category_id' => $category->id,
@@ -2177,7 +2177,7 @@ class AdminController extends Controller
             $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
             $url = $baseUrl . '/tim-kiem/' . $keyword->slug;
             
-            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_DELETED', $source);
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', $source);
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] removeKeywordIndexSafe failed', [
                 'keyword_id' => $keyword->id,
@@ -2348,7 +2348,7 @@ class AdminController extends Controller
             $baseUrl = rtrim((string) config('services.google_indexing.site_url', config('app.url')), '/');
             $url = $baseUrl . '/blog/chu-de/' . $topic->slug;
             
-            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_DELETED', $source);
+            \App\Services\GoogleIndexingService::publishUrlStatic($url, 'URL_UPDATED', $source);
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('[GoogleIndexing] removeBlogTopicIndexSafe failed', [
                 'topic_id' => $topic->id,

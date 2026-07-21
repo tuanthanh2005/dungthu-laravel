@@ -198,30 +198,16 @@
                             </div>
                         </div>
                         
-                        <!-- Bulk Blogs (130 Newest) -->
+                        <!-- Bulk Blogs -->
                         <div class="col-md-6 col-lg-3">
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
                                     <i class="fas fa-blog fs-1 text-danger mb-3"></i>
-                                    <h5>Index 130 Blog Mới Nhất</h5>
-                                    <p class="text-muted small">Gửi 130 bài viết mới đăng gần đây nhất (từ mới tới cũ) lên Google Indexing API.</p>
+                                    <h5>Index Tất Cả Blog</h5>
+                                    <p class="text-muted small">Lựa chọn số lượng bài viết (ví dụ: 130 bài) và thứ tự gửi lên Google Indexing API.</p>
                                 </div>
-                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?order=desc&limit=130&offset=0" data-label="130 bài Blog mới nhất">
-                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (Mới nhất)
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Bulk Blogs (130 Oldest) -->
-                        <div class="col-md-6 col-lg-3">
-                            <div class="console-card text-center d-flex flex-column justify-content-between">
-                                <div>
-                                    <i class="fas fa-history fs-1 text-warning mb-3"></i>
-                                    <h5>Index 130 Blog Cũ Nhất</h5>
-                                    <p class="text-muted small">Gửi 130 bài viết đầu tiên từ xưa tới nay (từ cũ nhất tới mới hơn - phục hồi các bài cũ bị mất chỉ mục).</p>
-                                </div>
-                                <button type="button" class="btn btn-warning text-dark rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?order=asc&limit=130&offset=0" data-label="130 bài Blog cũ nhất">
-                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (Cũ nhất)
+                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-blog-custom-modal mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}">
+                                    <i class="fab fa-google me-2"></i>Tùy chọn & Gửi Blog
                                 </button>
                             </div>
                         </div>
@@ -497,14 +483,51 @@
         });
     });
 
-    // Bulk submission handlers
-    document.querySelectorAll('.btn-bulk-index-custom').forEach(btn => {
+    // Custom Blog index modal handler
+    document.querySelectorAll('.btn-blog-custom-modal').forEach(btn => {
         btn.addEventListener('click', function() {
-            const url = this.getAttribute('data-url');
-            const label = this.getAttribute('data-label');
+            const baseUrl = this.getAttribute('data-url');
             const button = this;
             const originalHtml = button.innerHTML;
-            executeBulkIndex(url, label, button, originalHtml);
+
+            Swal.fire({
+                title: '<i class="fas fa-blog text-danger me-2"></i>Tùy Chọn Index Blog',
+                html: `
+                    <div class="text-start mb-3">
+                        <label class="form-label fw-bold small text-muted">1. Loại thứ tự sắp xếp bài viết:</label>
+                        <select id="swal-blog-order" class="form-select form-select-sm mb-3">
+                            <option value="asc">Bài CŨ NHẤT đến mới hơn (Từ bài đầu tiên đăng - Phục hồi bài bị mất)</option>
+                            <option value="desc" selected>Bài MỚI NHẤT đến cũ hơn (Bài vừa xuất bản gần đây)</option>
+                        </select>
+
+                        <label class="form-label fw-bold small text-muted">2. Số lượng bài muốn index (Số lượng bài viết):</label>
+                        <input type="number" id="swal-blog-limit" class="form-control form-control-sm mb-3" value="130" min="1" max="1000" placeholder="Nhập số lượng (vd: 130)">
+
+                        <label class="form-label fw-bold small text-muted">3. Vị trí bắt đầu (Bỏ qua N bài đầu nếu cần):</label>
+                        <input type="number" id="swal-blog-offset" class="form-control form-control-sm" value="0" min="0" placeholder="0 = Bắt đầu từ bài đầu tiên">
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận & Bắt đầu gửi',
+                cancelButtonText: 'Hủy bỏ',
+                confirmButtonColor: '#dc3545',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const order = document.getElementById('swal-blog-order').value;
+                    const limit = parseInt(document.getElementById('swal-blog-limit').value) || 130;
+                    const offset = parseInt(document.getElementById('swal-blog-offset').value) || 0;
+                    return { order, limit, offset };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { order, limit, offset } = result.value;
+                    const orderText = order === 'asc' ? 'CŨ NHẤT' : 'MỚI NHẤT';
+                    const targetUrl = `${baseUrl}?order=${order}&limit=${limit}&offset=${offset}`;
+                    const labelText = `${limit} bài Blog (${orderText}, bắt đầu từ bài ${offset + 1})`;
+                    
+                    executeBulkIndex(targetUrl, labelText, button, originalHtml);
+                }
+            });
         });
     });
 

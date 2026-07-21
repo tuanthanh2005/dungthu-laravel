@@ -72,6 +72,7 @@ class GoogleIndexingController extends Controller
         $chunk = max(10, min((int) $request->query('chunk', 50), 200));
         $limit = max(0, (int) $request->query('limit', 0));
         $offset = max(0, (int) $request->query('offset', 0));
+        $order = strtolower($request->query('order', 'desc')) === 'asc' ? 'asc' : 'desc';
         $latest = filter_var($request->query('latest', false), FILTER_VALIDATE_BOOLEAN);
 
         $query = Blog::published();
@@ -81,9 +82,8 @@ class GoogleIndexingController extends Controller
         $success = 0;
         $failed = [];
 
-        if ($latest && $limit > 0) {
-            // Fetch $limit blogs with offset ordering by latest (id desc)
-            $blogs = Blog::published()->orderBy('id', 'desc')->offset($offset)->limit($limit)->get();
+        if (($latest || $order === 'asc') && $limit > 0) {
+            $blogs = Blog::published()->orderBy('id', $order)->offset($offset)->limit($limit)->get();
             foreach ($blogs as $blog) {
                 try {
                     GoogleIndexingService::publishBlog($blog, 'URL_UPDATED', 'manual_bulk');

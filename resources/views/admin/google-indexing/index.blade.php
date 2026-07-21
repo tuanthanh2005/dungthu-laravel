@@ -198,30 +198,30 @@
                             </div>
                         </div>
                         
-                        <!-- Bulk Blogs (130 Latest) -->
+                        <!-- Bulk Blogs (130 Newest) -->
                         <div class="col-md-6 col-lg-3">
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
                                     <i class="fas fa-blog fs-1 text-danger mb-3"></i>
                                     <h5>Index 130 Blog Mới Nhất</h5>
-                                    <p class="text-muted small">Gửi 130 bài viết gần đây nhất (từ bài 1 đến 130) lên Google Indexing API.</p>
+                                    <p class="text-muted small">Gửi 130 bài viết mới đăng gần đây nhất (từ mới tới cũ) lên Google Indexing API.</p>
                                 </div>
-                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=0" data-label="130 bài Blog mới nhất (1-130)">
-                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (1-130)
+                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?order=desc&limit=130&offset=0" data-label="130 bài Blog mới nhất">
+                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (Mới nhất)
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Bulk Blogs (130 Previous) -->
+                        <!-- Bulk Blogs (130 Oldest) -->
                         <div class="col-md-6 col-lg-3">
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
-                                    <i class="fas fa-history fs-1 text-secondary mb-3"></i>
-                                    <h5>Index 130 Blog Trước Đó</h5>
-                                    <p class="text-muted small">Gửi 130 bài viết tiếp theo (từ bài 131 đến 260 - dành cho các bài cũ bị mất chỉ mục).</p>
+                                    <i class="fas fa-history fs-1 text-warning mb-3"></i>
+                                    <h5>Index 130 Blog Cũ Nhất</h5>
+                                    <p class="text-muted small">Gửi 130 bài viết đầu tiên từ xưa tới nay (từ cũ nhất tới mới hơn - phục hồi các bài cũ bị mất chỉ mục).</p>
                                 </div>
-                                <button type="button" class="btn btn-secondary text-white rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=130" data-label="130 bài Blog trước đó (131-260)">
-                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (131-260)
+                                <button type="button" class="btn btn-warning text-dark rounded-pill w-100 btn-bulk-index-custom mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?order=asc&limit=130&offset=0" data-label="130 bài Blog cũ nhất">
+                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi (Cũ nhất)
                                 </button>
                             </div>
                         </div>

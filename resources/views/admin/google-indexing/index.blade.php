@@ -133,7 +133,6 @@
                                 <label for="select-type" class="form-label fw-bold">Hành động:</label>
                                 <select id="select-type" class="form-select px-3 py-2 rounded-3">
                                     <option value="URL_UPDATED">Thêm / Cập nhật URL (Updated)</option>
-                                    <option value="URL_DELETED">Gỡ bỏ URL (Deleted)</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">

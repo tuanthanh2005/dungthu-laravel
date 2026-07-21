@@ -268,11 +268,11 @@ class GoogleIndexingController extends Controller
     {
         $request->validate([
             'url' => 'required|url',
-            'type' => 'nullable|in:URL_UPDATED,URL_DELETED',
+            'type' => 'nullable|in:URL_UPDATED',
         ]);
 
         $url = $request->input('url');
-        $type = $request->input('type', 'URL_UPDATED');
+        $type = 'URL_UPDATED';
 
         try {
             $result = GoogleIndexingService::publishUrlStatic($url, $type, 'manual_single');

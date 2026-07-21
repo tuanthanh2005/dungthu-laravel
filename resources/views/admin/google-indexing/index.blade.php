@@ -46,6 +46,7 @@
         padding: 20px;
         background: #f8fafc;
         transition: all 0.3s ease;
+        min-height: 280px;
         height: 100%;
     }
 

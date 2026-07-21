@@ -202,12 +202,20 @@
                             <div class="console-card text-center d-flex flex-column justify-content-between">
                                 <div>
                                     <i class="fas fa-blog fs-1 text-danger mb-3"></i>
-                                    <h5>Index Tất Cả Blog</h5>
-                                    <p class="text-muted small">Gửi toàn bộ bài viết (blog) đã xuất bản lên Google Indexing API.</p>
+                                    <h5>Index Bài Viết Blog</h5>
+                                    <p class="text-muted small">Lựa chọn phạm vi bài viết (blog) muốn gửi lên Google Indexing API.</p>
                                 </div>
-                                <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index mt-3" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}" data-type="Blog">
-                                    <i class="fab fa-google me-2"></i>Bắt đầu gửi
-                                </button>
+                                <div class="d-flex flex-column gap-2 mt-3">
+                                    <button type="button" class="btn btn-danger text-white rounded-pill w-100 btn-bulk-index-custom" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=0" data-label="130 bài Blog mới nhất (1-130)">
+                                        <i class="fab fa-google me-1"></i>130 bài mới nhất (1 - 130)
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger rounded-pill w-100 btn-bulk-index-custom" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}?latest=true&limit=130&offset=130" data-label="130 bài Blog trước đó (131-260)">
+                                        <i class="fab fa-google me-1"></i>130 bài trước đó (131 - 260)
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-link text-muted text-decoration-none btn-bulk-index-custom" data-url="{{ route('admin.google-indexing.submit-all', [], false) }}" data-label="toàn bộ Blog">
+                                        Index toàn bộ Blog
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
@@ -483,48 +491,23 @@
     });
 
     // Bulk submission handlers
+    document.querySelectorAll('.btn-bulk-index-custom').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            const label = this.getAttribute('data-label');
+            const button = this;
+            const originalHtml = button.innerHTML;
+            executeBulkIndex(url, label, button, originalHtml);
+        });
+    });
+
     document.querySelectorAll('.btn-bulk-index').forEach(btn => {
         btn.addEventListener('click', function() {
             const url = this.getAttribute('data-url');
             const type = this.getAttribute('data-type');
             const button = this;
             const originalHtml = button.innerHTML;
-
-            if (type === 'Blog') {
-                Swal.fire({
-                    title: 'Tùy chọn Index Blog',
-                    text: 'Vui lòng chọn phạm vi bài viết bạn muốn gửi lên Google Indexing API:',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#0d6efd',
-                    denyButtonColor: '#6c757d',
-                    cancelButtonColor: '#dc3545',
-                    confirmButtonText: '130 bài mới nhất (1 - 130)',
-                    denyButtonText: '130 bài trước đó (131 - 260)',
-                    cancelButtonText: 'Hủy bỏ',
-                    showDenyButton: true,
-                    footer: '<button type="button" class="btn btn-sm btn-link text-decoration-none" id="btn-index-all-blogs">Index toàn bộ bài viết</button>'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        executeBulkIndex(url + '?latest=true&limit=130&offset=0', '130 bài Blog mới nhất', button, originalHtml);
-                    } else if (result.isDenied) {
-                        executeBulkIndex(url + '?latest=true&limit=130&offset=130', '130 bài Blog trước đó (131-260)', button, originalHtml);
-                    }
-                });
-
-                // Attach event listener for the footer button inside SweetAlert modal
-                setTimeout(() => {
-                    const btnAll = document.getElementById('btn-index-all-blogs');
-                    if (btnAll) {
-                        btnAll.addEventListener('click', function() {
-                            Swal.close();
-                            executeBulkIndex(url, 'toàn bộ Blog', button, originalHtml);
-                        });
-                    }
-                }, 100);
-            } else {
-                executeBulkIndex(url, 'tất cả ' + type, button, originalHtml);
-            }
+            executeBulkIndex(url, 'tất cả ' + type, button, originalHtml);
         });
     });
 

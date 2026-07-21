@@ -500,11 +500,39 @@
     // Bulk submission handlers
     document.querySelectorAll('.btn-bulk-index-custom').forEach(btn => {
         btn.addEventListener('click', function() {
-            const url = this.getAttribute('data-url');
+            const rawUrl = this.getAttribute('data-url');
             const label = this.getAttribute('data-label');
             const button = this;
             const originalHtml = button.innerHTML;
-            executeBulkIndex(url, label, button, originalHtml);
+
+            Swal.fire({
+                title: 'Nhập số lượng bài viết',
+                text: `Nhập số lượng bài viết muốn gửi (${label}). Bạn có thể điều chỉnh số lượng (ví dụ: 60, 130...):`,
+                input: 'number',
+                inputValue: 130,
+                inputAttributes: {
+                    min: 1,
+                    max: 500,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận & Gửi',
+                cancelButtonText: 'Hủy bỏ',
+                confirmButtonColor: '#0d6efd',
+                inputValidator: (value) => {
+                    if (!value || value <= 0) {
+                        return 'Vui lòng nhập số lượng hợp lệ lớn hơn 0!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const customLimit = parseInt(result.value) || 130;
+                    // Replace limit=130 in URL with user's input quantity
+                    const finalUrl = rawUrl.replace(/limit=\d+/, 'limit=' + customLimit);
+                    const finalLabel = `${customLimit} bài (${label})`;
+                    executeBulkIndex(finalUrl, finalLabel, button, originalHtml);
+                }
+            });
         });
     });
 

@@ -493,22 +493,35 @@
             if (type === 'Blog') {
                 Swal.fire({
                     title: 'Tùy chọn Index Blog',
-                    text: 'Bạn muốn index 50 bài viết mới nhất (khuyên dùng vì các bài cũ đã index rồi) hay toàn bộ bài viết?',
+                    text: 'Vui lòng chọn phạm vi bài viết bạn muốn gửi lên Google Indexing API:',
                     icon: 'question',
                     showCancelButton: true,
+                    confirmButtonColor: '#0d6efd',
+                    denyButtonColor: '#6c757d',
+                    cancelButtonColor: '#dc3545',
+                    confirmButtonText: '130 bài mới nhất (1 - 130)',
+                    denyButtonText: '130 bài trước đó (131 - 260)',
+                    cancelButtonText: 'Hủy bỏ',
                     showDenyButton: true,
-                    confirmButtonColor: '#3085d6',
-                    denyButtonColor: '#d33',
-                    confirmButtonText: '50 bài mới nhất',
-                    denyButtonText: 'Toàn bộ bài viết',
-                    cancelButtonText: 'Hủy bỏ'
+                    footer: '<button type="button" class="btn btn-sm btn-link text-decoration-none" id="btn-index-all-blogs">Index toàn bộ bài viết</button>'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        executeBulkIndex(url + '?latest=true&limit=50', '50 ' + type + ' mới nhất', button, originalHtml);
+                        executeBulkIndex(url + '?latest=true&limit=130&offset=0', '130 bài Blog mới nhất', button, originalHtml);
                     } else if (result.isDenied) {
-                        executeBulkIndex(url, 'toàn bộ ' + type, button, originalHtml);
+                        executeBulkIndex(url + '?latest=true&limit=130&offset=130', '130 bài Blog trước đó (131-260)', button, originalHtml);
                     }
                 });
+
+                // Attach event listener for the footer button inside SweetAlert modal
+                setTimeout(() => {
+                    const btnAll = document.getElementById('btn-index-all-blogs');
+                    if (btnAll) {
+                        btnAll.addEventListener('click', function() {
+                            Swal.close();
+                            executeBulkIndex(url, 'toàn bộ Blog', button, originalHtml);
+                        });
+                    }
+                }, 100);
             } else {
                 executeBulkIndex(url, 'tất cả ' + type, button, originalHtml);
             }

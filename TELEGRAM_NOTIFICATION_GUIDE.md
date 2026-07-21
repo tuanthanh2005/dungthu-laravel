@@ -3,8 +3,8 @@
 ## Cấu Hình
 
 ### Thông Tin Telegram Bot
-- **Chat ID**: `8199725778`
-- **Bot Token**: `8187679739:AAEbsH_miAXOOepBwsB9p7oraCqQdD4jIXI`
+- **Chat ID**: `YOUR_TELEGRAM_CHAT_ID`
+- **Bot Token**: `YOUR_TELEGRAM_BOT_TOKEN`
 
 ## Cách Hoạt Động
 

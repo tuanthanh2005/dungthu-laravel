@@ -58,7 +58,6 @@ class Order extends Model
 
             // When status changes to cancelled (or any status other than completed, if it was completed before)
             if ($order->isDirty('status') && $order->status === 'cancelled') {
-                CustomerDuration::where('order_id', $order->id)->delete();
                 if ($order->getOriginal('status') === 'completed' && $order->user_id) {
                     $order->user()->decrement('spin_tickets');
                 }

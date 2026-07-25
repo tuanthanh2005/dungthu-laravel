@@ -17,7 +17,15 @@ class CustomerDurationController extends Controller
      */
     public function index(Request $request)
     {
-        $query = CustomerDuration::query();
+        // Khởi tạo base query lọc bỏ những thời hạn có đơn hàng bị hủy (status === 'cancelled')
+        $baseQuery = CustomerDuration::where(function ($q) {
+            $q->whereDoesntHave('order')
+              ->orWhereHas('order', function ($o) {
+                  $o->where('status', '!=', 'cancelled');
+              });
+        });
+
+        $query = (clone $baseQuery);
 
         // Search filter
         if ($request->filled('search')) {
@@ -43,10 +51,10 @@ class CustomerDurationController extends Controller
         }
 
         // Stats calculation
-        $totalCount = CustomerDuration::count();
-        $activeCount = CustomerDuration::active()->count();
-        $expiringCount = CustomerDuration::expiring()->count();
-        $expiredCount = CustomerDuration::expired()->count();
+        $totalCount = (clone $baseQuery)->count();
+        $activeCount = (clone $baseQuery)->active()->count();
+        $expiringCount = (clone $baseQuery)->expiring()->count();
+        $expiredCount = (clone $baseQuery)->expired()->count();
 
         // Paginate results
         $durations = $query->orderBy('created_at', 'desc')->paginate(20);

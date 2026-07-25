@@ -23,8 +23,7 @@ class AdminMiddleware
         $method = strtoupper($request->getMethod());
         $routeName = $request->route() ? $request->route()->getName() : null;
 
-        // Ghi log debug phân quyền
-        \Illuminate\Support\Facades\Log::info("DEBUG AUTH: User ID: {$user->id}, Role: {$user->role}, Route: {$routeName}, URL: " . $request->fullUrl());
+
 
         // 1. Phân quyền truy cập cho SieuSuperAdmin
         if ($user->role === 'sieusuperadmin' && $routeName) {
@@ -58,7 +57,7 @@ class AdminMiddleware
 
             if (!$isAllowed) {
                 \Illuminate\Support\Facades\Log::warning("Unauthorized admin access attempt by SieuSuperAdmin (User ID: {$user->id}) to route: {$routeName} from IP: {$request->ip()}");
-                abort(403, "Tài khoản của bạn không được cấp quyền truy cập tính năng này. (Role: {$user->role}, Route: {$routeName})");
+                abort(403, "Tài khoản của bạn không được cấp quyền truy cập tính năng này.");
             }
 
             // Ghi nhật ký các hành động thay đổi dữ liệu nhạy cảm
@@ -88,7 +87,7 @@ class AdminMiddleware
             foreach ($restrictedRoutePatterns as $pattern) {
                 if (\Illuminate\Support\Str::is($pattern, $routeName)) {
                     \Illuminate\Support\Facades\Log::warning("Unauthorized admin access attempt by superadmin_1 (User ID: {$user->id}) to sieusuperadmin route: {$routeName} from IP: {$request->ip()}");
-                    abort(403, "Quyền hạn của bạn không đủ để truy cập khu vực này. (Role: {$user->role}, Route: {$routeName})");
+                    abort(403, "Quyền hạn của bạn không đủ để truy cập khu vực này.");
                 }
             }
         }

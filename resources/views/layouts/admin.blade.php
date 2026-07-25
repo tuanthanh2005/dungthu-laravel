@@ -229,6 +229,11 @@
             <span class="nav-text">Chat</span>
             <span class="nav-badge" id="sidebarChatBadge" style="display: none;">0</span>
         </a>
+        <a href="{{ route('admin.menu-settings') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.menu-settings*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-sliders-h"></i></span>
+            <span class="nav-text">Menu Settings</span>
+        </a>
         @endif
 
         @if(auth()->user()->role === 'superadmin_1')
@@ -241,11 +246,6 @@
            class="sidebar-nav-item {{ request()->routeIs('admin.google-indexing*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fab fa-google"></i></span>
             <span class="nav-text">Google Indexing</span>
-        </a>
-        <a href="{{ route('admin.menu-settings') }}"
-           class="sidebar-nav-item {{ request()->routeIs('admin.menu-settings*') ? 'active' : '' }}">
-            <span class="nav-icon"><i class="fas fa-sliders-h"></i></span>
-            <span class="nav-text">Menu Settings</span>
         </a>
         @endif
 

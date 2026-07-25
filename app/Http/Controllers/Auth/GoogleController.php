@@ -45,6 +45,13 @@ class GoogleController extends Controller
                 'role' => 'user',
             ]);
 
+            // Gửi thông báo qua Telegram
+            try {
+                \App\Helpers\TelegramHelper::sendNewUserNotification($newUser);
+            } catch (\Exception $e) {
+                Log::error('Lỗi thông báo Telegram khi đăng nhập Google lần đầu: ' . $e->getMessage());
+            }
+
             Auth::login($newUser);
             
             // Mark as newly registered user to allow checkout without verification

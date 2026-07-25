@@ -94,6 +94,13 @@ class AuthController extends Controller
             'role' => 'user',
         ]);
 
+        // Gửi thông báo qua Telegram
+        try {
+            \App\Helpers\TelegramHelper::sendNewUserNotification($user);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Lỗi thông báo Telegram khi đăng ký: ' . $e->getMessage());
+        }
+
         Auth::login($user);
 
         return redirect()->route('home')->with('success', 'Đăng ký thành công!');

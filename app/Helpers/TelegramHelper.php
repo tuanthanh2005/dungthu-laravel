@@ -228,6 +228,34 @@ class TelegramHelper
     }
 
     /**
+     * Gửi thông báo có khách hàng mới đăng ký tài khoản
+     */
+    public static function sendNewUserNotification($user)
+    {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+
+        $text = "👤 <b>KHÁCH HÀNG MỚI ĐĂNG KÝ</b>\n";
+        $text .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+        $text .= "• Họ tên: <b>" . $user->name . "</b>\n";
+        $text .= "• Email: <b>" . $user->email . "</b>\n";
+        $text .= "• Thời gian: <b>" . now()->timezone('Asia/Ho_Chi_Minh')->format('H:i:s d/m/Y') . "</b>\n\n";
+        $text .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+        $text .= "🚀 <i>Chào mừng thành viên mới gia nhập hệ thống!</i>";
+
+        try {
+            Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+            Log::info('Telegram notification sent for new user: ' . $user->email);
+        } catch (\Exception $e) {
+            Log::error('Telegram User Notification Error: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Gửi thông báo có tin nhắn chat mới từ khách hàng
      */
     public static function sendNewChatMessageNotification($message)

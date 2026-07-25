@@ -1742,24 +1742,31 @@ class AdminController extends Controller
     }
 
     /**
-     * Hiển thị trang nhập mã PIN bảo mật
+     * Hiển thị trang nhập mã PIN / Cổng bảo mật
      */
     public function showVerifyPin()
     {
-        return view('admin.verify-pin');
+        return view('admin.verify-gate-password');
     }
 
     /**
-     * Xác thực mã PIN bảo mật
+     * Xác thực mã bảo mật cổng và tên vai trò
      */
     public function verifyPin(Request $request)
     {
         $request->validate([
-            'pin' => 'required',
+            'gate_password' => 'required',
+            'role_name' => 'required',
         ]);
 
-        if ($request->pin === '162004') {
-            session(['admin_unlocked' => true]);
+        $expectedPassword = (string) config('admin.gate_password', 'sieusuperadmin_secret_gate');
+        $user = auth()->user();
+
+        if ($request->gate_password === $expectedPassword && $request->role_name === $user->role) {
+            session([
+                'admin_unlocked' => true,
+                'admin_unlocked_hash' => md5($expectedPassword)
+            ]);
             
             // Check for previous intended URL or dashboard
             $url = session('target_url') ?? route('admin.dashboard');
@@ -1768,7 +1775,7 @@ class AdminController extends Controller
             return redirect($url)->with('success', 'Xác thực thành công!');
         }
 
-        return redirect()->back()->with('error', 'Mã PIN không chính xác!');
+        return redirect()->back()->with('error', 'Mật khẩu cổng hoặc Tên vai trò nhập vào không chính xác!');
     }
 
     /**

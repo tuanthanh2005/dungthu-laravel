@@ -23,12 +23,17 @@ class AdminRouteLock
 
         $currentRoute = $request->route()->getName();
 
-        // Nếu đã unlock trong session hoặc đang truy cập route được cho phép
-        if (session('admin_unlocked') === true || in_array($currentRoute, $allowedRoutes)) {
+        // Kiểm tra xem session đã unlock chưa và mã băm mật khẩu hiện tại có khớp với cấu hình .env không
+        $expectedHash = md5((string) config('admin.gate_password'));
+        $isUnlocked = session('admin_unlocked') === true && session('admin_unlocked_hash') === $expectedHash;
+
+        if ($isUnlocked || in_array($currentRoute, $allowedRoutes)) {
             return $next($request);
         }
 
-        // Nếu truy cập các route admin khác mà chưa unlock
+        // Nếu chưa mở khóa, xóa session cũ và chuyển hướng đến trang xác thực
+        session()->forget(['admin_unlocked', 'admin_unlocked_hash']);
+
         if ($request->is('admin/*') || $request->is('admin')) {
             return redirect()->route('admin.verify-pin')->with('target_url', $request->fullUrl());
         }

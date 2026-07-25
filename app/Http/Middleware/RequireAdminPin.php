@@ -10,6 +10,11 @@ class RequireAdminPin
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Bỏ qua nếu đã xác thực Gate bảo mật
+        if (session('admin_unlocked') === true) {
+            return $next($request);
+        }
+
         $method = strtoupper($request->getMethod());
         if (in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
             return $next($request);

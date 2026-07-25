@@ -563,7 +563,8 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
     });
 </script>
 
-<!-- Bảo mật yêu cầu nhập mã PIN 162004 cho mọi nút bấm và liên kết -->
+<!-- Bảo mật yêu cầu nhập mã PIN 162004 cho mọi nút bấm và liên kết nếu chưa mở khóa cổng bảo mật -->
+@if(!session('admin_unlocked'))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Hàm mã hóa kiểm tra mã PIN ẩn để tránh hacker đọc code thấy mã 162004
@@ -629,6 +630,7 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
         }, true);
     });
 </script>
+@endif
 
 @stack('scripts')
 

@@ -6,31 +6,33 @@
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 <style>
     .order-detail-wrapper {
-        padding: 100px 0 60px;
-        background: #f8f9fa;
+        padding: 80px 0 40px;
+        background: #f8fafc;
         min-height: 100vh;
     }
 
     .order-card {
         background: white;
         border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        border: 1px solid #e9ecef;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        border: 1px solid #e2e8f0;
     }
 
     .info-section {
-        background: #f7fafc;
-        border-radius: 15px;
-        padding: 25px;
-        margin-bottom: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 16px;
+        border: 1px solid #edf2f7;
     }
 
     .info-row {
         display: flex;
         justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid #e2e8f0;
+        padding: 8px 0;
+        border-bottom: 1px dashed #e2e8f0;
+        font-size: 0.95rem;
     }
 
     .info-row:last-child {
@@ -40,35 +42,41 @@
     .product-item {
         display: flex;
         align-items: center;
-        padding: 20px;
+        padding: 12px 16px;
         background: white;
         border-radius: 10px;
-        margin-bottom: 15px;
-        border: 2px solid #e2e8f0;
+        margin-bottom: 12px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+
+    .product-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.05);
     }
 
     .product-item img {
-        width: 80px;
-        height: 80px;
+        width: 50px;
+        height: 50px;
         object-fit: cover;
-        border-radius: 10px;
-        margin-right: 20px;
+        border-radius: 8px;
+        margin-right: 15px;
     }
 
     .tracking-timeline {
         position: relative;
-        padding-left: 40px;
+        padding-left: 30px;
     }
 
     .tracking-step {
         position: relative;
-        padding-bottom: 30px;
+        padding-bottom: 24px;
     }
 
     .tracking-step:before {
         content: '';
         position: absolute;
-        left: -29px;
+        left: -22px;
         top: 8px;
         width: 2px;
         height: 100%;
@@ -85,13 +93,13 @@
 
     .tracking-dot {
         position: absolute;
-        left: -35px;
+        left: -27px;
         top: 0;
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         background: #e2e8f0;
-        border: 3px solid white;
+        border: 2px solid white;
         box-shadow: 0 0 0 2px #e2e8f0;
     }
 
@@ -101,9 +109,9 @@
     }
 
     .order-type-badge {
-        padding: 8px 20px;
-        border-radius: 25px;
-        font-size: 0.9rem;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
         font-weight: 600;
         display: inline-block;
     }
@@ -129,15 +137,15 @@
     }
 
     .support-icon-btn {
-        width: 42px;
-        height: 42px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         background: linear-gradient(135deg, #ff4d00 0%, #ffb800 100%);
         color: white;
-        box-shadow: 0 8px 20px rgba(255, 77, 0, 0.25);
+        box-shadow: 0 6px 15px rgba(255, 77, 0, 0.2);
         text-decoration: none;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         vertical-align: middle;
@@ -146,7 +154,7 @@
     .support-icon-btn:hover {
         color: white;
         transform: translateY(-2px);
-        box-shadow: 0 10px 24px rgba(255, 77, 0, 0.32);
+        box-shadow: 0 8px 18px rgba(255, 77, 0, 0.28);
     }
 
     .support-copy-card {
@@ -157,11 +165,11 @@
     .support-copy-text {
         background: white;
         border: 1px dashed #ffb07a;
-        border-radius: 10px;
-        padding: 12px;
+        border-radius: 8px;
+        padding: 8px 12px;
         color: #4a5568;
-        font-size: 0.92rem;
-        line-height: 1.5;
+        font-size: 0.85rem;
+        line-height: 1.4;
         white-space: pre-line;
     }
 
@@ -171,8 +179,9 @@
         background: linear-gradient(135deg, #ff4d00 0%, #ffb800 100%);
         color: white;
         font-weight: 700;
-        padding: 10px 16px;
+        padding: 8px 14px;
         width: 100%;
+        font-size: 0.9rem;
         transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
@@ -183,53 +192,58 @@
 
     @media (max-width: 768px) {
         .order-detail-wrapper {
-            padding: 80px 0 40px;
+            padding: 70px 0 30px;
         }
         .order-card {
-            padding: 20px 15px;
-            border-radius: 15px;
+            padding: 16px 12px;
+            border-radius: 16px;
         }
         .info-section {
-            padding: 15px;
-            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
         }
         .order-card > .mb-4 > .d-flex.justify-content-between.align-items-center {
             flex-direction: column;
             align-items: flex-start !important;
-            gap: 15px;
+            gap: 12px;
         }
         .product-item {
             flex-wrap: wrap;
-            padding: 15px;
+            padding: 10px;
+            margin-bottom: 8px;
         }
         .product-item img, 
         .product-item > div[style*="width: 80px"] {
-            width: 60px !important;
-            height: 60px !important;
-            margin-right: 15px !important;
-            flex: 0 0 60px;
+            width: 48px !important;
+            height: 48px !important;
+            margin-right: 10px !important;
+            flex: 0 0 48px;
         }
         .product-item .flex-grow-1 {
-            flex: 0 0 calc(100% - 75px);
-            max-width: calc(100% - 75px);
-            margin-bottom: 10px;
+            flex: 0 0 calc(100% - 60px);
+            max-width: calc(100% - 60px);
+            margin-bottom: 5px;
             word-break: break-word;
+            font-size: 0.9rem;
         }
         .product-item .text-center.me-4 {
             flex: 0 0 50%;
             max-width: 50%;
             text-align: left !important;
             margin-right: 0 !important;
+            font-size: 0.85rem;
         }
         .product-item .text-end {
             flex: 0 0 50%;
             max-width: 50%;
             text-align: right !important;
+            font-size: 0.88rem;
         }
         .info-row {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 5px;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
         }
         .alert-info .d-flex {
             align-items: flex-start !important;
@@ -239,8 +253,8 @@
             font-size: 1.5rem;
         }
         .support-icon-btn {
-            width: 38px;
-            height: 38px;
+            width: 32px;
+            height: 32px;
         }
     }
 </style>

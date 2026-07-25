@@ -1770,8 +1770,7 @@ class AdminController extends Controller
             return redirect($url)->with('success', 'Xác thực thành công!');
         }
 
-        $hint = substr($expectedPassword, 0, 2) . str_repeat('*', max(0, strlen($expectedPassword) - 2)) . " (Độ dài: " . strlen($expectedPassword) . " ký tự)";
-        return redirect()->back()->with('error', "Mã số xác thực không chính xác! Hệ thống đang nhận mã có dạng: {$hint}. Nếu thay đổi .env chưa nhận, hãy chạy: php artisan config:clear");
+        return redirect()->back()->with('error', 'Mã số xác thực cổng bảo mật không chính xác!');
     }
 
     /**

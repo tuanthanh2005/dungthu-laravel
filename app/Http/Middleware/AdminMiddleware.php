@@ -15,6 +15,9 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // DEBUG DD
+        dd(auth()->user() ? auth()->user()->role : 'NOT_LOGGED_IN', $request->route() ? $request->route()->getName() : 'NO_ROUTE_NAME');
+
         if (!auth()->check() || !in_array(auth()->user()->role, ['superadmin_1', 'sieusuperadmin'])) {
             return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập!');
         }

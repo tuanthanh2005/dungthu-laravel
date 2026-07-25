@@ -98,6 +98,7 @@
             <span class="nav-text">Flash Sale</span>
         </a>
 
+        @if(auth()->user()->role === 'superadmin_1')
         <div class="sidebar-divider"></div>
 
         <!-- Buff Service -->
@@ -128,6 +129,7 @@
             <span class="nav-icon"><i class="fas fa-money-bill-wave"></i></span>
             <span class="nav-text">Buff Bảng giá</span>
         </a>
+        @endif
 
         <div class="sidebar-divider"></div>
 
@@ -139,6 +141,7 @@
             <span class="nav-text">Đơn hàng</span>
             <span class="nav-badge" id="sidebarOrderBadge" style="display: none;">0</span>
         </a>
+        @if(auth()->user()->role === 'superadmin_1')
         <a href="{{ route('admin.card-exchanges') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.card-exchanges*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-credit-card"></i></span>
@@ -157,12 +160,14 @@
             <span class="nav-text">Pre-orders</span>
             <span class="nav-badge" id="sidebarPreorderBadge" style="display: none;">0</span>
         </a>
+        @endif
         <a href="{{ route('admin.customer-durations') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.customer-durations*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-user-clock"></i></span>
             <span class="nav-text">Thời hạn khách</span>
         </a>
 
+        @if(auth()->user()->role === 'superadmin_1')
         <div class="sidebar-divider"></div>
 
         <!-- Người dùng -->
@@ -178,6 +183,7 @@
             <span class="nav-text">Cộng tác viên</span>
             <span class="nav-badge" id="sidebarAffiliateBadge" style="display: none;">0</span>
         </a>
+        @endif
 
         <div class="sidebar-divider"></div>
 
@@ -193,11 +199,13 @@
             <span class="nav-icon"><i class="fas fa-tags"></i></span>
             <span class="nav-text">Chủ đề Blog</span>
         </a>
+        @if(auth()->user()->role === 'superadmin_1')
         <a href="{{ route('admin.seo-keywords') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.seo-keywords*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-search"></i></span>
             <span class="nav-text">Từ khóa SEO</span>
         </a>
+        @endif
 
         <div class="sidebar-divider"></div>
 
@@ -210,6 +218,7 @@
             <span class="nav-badge" id="sidebarChatBadge" style="display: none;">0</span>
         </a>
 
+        @if(auth()->user()->role === 'superadmin_1')
         <a href="{{ route('admin.system-notifications') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.system-notifications*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-bullhorn"></i></span>
@@ -225,6 +234,7 @@
             <span class="nav-icon"><i class="fas fa-sliders-h"></i></span>
             <span class="nav-text">Menu Settings</span>
         </a>
+        @endif
 
     </nav>
 

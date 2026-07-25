@@ -224,10 +224,15 @@
         </div>
     </div>
 
+    @php
+        $isAdmin = auth()->user()->role === 'superadmin_1';
+        $colClass = $isAdmin ? 'col-xl-3 col-lg-6' : 'col-xl-4 col-lg-6';
+    @endphp
+
     <!-- Stats summary deck -->
     <div class="row mb-4">
         <!-- Products -->
-        <div class="col-xl-3 col-lg-6 mb-4">
+        <div class="{{ $colClass }} mb-4">
             <div class="stat-card-premium products">
                 <div class="stat-icon-wrapper">
                     <i class="fas fa-box"></i>
@@ -239,7 +244,7 @@
         </div>
 
         <!-- Orders -->
-        <div class="col-xl-3 col-lg-6 mb-4">
+        <div class="{{ $colClass }} mb-4">
             <div class="stat-card-premium orders">
                 <div class="stat-icon-wrapper">
                     <i class="fas fa-shopping-cart"></i>
@@ -254,6 +259,7 @@
             </div>
         </div>
 
+        @if($isAdmin)
         <!-- Users -->
         <div class="col-xl-3 col-lg-6 mb-4">
             <div class="stat-card-premium users">
@@ -269,9 +275,10 @@
                 @endif
             </div>
         </div>
+        @endif
 
         <!-- Blogs -->
-        <div class="col-xl-3 col-lg-6 mb-4">
+        <div class="{{ $colClass }} mb-4">
             <div class="stat-card-premium blogs">
                 <div class="stat-icon-wrapper">
                     <i class="fas fa-blog"></i>
@@ -285,6 +292,7 @@
 
     <!-- Main Chart & Tasks Grid -->
     <div class="row mb-4">
+        @if($isAdmin)
         <!-- Revenue Line Chart -->
         <div class="col-lg-8 mb-4">
             <div class="revenue-card-premium">
@@ -332,9 +340,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Pending Operations / Tasks Center -->
-        <div class="col-lg-4 mb-4">
+        <div class="{{ $isAdmin ? 'col-lg-4' : 'col-lg-12' }} mb-4">
             <div class="admin-card" style="height: 100%; display: flex; flex-direction: column;">
                 <div class="admin-card-header mb-3">
                     <h4 class="admin-card-title">
@@ -374,6 +383,7 @@
                             </div>
                         </li>
 
+                        @if($isAdmin)
                         <!-- Card Exchanges -->
                         <li class="pending-feed-item">
                             <div class="icon-circle bg-info-subtle text-info">
@@ -421,6 +431,7 @@
                                 </a>
                             </div>
                         </li>
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -455,6 +466,7 @@
                     </div>
                 </a>
             </div>
+            @if($isAdmin)
             <div class="col-lg-3 col-md-6">
                 <a href="{{ route('admin.preorders') }}" class="action-grid-card">
                     <div class="icon-box">
@@ -477,6 +489,7 @@
                     </div>
                 </a>
             </div>
+            @endif
         </div>
     </div>
 

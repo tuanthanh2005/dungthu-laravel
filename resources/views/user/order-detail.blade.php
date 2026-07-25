@@ -288,9 +288,9 @@
                     <div>
                         <h3 class="fw-bold mb-2">
                             <i class="fas fa-file-invoice text-primary me-3"></i>{{ __('Đơn hàng') }} #{{ $order->id }} @if($order->order_code) <span class="text-primary" style="font-family: monospace;">({{ $order->order_code }})</span> @endif
-                            <a href="#order-support-copy" class="support-icon-btn ms-2" title="{{ __('Hỗ trợ đơn hàng') }}" aria-label="{{ __('Hỗ trợ đơn hàng') }}">
-                                <i class="fas fa-headset"></i>
-                            </a>
+                            <button type="button" class="support-icon-btn ms-2" id="header-copy-btn" title="{{ __('Copy thông tin đơn hàng gửi admin') }}" aria-label="{{ __('Copy thông tin đơn hàng') }}" style="border: none;">
+                                <i class="fas fa-copy"></i>
+                            </button>
                         </h3>
                         <span class="order-type-badge type-{{ $order->order_type }}">
                             @if($order->order_type == 'qr')
@@ -538,6 +538,39 @@
                 setTimeout(() => {
                     copySupportButton.innerHTML = '<i class="fas fa-copy me-2"></i>{{ __("Copy mã đơn hàng + tên đơn hàng") }}';
                 }, 2200);
+            }
+        });
+    }
+
+    const headerCopyBtn = document.getElementById('header-copy-btn');
+    if (headerCopyBtn) {
+        headerCopyBtn.addEventListener('click', async () => {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(supportCopyText);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = supportCopyText;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    document.execCommand('copy');
+                    textarea.remove();
+                }
+
+                headerCopyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                headerCopyBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                headerCopyBtn.style.boxShadow = '0 6px 15px rgba(40, 167, 69, 0.2)';
+
+                setTimeout(() => {
+                    headerCopyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    headerCopyBtn.style.background = 'linear-gradient(135deg, #ff4d00 0%, #ffb800 100%)';
+                    headerCopyBtn.style.boxShadow = '0 6px 15px rgba(255, 77, 0, 0.2)';
+                }, 2000);
+            } catch (error) {
+                console.error('Copy header error:', error);
             }
         });
     }

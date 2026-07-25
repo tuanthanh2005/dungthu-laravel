@@ -246,6 +246,65 @@
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
+    /* Emoji Picker CSS */
+    .emoji-picker-container {
+        position: relative;
+        display: inline-block;
+    }
+    .emoji-popover {
+        position: absolute;
+        bottom: 56px;
+        left: -10px;
+        width: 310px;
+        height: 250px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0,0,0,0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        border-radius: 20px;
+        display: none;
+        z-index: 1000;
+        flex-direction: column;
+        overflow: hidden;
+        animation: popEmoji 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popEmoji {
+        from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .emoji-popover-header {
+        padding: 10px 14px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 13px;
+        font-weight: 700;
+        color: #64748b;
+        background: #f8fafc;
+    }
+    .emoji-list {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        padding: 12px;
+        overflow-y: auto;
+    }
+    .emoji-item {
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: all 0.15s ease;
+        user-select: none;
+        width: 36px;
+        height: 36px;
+    }
+    .emoji-item:hover {
+        background: #f1f5f9;
+        transform: scale(1.15);
+    }
+
     .empty-state {
         display: flex;
         flex-direction: column;
@@ -374,6 +433,17 @@
                         <i class="fas fa-image"></i>
                         <input type="file" id="adminFile" name="image" hidden accept="image/*" onchange="previewImage(this)">
                     </label>
+                    <div class="emoji-picker-container">
+                        <button type="button" class="admin-image-upload-btn mb-0" id="adminEmojiToggleBtn" title="Chọn emoji" style="border-radius: 50%;">
+                            <i class="far fa-smile" style="font-size: 18px;"></i>
+                        </button>
+                        <div class="emoji-popover" id="adminEmojiPopover">
+                            <div class="emoji-popover-header">
+                                <span>Biểu tượng cảm xúc</span>
+                            </div>
+                            <div class="emoji-list" id="adminEmojiList"></div>
+                        </div>
+                    </div>
                     <textarea class="admin-chat-input" id="adminChatInput" name="message" placeholder="Nhập tin nhắn..." autocomplete="off" rows="1" style="resize: none; max-height: 120px; overflow-y: hidden;"></textarea>
                     <button class="admin-send-btn" type="button" id="adminSendBtn" onclick="sendAdminMessage()">
                         <i class="fas fa-paper-plane"></i>
@@ -391,6 +461,48 @@ let selectedId = null;
 let selectedType = 'user';
 let lastMessageId = 0;
 let pollingInterval = null;
+
+document.addEventListener('DOMContentLoaded', function () {
+    const adminChatInput = document.getElementById('adminChatInput');
+    const adminEmojiToggleBtn = document.getElementById('adminEmojiToggleBtn');
+    const adminEmojiPopover = document.getElementById('adminEmojiPopover');
+    const adminEmojiList = document.getElementById('adminEmojiList');
+
+    const emojis = [
+        '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👹','👺','🤡','💩','👻','💀','☠️','👽','👾','🤖','🎃','😺','😸','😹','😻','😼','😽','🙀','😿','😾','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','🌟','⭐','✨','⚡','💥','🔥','🌈','☀️','🌤️','⛅','🌥️','☁️','🌦️','🌧️','⛈️','🌩️','❄️','💨','🌪️','🌫️','🌊','🎈','🎉','🎊','🎁','🐱','🐶','🦊','🐰','🐻','🐼','🐨','🦁','🐯','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🐣','🐥','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🐝','🐛','🦋','🐌','🐞','🐜','🕷️','🕸️','🐢','🐍','🦎','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐆','🐅','🦍','🦧','🚀','🛸','🎮','🕹️','🧩','🔮','🧸'
+    ];
+
+    emojis.forEach(emoji => {
+        const span = document.createElement('span');
+        span.className = 'emoji-item';
+        span.innerText = emoji;
+        span.addEventListener('click', function () {
+            const startPos = adminChatInput.selectionStart;
+            const endPos = adminChatInput.selectionEnd;
+            const textVal = adminChatInput.value;
+            adminChatInput.value = textVal.substring(0, startPos) + emoji + textVal.substring(endPos, textVal.length);
+            adminChatInput.focus();
+            adminChatInput.selectionStart = startPos + emoji.length;
+            adminChatInput.selectionEnd = startPos + emoji.length;
+        });
+        adminEmojiList.appendChild(span);
+    });
+
+    adminEmojiToggleBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (adminEmojiPopover.style.display === 'flex') {
+            adminEmojiPopover.style.display = 'none';
+        } else {
+            adminEmojiPopover.style.display = 'flex';
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!adminEmojiPopover.contains(e.target) && e.target !== adminEmojiToggleBtn && !adminEmojiToggleBtn.contains(e.target)) {
+            adminEmojiPopover.style.display = 'none';
+        }
+    });
+});
 
 function selectTarget(evt, id, name, email, type) {
     selectedId = id;

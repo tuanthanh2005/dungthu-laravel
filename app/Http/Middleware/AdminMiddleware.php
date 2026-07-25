@@ -23,6 +23,9 @@ class AdminMiddleware
         $method = strtoupper($request->getMethod());
         $routeName = $request->route() ? $request->route()->getName() : null;
 
+        // Ghi log debug phân quyền
+        \Illuminate\Support\Facades\Log::info("DEBUG AUTH: User ID: {$user->id}, Role: {$user->role}, Route: {$routeName}, URL: " . $request->fullUrl());
+
         // 1. Phân quyền truy cập cho SieuSuperAdmin
         if ($user->role === 'sieusuperadmin' && $routeName) {
             $allowedRoutePatterns = [

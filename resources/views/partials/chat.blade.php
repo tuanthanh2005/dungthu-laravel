@@ -540,13 +540,14 @@
 }
 
 .chat-send-btn {
-    width: 52px;
+    padding: 0 18px;
     height: 52px;
-    border-radius: 50%;
+    border-radius: 26px;
     border: none;
     background: var(--widget-gradient);
     color: white;
-    font-size: 20px;
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -660,9 +661,10 @@
     }
 
     .chat-send-btn {
-        width: 40px;
+        padding: 0 14px;
         height: 40px;
-        font-size: 16px;
+        font-size: 13px;
+        border-radius: 20px;
     }
 }
 
@@ -876,7 +878,7 @@
                     ></textarea>
                 </div>
                 <button class="chat-send-btn" type="submit" id="affiliateChatSendBtn">
-                    <i class="fas fa-paper-plane"></i>
+                    {{ __('Gửi') }}
                 </button>
             </div>
         </form>
@@ -953,7 +955,7 @@
                     ></textarea>
                 </div>
                 <button class="chat-send-btn" type="submit" id="userChatSendBtn" aria-label="{{ __('Gửi') }}">
-                    <i class="fas fa-paper-plane"></i>
+                    {{ __('Gửi') }}
                 </button>
             </div>
         </form>

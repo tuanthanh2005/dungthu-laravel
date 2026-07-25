@@ -707,6 +707,66 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     border-style: solid;
 }
+
+/* Emoji Picker CSS */
+.emoji-picker-container {
+    position: relative;
+    display: inline-block;
+}
+.emoji-popover {
+    position: absolute;
+    bottom: 56px;
+    left: -10px;
+    width: 280px;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 16px;
+    display: none;
+    z-index: 100000;
+    flex-direction: column;
+    overflow: hidden;
+    animation: popEmoji 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes popEmoji {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.emoji-popover-header {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    background: #f8fafc;
+}
+.emoji-list {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    padding: 8px;
+    overflow-y: auto;
+}
+.emoji-item {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    user-select: none;
+    width: 32px;
+    height: 32px;
+}
+.emoji-item:hover {
+    background: #f1f5f9;
+    transform: scale(1.15);
+}
+
 .chat-input-container {
     flex: 1;
     display: flex;
@@ -787,6 +847,17 @@
                     <i class="fas fa-image"></i>
                     <input type="file" id="affiliateChatImage" hidden accept="image/*" onchange="previewAffiliateImage(this)">
                 </label>
+                <div class="emoji-picker-container">
+                    <button type="button" class="chat-tool-btn" id="affiliateEmojiToggleBtn" title="{{ __('Chọn emoji') }}">
+                        <i class="far fa-smile" style="font-size: 18px;"></i>
+                    </button>
+                    <div class="emoji-popover" id="affiliateEmojiPopover">
+                        <div class="emoji-popover-header">
+                            <span>{{ __('Biểu tượng cảm xúc') }}</span>
+                        </div>
+                        <div class="emoji-list" id="affiliateEmojiList"></div>
+                    </div>
+                </div>
                 <div class="chat-input-container">
                     <div id="affiliateImagePreviewContainer" style="display: none;">
                         <span class="preview-item">
@@ -853,6 +924,17 @@
                     <i class="fas fa-image"></i>
                     <input type="file" id="userChatImage" hidden accept="image/*" onchange="previewUserImage(this)">
                 </label>
+                <div class="emoji-picker-container">
+                    <button type="button" class="chat-tool-btn" id="userEmojiToggleBtn" title="{{ __('Chọn emoji') }}">
+                        <i class="far fa-smile" style="font-size: 18px;"></i>
+                    </button>
+                    <div class="emoji-popover" id="userEmojiPopover">
+                        <div class="emoji-popover-header">
+                            <span>{{ __('Biểu tượng cảm xúc') }}</span>
+                        </div>
+                        <div class="emoji-list" id="userEmojiList"></div>
+                    </div>
+                </div>
                 <div class="chat-input-container">
                     <div id="userImagePreviewContainer" style="display: none;">
                         <span class="preview-item">
@@ -1246,6 +1328,55 @@ function clearAffiliateImagePreview() {
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
+    // Emoji list initialization
+    const emojis = [
+        '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👹','👺','🤡','💩','👻','💀','☠️','👽','👾','🤖','🎃','😺','😸','😹','😻','😼','😽','🙀','😿','😾','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','🌟','⭐','✨','⚡','💥','🔥','🌈','☀️','🌤️','⛅','🌥️','☁️','🌦️','🌧️','⛈️','🌩️','❄️','💨','🌪️','🌫️','🌊','🎈','🎉','🎊','🎁','🐱','🐶','🦊','🐰','🐻','🐼','🐨','🦁','🐯','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🐣','🐥','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🐝','🐛','🦋','🐌','🐞','🐜','🕷️','🕸️','🐢','🐍','🦎','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐆','🐅','🦍','🦧','🚀','🛸','🎮','🕹️','🧩','🔮','🧸'
+    ];
+
+    function setupEmojiPicker(toggleBtnId, popoverId, listId, inputId) {
+        const toggleBtn = document.getElementById(toggleBtnId);
+        const popover = document.getElementById(popoverId);
+        const list = document.getElementById(listId);
+        const input = document.getElementById(inputId);
+
+        if (!toggleBtn || !popover || !list || !input) return;
+
+        emojis.forEach(emoji => {
+            const span = document.createElement('span');
+            span.className = 'emoji-item';
+            span.innerText = emoji;
+            span.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const startPos = input.selectionStart;
+                const endPos = input.selectionEnd;
+                const textVal = input.value;
+                input.value = textVal.substring(0, startPos) + emoji + textVal.substring(endPos, textVal.length);
+                input.focus();
+                input.selectionStart = startPos + emoji.length;
+                input.selectionEnd = startPos + emoji.length;
+            });
+            list.appendChild(span);
+        });
+
+        toggleBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (popover.style.display === 'flex') {
+                popover.style.display = 'none';
+            } else {
+                popover.style.display = 'flex';
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!popover.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
+                popover.style.display = 'none';
+            }
+        });
+    }
+
+    setupEmojiPicker('affiliateEmojiToggleBtn', 'affiliateEmojiPopover', 'affiliateEmojiList', 'affiliateChatInput');
+    setupEmojiPicker('userEmojiToggleBtn', 'userEmojiPopover', 'userEmojiList', 'userChatInput');
+
     @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
         startAffiliatePolling();
         refreshAffiliateUnreadCount();

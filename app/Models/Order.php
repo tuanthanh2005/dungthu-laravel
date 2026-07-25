@@ -46,14 +46,28 @@ class Order extends Model
             }
         });
 
-        // When order status is updated to completed
+        // When order status is updated
         static::updated(function ($order) {
+            // When status changes to completed
             if ($order->isDirty('status') && $order->status === 'completed' && $order->getOriginal('status') !== 'completed') {
                 if ($order->user_id) {
                     $order->user()->increment('spin_tickets');
                 }
                 $order->createCustomerDurations();
             }
+
+            // When status changes to cancelled (or any status other than completed, if it was completed before)
+            if ($order->isDirty('status') && $order->status === 'cancelled') {
+                CustomerDuration::where('order_id', $order->id)->delete();
+                if ($order->getOriginal('status') === 'completed' && $order->user_id) {
+                    $order->user()->decrement('spin_tickets');
+                }
+            }
+        });
+
+        // When order is deleted
+        static::deleted(function ($order) {
+            CustomerDuration::where('order_id', $order->id)->delete();
         });
     }
 

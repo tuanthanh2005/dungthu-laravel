@@ -102,9 +102,8 @@
             </div>
 
             <div class="mb-4 text-start">
-                <label class="form-label fw-semibold text-dark">Bước 2: Xác nhận vai trò của bạn</label>
-                <input type="text" name="role_name" class="custom-input" placeholder="Nhập chính xác tên vai trò (ví dụ: sieusuperadmin)" required>
-                <div class="form-text text-muted">Vui lòng nhập đúng vai trò của tài khoản bạn đang đăng nhập.</div>
+                <label class="form-label fw-semibold text-dark">Bước 2: Xác nhận vai trò</label>
+                <input type="password" name="role_name" class="custom-input" placeholder="Nhập vai trò của bạn" required autocomplete="off">
             </div>
 
             <button type="submit" class="btn-verify">

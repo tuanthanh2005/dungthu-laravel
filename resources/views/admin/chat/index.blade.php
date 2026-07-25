@@ -319,6 +319,35 @@
         margin-bottom: 15px;
         opacity: 0.3;
     }
+
+    /* Mobile Responsive styles */
+    @media (max-width: 768px) {
+        .chat-admin-card {
+            margin: 5px;
+            height: calc(100vh - 130px);
+            border-radius: 10px;
+        }
+        .users-sidebar {
+            width: 100%;
+            display: flex;
+        }
+        .chat-main {
+            display: none !important;
+        }
+        .chat-admin-card.chat-open .users-sidebar {
+            display: none !important;
+        }
+        .chat-admin-card.chat-open .chat-main {
+            display: flex !important;
+            width: 100%;
+        }
+        .chat-messages {
+            padding: 15px;
+        }
+        .chat-message {
+            max-width: 85%;
+        }
+    }
 </style>
 @endpush
 
@@ -513,18 +542,31 @@ function selectTarget(evt, id, name, email, type) {
     evt.currentTarget.classList.add('active');
     
     document.getElementById('chatHeaderMain').innerHTML = `
-        <h5 class="mb-0">
-            <i class="fas fa-user"></i> ${name}
-            ${type === 'affiliate' ? '<span class="badge bg-info ms-1">CTV</span>' : ''}
-            <small class="text-muted d-block" style="font-size: 11px;">${email}</small>
-        </h5>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary btn-sm d-md-none me-2" onclick="closeChatMobile()" style="border-radius: 8px;">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </button>
+            <h5 class="mb-0">
+                <i class="fas fa-user"></i> ${name}
+                ${type === 'affiliate' ? '<span class="badge bg-info ms-1">CTV</span>' : ''}
+                <small class="text-muted d-block" style="font-size: 11px;">${email}</small>
+            </h5>
+        </div>
     `;
     
     document.getElementById('chatInputArea').style.display = 'block';
+    document.querySelector('.chat-admin-card').classList.add('chat-open');
     loadMessages();
     
     if (pollingInterval) clearInterval(pollingInterval);
     pollingInterval = setInterval(checkNewMessages, 3000);
+}
+
+function closeChatMobile() {
+    selectedId = null;
+    document.querySelector('.chat-admin-card').classList.remove('chat-open');
+    document.querySelectorAll('.user-item').forEach(item => item.classList.remove('active'));
+    if (pollingInterval) clearInterval(pollingInterval);
 }
 
 function previewImage(input) {

@@ -12,11 +12,25 @@ class TelegramHelper
      */
     public static function sendMessage($text)
     {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+
         try {
-            \App\Jobs\SendTelegramNotification::dispatch($text);
-            return true;
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Telegram message sent successfully');
+                return true;
+            } else {
+                Log::error('Telegram send failed: ' . $response->body());
+                return false;
+            }
         } catch (\Exception $e) {
-            Log::error('Telegram dispatch error: ' . $e->getMessage());
+            Log::error('Telegram error: ' . $e->getMessage());
             return false;
         }
     }
@@ -26,13 +40,26 @@ class TelegramHelper
      */
     public static function sendNewOrderNotification($order)
     {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+
         // Tạo nội dung thông báo
         $message = self::formatOrderMessage($order);
 
         try {
-            \App\Jobs\SendTelegramNotification::dispatch($message);
-            Log::info('Telegram notification queued successfully for order #' . $order->id);
-            return true;
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $message,
+                'parse_mode' => 'HTML',
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Telegram notification sent successfully for order #' . $order->id);
+                return true;
+            } else {
+                Log::error('Telegram notification failed: ' . $response->body());
+                return false;
+            }
         } catch (\Exception $e) {
             Log::error('Telegram notification error: ' . $e->getMessage());
             return false;
@@ -149,6 +176,9 @@ class TelegramHelper
      */
     public static function sendBuffPaymentNotification($buffOrder)
     {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+
         try {
             $service = $buffOrder->buffService;
             $server = $buffOrder->buffServer;
@@ -178,9 +208,19 @@ class TelegramHelper
 
             $message .= "✅ <i>Payment confirmed! Processing order...</i>";
 
-            \App\Jobs\SendTelegramNotification::dispatch($message);
-            Log::info('Telegram buff payment notification queued for order: ' . $buffOrder->order_code);
-            return true;
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $message,
+                'parse_mode' => 'HTML',
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Telegram buff payment notification sent for order: ' . $buffOrder->order_code);
+                return true;
+            } else {
+                Log::error('Telegram buff notification failed: ' . $response->body());
+                return false;
+            }
         } catch (\Exception $e) {
             Log::error('Telegram buff notification error: ' . $e->getMessage());
             return false;
@@ -192,6 +232,9 @@ class TelegramHelper
      */
     public static function sendNewUserNotification($user)
     {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+
         $text = "👤 <b>KHÁCH HÀNG MỚI ĐĂNG KÝ</b>\n";
         $text .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
         $text .= "• Họ tên: <b>" . $user->name . "</b>\n";
@@ -201,8 +244,12 @@ class TelegramHelper
         $text .= "🚀 <i>Chào mừng thành viên mới gia nhập hệ thống!</i>";
 
         try {
-            \App\Jobs\SendTelegramNotification::dispatch($text);
-            Log::info('Telegram notification queued for new user: ' . $user->email);
+            Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+            Log::info('Telegram notification sent for new user: ' . $user->email);
         } catch (\Exception $e) {
             Log::error('Telegram User Notification Error: ' . $e->getMessage());
         }
@@ -213,6 +260,9 @@ class TelegramHelper
      */
     public static function sendNewChatMessageNotification($message)
     {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+
         $user = $message->user;
         $userName = $user ? $user->name : 'Khách lạ';
         $userEmail = $user ? $user->email : 'N/A';
@@ -234,7 +284,11 @@ class TelegramHelper
         $text .= "⏰ <i>" . now()->format('H:i:s d/m/Y') . "</i>";
 
         try {
-            \App\Jobs\SendTelegramNotification::dispatch($text);
+            Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
         } catch (\Exception $e) {
             Log::error('Telegram Chat Notification Error: ' . $e->getMessage());
         }

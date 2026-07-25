@@ -125,9 +125,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Password Reset Routes
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->middleware('throttle:5,1')->name('password.email');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->middleware('throttle:5,1')->name('password.update');
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 // Google OAuth routes
 Route::get('/auth/google/redirect', [GoogleController::class, 'redirect']);
@@ -190,7 +190,7 @@ Route::middleware(['auth', 'admin', 'admin.pin'])->prefix('admin/chat')->group(f
 // Card Exchange routes
 Route::middleware('auth')->group(function () {
     Route::get('/card-exchange', [CardExchangeController::class, 'index'])->name('card-exchange.index');
-    Route::post('/card-exchange', [CardExchangeController::class, 'store'])->middleware('throttle:10,1')->name('card-exchange.store');
+    Route::post('/card-exchange', [CardExchangeController::class, 'store'])->name('card-exchange.store');
 });
 
 // Admin routes (requires auth and admin role)
@@ -427,7 +427,7 @@ Route::prefix('cong-tac-vien')->group(function () {
 });
 
 // ─── Admin Affiliate Routes ───────────────────────────────────────────────────
-Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->middleware('throttle:5,1')->name('newsletter.subscribe');
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 
 // Test email route
 Route::get('/test-email', function() {

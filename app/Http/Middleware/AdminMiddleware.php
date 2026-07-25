@@ -63,6 +63,27 @@ class AdminMiddleware
             }
         }
 
+        // 2. Phân quyền chặn Superadmin thường (superadmin_1) truy cập các trang độc quyền của SieuSuperAdmin
+        if ($user->role === 'superadmin_1' && $routeName) {
+            $restrictedRoutePatterns = [
+                'admin.orders*',
+                'admin.chat*',
+                'admin.products*',
+                'admin.categories*',
+                'admin.features*',
+                'admin.customer-durations*',
+                'admin.blogs*',
+                'admin.blog-topics*',
+            ];
+
+            foreach ($restrictedRoutePatterns as $pattern) {
+                if (\Illuminate\Support\Str::is($pattern, $routeName)) {
+                    \Illuminate\Support\Facades\Log::warning("Unauthorized admin access attempt by superadmin_1 (User ID: {$user->id}) to sieusuperadmin route: {$routeName} from IP: {$request->ip()}");
+                    abort(403, 'Quyền hạn của bạn không đủ để truy cập khu vực này.');
+                }
+            }
+        }
+
         // 2. Bỏ qua nhập mã PIN nếu đã mở khóa Gate bảo mật
         if (session('admin_unlocked') === true) {
             return $next($request);

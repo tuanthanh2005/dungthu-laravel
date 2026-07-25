@@ -42,6 +42,8 @@ class AdminMiddleware
                 'admin.customer-durations*',
                 'admin.blogs*',
                 'admin.blog-topics*',
+                'admin.users*',
+                'admin.coupons*',
                 'admin.google-indexing.submit-all',
             ];
 
@@ -77,6 +79,8 @@ class AdminMiddleware
                 'admin.customer-durations*',
                 'admin.blogs*',
                 'admin.blog-topics*',
+                'admin.users*',
+                'admin.coupons*',
             ];
 
             foreach ($restrictedRoutePatterns as $pattern) {

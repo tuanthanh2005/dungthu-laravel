@@ -175,9 +175,8 @@
         </a>
         @endif
 
-        @if(auth()->user()->role === 'superadmin_1')
+        @if(auth()->user()->role === 'sieusuperadmin')
         <div class="sidebar-divider"></div>
-
         <!-- Người dùng -->
         <div class="sidebar-section-label">Người dùng</div>
         <a href="{{ route('admin.users') }}"
@@ -185,6 +184,12 @@
             <span class="nav-icon"><i class="fas fa-users"></i></span>
             <span class="nav-text">Danh sách User</span>
         </a>
+        @endif
+
+        @if(auth()->user()->role === 'superadmin_1')
+        <div class="sidebar-divider"></div>
+        <!-- Đối tác -->
+        <div class="sidebar-section-label">Cộng tác viên</div>
         <a href="{{ route('admin.affiliates.index') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.affiliates*') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-handshake"></i></span>

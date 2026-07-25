@@ -93,7 +93,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.verify-pin.post') }}" method="POST" data-admin-pin-skip="1">
+        <form action="{{ route('admin.verify-pin.post') }}" method="POST">
             @csrf
             
             <div class="mb-3 text-start">

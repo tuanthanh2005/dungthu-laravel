@@ -85,7 +85,7 @@
             <i class="fas fa-shield-alt"></i>
         </div>
         <h3 class="fw-bold mb-2">Cổng bảo mật Admin</h3>
-        <p class="text-muted mb-4">Vui lòng hoàn thành xác thực 2 lớp để truy cập trang quản trị.</p>
+        <p class="text-muted mb-4">Vui lòng nhập mã số bảo mật để truy cập khu vực này.</p>
 
         @if(session('error'))
             <div class="alert alert-danger border-0 rounded-3 mb-4 text-start">
@@ -96,18 +96,13 @@
         <form action="{{ route('admin.verify-pin.post') }}" method="POST">
             @csrf
             
-            <div class="mb-3 text-start">
-                <label class="form-label fw-semibold text-dark">Bước 1: Mật khẩu cổng bảo mật</label>
-                <input type="password" name="gate_password" class="custom-input" placeholder="Nhập mật khẩu bí mật" required autofocus>
-            </div>
-
             <div class="mb-4 text-start">
-                <label class="form-label fw-semibold text-dark">Bước 2: Xác nhận vai trò</label>
-                <input type="password" name="role_name" class="custom-input" placeholder="Nhập vai trò của bạn" required autocomplete="off">
+                <label class="form-label fw-semibold text-dark">Mã số bảo mật (ADMIN_GATE_PASSWORD)</label>
+                <input type="password" name="gate_password" class="custom-input" placeholder="Nhập mã số PIN bảo mật" required autofocus autocomplete="off">
             </div>
 
             <button type="submit" class="btn-verify">
-                <i class="fas fa-key me-1"></i> Xác thực & Vào hệ thống
+                <i class="fas fa-key me-1"></i> Xác nhận & Tiếp tục
             </button>
         </form>
 

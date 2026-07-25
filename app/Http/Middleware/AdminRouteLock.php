@@ -31,10 +31,15 @@ class AdminRouteLock
             return $next($request);
         }
 
-        // Nếu chưa mở khóa, xóa session cũ và chuyển hướng đến trang xác thực
-        session()->forget(['admin_unlocked', 'admin_unlocked_hash']);
+        // Chỉ khóa và yêu cầu xác thực đối với các mục nhạy cảm: Đơn hàng, Danh sách User, Thời hạn khách
+        $isSensitivePath = $request->is('admin/orders*') || 
+                           $request->is('admin/users*') || 
+                           $request->is('admin/customer-durations*') ||
+                           $request->is('admin/coupons*');
 
-        if ($request->is('admin/*') || $request->is('admin')) {
+        if ($isSensitivePath) {
+            // Xóa session cũ không hợp lệ
+            session()->forget(['admin_unlocked', 'admin_unlocked_hash']);
             return redirect()->route('admin.verify-pin')->with('target_url', $request->fullUrl());
         }
 

@@ -540,25 +540,29 @@
 }
 
 .chat-send-btn {
-    padding: 0 18px;
-    height: 52px;
-    border-radius: 26px;
+    padding: 0;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    border-radius: 50%;
     border: none;
-    background: var(--widget-gradient);
-    color: white;
-    font-size: 15px;
+    background: transparent;
+    color: var(--widget-color, #6366f1);
+    font-size: 21px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: var(--chat-shadow-sm);
+    box-shadow: none;
+    flex-shrink: 0;
 }
 
 .chat-send-btn:hover:not(:disabled) {
-    transform: scale(1.1);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transform: scale(1.08);
+    background: rgba(99, 102, 241, 0.1);
+    box-shadow: none;
 }
 
 .chat-send-btn:active:not(:disabled) {
@@ -715,8 +719,8 @@
     }
 
     .chat-send-btn {
-        width: 50px;
-        min-width: 50px;
+        width: 40px;
+        min-width: 40px;
         height: 40px;
         padding: 0;
         flex-shrink: 0;
@@ -916,8 +920,8 @@
                         style="resize: none; overflow-y: hidden;"
                     ></textarea>
                 </div>
-                <button class="chat-send-btn" type="submit" id="affiliateChatSendBtn">
-                    {{ __('Gửi') }}
+                <button class="chat-send-btn" type="submit" id="affiliateChatSendBtn" aria-label="{{ __('Gửi') }}" title="{{ __('Gửi') }}">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </form>
@@ -993,8 +997,8 @@
                         style="resize: none; overflow-y: hidden;"
                     ></textarea>
                 </div>
-                <button class="chat-send-btn" type="submit" id="userChatSendBtn" aria-label="{{ __('Gửi') }}">
-                    {{ __('Gửi') }}
+                <button class="chat-send-btn" type="submit" id="userChatSendBtn" aria-label="{{ __('Gửi') }}" title="{{ __('Gửi') }}">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </form>

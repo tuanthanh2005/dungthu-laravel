@@ -108,10 +108,14 @@
                     <label for="excerpt" class="form-label">
                         <i class="fas fa-align-left me-2"></i>Mô tả ngắn
                     </label>
-                    <textarea class="form-control" id="excerpt" name="excerpt" 
-                              rows="3" required 
+                    <textarea class="form-control @error('excerpt') is-invalid @enderror" id="excerpt" name="excerpt"
+                              rows="3" required maxlength="162"
                               placeholder="Nhập mô tả ngắn về bài viết...">{{ old('excerpt', $blog->excerpt) }}</textarea>
-                    <small class="text-muted">Mô tả ngắn sẽ hiển thị trong danh sách bài viết</small>
+                    @error('excerpt')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="d-flex justify-content-between mt-1">
+                        <small class="text-muted">Mô tả ngắn sẽ hiển thị trong danh sách bài viết</small>
+                        <small id="excerptCounter" class="text-muted">0/162 ký tự</small>
+                    </div>
                 </div>
 
                 <!-- Nội dung -->
@@ -205,6 +209,17 @@ tinymce.init({
     content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.6; }',
     branding: false
 });
+
+const excerpt = document.getElementById('excerpt');
+const excerptCounter = document.getElementById('excerptCounter');
+function updateExcerptCounter() {
+    const length = Array.from(excerpt.value).length;
+    excerptCounter.textContent = `${length}/162 ký tự`;
+    excerptCounter.classList.toggle('text-danger', length >= 162);
+    excerptCounter.classList.toggle('text-muted', length < 162);
+}
+excerpt.addEventListener('input', updateExcerptCounter);
+updateExcerptCounter();
 
 function previewImage(event) {
     const file = event.target.files[0];

@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3065867660863139"
-     crossorigin="anonymous"></script>
-    <meta name="google-adsense-account" content="ca-pub-3065867660863139">
-    @endif
-    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-K1EFHMNDGK"></script>
     <script>
@@ -90,34 +83,18 @@
 
     <!-- Main Content -->
     <main>
-        {{-- GLOBAL TOP AD (Desktop only, minimal height) --}}
-        @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-        <div class="container-fluid d-none d-lg-block pb-3" style="max-width:1200px; margin: 0 auto;">
-            <div class="ads-wrapper" style="margin: 10px 0; min-height: 90px; border-bottom: 1px solid #eee;">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-        </div>
-        @endif
-
         @yield('content')
-
-        {{-- GLOBAL PRE-FOOTER AD (System wide) --}}
-        @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-        <div class="container-fluid py-4" style="max-width:1100px; margin: 0 auto;">
-            <div class="ads-wrapper" style="background: #fdfdfd; border: 1px dashed #ddd; padding: 15px; min-height: 100px;">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975" data-ad-format="fluid" data-ad-layout="in-article"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-        </div>
-        @endif
     </main>
 
     <!-- Footer -->
     @include('partials.footer')
 
-    <!-- Chat Widget -->
-    @include('partials.chat')
+    <!-- Support buttons stay lightweight for guests; full chat loads only for signed-in users/affiliates. -->
+    @if(Auth::check() || Auth::guard('affiliate')->check())
+        @include('partials.chat')
+    @else
+        @include('partials.contact-fabs')
+    @endif
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

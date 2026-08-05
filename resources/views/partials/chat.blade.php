@@ -1171,10 +1171,12 @@ function appendAffiliateMessage(message, playSound = false) {
 }
 
 function startAffiliatePolling() {
-    affiliatePollingInterval = setInterval(() => {
+    const poll = () => {
         if (affiliateChatOpen) checkNewAffiliateMessages();
         else refreshAffiliateUnreadCount();
-    }, 3000);
+        affiliatePollingInterval = setTimeout(poll, affiliateChatOpen ? 5000 : 30000);
+    };
+    poll();
 }
 
 function checkNewAffiliateMessages() {
@@ -1580,13 +1582,15 @@ function _appendUserMsg(msg, playSound) {
 }
 
 function _startUserPolling() {
-    userPollingInterval = setInterval(() => {
+    const poll = () => {
         if (userChatOpen) {
             _checkNewUserMessages();
         } else {
             _refreshUserUnreadCount();
         }
-    }, 3500);
+        userPollingInterval = setTimeout(poll, userChatOpen ? 5000 : 30000);
+    };
+    poll();
 }
 
 function _checkNewUserMessages() {
@@ -1627,6 +1631,12 @@ function _refreshUserUnreadCount() {
                 prevUserUnreadCount = 0;
                 badge.style.display = 'none';
             }
+
+            [document.getElementById('navChatBadge'), document.getElementById('mobileChatBadge')].forEach(navBadge => {
+                if (!navBadge) return;
+                navBadge.textContent = data.unread || 0;
+                navBadge.style.display = data.unread > 0 ? 'inline-block' : 'none';
+            });
         })
         .catch(() => {});
 }

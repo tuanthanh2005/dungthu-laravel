@@ -473,39 +473,10 @@
                     <i class="fas fa-quote-right text-primary ms-2"></i>
                 </div>
 
-                <!-- AdSense: In-article -->
-                @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-                <div class="ads-wrapper my-4" data-aos="fade-up">
-                    <ins class="adsbygoogle"
-                         style="display:block; text-align:center;"
-                         data-ad-layout="in-article"
-                         data-ad-format="fluid"
-                         data-ad-client="ca-pub-3065867660863139"
-                         data-ad-slot="4989157975"></ins>
-                </div>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                @endif
-
                 <!-- Blog Content -->
                 <div class="blog-content-area" data-aos="fade-up">
                     {!! $blog->content !!}
                 </div>
-
-                <!-- AdSense: Bottom Content -->
-                @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-                <div class="ads-wrapper my-5 ads-mobile-300" data-aos="fade-up">
-                    <ins class="adsbygoogle"
-                         style="display:block; width:100%; height:250px;"
-                         data-ad-client="ca-pub-3065867660863139"
-                         data-ad-slot="4989157975"
-                         data-ad-format="rectangle"></ins>
-                </div>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                @endif
 
                 <!-- Author Info -->
                 <div class="author-info" data-aos="fade-up">

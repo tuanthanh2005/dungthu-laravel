@@ -1687,7 +1687,6 @@ class AdminController extends Controller
             'menu_chat',
             'menu_minigame',
             'menu_zalo_group',
-            'adsense_enabled',
         ];
 
         foreach ($menuKeys as $key) {
@@ -1702,7 +1701,6 @@ class AdminController extends Controller
             'fake_orders_top3',
             'zalo_group_link',
             'usd_exchange_rate',
-            'support_facebook_link',
             'support_zalo_link',
             'support_zalo_number',
             'support_telegram_link',

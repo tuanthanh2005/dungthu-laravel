@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class SiteSetting extends Model
 {
+    private const CACHE_KEY = 'site_settings.all';
+
+    private static ?array $settings = null;
+
     protected $fillable = [
         'key',
         'value',
@@ -13,8 +18,12 @@ class SiteSetting extends Model
 
     public static function getValue(string $key, $default = null)
     {
-        $record = static::query()->where('key', $key)->first();
-        return $record ? $record->value : $default;
+        self::$settings ??= Cache::rememberForever(
+            self::CACHE_KEY,
+            fn () => static::query()->pluck('value', 'key')->all()
+        );
+
+        return self::$settings[$key] ?? $default;
     }
 
     public static function setValue(string $key, $value): void
@@ -23,5 +32,8 @@ class SiteSetting extends Model
             ['key' => $key],
             ['value' => (string) $value]
         );
+
+        self::$settings = null;
+        Cache::forget(self::CACHE_KEY);
     }
 }

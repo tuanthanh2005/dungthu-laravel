@@ -55,7 +55,7 @@
 <aside class="admin-sidebar" id="adminSidebar">
 
     <!-- Logo -->
-    <a href="{{ route('admin.dashboard') }}" class="sidebar-logo">
+    <a href="{{ auth()->user()->role === 'blog_editor' ? route('admin.blogs') : route('admin.dashboard') }}" class="sidebar-logo">
         <div class="sidebar-logo-icon">
             <i class="fas fa-shield-alt"></i>
         </div>
@@ -64,6 +64,15 @@
 
     <!-- Navigation -->
     <nav class="sidebar-nav">
+
+        @if(auth()->user()->role === 'blog_editor')
+        <div class="sidebar-section-label">Nội dung</div>
+        <a href="{{ route('admin.blogs') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.blogs*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-blog"></i></span>
+            <span class="nav-text">Blog</span>
+        </a>
+        @else
 
         <!-- Tổng quan -->
         <div class="sidebar-section-label">Tổng quan</div>
@@ -249,9 +258,12 @@
         </a>
         @endif
 
+        @endif {{-- blog_editor --}}
+
     </nav>
 
     <!-- Sidebar Footer -->
+    @if(auth()->user()->role !== 'blog_editor')
     <div class="sidebar-footer">
         <a href="{{ url('/') }}" class="sidebar-nav-item" target="_blank">
             <span class="nav-icon"><i class="fas fa-external-link-alt"></i></span>
@@ -262,6 +274,7 @@
             <span class="nav-text">Khóa Admin</span>
         </a>
     </div>
+    @endif
 
 </aside>
 

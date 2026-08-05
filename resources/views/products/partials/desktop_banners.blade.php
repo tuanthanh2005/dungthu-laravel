@@ -42,12 +42,12 @@
         color: #0068ff;
         font-size: 22px;
     }
-    /* Fanpage Colors */
-    .fanpage-card .banner-icon-circle {
-        background-color: #e7f3ff;
+    /* Telegram Colors */
+    .telegram-card .banner-icon-circle {
+        background-color: #e6f7ff;
     }
-    .fanpage-card .banner-icon-circle i {
-        color: #1877f2;
+    .telegram-card .banner-icon-circle i {
+        color: #0088cc;
         font-size: 22px;
     }
     /* Admin Zalo Colors */
@@ -87,14 +87,15 @@
             </a>
         </div>
         <div class="col-4">
-            <a href="{{ \App\Helpers\SupportHelper::getFacebookLink() }}" 
-               target="_blank" 
-               class="desktop-banner-card fanpage-card text-decoration-none">
+            <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="desktop-banner-card telegram-card text-decoration-none">
                 <div class="banner-icon-circle">
-                    <i class="fab fa-facebook-f"></i>
+                    <i class="fab fa-telegram-plane"></i>
                 </div>
-                <div class="banner-title">{{ __('Fanpage') }}</div>
-                <div class="banner-subtitle">{{ __('Theo dõi Fanpage chính thức') }}</div>
+                <div class="banner-title">{{ __('Telegram') }}</div>
+                <div class="banner-subtitle">{{ __('Liên hệ Telegram:') }} {{ \App\Helpers\SupportHelper::getTelegramUsername() }}</div>
             </a>
         </div>
         <div class="col-4">

@@ -236,15 +236,18 @@
 
         .floating-ai-card {
             position: absolute;
-            width: 140px;
+            width: 158px;
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #e5e7eb;
             border-radius: 12px;
-            padding: 10px;
+            padding: 14px 12px;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            text-align: center;
         }
 
         .floating-ai-card:hover {
@@ -281,10 +284,22 @@
         }
 
         .floating-ai-card .card-name {
-            font-size: 0.78rem;
+            font-size: 0.86rem;
             font-weight: 700;
             color: #111827;
-            margin-bottom: 2px;
+            margin-top: 10px;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        .floating-ai-card .website-logo {
+            width: 56px;
+            height: 56px;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+            object-fit: contain;
+            background: #fff;
         }
 
         .floating-ai-card .card-desc {
@@ -305,8 +320,8 @@
 
         /* Float Positions & Animations */
         .card-chatgpt {
-            left: 2%;
-            top: 8%;
+            left: 16%;
+            top: 0;
             z-index: 4;
             --hover-border: rgba(16, 185, 129, 0.4);
             --hover-shadow: rgba(16, 185, 129, 0.2);
@@ -317,8 +332,8 @@
         .card-chatgpt .card-price { color: #059669; }
 
         .card-claude {
-            right: 2%;
-            top: 2%;
+            right: 16%;
+            top: 0;
             z-index: 3;
             --hover-border: rgba(249, 115, 22, 0.4);
             --hover-shadow: rgba(249, 115, 22, 0.2);
@@ -329,8 +344,8 @@
         .card-claude .card-price { color: #d97706; }
 
         .card-vpn {
-            left: 20%;
-            bottom: 6%;
+            left: 16%;
+            bottom: 0;
             z-index: 5;
             --hover-border: rgba(139, 92, 246, 0.4);
             --hover-shadow: rgba(139, 92, 246, 0.2);
@@ -341,8 +356,8 @@
         .card-vpn .card-price { color: #7c3aed; }
 
         .card-cursor {
-            right: 18%;
-            bottom: 15%;
+            right: 16%;
+            bottom: 0;
             z-index: 4;
             --hover-border: rgba(56, 189, 248, 0.4);
             --hover-shadow: rgba(56, 189, 248, 0.2);
@@ -1823,61 +1838,25 @@
                     <div class="col-lg-5">
                         <div class="hero-right-showcase">
                             <div class="floating-cards-wrapper">
-                                <!-- Card ChatGPT -->
-                                <div class="floating-ai-card card-chatgpt" onclick="window.location.href='{{ route('product.keyword', 'gpt') }}'">
-                                    <div class="card-head">
-                                        <div class="card-icon"><i class="fa-solid fa-message"></i></div>
-                                        <div class="card-status">Hot</div>
-                                    </div>
-                                    <div class="card-name">ChatGPT Plus</div>
-                                    <div class="card-desc">{{ __('Sử dụng GPT-4, DALL-E 3 & các công cụ phân tích nâng cao.') }}</div>
-                                    <div class="card-foot">
-                                        <span class="text-muted">{{ __('Giá từ') }}</span>
-                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$2.40' : '60.000đ' }}</span>
-                                    </div>
-                                </div>
+                                <a class="floating-ai-card card-chatgpt" href="https://vpnstore.pro/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập vpnstore.pro">
+                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=vpnstore.pro&amp;sz=128" alt="Logo VPN Store">
+                                    <div class="card-name">vpnstore.pro</div>
+                                </a>
 
-                                <!-- Card Claude AI -->
-                                <div class="floating-ai-card card-claude" onclick="window.location.href='{{ route('product.keyword', 'claude') }}'">
-                                    <div class="card-head">
-                                        <div class="card-icon"><i class="fa-solid fa-brain"></i></div>
-                                        <div class="card-status">Vip</div>
-                                    </div>
-                                    <div class="card-name">Claude AI Pro</div>
-                                    <div class="card-desc">{{ __('Sở hữu Claude 3.5 Sonnet với giới hạn chat lớn nhất.') }}</div>
-                                    <div class="card-foot">
-                                        <span class="text-muted">{{ __('Giá từ') }}</span>
-                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$3.56' : '89.000đ' }}</span>
-                                    </div>
-                                </div>
+                                <a class="floating-ai-card card-claude" href="https://aicuatoi.com/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập aicuatoi.com">
+                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=aicuatoi.com&amp;sz=128" alt="Logo AI Của Tôi">
+                                    <div class="card-name">aicuatoi.com</div>
+                                </a>
 
-                                <!-- Card VPN -->
-                                <div class="floating-ai-card card-vpn" onclick="window.location.href='{{ route('product.keyword', 'vpn') }}'">
-                                    <div class="card-head">
-                                        <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                                        <div class="card-status">New</div>
-                                    </div>
-                                    <div class="card-name">VPN Premium</div>
-                                    <div class="card-desc">{{ __('Bảo mật thông tin, truy cập website bị chặn & tăng tốc internet.') }}</div>
-                                    <div class="card-foot">
-                                        <span class="text-muted">{{ __('Giá từ') }}</span>
-                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$0.80' : '20.000đ' }}</span>
-                                    </div>
-                                </div>
+                                <a class="floating-ai-card card-vpn" href="https://aicuatoi.net/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập aicuatoi.net">
+                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=aicuatoi.com&amp;sz=128" alt="Logo AI Của Tôi">
+                                    <div class="card-name">aicuatoi.net</div>
+                                </a>
 
-                                <!-- Card Cursor Pro -->
-                                <div class="floating-ai-card card-cursor" onclick="window.location.href='{{ route('product.keyword', 'cursor') }}'">
-                                    <div class="card-head">
-                                        <div class="card-icon"><i class="fa-solid fa-code"></i></div>
-                                        <div class="card-status">Sale</div>
-                                    </div>
-                                    <div class="card-name">Cursor Pro</div>
-                                    <div class="card-desc">{{ __('Trình soạn thảo code AI bứt phá tốc độ lập trình.') }}</div>
-                                    <div class="card-foot">
-                                        <span class="text-muted">{{ __('Giá từ') }}</span>
-                                        <span class="card-price">{{ app()->getLocale() === 'en' ? '$6.00' : '150.000đ' }}</span>
-                                    </div>
-                                </div>
+                                <a class="floating-ai-card card-cursor" href="https://2fa.center/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập 2fa.center">
+                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=2fa.center&amp;sz=128" alt="Logo 2FA Center">
+                                    <div class="card-name">2fa.center</div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1898,7 +1877,10 @@
                 {{-- 0. Official Fanpages Verification Section --}}
                 @php
                     $fanpagesJson = \App\Models\SiteSetting::getValue('official_fanpages', '[]');
-                    $officialFanpages = json_decode($fanpagesJson, true) ?: [];
+                    $officialFanpages = array_values(array_filter(
+                        json_decode($fanpagesJson, true) ?: [],
+                        fn ($channel) => ($channel['platform'] ?? '') !== 'facebook'
+                    ));
                 @endphp
 
                 @if(count($officialFanpages) > 0)
@@ -1906,7 +1888,7 @@
                         <div class="official-header">
                             <div class="official-header-title">
                                 <i class="fa-solid fa-shield-halved text-success fs-5"></i>
-                                <h3>{{ __('Kênh liên hệ & Fanpage chính thức') }}</h3>
+                                <h3>{{ __('Kênh liên hệ chính thức') }}</h3>
                             </div>
                             <div class="official-badge-verify">
                                 <i class="fa-solid fa-circle-check"></i> {{ __('Đã xác minh') }}
@@ -1998,7 +1980,7 @@
                                         @if($sp->stock <= 0)
                                             <div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">{{ __('HẾT HÀNG') }}</div>
                                         @endif
-                                        <img src="{{ $sp->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $sp->name }}"
+                                        <img src="{{ $sp->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $sp->name }}" loading="lazy" decoding="async"
                                             style="width:100%;height:120px;object-fit:cover;">
                                         <div style="padding:8px;">
                                             <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">
@@ -2027,7 +2009,7 @@
                             @foreach($featuredProducts->take(6) as $fp)
                             <a href="{{ route('product.show', $fp->slug) }}" class="combo-prod-card {{ $fp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
-                                    <img src="{{ $fp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
+                                    <img src="{{ $fp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}" loading="lazy" decoding="async"
                                          alt="{{ $fp->name }}" loading="lazy">
                                     @if($fp->is_on_sale)
                                         <span class="discount-badge">-{{ $fp->discount_percent }}%</span>
@@ -2075,7 +2057,7 @@
                             @foreach($highlightProducts->take(6) as $hp)
                             <a href="{{ route('product.show', $hp->slug) }}" class="combo-prod-card {{ $hp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
-                                    <img src="{{ $hp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
+                                    <img src="{{ $hp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}" loading="lazy" decoding="async"
                                          alt="{{ $hp->name }}" loading="lazy">
                                     @if($hp->is_on_sale)
                                         <span class="discount-badge">-{{ $hp->discount_percent }}%</span>
@@ -2123,7 +2105,7 @@
                             @foreach($latestProducts->take(12) as $cp)
                             <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card {{ $cp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
-                                    <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}"
+                                    <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}" loading="lazy" decoding="async"
                                          alt="{{ $cp->name }}" loading="lazy">
                                     @if($cp->is_on_sale)
                                         <span class="discount-badge">-{{ $cp->discount_percent }}%</span>
@@ -2243,16 +2225,6 @@
                         </a>
                     </div>
 
-                    {{-- AdSense 300x250 --}}
-                    @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-                    <div class="ads-wrapper ads-sidebar-260 mb-3">
-                        <ins class="adsbygoogle" style="display:block;width:100%;height:260px;"
-                            data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
-                            data-ad-format="rectangle"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                    </div>
-                    @endif
-
                     {{-- Flash Sale sidebar --}}
                     @if(isset($saleProducts) && $saleProducts->count() > 0)
                         <div class="tf-widget">
@@ -2322,16 +2294,6 @@
                                 </a>
                             @endforeach
                         </div>
-                    @endif
-
-                    {{-- AdSense 2nd --}}
-                    @if(\App\Models\SiteSetting::getValue('adsense_enabled', '1') === '1')
-                    <div class="ads-wrapper ads-sidebar-600 mb-3">
-                        <ins class="adsbygoogle" style="display:block;width:100%;height:600px;"
-                            data-ad-client="ca-pub-3065867660863139" data-ad-slot="4989157975"
-                            data-ad-format="vertical"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                    </div>
                     @endif
 
                     {{-- Footer mini --}}

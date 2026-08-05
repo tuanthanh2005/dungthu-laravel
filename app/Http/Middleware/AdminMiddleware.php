@@ -15,13 +15,23 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !in_array(auth()->user()->role, ['superadmin_1', 'sieusuperadmin'])) {
+        if (!auth()->check() || !in_array(auth()->user()->role, ['superadmin_1', 'sieusuperadmin', 'blog_editor'], true)) {
             return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập!');
         }
 
         $user = auth()->user();
         $method = strtoupper($request->getMethod());
         $routeName = $request->route() ? $request->route()->getName() : null;
+
+        // Cộng tác viên Blog chỉ được truy cập trang quản lý bài viết.
+        if ($user->role === 'blog_editor') {
+            if (!$routeName || !\Illuminate\Support\Str::is('admin.blogs*', $routeName)) {
+                return redirect()->route('admin.blogs')
+                    ->with('error', 'Tài khoản này chỉ được cấp quyền quản lý Blog.');
+            }
+
+            return $next($request);
+        }
 
 
 

@@ -303,13 +303,6 @@
                             'color'  => 'linear-gradient(135deg,#0068ff,#00c6ff)',
                             'where'  => 'both',
                         ],
-                        'adsense_enabled' => [
-                            'label'  => 'Google AdSense',
-                            'desc'   => 'Bật/tắt toàn bộ ô quảng cáo Google AdSense',
-                            'icon'   => 'fa-rectangle-ad',
-                            'color'  => 'linear-gradient(135deg,#f59e0b,#d97706)',
-                            'where'  => 'both',
-                        ],
                         'home_show_flash_sale' => [
                             'label'  => 'Uu tien Flash Sale',
                             'desc'   => 'Dua len 4 o giam gia tren trang chu',
@@ -446,20 +439,6 @@
                 </div>
 
                 <div class="row mb-4">
-                    {{-- Facebook Fanpage --}}
-                    <div class="col-md-6 mb-3">
-                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
-                            <label class="form-label fw-bold text-primary mb-2"><i class="fab fa-facebook"></i> Link Fanpage Facebook</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0" style="color: #1877f2;"><i class="fab fa-facebook-f"></i></span>
-                                <input type="url" class="form-control border-start-0 ps-0" name="support_facebook_link" 
-                                       value="{{ \App\Helpers\SupportHelper::getFacebookLink() }}" 
-                                       placeholder="https://www.facebook.com/profile.php?id=...">
-                            </div>
-                            <div class="form-text mt-2 text-muted">Link Fanpage hỗ trợ chính thức.</div>
-                        </div>
-                    </div>
-
                     {{-- Telegram --}}
                     <div class="col-md-6 mb-3">
                         <div class="menu-item-row flex-column align-items-start h-100 mb-0">

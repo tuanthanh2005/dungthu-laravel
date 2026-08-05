@@ -299,34 +299,6 @@
     </a>
 </nav>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        function updateUnreadChat() {
-            fetch('{{ route('chat.unread-count') }}')
-                .then(res => res.json())
-                .then(data => {
-                    const badges = [document.getElementById('navChatBadge'), document.getElementById('mobileChatBadge')];
-                    badges.forEach(badge => {
-                        if (badge) {
-                            if (data.unread > 0) {
-                                badge.textContent = data.unread;
-                                badge.style.display = 'inline-block';
-                            } else {
-                                badge.style.display = 'none';
-                            }
-                        }
-                    });
-                })
-                .catch(err => console.error('Chat unread count error:', err));
-        }
-
-        @auth
-            updateUnreadChat();
-            setInterval(updateUnreadChat, 10000); // Check every 10s
-        @endauth
-    });
-</script>
-
 {{-- Quick Contact Modal --}}
 <div class="modal fade" id="quickContactModal" tabindex="-1" aria-labelledby="quickContactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
@@ -362,18 +334,19 @@
                         <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
                     </a>
 
-                    {{-- Item 2: Fanpage --}}
-                    <a href="{{ \App\Helpers\SupportHelper::getFacebookLink() }}" 
-                       target="_blank" 
+                    {{-- Item 2: Telegram --}}
+                    <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
                        class="d-flex align-items-center gap-3 p-3 text-decoration-none bg-white rounded-3 contact-modal-item"
                        style="border: 1px solid #e5e7eb; transition: all 0.2s ease;">
-                        <div class="contact-modal-icon-wrap d-flex align-items-center justify-content-center" 
-                             style="width: 48px; height: 48px; border-radius: 12px; background: #e7f3ff; color: #1877f2; min-width: 48px; font-size: 18px;">
-                            <i class="fa-brands fa-facebook"></i>
+                        <div class="contact-modal-icon-wrap d-flex align-items-center justify-content-center"
+                             style="width: 48px; height: 48px; border-radius: 12px; background: #e6f7ff; color: #0088cc; min-width: 48px; font-size: 18px;">
+                            <i class="fa-brands fa-telegram-plane"></i>
                         </div>
                         <div class="flex-grow-1 text-start">
-                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">{{ __('FANPAGE FACEBOOK') }}</h6>
-                            <p class="mb-0 text-muted" style="font-size: 12px;">{{ __('Gửi tin nhắn qua Fanpage chính thức') }}</p>
+                            <h6 class="fw-bold mb-1" style="color: #1f2937; font-size: 14px;">{{ __('TELEGRAM ADMIN') }}</h6>
+                            <p class="mb-0 text-muted" style="font-size: 12px;">{{ __('Telegram liên hệ:') }} {{ \App\Helpers\SupportHelper::getTelegramUsername() }}</p>
                         </div>
                         <div style="color: #9ca3af;"><i class="fa-solid fa-chevron-right"></i></div>
                     </a>

@@ -33,7 +33,11 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
             
-            if (auth()->user()->role === 'superadmin_1') {
+            if (auth()->user()->role === 'blog_editor') {
+                return redirect()->intended(route('admin.blogs'))->with('success', 'Chào mừng cộng tác viên Blog!');
+            }
+
+            if (in_array(auth()->user()->role, ['superadmin_1', 'sieusuperadmin'], true)) {
                 return redirect()->intended('/admin')->with('success', 'Chào mừng Admin!');
             }
             

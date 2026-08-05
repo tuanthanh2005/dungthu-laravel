@@ -82,7 +82,7 @@
                 <div class="col-md-4 col-lg-3">
                     <div class="card product-card">
                         <a href="{{ route('product.show', $product->slug) }}">
-                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" class="product-img" alt="{{ $product->name }}">
+                            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}" class="product-img" alt="{{ $product->name }}" loading="lazy" decoding="async">
                         </a>
                         <div class="card-body d-flex flex-column">
                             <a href="{{ route('product.show', $product->slug) }}" class="text-decoration-none">

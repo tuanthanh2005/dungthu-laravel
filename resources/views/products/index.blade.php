@@ -6,7 +6,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/category-filter.css')) }}">
     <style>
         /* Shop Hero Section */
         .shop-hero {
@@ -768,7 +768,7 @@
                 <button class="category-filter-btn {{ $currentCategoryId == $category->id ? 'active' : '' }}" type="button">
                     <div class="category-icon-wrap">
                         @if($category->image)
-                            <img src="{{ $category->image }}" alt="{{ $category->name }}">
+                            <img src="{{ $category->image }}" alt="{{ $category->name }}" loading="lazy" decoding="async">
                         @else
                             @switch($category->type)
                                 @case('tech')
@@ -865,7 +865,7 @@
                                 <i class="fas fa-file-{{ $product->file_type === 'pdf' ? 'pdf' : ($product->file_type === 'docx' ? 'word' : 'alt') }} fa-3x text-white" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); opacity: 0.85;"></i>
                             </div>
                         @endif
-                        <img src="{{ $product->image ?? 'https://via.placeholder.com/400x300?text=No+Image' }}" alt="{{ $product->name }}" loading="lazy">
+                        <img src="{{ $product->image ?? 'https://via.placeholder.com/400x300?text=No+Image' }}" alt="{{ $product->name }}" loading="lazy" decoding="async">
                     </div>
                 </a>
                 

@@ -682,6 +682,45 @@
         bottom: 80px;
         right: 16px;
     }
+
+    .chat-footer {
+        padding: 10px 8px;
+    }
+
+    .chat-input-wrapper {
+        gap: 6px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .chat-tool-btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+    }
+
+    .chat-tool-btn i {
+        font-size: 15px;
+    }
+
+    .chat-input-container {
+        min-width: 0;
+    }
+
+    .chat-input {
+        width: 100%;
+        min-width: 0;
+        height: 40px;
+        padding: 9px 12px;
+    }
+
+    .chat-send-btn {
+        width: 50px;
+        min-width: 50px;
+        height: 40px;
+        padding: 0;
+        flex-shrink: 0;
+    }
 }
 
 /* Chat Tools & Image Preview */

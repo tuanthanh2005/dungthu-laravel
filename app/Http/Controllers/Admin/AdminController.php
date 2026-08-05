@@ -1465,6 +1465,11 @@ class AdminController extends Controller
     {
         $query = Blog::query();
 
+        // Cộng tác viên Blog chỉ nhìn thấy bài viết do chính mình tạo.
+        if (auth()->user()->role === 'blog_editor') {
+            $query->where('user_id', auth()->id());
+        }
+
         // Filter by category
         if ($request->has('category') && $request->category !== 'all') {
             $query->where('category', $request->category);
@@ -1539,11 +1544,15 @@ class AdminController extends Controller
 
     public function editBlog(Blog $blog)
     {
+        $this->ensureBlogOwnership($blog);
+
         return view('admin.blogs.edit', compact('blog'));
     }
 
     public function updateBlog(Request $request, Blog $blog)
     {
+        $this->ensureBlogOwnership($blog);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'excerpt' => 'required|string|max:162',
@@ -1602,6 +1611,8 @@ class AdminController extends Controller
 
     public function deleteBlog(Blog $blog)
     {
+        $this->ensureBlogOwnership($blog);
+
         // Notify Google to remove URL before deleting
         GoogleIndexingService::removeBlogSafe($blog, 'blog_delete');
 
@@ -1616,6 +1627,16 @@ class AdminController extends Controller
 
         $blog->delete();
         return redirect()->route('admin.blogs')->with('success', 'Xóa bài viết thành công!');
+    }
+
+    /**
+     * Ngăn cộng tác viên Blog truy cập bài viết của người khác bằng URL trực tiếp.
+     */
+    private function ensureBlogOwnership(Blog $blog): void
+    {
+        if (auth()->user()->role === 'blog_editor' && $blog->user_id !== auth()->id()) {
+            abort(403, 'Bạn chỉ được phép quản lý bài viết do chính mình tạo.');
+        }
     }
 
     // Card Exchange Management

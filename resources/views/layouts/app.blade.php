@@ -89,12 +89,7 @@
     <!-- Footer -->
     @include('partials.footer')
 
-    <!-- Support buttons stay lightweight for guests; full chat loads only for signed-in users/affiliates. -->
-    @if(Auth::check() || Auth::guard('affiliate')->check())
-        @include('partials.chat')
-    @else
-        @include('partials.contact-fabs')
-    @endif
+    @include('partials.chat')
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

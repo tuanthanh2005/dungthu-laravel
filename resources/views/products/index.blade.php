@@ -910,6 +910,8 @@
             <i class="fas fa-sync-alt"></i> {{ __('Tải lại cửa hàng') }}
         </a>
     </div>
+    @endif
+
     @if(!empty($keywordLinks))
     <div class="seo-keyword-section mt-5" data-aos="fade-up" data-aos-delay="120">
         <div class="seo-keyword-title">

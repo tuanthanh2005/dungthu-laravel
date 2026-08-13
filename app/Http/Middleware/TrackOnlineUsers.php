@@ -29,12 +29,20 @@ class TrackOnlineUsers
                 return $response;
             }
 
+            $currentUrl = substr($request->fullUrl(), 0, 255);
+            $lastTrackedUrl = $request->session()->get('online_tracked_url');
+            $lastTrackedTime = $request->session()->get('online_tracked_at');
+            $now = time();
+
+            // Optimization: Skip DB write if on same URL and updated within last 30 seconds
+            if ($lastTrackedUrl === $currentUrl && $lastTrackedTime && ($now - $lastTrackedTime) < 30) {
+                return $response;
+            }
+
             $userId = Auth::id();
             $ipAddress = $request->ip();
             $userAgent = substr((string) $request->userAgent(), 0, 500);
             $deviceType = $this->detectDevice($userAgent);
-
-            $currentUrl = $request->fullUrl();
 
             // Perform upsert for online_sessions
             OnlineSession::updateOrCreate(
@@ -44,14 +52,18 @@ class TrackOnlineUsers
                     'ip_address' => $ipAddress,
                     'user_agent' => $userAgent,
                     'device_type' => $deviceType,
-                    'current_url' => substr($currentUrl, 0, 255),
+                    'current_url' => $currentUrl,
                     'last_activity' => Carbon::now(),
                 ]
             );
 
-            // Garbage collection: 1% chance to purge sessions older than 2 hours
+            // Remember in session to throttle redundant DB writes
+            $request->session()->put('online_tracked_url', $currentUrl);
+            $request->session()->put('online_tracked_at', $now);
+
+            // Garbage collection: 1% chance to purge sessions older than 2 hours (limited to 500 rows)
             if (rand(1, 100) === 1) {
-                OnlineSession::where('last_activity', '<', Carbon::now()->subHours(2))->delete();
+                OnlineSession::where('last_activity', '<', Carbon::now()->subHours(2))->limit(500)->delete();
             }
         } catch (\Exception $e) {
             // Silently ignore tracking errors to avoid disrupting user experience

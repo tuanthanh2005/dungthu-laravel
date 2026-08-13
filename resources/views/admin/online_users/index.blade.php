@@ -368,7 +368,14 @@
                                         <a href="{{ $session->current_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Mở trang trong tab mới">
                                             <i class="fas fa-external-link-alt me-1"></i> Xem trang
                                         </a>
-                                        <form action="{{ route('admin.online-users.kick', $session->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn ngắt phiên làm việc của khách hàng này?');">
+                                        @php
+                                            $kickRoute = \Illuminate\Support\Facades\Route::has('admin.online-users.kick')
+                                                ? route('admin.online-users.kick', $session->id)
+                                                : (\Illuminate\Support\Facades\Route::has('admin.online-users.delete')
+                                                    ? route('admin.online-users.delete', $session->id)
+                                                    : '#');
+                                        @endphp
+                                        <form action="{{ $kickRoute }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn ngắt phiên làm việc của khách hàng này?');">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-outline-warning" title="Ngắt kết nối phiên">
                                                 <i class="fas fa-power-off me-1"></i> Ngắt phiên

@@ -222,6 +222,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     
     // Online Users Management (Khách hàng đang xem)
     Route::get('/online-users', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'index'])->name('admin.online-users.index');
+    Route::get('/online-users/export', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'exportExcel'])->name('admin.online-users.export');
     Route::post('/online-users/{id}/kick', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'kick'])->name('admin.online-users.kick');
     Route::delete('/online-users/{id}', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'destroy'])->name('admin.online-users.delete');
     

@@ -71,9 +71,9 @@ class TrackOnlineUsers
             $request->session()->put('online_tracked_url', $currentUrl);
             $request->session()->put('online_tracked_at', $now);
 
-            // Garbage collection: 1% chance to purge sessions older than 2 hours (limited to 500 rows)
+            // Garbage collection: 1% chance to purge sessions older than 3 months (90 days, limited to 500 rows)
             if (rand(1, 100) === 1) {
-                OnlineSession::where('last_activity', '<', Carbon::now()->subHours(2))->limit(500)->delete();
+                OnlineSession::where('last_activity', '<', Carbon::now()->subDays(90))->limit(500)->delete();
             }
         } catch (\Throwable $e) {
             // Silently ignore tracking errors to avoid disrupting user experience

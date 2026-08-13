@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\OnlineSession;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 
 class TrackOnlineUsers
@@ -24,6 +25,15 @@ class TrackOnlineUsers
         }
 
         try {
+            // Check if online_sessions table exists in database
+            if (!Schema::hasTable('online_sessions')) {
+                return $response;
+            }
+
+            if (!$request->hasSession()) {
+                return $response;
+            }
+
             $sessionId = $request->session()->getId();
             if (!$sessionId) {
                 return $response;
@@ -65,7 +75,7 @@ class TrackOnlineUsers
             if (rand(1, 100) === 1) {
                 OnlineSession::where('last_activity', '<', Carbon::now()->subHours(2))->limit(500)->delete();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Silently ignore tracking errors to avoid disrupting user experience
         }
 

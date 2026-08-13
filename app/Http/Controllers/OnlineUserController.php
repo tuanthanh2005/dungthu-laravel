@@ -7,6 +7,7 @@ use App\Models\OnlineSession;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class OnlineUserController extends Controller
 {
@@ -16,33 +17,55 @@ class OnlineUserController extends Controller
      */
     public function count()
     {
-        $stats = Cache::remember('online_users_stats_cache', 10, function () {
-            $minutes = 5;
-            $activeQuery = OnlineSession::active($minutes);
+        try {
+            if (!Schema::hasTable('online_sessions')) {
+                return response()->json([
+                    'success' => true,
+                    'count' => 1,
+                    'real_count' => 1,
+                    'logged_in_count' => 0,
+                    'guest_count' => 1,
+                    'formatted' => '1 đang xem',
+                ]);
+            }
 
-            $totalCount = (clone $activeQuery)->count();
-            $loggedInCount = (clone $activeQuery)->loggedIn()->count();
-            $guestCount = (clone $activeQuery)->guests()->count();
+            $stats = Cache::remember('online_users_stats_cache', 10, function () {
+                $minutes = 5;
+                $activeQuery = OnlineSession::active($minutes);
 
-            return [
-                'total_count' => $totalCount,
-                'logged_in_count' => $loggedInCount,
-                'guest_count' => $guestCount,
-            ];
-        });
+                $totalCount = (clone $activeQuery)->count();
+                $loggedInCount = (clone $activeQuery)->loggedIn()->count();
+                $guestCount = (clone $activeQuery)->guests()->count();
 
-        // Optional baseline offset from SiteSetting if configured by admin (default 0)
-        $offset = (int) \App\Models\SiteSetting::getValue('online_users_offset', 0);
-        $displayCount = max(1, $stats['total_count'] + $offset);
+                return [
+                    'total_count' => $totalCount,
+                    'logged_in_count' => $loggedInCount,
+                    'guest_count' => $guestCount,
+                ];
+            });
 
-        return response()->json([
-            'success' => true,
-            'count' => $displayCount,
-            'real_count' => $stats['total_count'],
-            'logged_in_count' => $stats['logged_in_count'],
-            'guest_count' => $stats['guest_count'],
-            'formatted' => $displayCount . ' đang xem',
-        ]);
+            // Optional baseline offset from SiteSetting if configured by admin (default 0)
+            $offset = (int) \App\Models\SiteSetting::getValue('online_users_offset', 0);
+            $displayCount = max(1, $stats['total_count'] + $offset);
+
+            return response()->json([
+                'success' => true,
+                'count' => $displayCount,
+                'real_count' => $stats['total_count'],
+                'logged_in_count' => $stats['logged_in_count'],
+                'guest_count' => $stats['guest_count'],
+                'formatted' => $displayCount . ' đang xem',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => true,
+                'count' => 1,
+                'real_count' => 1,
+                'logged_in_count' => 0,
+                'guest_count' => 1,
+                'formatted' => '1 đang xem',
+            ]);
+        }
     }
 
     /**
@@ -51,26 +74,28 @@ class OnlineUserController extends Controller
     public function ping(Request $request)
     {
         try {
-            $sessionId = $request->session()->getId();
-            $lastPing = $request->session()->get('online_last_ping_at');
-            $now = time();
+            if (Schema::hasTable('online_sessions') && $request->hasSession()) {
+                $sessionId = $request->session()->getId();
+                $lastPing = $request->session()->get('online_last_ping_at');
+                $now = time();
 
-            // Only update DB if last ping was more than 30 seconds ago
-            if ($sessionId && (!$lastPing || ($now - $lastPing) >= 30)) {
-                OnlineSession::updateOrCreate(
-                    ['session_id' => $sessionId],
-                    [
-                        'user_id' => Auth::id(),
-                        'ip_address' => $request->ip(),
-                        'user_agent' => substr((string) $request->userAgent(), 0, 500),
-                        'current_url' => substr($request->fullUrl(), 0, 255),
-                        'last_activity' => Carbon::now(),
-                    ]
-                );
+                // Only update DB if last ping was more than 30 seconds ago
+                if ($sessionId && (!$lastPing || ($now - $lastPing) >= 30)) {
+                    OnlineSession::updateOrCreate(
+                        ['session_id' => $sessionId],
+                        [
+                            'user_id' => Auth::id(),
+                            'ip_address' => $request->ip(),
+                            'user_agent' => substr((string) $request->userAgent(), 0, 500),
+                            'current_url' => substr($request->fullUrl(), 0, 255),
+                            'last_activity' => Carbon::now(),
+                        ]
+                    );
 
-                $request->session()->put('online_last_ping_at', $now);
+                    $request->session()->put('online_last_ping_at', $now);
+                }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Ignore
         }
 

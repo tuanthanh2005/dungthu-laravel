@@ -47,7 +47,7 @@ class AdminOnlineUserController extends Controller
                 ->whereYear('last_activity', Carbon::now()->year)
                 ->count();
 
-            // Daily breakdown chart/table for last 14 days
+            // Daily breakdown table for last 14 days
             $dailyStats = OnlineSession::where('last_activity', '>=', Carbon::now()->subDays(14))
                 ->select(
                     DB::raw('DATE(last_activity) as date'),
@@ -58,6 +58,21 @@ class AdminOnlineUserController extends Controller
                 ->groupBy('date')
                 ->orderBy('date', 'desc')
                 ->get();
+
+            // Top Visited Pages ranking (sorted descending by total views) with pagination
+            $topVisitedPages = OnlineSession::select(
+                    'current_url',
+                    DB::raw('count(*) as total_views'),
+                    DB::raw('count(user_id) as logged_in_views'),
+                    DB::raw('count(case when user_id is null then 1 end) as guest_views'),
+                    DB::raw('max(last_activity) as last_visited_at')
+                )
+                ->whereNotNull('current_url')
+                ->where('current_url', '!=', '')
+                ->groupBy('current_url')
+                ->orderBy('total_views', 'desc')
+                ->paginate(10, ['*'], 'top_page')
+                ->withQueryString();
 
             // Query for historical log list with date range & search filters
             $manageQuery = OnlineSession::with('user');
@@ -100,7 +115,8 @@ class AdminOnlineUserController extends Controller
                 'todayVisitors',
                 'yesterdayVisitors',
                 'thisMonthVisitors',
-                'dailyStats'
+                'dailyStats',
+                'topVisitedPages'
             ));
         }
 

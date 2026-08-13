@@ -182,6 +182,12 @@
                     <p class="text-muted small m-0 mt-1">Quản lý theo dõi trực tiếp khách hàng online real-time và thống kê truy cập lưu trữ 3 tháng</p>
                 </div>
 
+                @php
+                    $exportUrl = \Illuminate\Support\Facades\Route::has('admin.online-users.export')
+                        ? route('admin.online-users.export', request()->all())
+                        : url('/admin/online-users/export?' . http_build_query(request()->all()));
+                @endphp
+
                 @if($activeTab === 'online')
                     <div class="d-flex align-items-center gap-2">
                         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.location.reload();">
@@ -196,11 +202,6 @@
                     </div>
                 @else
                     <div>
-                        @php
-                            $exportUrl = \Illuminate\Support\Facades\Route::has('admin.online-users.export')
-                                ? route('admin.online-users.export', request()->all())
-                                : url('/admin/online-users/export?' . http_build_query(request()->all()));
-                        @endphp
                         <a href="{{ $exportUrl }}" class="btn btn-success btn-sm px-3 fw-bold shadow-sm">
                             <i class="fas fa-file-excel me-1"></i> Xuất file Excel (Tối đa 100 bản ghi)
                         </a>
@@ -527,6 +528,117 @@
                         <div class="stat-label">Thời hạn tự động dọn dẹp</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Top Visited Pages Ranking (Sắp xếp giảm dần, có phân trang) -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom border-light d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <h6 class="fw-bold m-0 text-dark d-flex align-items-center gap-2">
+                        <i class="fas fa-fire text-danger"></i> Bảng Xếp Hạng Trang Được Truy Cập Nhiều Nhất (Phân trang & Xếp giảm dần)
+                    </h6>
+                    <small class="text-muted">Danh sách các URL có lượt truy cập cao nhất, sắp xếp từ lớn đến nhỏ</small>
+                </div>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
+                    <i class="fas fa-arrow-down-wide-short me-1"></i> Xếp lượt xem giảm dần
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4" style="width: 80px;">Hạng</th>
+                                <th>Đường dẫn trang (URL)</th>
+                                <th class="text-center">Tổng lượt xem</th>
+                                <th class="text-center">Thành viên xem</th>
+                                <th class="text-center">Khách vãng lai xem</th>
+                                <th>Lượt xem gần nhất</th>
+                                <th class="text-end pe-4">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($topVisitedPages ?? [] as $index => $page)
+                                @php
+                                    $rank = ($topVisitedPages->currentPage() - 1) * $topVisitedPages->perPage() + $index + 1;
+                                    $parsedPath = parse_url($page->current_url, PHP_URL_PATH) ?: '/';
+                                @endphp
+                                <tr>
+                                    <!-- Rank badge -->
+                                    <td class="ps-4">
+                                        @if($rank === 1)
+                                            <span class="badge bg-warning text-dark fs-6 rounded-circle p-2" title="Hạng 1" style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;">🥇</span>
+                                        @elseif($rank === 2)
+                                            <span class="badge bg-secondary text-white fs-6 rounded-circle p-2" title="Hạng 2" style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;">🥈</span>
+                                        @elseif($rank === 3)
+                                            <span class="badge bg-danger-subtle text-danger border border-danger fs-6 rounded-circle p-2" title="Hạng 3" style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;">🥉</span>
+                                        @else
+                                            <span class="badge bg-light text-dark border rounded-circle p-2 fw-bold" style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;">#{{ $rank }}</span>
+                                        @endif
+                                    </td>
+
+                                    <!-- URL Path -->
+                                    <td>
+                                        <a href="{{ $page->current_url }}" target="_blank" class="url-badge font-monospace fw-bold" title="{{ $page->current_url }}">
+                                            <i class="fas fa-link me-1 text-muted fs-xs"></i>{{ $parsedPath }}
+                                        </a>
+                                        <div class="small text-muted text-truncate mt-1" style="max-width: 380px;">{{ $page->current_url }}</div>
+                                    </td>
+
+                                    <!-- Total Views -->
+                                    <td class="text-center">
+                                        <span class="badge bg-danger text-white fs-6 px-3 py-2 rounded-pill fw-bold">
+                                            <i class="fas fa-fire me-1"></i>{{ number_format($page->total_views) }} lượt
+                                        </span>
+                                    </td>
+
+                                    <!-- Member Views -->
+                                    <td class="text-center">
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill fw-bold">
+                                            {{ number_format($page->logged_in_views) }}
+                                        </span>
+                                    </td>
+
+                                    <!-- Guest Views -->
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary-subtle text-secondary border px-3 py-1 rounded-pill fw-bold">
+                                            {{ number_format($page->guest_views) }}
+                                        </span>
+                                    </td>
+
+                                    <!-- Last Visited At -->
+                                    <td>
+                                        <div class="small text-dark fw-bold">
+                                            {{ \Carbon\Carbon::parse($page->last_visited_at)->diffForHumans() }}
+                                        </div>
+                                        <div class="small text-muted">
+                                            {{ \Carbon\Carbon::parse($page->last_visited_at)->format('H:i:s d/m/Y') }}
+                                        </div>
+                                    </td>
+
+                                    <!-- Action -->
+                                    <td class="text-end pe-4">
+                                        <a href="{{ $page->current_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Mở trang trong tab mới">
+                                            <i class="fas fa-external-link-alt me-1"></i> Xem trang
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">Chưa có dữ liệu xếp hạng trang.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                @if(isset($topVisitedPages) && $topVisitedPages->hasPages())
+                    <div class="p-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <span class="small text-muted">Trang xếp hạng {{ $topVisitedPages->currentPage() }} / {{ $topVisitedPages->lastPage() }} (Tổng {{ number_format($topVisitedPages->total()) }} trang được xem)</span>
+                        {{ $topVisitedPages->appends(request()->except('top_page'))->links() }}
+                    </div>
+                @endif
             </div>
         </div>
 

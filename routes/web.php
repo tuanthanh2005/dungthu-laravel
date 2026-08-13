@@ -56,6 +56,10 @@ Route::get('/api/chatbot/services', [ChatbotController::class, 'getBuffServices'
 // Random Products for Flash Sale Fallback
 Route::get('/api/products/random', [HomeController::class, 'getRandomProducts'])->name('products.random');
 
+// Online Users API
+Route::get('/api/online-users/count', [\App\Http\Controllers\OnlineUserController::class, 'count'])->name('online-users.count');
+Route::post('/api/online-users/ping', [\App\Http\Controllers\OnlineUserController::class, 'ping'])->name('online-users.ping');
+
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
@@ -215,6 +219,10 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
     Route::post('/users/{user}/award-tickets', [AdminController::class, 'awardSpinTickets'])->name('admin.users.award-tickets');
     Route::post('/coupons/generate', [AdminController::class, 'generateCoupon'])->name('admin.coupons.generate');
+    
+    // Online Users Management (Khách hàng đang xem)
+    Route::get('/online-users', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'index'])->name('admin.online-users.index');
+    Route::delete('/online-users/{id}', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'destroy'])->name('admin.online-users.delete');
     
     // Product Management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');

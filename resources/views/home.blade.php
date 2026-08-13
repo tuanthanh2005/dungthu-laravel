@@ -105,8 +105,15 @@
             position: relative;
         }
 
+        .hero-top-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
         .hero-ai-badge {
-            align-self: flex-start;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -119,7 +126,47 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 12px;
+            margin-bottom: 0;
+        }
+
+        .hero-online-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #fff0f0;
+            border: 1px solid #ffcccc;
+            color: #b91c1c;
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .hero-online-badge .live-dot {
+            width: 9px;
+            height: 9px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: heroLivePulse 1.6s infinite ease-in-out;
+        }
+
+        @keyframes heroLivePulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                transform: scale(1.15);
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
         .hero-title {
@@ -1800,8 +1847,15 @@
                     <!-- Left Column: Content & Call to Action -->
                     <div class="col-lg-7">
                         <div class="hero-left-content">
-                            <div class="hero-ai-badge">
-                                <i class="fa-solid fa-bolt"></i> DungThu.com AI Hub
+                            <div class="hero-top-bar">
+                                <div class="hero-ai-badge">
+                                    <i class="fa-solid fa-bolt"></i> DungThu.com AI Hub
+                                </div>
+                                <div class="hero-online-badge" title="{{ __('Khách hàng đang online / xem sản phẩm thực tế') }}">
+                                    <span class="live-dot"></span>
+                                    <i class="fa-solid fa-users" style="color: #dc2626;"></i>
+                                    <span id="heroOnlineCountText">-- đang xem</span>
+                                </div>
                             </div>
                             <h2 class="hero-title">{!! __('Khám Phá Sức Mạnh AI<br>Tối Ưu Hiệu Suất Công Việc') !!}</h2>
                             <p class="hero-desc">
@@ -2554,6 +2608,34 @@
                 rotateToast();
                 rotateInterval = setInterval(rotateToast, 15000);
             }, 4000);
+        })();
+
+        // Real-time Online Users Count Heartbeat
+        (function() {
+            const countEl = document.getElementById('heroOnlineCountText');
+            if (!countEl) return;
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            function updateCount() {
+                fetch('{{ route("online-users.ping") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken || ''
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.success) {
+                        countEl.textContent = `${data.count} đang xem`;
+                    }
+                })
+                .catch(() => {});
+            }
+
+            updateCount();
+            setInterval(updateCount, 15000);
         })();
     </script>
 @endpush

@@ -188,8 +188,14 @@
         <div class="sidebar-divider"></div>
         <!-- Người dùng -->
         <div class="sidebar-section-label">Người dùng</div>
+        <a href="{{ route('admin.online-users.index') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.online-users*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-eye text-success"></i></span>
+            <span class="nav-text">Khách đang xem</span>
+            <span class="nav-badge bg-success" id="sidebarOnlineUsersBadge" style="display: none;">0</span>
+        </a>
         <a href="{{ route('admin.users') }}"
-           class="sidebar-nav-item {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+           class="sidebar-nav-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-users"></i></span>
             <span class="nav-text">Danh sách User</span>
         </a>
@@ -590,6 +596,7 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
                     updateBadge('sidebarAbandonedCartBadge', data.abandoned_carts);
                     updateBadge('sidebarPreorderBadge', data.pending_preorders);
                     updateBadge('sidebarAffiliateBadge', data.pending_affiliates_total);
+                    updateBadge('sidebarOnlineUsersBadge', data.online_users_count);
                 })
                 .catch(err => console.error('Error fetching sidebar counters:', err));
         }

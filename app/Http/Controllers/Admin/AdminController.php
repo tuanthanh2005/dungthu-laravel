@@ -1969,6 +1969,8 @@ class AdminController extends Controller
             AffiliateInvoice::where('status', 'pending')->count() +
             AffiliateWithdrawal::where('status', 'pending')->count();
 
+        $onlineUsersCount = \App\Models\OnlineSession::active(5)->count();
+
         return response()->json([
             'unread_chats' => $unreadChats,
             'pending_orders' => $pendingOrders,
@@ -1977,6 +1979,7 @@ class AdminController extends Controller
             'abandoned_carts' => $abandonedCarts,
             'pending_preorders' => $pendingPreorders,
             'pending_affiliates_total' => $pendingAffiliatesTotal,
+            'online_users_count' => $onlineUsersCount,
         ]);
     }
 

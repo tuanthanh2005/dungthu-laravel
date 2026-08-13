@@ -42,11 +42,11 @@ Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
 Route::view('/chinh-sach', 'pages.privacy')->name('policy');
 
 // Guest AI chat (home only UI)
-Route::post('/guest-chat', [GuestChatController::class, 'send'])->name('guest-chat.send');
+Route::post('/guest-chat', [GuestChatController::class, 'send'])->middleware('throttle:15,1')->name('guest-chat.send');
 
 // Chatbot AI routes
 Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
-Route::post('/api/chatbot/send', [ChatbotController::class, 'sendMessage'])->name('chatbot.send');
+Route::post('/api/chatbot/send', [ChatbotController::class, 'sendMessage'])->middleware('throttle:15,1')->name('chatbot.send');
 Route::post('/api/chatbot/session', [ChatbotController::class, 'createSession'])->name('chatbot.session.create');
 Route::get('/api/chatbot/history', [ChatbotController::class, 'history'])->name('chatbot.history');
 Route::post('/api/chatbot/feedback', [ChatbotController::class, 'feedback'])->name('chatbot.feedback');

@@ -796,24 +796,6 @@
     </div>
     @endif
 
-    @if(!empty($keywordLinks))
-    <div class="seo-keyword-section" data-aos="fade-up" data-aos-delay="120">
-        <div class="seo-keyword-title">
-            <i class="fas fa-bolt text-warning me-2"></i>{{ __('Tìm nhanh theo sản phẩm') }}
-        </div>
-        <div class="seo-keyword-links">
-            @foreach($keywordLinks as $keywordSlug => $keyword)
-                <a href="{{ route('product.keyword', $keywordSlug) }}"
-                   class="seo-keyword-chip {{ request()->routeIs('product.keyword') && request()->route('keyword') === $keywordSlug ? 'active' : '' }}">
-                    {{ $keyword['label'] }}
-                </a>
-            @endforeach
-        </div>
-        <button type="button" class="seo-keyword-toggle" aria-label="{{ __('Xem thêm sản phẩm') }}" aria-expanded="false">
-            <i class="fas fa-chevron-down"></i>
-        </button>
-    </div>
-    @endif
 
     <!-- Results Info -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3" data-aos="fade-in">
@@ -927,6 +909,23 @@
         <a href="{{ route('shop') }}" class="btn search-btn d-inline-flex mx-auto" style="width: auto;">
             <i class="fas fa-sync-alt"></i> {{ __('Tải lại cửa hàng') }}
         </a>
+    </div>
+    @if(!empty($keywordLinks))
+    <div class="seo-keyword-section mt-5" data-aos="fade-up" data-aos-delay="120">
+        <div class="seo-keyword-title">
+            <i class="fas fa-bolt text-warning me-2"></i>{{ __('Tìm nhanh theo sản phẩm') }}
+        </div>
+        <div class="seo-keyword-links">
+            @foreach($keywordLinks as $keywordSlug => $keyword)
+                <a href="{{ route('product.keyword', $keywordSlug) }}"
+                   class="seo-keyword-chip {{ request()->routeIs('product.keyword') && request()->route('keyword') === $keywordSlug ? 'active' : '' }}">
+                    {{ $keyword['label'] }}
+                </a>
+            @endforeach
+        </div>
+        <button type="button" class="seo-keyword-toggle" aria-label="{{ __('Xem thêm sản phẩm') }}" aria-expanded="false">
+            <i class="fas fa-chevron-down"></i>
+        </button>
     </div>
     @endif
 </div>

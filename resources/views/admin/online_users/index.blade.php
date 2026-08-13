@@ -359,13 +359,22 @@
 
                                 <!-- Action -->
                                 <td class="text-end pe-4">
-                                    <form action="{{ route('admin.online-users.delete', $session->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn ngắt phiên của người dùng này?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Kết thúc phiên">
-                                            <i class="fas fa-power-off me-1"></i> Ngắt phiên
-                                        </button>
-                                    </form>
+                                    <div class="d-inline-flex gap-1 align-items-center">
+                                        @if($session->user_id)
+                                            <a href="{{ route('admin.users.history', $session->user_id) }}" class="btn btn-sm btn-outline-info" title="Xem lịch sử user">
+                                                <i class="fas fa-user-gear me-1"></i> Hồ sơ
+                                            </a>
+                                        @endif
+                                        <a href="{{ $session->current_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Mở trang trong tab mới">
+                                            <i class="fas fa-external-link-alt me-1"></i> Xem trang
+                                        </a>
+                                        <form action="{{ route('admin.online-users.kick', $session->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn ngắt phiên làm việc của khách hàng này?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Ngắt kết nối phiên">
+                                                <i class="fas fa-power-off me-1"></i> Ngắt phiên
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

@@ -69,13 +69,21 @@ class AdminOnlineUserController extends Controller
     }
 
     /**
-     * Delete/terminate an active online session
+     * Terminate/kick an active online session
      */
-    public function destroy($id)
+    public function kick($id)
     {
         $session = OnlineSession::findOrFail($id);
         $session->delete();
 
-        return redirect()->back()->with('success', 'Đã kết thúc phiên của khách hàng này thành công.');
+        return redirect()->back()->with('success', 'Đã ngắt phiên làm việc của khách hàng thành công.');
+    }
+
+    /**
+     * Delete/terminate an active online session
+     */
+    public function destroy($id)
+    {
+        return $this->kick($id);
     }
 }

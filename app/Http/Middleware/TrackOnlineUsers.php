@@ -87,16 +87,24 @@ class TrackOnlineUsers
      */
     private function shouldSkip(Request $request): bool
     {
-        // Skip non-GET requests or AJAX background calls except standard page navigation
+        // Skip non-GET requests
         if (!$request->isMethod('GET')) {
+            return true;
+        }
+
+        // Skip AJAX / JSON fetch requests (e.g. background polling calls like sidebar-counters)
+        if ($request->ajax() || $request->wantsJson() || $request->isXmlHttpRequest()) {
             return true;
         }
 
         $path = ltrim($request->path(), '/');
 
-        // Ignore API routes, asset routes, image routes, debugbar, websocket, etc.
+        // Ignore API routes, asset routes, image routes, debugbar, websocket, background AJAX paths
         $ignorePrefixes = [
             'api/',
+            'admin/sidebar-counters',
+            'admin/chat/unread-count',
+            'admin/chat/messages',
             'storage/',
             'images/',
             'build/',

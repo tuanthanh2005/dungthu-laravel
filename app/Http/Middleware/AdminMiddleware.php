@@ -52,6 +52,7 @@ class AdminMiddleware
                 'admin.blogs*',
                 'admin.blog-topics*',
                 'admin.users*',
+                'admin.online-users*',
                 'admin.coupons*',
                 'admin.menu-settings*',
                 'admin.google-indexing.submit-all',
@@ -90,6 +91,7 @@ class AdminMiddleware
                 'admin.blogs*',
                 'admin.blog-topics*',
                 'admin.users*',
+                'admin.online-users*',
                 'admin.coupons*',
                 'admin.menu-settings*',
             ];

@@ -196,7 +196,12 @@
                     </div>
                 @else
                     <div>
-                        <a href="{{ route('admin.online-users.export', request()->all()) }}" class="btn btn-success btn-sm px-3 fw-bold shadow-sm">
+                        @php
+                            $exportUrl = \Illuminate\Support\Facades\Route::has('admin.online-users.export')
+                                ? route('admin.online-users.export', request()->all())
+                                : url('/admin/online-users/export?' . http_build_query(request()->all()));
+                        @endphp
+                        <a href="{{ $exportUrl }}" class="btn btn-success btn-sm px-3 fw-bold shadow-sm">
                             <i class="fas fa-file-excel me-1"></i> Xuất file Excel (Tối đa 100 bản ghi)
                         </a>
                     </div>
@@ -576,7 +581,7 @@
                     <i class="fas fa-filter text-primary me-1"></i> Bộ Lọc & Tìm Kiếm Lịch Sử
                 </h6>
 
-                <a href="{{ route('admin.online-users.export', request()->all()) }}" class="btn btn-success btn-sm px-3 fw-bold">
+                <a href="{{ $exportUrl }}" class="btn btn-success btn-sm px-3 fw-bold">
                     <i class="fas fa-file-excel me-1"></i> Xuất file Excel (Tối đa 100 bản ghi)
                 </a>
             </div>

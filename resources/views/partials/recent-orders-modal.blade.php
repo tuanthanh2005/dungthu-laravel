@@ -78,7 +78,7 @@
                     </h5>
                     <div class="d-flex align-items-center gap-1 text-white-50" style="font-size: 11px;">
                         <span style="width: 7px; height: 7px; background-color: #22c55e; border-radius: 50%; display: inline-block; animation: pulseDotLive 1.5s infinite;"></span>
-                        <span class="text-white fw-medium">{{ __('Hệ thống bàn giao tự động 24/7') }}</span>
+                        <span class="text-white fw-medium">{{ __('Hệ thống bàn giao tự động 24/7 - Từ 8h sáng đến 00h Tối') }}</span>
                     </div>
                 </div>
                 <button type="button" class="btn-close btn-close-white close-recent-modal-btn" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.9; filter: invert(1) grayscale(1) brightness(2);"></button>

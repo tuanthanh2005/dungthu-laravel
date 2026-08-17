@@ -134,14 +134,18 @@ class HomeController extends Controller
                 ->all();
         });
 
-        // Lấy 4 sản phẩm Nổi Bật Banner Hero do Admin chọn (Cache 10 phút)
-        $bannerProducts = Cache::remember('home.banner_products', 600, function () {
-            $prods = Product::where('show_on_banner', true)->latest('updated_at')->take(4)->get();
+        // Lấy 4 sản phẩm Banner Hero: Admin gán thì ưu tiên lấy của Admin, thiếu thì random 1 tiếng đổi 1 lần
+        $bannerProducts = Cache::remember('home.banner_products.' . date('YmdH'), 3600, function () {
+            $prods = Product::where('status', 'active')->where('show_on_banner', true)->latest()->take(4)->get();
             if ($prods->count() < 4) {
                 $needed = 4 - $prods->count();
                 $existingIds = $prods->pluck('id')->toArray();
-                $fallback = Product::whereNotIn('id', $existingIds)->latest('updated_at')->take($needed)->get();
-                $prods = $prods->concat($fallback);
+                $randomFallback = Product::where('status', 'active')
+                    ->whereNotIn('id', $existingIds)
+                    ->inRandomOrder()
+                    ->take($needed)
+                    ->get();
+                $prods = $prods->concat($randomFallback);
             }
             return $prods;
         });

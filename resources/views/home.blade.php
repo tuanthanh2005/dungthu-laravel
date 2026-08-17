@@ -1919,10 +1919,6 @@
                     <!-- Right Column: Clean 2x2 Fixed Grid Showcase -->
                     <div class="col-lg-5 col-xl-5 mt-4 mt-lg-0">
                         <div class="hero-right-showcase">
-                            <div class="fw-bold mb-3 text-dark d-flex align-items-center justify-content-center justify-content-lg-start gap-2" style="font-size: 14px;">
-                                <i class="fa-solid fa-bolt text-warning"></i>
-                                <span>{{ __('Sản phẩm vừa cập nhật mới') }}</span>
-                            </div>
                             <div class="hero-banner-grid">
                                 @foreach($bannerProducts->take(4) as $bProduct)
                                     @php

@@ -76,6 +76,7 @@ class Product extends Model
         \Illuminate\Support\Facades\Cache::forget('home.latest_products');
         \Illuminate\Support\Facades\Cache::forget('home.sale_products');
         \Illuminate\Support\Facades\Cache::forget('home.banner_products');
+        \Illuminate\Support\Facades\Cache::forget('home.banner_products.' . date('YmdH'));
     }
 
     public function categoryRelation()

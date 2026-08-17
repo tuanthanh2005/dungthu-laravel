@@ -230,6 +230,11 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/banned-ips', [\App\Http\Controllers\Admin\BannedIpController::class, 'index'])->name('admin.banned-ips.index');
     Route::post('/banned-ips', [\App\Http\Controllers\Admin\BannedIpController::class, 'store'])->name('admin.banned-ips.store');
     Route::delete('/banned-ips/{id}', [\App\Http\Controllers\Admin\BannedIpController::class, 'destroy'])->name('admin.banned-ips.destroy');
+
+    // Suspicious IP Security Logs Management (IP Nghi Ngờ & Bảo Mật)
+    Route::get('/suspicious-ips', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'index'])->name('admin.suspicious-ips.index');
+    Route::post('/suspicious-ips/{id}/status', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'updateStatus'])->name('admin.suspicious-ips.update-status');
+    Route::delete('/suspicious-ips/{id}', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'destroy'])->name('admin.suspicious-ips.destroy');
     
     // Product Management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');

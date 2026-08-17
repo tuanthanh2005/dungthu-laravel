@@ -220,9 +220,37 @@
         <div class="login-right">
             <h2 class="login-title">User Login</h2>
 
+            @if(session('info'))
+                <div class="alert alert-info border-0 rounded-3 mb-3 py-2 px-3 shadow-sm text-start" role="alert" style="font-size: 13px; line-height: 1.5; background-color: #e7f5ff; color: #1864ab;">
+                    <i class="fas fa-info-circle me-1 fs-6"></i>
+                    {{ session('info') }}
+                </div>
+            @endif
+
+            @if(session('warning'))
+                <div class="alert alert-warning border-0 rounded-3 mb-3 py-2 px-3 shadow-sm text-start" role="alert" style="font-size: 13px; line-height: 1.5; background-color: #fff9db; color: #f59f00;">
+                    <i class="fas fa-exclamation-triangle me-1 fs-6"></i>
+                    {{ session('warning') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger border-0 rounded-3 mb-3 py-2 px-3 shadow-sm text-start" role="alert" style="font-size: 13px; line-height: 1.5;">
+                    <i class="fas fa-exclamation-circle me-1 fs-6"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if(session('success'))
+                <div class="alert alert-success border-0 rounded-3 mb-3 py-2 px-3 shadow-sm text-start" role="alert" style="font-size: 13px; line-height: 1.5;">
+                    <i class="fas fa-check-circle me-1 fs-6"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+
             @if($errors->any())
-                <div class="alert alert-danger border-0 rounded-4 mb-3 py-2 px-3 small shadow-sm" role="alert" style="font-size: 11px;">
-                    <i class="fas fa-exclamation-circle me-2"></i>
+                <div class="alert alert-danger border-0 rounded-3 mb-3 py-2 px-3 shadow-sm text-start" role="alert" style="font-size: 13px; line-height: 1.5;">
+                    <i class="fas fa-exclamation-circle me-1 fs-6"></i>
                     {{ $errors->first() }}
                 </div>
             @endif

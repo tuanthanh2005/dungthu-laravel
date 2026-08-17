@@ -93,11 +93,26 @@ class BlockBadBots
             '/\/etc\/passwd|\/etc\/shadow|\.\.\/\.\.\//i',
         ];
 
+        $queryString = !empty($request->all()) ? http_build_query($request->all()) : '';
         foreach ($maliciousPatterns as $pattern) {
-            if (preg_match($pattern, $uri) || preg_match($pattern, http_build_query($request->all()))) {
+            if (preg_match($pattern, $uri) || ($queryString !== '' && preg_match($pattern, $queryString))) {
                 // Khóa IP tự động trong 24 giờ (86,400 giây)
                 Cache::put('banned_ip_' . $ip, true, now()->addHours(24));
                 
+                // Tự động lưu nhật ký báo đỏ vào CSDL
+                try {
+                    \App\Models\SuspiciousIpLog::updateOrCreate(
+                        ['ip_address' => $ip],
+                        [
+                            'reason' => 'Tấn công / rà quét lỗ hổng SQL Injection hoặc XSS',
+                            'url' => substr($request->fullUrl(), 0, 500),
+                            'user_agent' => substr($userAgent, 0, 500),
+                            'status' => 'auto_banned_24h',
+                            'banned_until' => now()->addHours(24),
+                        ]
+                    );
+                } catch (\Throwable $e) {}
+
                 // Gửi thông báo Telegram về IP đáng nghi ngờ (Throttle 1 giờ / 1 IP)
                 if (!Cache::has('telegram_notified_ip_' . $ip)) {
                     Cache::put('telegram_notified_ip_' . $ip, true, now()->addHour());
@@ -113,11 +128,11 @@ class BlockBadBots
             }
         }
 
-        // 4. Theo dõi và giới hạn số lượng Session khách vãng lai (> 10 session / IP)
+        // 4. Theo dõi thời gian (5 phút) và số lượng Session (> 10 session) đối với Khách vãng lai
         if (!$isGoodBot && !Auth::check()) {
-            // Bỏ qua kiểm tra giới hạn đối với các đường dẫn đăng nhập/đăng ký/static assets/webhooks
+            // Bỏ qua kiểm tra giới hạn đối với các đường dẫn đăng nhập/đăng ký/static assets/webhooks/API
             $path = ltrim($request->path(), '/');
-            $exemptPaths = ['login', 'register', 'password', 'auth', 'webhook'];
+            $exemptPaths = ['login', 'register', 'password', 'auth', 'webhook', 'guest-chat', 'api/online-users'];
             $isExempt = false;
 
             foreach ($exemptPaths as $exempt) {
@@ -128,7 +143,26 @@ class BlockBadBots
             }
 
             if (!$isExempt && $request->hasSession()) {
-                $sessionId = $request->session()->getId();
+                $session = $request->session();
+
+                // 4A. Kiểm tra thời gian duyệt web của Khách vãng lai (Giới hạn 5 phút = 300 giây)
+                if (!$session->has('guest_first_seen_at')) {
+                    $session->put('guest_first_seen_at', time());
+                }
+
+                $firstSeen = (int) $session->get('guest_first_seen_at');
+                if ($firstSeen > 0 && (time() - $firstSeen) >= 300) {
+                    if ($request->expectsJson() || $request->is('api/*')) {
+                        return response()->json([
+                            'message' => 'Bạn đã trải nghiệm xem web 5 phút với tư cách Khách vãng lai. Vui lòng đăng nhập để tiếp tục.'
+                        ], 403);
+                    }
+
+                    return redirect()->route('login')->with('info', '⏰ Bạn đã trải nghiệm xem trang web 5 phút với tư cách Khách vãng lai. Vui lòng đăng nhập hoặc tạo tài khoản miễn phí để tiếp tục lướt xem và sử dụng dịch vụ trên DungThu.com!');
+                }
+
+                // 4B. Kiểm tra số lượng Session khách vãng lai (> 10 session / IP)
+                $sessionId = $session->getId();
                 if ($sessionId) {
                     $cacheKey = 'guest_sessions_' . md5($ip);
                     $guestSessions = Cache::get($cacheKey, []);
@@ -142,6 +176,20 @@ class BlockBadBots
                     if (count($guestSessions) > 10) {
                         // Tự động khóa IP 24h khi vượt quá 10 session rác liên tục
                         Cache::put('banned_ip_' . $ip, true, now()->addHours(24));
+
+                        // Tự động lưu nhật ký báo đỏ vào CSDL
+                        try {
+                            \App\Models\SuspiciousIpLog::updateOrCreate(
+                                ['ip_address' => $ip],
+                                [
+                                    'reason' => 'Phát sinh trên 10 session khách vãng lai liên tục (Spam session)',
+                                    'url' => substr($request->fullUrl(), 0, 500),
+                                    'user_agent' => substr($userAgent, 0, 500),
+                                    'status' => 'auto_banned_24h',
+                                    'banned_until' => now()->addHours(24),
+                                ]
+                            );
+                        } catch (\Throwable $e) {}
 
                         // Gửi thông báo Telegram về IP spam session nghi ngờ (Throttle 1 giờ / 1 IP)
                         if (!Cache::has('telegram_notified_ip_' . $ip)) {
@@ -160,8 +208,8 @@ class BlockBadBots
                             ], 403);
                         }
 
-                        // Chuyển hướng người dùng đến trang đăng nhập với thông báo
-                        return redirect()->route('login')->with('error', 'Hệ thống phát hiện quá 10 phiên khách vãng lai từ địa chỉ IP này. Vui lòng đăng nhập tài khoản để tiếp tục sử dụng.');
+                        // Chuyển hướng người dùng đến trang đăng nhập với thông báo rõ ràng
+                        return redirect()->route('login')->with('warning', '⚠️ Hệ thống phát hiện quá 10 phiên kết nối khách từ địa chỉ IP này. Để đảm bảo an toàn & bảo mật, vui lòng đăng nhập tài khoản để tiếp tục sử dụng website!');
                     }
                 }
             }

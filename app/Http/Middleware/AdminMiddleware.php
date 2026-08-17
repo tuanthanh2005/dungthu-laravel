@@ -54,6 +54,7 @@ class AdminMiddleware
                 'admin.users*',
                 'admin.online-users*',
                 'admin.banned-ips*',
+                'admin.suspicious-ips*',
                 'admin.coupons*',
                 'admin.menu-settings*',
                 'admin.google-indexing.submit-all',

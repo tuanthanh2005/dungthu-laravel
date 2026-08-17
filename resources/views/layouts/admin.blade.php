@@ -199,6 +199,11 @@
             <span class="nav-icon"><i class="fas fa-user-slash text-danger"></i></span>
             <span class="nav-text">Quản lý Khóa IP</span>
         </a>
+        <a href="{{ route('admin.suspicious-ips.index') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.suspicious-ips*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-shield-virus text-warning"></i></span>
+            <span class="nav-text">IP Nghi Ngờ & Bảo Mật</span>
+        </a>
         <a href="{{ route('admin.users') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-users"></i></span>

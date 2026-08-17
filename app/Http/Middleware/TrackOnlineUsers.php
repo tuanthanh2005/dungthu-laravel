@@ -92,6 +92,12 @@ class TrackOnlineUsers
             return true;
         }
 
+        // Skip bots, crawlers, scanners, and command line tools
+        $userAgent = strtolower((string) $request->userAgent());
+        if (empty(trim($userAgent)) || preg_match('/(curl|python|wget|sqlmap|nikto|bot|crawler|spider|scan)/i', $userAgent)) {
+            return true;
+        }
+
         // Skip AJAX / JSON fetch requests (e.g. background polling calls like sidebar-counters)
         if ($request->ajax() || $request->wantsJson() || $request->isXmlHttpRequest()) {
             return true;

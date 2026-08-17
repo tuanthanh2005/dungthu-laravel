@@ -136,7 +136,7 @@
                 <button type="button" class="btn btn-sm btn-light border text-muted px-3 close-recent-modal-btn" data-bs-dismiss="modal" style="border-radius: 20px; font-size: 12px;">
                     <i class="fa-solid fa-xmark me-1"></i>{{ __('Đóng (Tắt 1h)') }}
                 </button>
-                <a href="{{ route('shop') }}" class="btn btn-sm text-white px-4 fw-bold shadow-sm" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); border-radius: 20px; font-size: 12.5px;">
+                <a href="{{ route('shop') }}" class="btn btn-sm text-white px-4 fw-bold shadow-sm shop-now-modal-btn" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); border-radius: 20px; font-size: 12.5px;">
                     <i class="fa-solid fa-cart-shopping me-1"></i>{{ __('Mua sắm ngay') }}
                 </a>
             </div>
@@ -161,10 +161,10 @@
             }, 1500);
         }
 
-        // Khi người dùng nhấn nút Đóng hoặc X -> Lưu mốc thời gian ẩn 1 tiếng (3,600,000 ms)
-        const closeButtons = modalEl.querySelectorAll('.close-recent-modal-btn');
-        closeButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
+        // Khi người dùng nhấn nút Đóng, X, hoặc Mua sắm ngay -> Lưu mốc thời gian ẩn 1 tiếng (3,600,000 ms)
+        const actionElements = modalEl.querySelectorAll('.close-recent-modal-btn, .shop-now-modal-btn');
+        actionElements.forEach(el => {
+            el.addEventListener('click', function() {
                 const oneHourLater = Date.now() + 3600000;
                 localStorage.setItem(STORAGE_KEY, oneHourLater.toString());
             });

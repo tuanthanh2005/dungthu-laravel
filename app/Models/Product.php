@@ -31,6 +31,7 @@ class Product extends Model
         'specs_en',
         'is_featured',
         'is_exclusive',
+        'show_on_banner',
         'is_combo_ai',
         'is_flash_sale',
         'is_vpn',
@@ -48,6 +49,7 @@ class Product extends Model
         'specs_en' => 'array',
         'is_featured' => 'boolean',
         'is_exclusive' => 'boolean',
+        'show_on_banner' => 'boolean',
         'is_combo_ai' => 'boolean',
         'is_flash_sale' => 'boolean',
         'duration_value' => 'integer',
@@ -73,6 +75,7 @@ class Product extends Model
         \Illuminate\Support\Facades\Cache::forget('home.highlight_products');
         \Illuminate\Support\Facades\Cache::forget('home.latest_products');
         \Illuminate\Support\Facades\Cache::forget('home.sale_products');
+        \Illuminate\Support\Facades\Cache::forget('home.banner_products');
     }
 
     public function categoryRelation()

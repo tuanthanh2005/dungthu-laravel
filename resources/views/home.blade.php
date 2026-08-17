@@ -1890,27 +1890,29 @@
 
                     <!-- Right Column: 3D Floating Showcase -->
                     <div class="col-lg-5">
-                        <div class="hero-right-showcase">
-                            <div class="floating-cards-wrapper">
-                                <a class="floating-ai-card card-chatgpt" href="https://vpnstore.pro/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập vpnstore.pro">
-                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=vpnstore.pro&amp;sz=128" alt="Logo VPN Store">
-                                    <div class="card-name">vpnstore.pro</div>
-                                </a>
-
-                                <a class="floating-ai-card card-claude" href="https://aicuatoi.com/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập aicuatoi.com">
-                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=aicuatoi.com&amp;sz=128" alt="Logo AI Của Tôi">
-                                    <div class="card-name">aicuatoi.com</div>
-                                </a>
-
-                                <a class="floating-ai-card card-vpn" href="https://aicuatoi.net/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập aicuatoi.net">
-                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=aicuatoi.com&amp;sz=128" alt="Logo AI Của Tôi">
-                                    <div class="card-name">aicuatoi.net</div>
-                                </a>
-
-                                <a class="floating-ai-card card-cursor" href="https://2fa.center/" target="_blank" rel="noopener noreferrer" aria-label="Truy cập 2fa.center">
-                                    <img class="website-logo" src="https://www.google.com/s2/favicons?domain=2fa.center&amp;sz=128" alt="Logo 2FA Center">
-                                    <div class="card-name">2fa.center</div>
-                                </a>
+                        <div class="hero-right-showcase flex-column align-items-start">
+                            <div class="w-100 text-center text-lg-start fw-bold mb-2 text-dark d-flex align-items-center justify-content-center justify-content-lg-start gap-2" style="font-size: 13.5px;">
+                                <i class="fa-solid fa-bolt text-warning"></i>
+                                <span>{{ __('Sản phẩm vừa cập nhật mới') }}</span>
+                            </div>
+                            <div class="floating-cards-wrapper w-100">
+                                @php
+                                    $cardClasses = ['card-chatgpt', 'card-claude', 'card-vpn', 'card-cursor'];
+                                @endphp
+                                @foreach($bannerProducts->take(4) as $index => $bProduct)
+                                    @php
+                                        $cardClass = $cardClasses[$index % count($cardClasses)];
+                                        $bImg = $bProduct->image ? (str_starts_with($bProduct->image, 'http') ? $bProduct->image : asset('storage/' . $bProduct->image)) : asset('images/default-product.png');
+                                        $bPrice = $bProduct->sale_price ?: $bProduct->price;
+                                    @endphp
+                                    <a class="floating-ai-card {{ $cardClass }}" href="{{ route('product.show', $bProduct->slug) }}" aria-label="{{ $bProduct->name }}">
+                                        <img class="website-logo" src="{{ $bImg }}" alt="{{ $bProduct->name }}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">
+                                        <div class="card-name text-truncate mt-1 fw-bold" style="font-size: 12px; color: #1e293b;" title="{{ $bProduct->name }}">{{ $bProduct->name }}</div>
+                                        <div class="card-price fw-bold text-danger mt-1" style="font-size: 11.5px;">
+                                            {{ number_format($bPrice, 0, ',', '.') }}đ
+                                        </div>
+                                    </a>
+                                @endforeach
                             </div>
                         </div>
                     </div>

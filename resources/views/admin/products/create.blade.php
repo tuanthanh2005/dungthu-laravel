@@ -355,6 +355,24 @@
                     </div>
                 </div>
 
+                <!-- Banner Hero Product (4 ô trang chủ) -->
+                <div class="mb-4">
+                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               role="switch" 
+                               id="show_on_banner" 
+                               name="show_on_banner" 
+                               value="1"
+                               {{ old('show_on_banner') ? 'checked' : '' }}
+                               style="width: 50px; height: 25px; cursor: pointer;">
+                        <label class="form-check-label fw-bold" for="show_on_banner" style="margin-left: 10px; cursor: pointer;">
+                            <i class="fas fa-desktop text-primary me-2"></i>Nổi bật Banner Hero (4 ô đầu trang chủ)
+                            <small class="text-muted d-block">Hiển thị trong 4 thẻ sản phẩm vừa cập nhật mới ở Banner chính</small>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Combo AI Giá Rẻ -->
                 <div class="mb-4">
                     <div class="form-check form-switch" style="padding-left: 2.5rem;">

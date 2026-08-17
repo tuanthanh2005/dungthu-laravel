@@ -134,10 +134,23 @@ class HomeController extends Controller
                 ->all();
         });
 
+        // Lấy 4 sản phẩm Nổi Bật Banner Hero do Admin chọn (Cache 10 phút)
+        $bannerProducts = Cache::remember('home.banner_products', 600, function () {
+            $prods = Product::where('show_on_banner', true)->latest('updated_at')->take(4)->get();
+            if ($prods->count() < 4) {
+                $needed = 4 - $prods->count();
+                $existingIds = $prods->pluck('id')->toArray();
+                $fallback = Product::whereNotIn('id', $existingIds)->latest('updated_at')->take($needed)->get();
+                $prods = $prods->concat($fallback);
+            }
+            return $prods;
+        });
+
         return view('home', compact(
             'categories',
             'featuredProducts',
             'highlightProducts',
+            'bannerProducts',
             'latestProducts',
             'latestBlogs',
             'recentPurchases',

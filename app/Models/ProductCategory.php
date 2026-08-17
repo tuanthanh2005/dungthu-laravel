@@ -26,6 +26,19 @@ class ProductCategory extends Model
         'show_on_home' => 'boolean',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('home.categories');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('home.categories');
+        });
+    }
+
     public function getNameAttribute($value)
     {
         if (app()->getLocale() === 'en' && !empty($this->name_en) && !request()->is('admin*')) {

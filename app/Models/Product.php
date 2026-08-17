@@ -53,6 +53,28 @@ class Product extends Model
         'duration_value' => 'integer',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function () {
+            self::clearHomeCache();
+        });
+
+        static::deleted(function () {
+            self::clearHomeCache();
+        });
+    }
+
+    public static function clearHomeCache()
+    {
+        \Illuminate\Support\Facades\Cache::forget('home.categories');
+        \Illuminate\Support\Facades\Cache::forget('home.featured_products');
+        \Illuminate\Support\Facades\Cache::forget('home.highlight_products');
+        \Illuminate\Support\Facades\Cache::forget('home.latest_products');
+        \Illuminate\Support\Facades\Cache::forget('home.sale_products');
+    }
+
     public function categoryRelation()
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');

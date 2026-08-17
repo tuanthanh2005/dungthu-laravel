@@ -16,48 +16,59 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Lấy danh sách categories active và show_on_home
-        $categories = ProductCategory::where('is_active', true)
-            ->where('show_on_home', true)
-            ->withCount('products')
-            ->orderBy('name')
-            ->get();
+        // Lấy danh sách categories active và show_on_home (Cache 10 phút)
+        $categories = Cache::remember('home.categories', 600, function () {
+            return ProductCategory::where('is_active', true)
+                ->where('show_on_home', true)
+                ->withCount('products')
+                ->orderBy('name')
+                ->get();
+        });
         
-        // Lấy 4 sản phẩm featured cho trang home - Hàng 1
-        $featuredProducts = Product::featured(12)->get();
+        // Lấy sản phẩm featured cho trang home (Cache 10 phút)
+        $featuredProducts = Cache::remember('home.featured_products', 600, function () {
+            return Product::featured(12)->get();
+        });
         
-        // Lấy 8 sản phẩm độc quyền - 2 hàng x 4 sản phẩm
-        $highlightProducts = Product::where('is_exclusive', true)->latest()->take(12)->get();
+        // Lấy sản phẩm độc quyền (Cache 10 phút)
+        $highlightProducts = Cache::remember('home.highlight_products', 600, function () {
+            return Product::where('is_exclusive', true)->latest()->take(12)->get();
+        });
         
-        // Lấy 24 sản phẩm mới nhất cho trang chủ (phần Sản Phẩm)
-        $latestProducts = Product::query()
-            ->where('is_combo_ai', true)
-            ->latest()
-            ->take(24)
-            ->get();
+        // Lấy 24 sản phẩm mới nhất cho trang chủ (Cache 10 phút)
+        $latestProducts = Cache::remember('home.latest_products', 600, function () {
+            return Product::query()
+                ->where('is_combo_ai', true)
+                ->latest()
+                ->take(24)
+                ->get();
+        });
         
-        // Lấy 10 blog mới nhất (published)
-        $latestBlogs = Blog::published()->orderBy('published_at', 'desc')->take(10)->get();
+        // Lấy 10 blog mới nhất (Cache 10 phút)
+        $latestBlogs = Cache::remember('home.latest_blogs', 600, function () {
+            return Blog::published()->orderBy('published_at', 'desc')->take(10)->get();
+        });
         
 
-        // Sản phẩm đang giảm giá
-        // Đếm ngược đến cuối ngày. Khi đếm về 0 hoặc hết hạn thì random 6 sản phẩm.
+        // Sản phẩm đang giảm giá (Cache 5 phút)
         $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';
         $saleEndsAt = now()->endOfDay();
         $isExpired = false;
 
-        if ($flashSaleEnabled && now()->lt($saleEndsAt)) {
-            $saleProducts = Product::query()
-                ->where('is_flash_sale', true)
-                ->latest()
-                ->take(6)
-                ->get();
-            if ($saleProducts->isEmpty()) {
-                $saleProducts = Product::query()->inRandomOrder()->take(6)->get();
-                $isExpired = true;
+        $saleProducts = Cache::remember('home.sale_products', 300, function () use ($flashSaleEnabled, $saleEndsAt) {
+            if ($flashSaleEnabled && now()->lt($saleEndsAt)) {
+                $prods = Product::query()
+                    ->where('is_flash_sale', true)
+                    ->latest()
+                    ->take(6)
+                    ->get();
+                if ($prods->isNotEmpty()) {
+                    return $prods;
+                }
             }
-        } else {
-            $saleProducts = Product::query()->inRandomOrder()->take(6)->get();
+            return Product::query()->latest()->take(6)->get();
+        });
+        if ($saleProducts->isEmpty()) {
             $isExpired = true;
         }
 

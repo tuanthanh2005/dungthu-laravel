@@ -2609,33 +2609,5 @@
                 rotateInterval = setInterval(rotateToast, 15000);
             }, 4000);
         })();
-
-        // Real-time Online Users Count Heartbeat
-        (function() {
-            const countEl = document.getElementById('heroOnlineCountText');
-            if (!countEl) return;
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-            function updateCount() {
-                fetch('{{ route("online-users.ping") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken || ''
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.success) {
-                        countEl.textContent = `${data.count} đang xem`;
-                    }
-                })
-                .catch(() => {});
-            }
-
-            updateCount();
-            setInterval(updateCount, 15000);
-        })();
     </script>
 @endpush

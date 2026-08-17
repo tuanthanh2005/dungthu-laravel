@@ -22,11 +22,18 @@
             <span>DungThu<span class="brand-dot">.com</span></span>
         </a>
 
-        {{-- Live Online Eye Badge for Mobile & Desktop --}}
-        <div class="online-eye-badge d-flex align-items-center me-auto ms-1 ms-sm-2" title="{{ __('Khách hàng đang online xem sản phẩm thực tế') }}" style="padding: 3px 8px; border-radius: 20px; background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.2); font-size: 11px; font-weight: 700; color: #dc2626; white-space: nowrap;">
+        {{-- Live Online Eye Badge for Desktop/Tablet --}}
+        <div class="online-eye-badge d-none d-md-flex align-items-center me-auto ms-2" title="{{ __('Khách hàng đang online xem sản phẩm thực tế') }}" style="padding: 3px 10px; border-radius: 20px; background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.2); font-size: 11px; font-weight: 700; color: #dc2626; white-space: nowrap;">
             <span class="live-dot-pulse" style="width: 7px; height: 7px; background-color: #dc2626; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
             <i class="fa-solid fa-eye me-1" style="color: #dc2626; font-size: 11px;"></i>
             <span class="heroOnlineCountText">-- đang xem</span>
+        </div>
+
+        {{-- Mobile Floating Live Online Badge (Chặn vỡ khung Header Mobile) --}}
+        <div class="mobile-live-online-float d-flex d-md-none align-items-center shadow-sm" title="{{ __('Số khách hàng đang xem thực tế') }}">
+            <span class="live-dot-pulse" style="width: 6px; height: 6px; background-color: #dc2626; border-radius: 50%; display: inline-block; margin-right: 4px;"></span>
+            <i class="fa-solid fa-eye me-1" style="color: #dc2626; font-size: 10px;"></i>
+            <span class="heroOnlineCountText" style="font-size: 10px; font-weight: 800; color: #dc2626;">-- đang xem</span>
         </div>
 
         {{-- Desktop Nav Links --}}
@@ -451,6 +458,19 @@
     }
     .live-dot-pulse {
         animation: pulseDotLive 1.5s infinite;
+    }
+    .mobile-live-online-float {
+        position: fixed;
+        top: 62px;
+        right: 12px;
+        z-index: 1025;
+        padding: 3px 9px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(220, 38, 38, 0.25);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
+        pointer-events: none;
     }
 </style>
 

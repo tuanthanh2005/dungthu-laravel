@@ -295,6 +295,49 @@ class TelegramHelper
     }
 
     /**
+     * Gửi thông báo IP đáng nghi ngờ / bị khóa qua Telegram
+     */
+    public static function sendSuspiciousIpNotification($ip, $reason, $userAgent = null, $url = null)
+    {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+
+        if (empty($botToken) || empty($chatId)) {
+            return false;
+        }
+
+        $text = "🚨 <b>CẢNH BÁO IP ĐÁNG NGHI NGỜ / BỊ CHẶN</b>\n";
+        $text .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+        $text .= "🌐 <b>Địa chỉ IP:</b> <code>" . $ip . "</code>\n";
+        $text .= "⚠️ <b>Lý do:</b> " . $reason . "\n";
+
+        if ($url) {
+            $text .= "🔗 <b>URL truy cập:</b> <code>" . htmlspecialchars($url) . "</code>\n";
+        }
+
+        if ($userAgent) {
+            $text .= "💻 <b>User-Agent:</b> <code>" . htmlspecialchars(substr($userAgent, 0, 150)) . "</code>\n";
+        }
+
+        $text .= "⏰ <b>Thời gian:</b> " . now()->timezone('Asia/Ho_Chi_Minh')->format('H:i:s d/m/Y') . "\n\n";
+        $text .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+        $text .= "🔒 <i>Hệ thống tự động ngắt kết nối IP này để bảo vệ website!</i>";
+
+        try {
+            Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+            Log::info("Telegram alert sent for suspicious IP: {$ip}");
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Telegram Suspicious IP Alert Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Lấy nhãn cho loại đơn hàng
      */
     private static function getOrderTypeLabel($type)

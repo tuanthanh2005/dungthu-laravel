@@ -68,6 +68,13 @@ class BannedIpController extends Controller
         }
         Cache::forget('db_banned_ip_' . $ip);
 
+        // Gửi thông báo Telegram
+        $reasonText = $request->reason ?: 'Chặn thủ công từ trang quản trị';
+        \App\Helpers\TelegramHelper::sendSuspiciousIpNotification(
+            $ip,
+            "Đã bị Admin ({$bannedBy}) khóa thủ công qua trang Quản lý Khóa IP. (Lý do: {$reasonText})"
+        );
+
         return back()->with('success', "Đã khóa thành công IP: {$ip}");
     }
 

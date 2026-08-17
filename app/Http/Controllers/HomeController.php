@@ -139,12 +139,12 @@ class HomeController extends Controller
             $hasColumn = \Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_banner');
             $prods = collect();
             if ($hasColumn) {
-                $prods = Product::where('status', 'active')->where('show_on_banner', true)->latest()->take(4)->get();
+                $prods = Product::where('show_on_banner', true)->latest()->take(4)->get();
             }
             if ($prods->count() < 4) {
                 $needed = 4 - $prods->count();
                 $existingIds = $prods->pluck('id')->toArray();
-                $randomFallback = Product::where('status', 'active')
+                $randomFallback = Product::query()
                     ->whereNotIn('id', $existingIds)
                     ->inRandomOrder()
                     ->take($needed)

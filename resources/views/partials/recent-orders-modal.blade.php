@@ -47,7 +47,7 @@
     // Nếu CSDL chưa có đủ 2 đơn hàng -> Bổ sung từ Sản phẩm CSDL
     if (count($displayItems) < 2) {
         $needed = 2 - count($displayItems);
-        $fallbackProducts = \App\Models\Product::where('status', 'active')
+        $fallbackProducts = \App\Models\Product::query()
             ->inRandomOrder()
             ->take($needed)
             ->get();

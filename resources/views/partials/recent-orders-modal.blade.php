@@ -1,7 +1,42 @@
 @php
-    // Lấy 2 sản phẩm ngẫu nhiên/nổi bật làm mẫu giao dịch vừa thành công
-    $recentProducts = \App\Models\Product::inRandomOrder()->take(2)->get();
-    $sampleBuyers = ['Nguyễn***', 'Trần***', 'Lê***', 'Phạm***', 'Hoàng***', 'Vũ***'];
+    // Lấy 2 sản phẩm bán chạy/độc quyền ngẫu nhiên
+    $recentProducts = \App\Models\Product::where('status', 'active')
+        ->inRandomOrder()
+        ->take(2)
+        ->get();
+
+    if ($recentProducts->isEmpty()) {
+        $recentProducts = \App\Models\Product::inRandomOrder()->take(2)->get();
+    }
+
+    // Danh sách mẫu tên người mua chân thực & ngẫu nhiên phong phú
+    $namePool = [
+        'Nguyễn V*** H***',
+        'Trần T*** H***',
+        'Lê M*** K***',
+        'Phạm H*** A***',
+        'Vũ A*** T***',
+        'Đoàn N*** K***',
+        'Bùi T*** P***',
+        'Đặng K*** N***',
+        'Đỗ H*** M***',
+        'Ngô T*** N***',
+        'Dương V*** A***',
+        'Đinh M*** T***',
+        'Lương V*** N***',
+        'Hồ T*** B***',
+        'Huỳnh V*** D***',
+        'Phan T*** M***',
+        'Trịnh H*** Q***',
+        'Cao V*** K***',
+        'Mai T*** L***',
+        'Tạ V*** P***',
+    ];
+
+    $selectedBuyers = \Illuminate\Support\Arr::random($namePool, max(1, min(count($recentProducts), count($namePool))));
+    if (!is_array($selectedBuyers)) {
+        $selectedBuyers = [$selectedBuyers];
+    }
 @endphp
 
 <!-- Modal 2 Sản Phẩm Vừa Được Mua Gần Đây -->
@@ -33,7 +68,7 @@
                 <div class="d-flex flex-column gap-3">
                     @foreach($recentProducts as $index => $product)
                         @php
-                            $buyer = $sampleBuyers[$index % count($sampleBuyers)];
+                            $buyer = $selectedBuyers[$index] ?? $selectedBuyers[0];
                             $price = $product->sale_price ?: $product->price;
                             $imgSrc = $product->image ? (str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image)) : asset('images/default-product.png');
                         @endphp

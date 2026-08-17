@@ -15,12 +15,19 @@
 <nav class="navbar navbar-expand-xl navbar-techfeed sticky-top" id="mainNavbar">
     <div class="container-fluid px-3">
         {{-- Logo --}}
-        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
+        <a class="navbar-brand d-flex align-items-center gap-2 me-0 me-sm-2" href="{{ route('home') }}">
             <div class="brand-icon">
                 <i class="fa-solid fa-bolt"></i>
             </div>
             <span>DungThu<span class="brand-dot">.com</span></span>
         </a>
+
+        {{-- Live Online Eye Badge for Mobile & Desktop --}}
+        <div class="online-eye-badge d-flex align-items-center me-auto ms-1 ms-sm-2" title="{{ __('Khách hàng đang online xem sản phẩm thực tế') }}" style="padding: 3px 8px; border-radius: 20px; background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.2); font-size: 11px; font-weight: 700; color: #dc2626; white-space: nowrap;">
+            <span class="live-dot-pulse" style="width: 7px; height: 7px; background-color: #dc2626; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+            <i class="fa-solid fa-eye me-1" style="color: #dc2626; font-size: 11px;"></i>
+            <span class="heroOnlineCountText">-- đang xem</span>
+        </div>
 
         {{-- Desktop Nav Links --}}
         <div class="d-none d-xl-flex align-items-center gap-2 mx-auto desktop-nav-links" style="font-size: 14px;">
@@ -436,6 +443,17 @@
     </div>
 </div>
 
+<style>
+    @keyframes pulseDotLive {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 5px rgba(220, 38, 38, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+    .live-dot-pulse {
+        animation: pulseDotLive 1.5s infinite;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchModalEl = document.getElementById('searchProductsModal');
@@ -446,6 +464,34 @@
                     searchInput.focus();
                 }
             });
+        }
+
+        // Global Real-time Online Users Count & Heartbeat
+        const onlineCountEls = document.querySelectorAll('.heroOnlineCountText');
+        if (onlineCountEls.length) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            function updateGlobalOnlineUsersCount() {
+                fetch('{{ route("online-users.ping") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken || ''
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.success) {
+                        onlineCountEls.forEach(el => {
+                            el.textContent = `${data.count} đang xem`;
+                        });
+                    }
+                })
+                .catch(() => {});
+            }
+
+            updateGlobalOnlineUsersCount();
+            setInterval(updateGlobalOnlineUsersCount, 15000);
         }
     });
 </script>

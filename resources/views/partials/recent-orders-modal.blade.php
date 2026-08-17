@@ -1,41 +1,66 @@
 @php
-    // Lấy 2 sản phẩm bán chạy/độc quyền ngẫu nhiên
-    $recentProducts = \App\Models\Product::where('status', 'active')
-        ->inRandomOrder()
+    if (!function_exists('maskRealCustomerNameModal')) {
+        function maskRealCustomerNameModal($name) {
+            $name = trim($name);
+            if ($name === '' || strtolower($name) === 'guest') {
+                return 'Khách hàng';
+            }
+            $parts = preg_split('/\s+/u', $name) ?: [];
+            $parts = array_values(array_filter($parts, fn ($p) => $p !== ''));
+            
+            if (count($parts) === 0) return 'Khách hàng';
+            
+            $lastName = $parts[0];
+            $firstName = $parts[count($parts) - 1];
+            
+            if (count($parts) === 1) {
+                return mb_substr($lastName, 0, 1) . '***';
+            }
+            
+            return $lastName . ' ' . mb_substr($firstName, 0, 1) . '***';
+        }
+    }
+
+    // Lấy 2 đơn hàng mới nhất thực tế từ CSDL hệ thống
+    $realOrders = \App\Models\Order::query()
+        ->with(['orderItems.product'])
+        ->whereNotIn('status', ['cancelled'])
+        ->latest()
         ->take(2)
         ->get();
 
-    if ($recentProducts->isEmpty()) {
-        $recentProducts = \App\Models\Product::inRandomOrder()->take(2)->get();
+    $displayItems = [];
+
+    foreach ($realOrders as $order) {
+        $firstItem = $order->orderItems->first();
+        $product = $firstItem?->product;
+        if ($product) {
+            $displayItems[] = [
+                'product_name' => $product->name,
+                'price' => $firstItem->price ?? ($product->sale_price ?: $product->price),
+                'buyer' => maskRealCustomerNameModal($order->customer_name),
+                'img_src' => $product->image ? (str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image)) : asset('images/default-product.png'),
+            ];
+        }
     }
 
-    // Danh sách mẫu tên người mua chân thực & ngẫu nhiên phong phú
-    $namePool = [
-        'Nguyễn V*** H***',
-        'Trần T*** H***',
-        'Lê M*** K***',
-        'Phạm H*** A***',
-        'Vũ A*** T***',
-        'Đoàn N*** K***',
-        'Bùi T*** P***',
-        'Đặng K*** N***',
-        'Đỗ H*** M***',
-        'Ngô T*** N***',
-        'Dương V*** A***',
-        'Đinh M*** T***',
-        'Lương V*** N***',
-        'Hồ T*** B***',
-        'Huỳnh V*** D***',
-        'Phan T*** M***',
-        'Trịnh H*** Q***',
-        'Cao V*** K***',
-        'Mai T*** L***',
-        'Tạ V*** P***',
-    ];
+    // Nếu CSDL chưa có đủ 2 đơn hàng -> Bổ sung từ Sản phẩm CSDL
+    if (count($displayItems) < 2) {
+        $needed = 2 - count($displayItems);
+        $fallbackProducts = \App\Models\Product::where('status', 'active')
+            ->inRandomOrder()
+            ->take($needed)
+            ->get();
 
-    $selectedBuyers = \Illuminate\Support\Arr::random($namePool, max(1, min(count($recentProducts), count($namePool))));
-    if (!is_array($selectedBuyers)) {
-        $selectedBuyers = [$selectedBuyers];
+        $fallbackBuyers = ['Nguyễn V***', 'Trần T***', 'Lê M***', 'Phạm H***'];
+        foreach ($fallbackProducts as $idx => $prod) {
+            $displayItems[] = [
+                'product_name' => $prod->name,
+                'price' => $prod->sale_price ?: $prod->price,
+                'buyer' => $fallbackBuyers[$idx % count($fallbackBuyers)],
+                'img_src' => $prod->image ? (str_starts_with($prod->image, 'http') ? $prod->image : asset('storage/' . $prod->image)) : asset('images/default-product.png'),
+            ];
+        }
     }
 @endphp
 
@@ -66,24 +91,25 @@
                 </p>
 
                 <div class="d-flex flex-column gap-3">
-                    @foreach($recentProducts as $index => $product)
+                    @foreach($displayItems as $item)
                         @php
-                            $buyer = $selectedBuyers[$index] ?? $selectedBuyers[0];
-                            $price = $product->sale_price ?: $product->price;
-                            $imgSrc = $product->image ? (str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image)) : asset('images/default-product.png');
+                            $buyer = $item['buyer'];
+                            $price = $item['price'];
+                            $imgSrc = $item['img_src'];
+                            $productName = $item['product_name'];
                         @endphp
                         <div class="p-3 bg-white rounded-3 shadow-sm border border-light text-start">
                             <div class="d-flex align-items-start gap-3">
                                 <!-- Thumbnail -->
                                 <img src="{{ $imgSrc }}" 
-                                     alt="{{ $product->name }}" 
+                                     alt="{{ $productName }}" 
                                      style="width: 52px; height: 52px; object-fit: cover; border-radius: 10px; border: 1px solid #f1f5f9; flex-shrink: 0;">
                                 
                                 <!-- Details -->
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
-                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 13px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $product->name }}">
-                                            {{ $product->name }}
+                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 13px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $productName }}">
+                                            {{ $productName }}
                                         </h6>
                                         <span class="fw-bold text-danger flex-shrink-0 ms-1" style="font-size: 13.5px;">
                                             {{ number_format($price, 0, ',', '.') }}đ

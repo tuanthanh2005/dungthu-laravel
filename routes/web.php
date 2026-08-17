@@ -225,6 +225,11 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/online-users/export', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'exportExcel'])->name('admin.online-users.export');
     Route::post('/online-users/{id}/kick', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'kick'])->name('admin.online-users.kick');
     Route::delete('/online-users/{id}', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'destroy'])->name('admin.online-users.delete');
+
+    // Banned IPs Management (Khóa IP)
+    Route::get('/banned-ips', [\App\Http\Controllers\Admin\BannedIpController::class, 'index'])->name('admin.banned-ips.index');
+    Route::post('/banned-ips', [\App\Http\Controllers\Admin\BannedIpController::class, 'store'])->name('admin.banned-ips.store');
+    Route::delete('/banned-ips/{id}', [\App\Http\Controllers\Admin\BannedIpController::class, 'destroy'])->name('admin.banned-ips.destroy');
     
     // Product Management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');

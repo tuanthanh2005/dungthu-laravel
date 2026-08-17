@@ -53,6 +53,7 @@ class AdminMiddleware
                 'admin.blog-topics*',
                 'admin.users*',
                 'admin.online-users*',
+                'admin.banned-ips*',
                 'admin.coupons*',
                 'admin.menu-settings*',
                 'admin.google-indexing.submit-all',

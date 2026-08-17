@@ -20,14 +20,30 @@ class BlockBadBots
             return $next($request);
         }
 
-        // 1. Kiểm tra IP đã bị ban chưa
-        if (Cache::has('banned_ip_' . $ip)) {
+        // 1. Kiểm tra IP đã bị ban chưa (Trong Cache hoặc CSDL)
+        $isBanned = Cache::has('banned_ip_' . $ip);
+
+        if (!$isBanned) {
+            $isBanned = Cache::remember('db_banned_ip_' . $ip, 120, function () use ($ip) {
+                return \App\Models\BannedIp::where('ip_address', $ip)
+                    ->where(function ($q) {
+                        $q->whereNull('banned_until')->orWhere('banned_until', '>', now());
+                    })
+                    ->exists();
+            });
+
+            if ($isBanned) {
+                Cache::put('banned_ip_' . $ip, true, now()->addHours(1));
+            }
+        }
+
+        if ($isBanned) {
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Địa chỉ IP của bạn đã bị khóa tạm thời do phát hiện hoạt động nghi vấn.'
+                    'message' => 'Địa chỉ IP của bạn đã bị truy cập giới hạn hoặc bị khóa bởi Quản trị viên.'
                 ], 403);
             }
-            return response('<h1>403 Forbidden</h1><p>Địa chỉ IP của bạn đã bị khóa tạm thời do hệ thống phát hiện hoạt động rà quét hoặc nghi vấn tấn công.</p>', 403);
+            return response('<h1>403 Forbidden</h1><p>Địa chỉ IP của bạn ('.$ip.') đã bị khóa truy cập bởi Quản trị viên hoặc do hệ thống bảo mật ngắt kết nối.</p>', 403);
         }
 
         $userAgent = (string) $request->userAgent();

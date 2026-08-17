@@ -194,6 +194,11 @@
             <span class="nav-text">Khách đang xem</span>
             <span class="nav-badge bg-success" id="sidebarOnlineUsersBadge" style="display: none;">0</span>
         </a>
+        <a href="{{ route('admin.banned-ips.index') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.banned-ips*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-user-slash text-danger"></i></span>
+            <span class="nav-text">Quản lý Khóa IP</span>
+        </a>
         <a href="{{ route('admin.users') }}"
            class="sidebar-nav-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-users"></i></span>

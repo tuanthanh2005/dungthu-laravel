@@ -461,16 +461,16 @@
     }
     .mobile-live-online-float {
         position: fixed;
-        top: 62px;
-        right: 12px;
-        z-index: 1025;
-        padding: 3px 9px;
+        bottom: 245px;
+        right: 16px;
+        z-index: 9999;
+        padding: 4px 10px;
         border-radius: 20px;
-        background: rgba(255, 255, 255, 0.94);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(220, 38, 38, 0.25);
-        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
-        pointer-events: none;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(220, 38, 38, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        pointer-events: auto;
     }
 </style>
 

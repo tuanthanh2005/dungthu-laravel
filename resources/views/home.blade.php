@@ -258,43 +258,71 @@
             transform: translateY(-2px);
         }
 
-        /* Right Side Showcase */
+        /* Right Side Showcase Grid */
         .hero-right-showcase {
-            position: relative;
-            height: 240px;
             width: 100%;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
             z-index: 2;
         }
 
-        /* Floating AI Cards Styles */
-        .floating-cards-wrapper {
-            position: relative;
+        .hero-banner-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
             width: 100%;
-            height: 100%;
         }
 
-        .floating-cards-wrapper::before,
-        .floating-cards-wrapper::after {
-            display: none;
-        }
-
-        .floating-ai-card {
-            position: absolute;
-            width: 158px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
+        .hero-banner-item {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
             padding: 14px 12px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            cursor: pointer;
+            text-align: center;
             text-decoration: none;
             color: inherit;
-            text-align: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+            transition: all 0.25s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-banner-item:hover {
+            transform: translateY(-4px);
+            border-color: #ff5e00;
+            box-shadow: 0 10px 24px rgba(255, 94, 0, 0.12);
+        }
+
+        .hero-banner-item .item-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .hero-banner-item .item-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 34px;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+
+        .hero-banner-item .item-price {
+            font-size: 13px;
+            font-weight: 800;
+            color: #ef4444;
         }
 
         .floating-ai-card:hover {
@@ -1888,27 +1916,23 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: 3D Floating Showcase -->
-                    <div class="col-lg-5">
-                        <div class="hero-right-showcase flex-column align-items-start">
-                            <div class="w-100 text-center text-lg-start fw-bold mb-2 text-dark d-flex align-items-center justify-content-center justify-content-lg-start gap-2" style="font-size: 13.5px;">
+                    <!-- Right Column: Clean 2x2 Fixed Grid Showcase -->
+                    <div class="col-lg-5 col-xl-5 mt-4 mt-lg-0">
+                        <div class="hero-right-showcase">
+                            <div class="fw-bold mb-3 text-dark d-flex align-items-center justify-content-center justify-content-lg-start gap-2" style="font-size: 14px;">
                                 <i class="fa-solid fa-bolt text-warning"></i>
                                 <span>{{ __('Sản phẩm vừa cập nhật mới') }}</span>
                             </div>
-                            <div class="floating-cards-wrapper w-100">
-                                @php
-                                    $cardClasses = ['card-chatgpt', 'card-claude', 'card-vpn', 'card-cursor'];
-                                @endphp
-                                @foreach($bannerProducts->take(4) as $index => $bProduct)
+                            <div class="hero-banner-grid">
+                                @foreach($bannerProducts->take(4) as $bProduct)
                                     @php
-                                        $cardClass = $cardClasses[$index % count($cardClasses)];
                                         $bImg = $bProduct->image ? (str_starts_with($bProduct->image, 'http') ? $bProduct->image : asset('storage/' . $bProduct->image)) : asset('images/default-product.png');
                                         $bPrice = $bProduct->sale_price ?: $bProduct->price;
                                     @endphp
-                                    <a class="floating-ai-card {{ $cardClass }}" href="{{ route('product.show', $bProduct->slug) }}" aria-label="{{ $bProduct->name }}">
-                                        <img class="website-logo" src="{{ $bImg }}" alt="{{ $bProduct->name }}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">
-                                        <div class="card-name text-truncate mt-1 fw-bold" style="font-size: 12px; color: #1e293b;" title="{{ $bProduct->name }}">{{ $bProduct->name }}</div>
-                                        <div class="card-price fw-bold text-danger mt-1" style="font-size: 11.5px;">
+                                    <a class="hero-banner-item" href="{{ route('product.show', $bProduct->slug) }}" title="{{ $bProduct->name }}">
+                                        <img class="item-img" src="{{ $bImg }}" alt="{{ $bProduct->name }}">
+                                        <div class="item-title">{{ $bProduct->name }}</div>
+                                        <div class="item-price">
                                             {{ number_format($bPrice, 0, ',', '.') }}đ
                                         </div>
                                     </a>

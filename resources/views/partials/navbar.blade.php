@@ -22,18 +22,24 @@
             <span>DungThu<span class="brand-dot">.com</span></span>
         </a>
 
-        {{-- Live Online Eye Badge for Desktop/Tablet --}}
-        <div class="online-eye-badge d-none d-md-flex align-items-center me-auto ms-2" title="{{ __('Khách hàng đang online xem sản phẩm thực tế') }}" style="padding: 3px 10px; border-radius: 20px; background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.2); font-size: 11px; font-weight: 700; color: #dc2626; white-space: nowrap;">
+        {{-- Live Online Eye Badge for Desktop/Tablet (Click để xem chi tiết 3s rồi tự thu lại) --}}
+        <div class="online-eye-badge live-online-interactive-pill d-none d-md-flex align-items-center me-auto ms-2" 
+             title="{{ __('Nhấn để xem chi tiết số người đang xem') }}" 
+             style="padding: 4px 10px; border-radius: 20px; background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.2); font-size: 11px; font-weight: 700; color: #dc2626; white-space: nowrap; cursor: pointer; user-select: none;">
             <span class="live-dot-pulse" style="width: 7px; height: 7px; background-color: #dc2626; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
             <i class="fa-solid fa-eye me-1" style="color: #dc2626; font-size: 11px;"></i>
-            <span class="heroOnlineCountText">-- đang xem</span>
+            <span class="online-count-val">--</span>
+            <span class="online-extra-text text-danger fw-bold">người đang xem</span>
         </div>
 
-        {{-- Mobile Floating Live Online Badge (Chặn vỡ khung Header Mobile - Xếp trên cụm Chat FABs) --}}
-        <div class="mobile-live-online-float d-flex d-md-none align-items-center shadow-sm" title="{{ __('Số khách hàng đang xem thực tế') }}">
+        {{-- Mobile Floating Live Online Badge (Click để mở rộng 3s rồi tự thu gọn lại) --}}
+        <div class="mobile-live-online-float live-online-interactive-pill d-flex d-md-none align-items-center shadow-sm" 
+             title="{{ __('Nhấn để xem chi tiết') }}"
+             style="cursor: pointer; user-select: none;">
             <span class="live-dot-pulse" style="width: 6px; height: 6px; background-color: #dc2626; border-radius: 50%; display: inline-block; margin-right: 4px;"></span>
             <i class="fa-solid fa-eye me-1" style="color: #dc2626; font-size: 10px;"></i>
-            <span class="heroOnlineCountText" style="font-size: 10px; font-weight: 800; color: #dc2626;">-- đang xem</span>
+            <span class="online-count-val" style="font-size: 11px; font-weight: 800; color: #dc2626;">--</span>
+            <span class="online-extra-text text-danger fw-bold" style="font-size: 10px;">người đang xem</span>
         </div>
 
         {{-- Desktop Nav Links --}}
@@ -471,6 +477,24 @@
         border: 1px solid rgba(220, 38, 38, 0.3);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
         pointer-events: auto;
+        transition: all 0.35s ease;
+    }
+    /* Chế độ mặc định (Thu gọn): Ẩn chữ "người đang xem", chỉ hiện Icon Mắt + Số */
+    .live-online-interactive-pill .online-extra-text {
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: bottom;
+        transition: max-width 0.35s ease, opacity 0.25s ease, margin 0.25s ease;
+        margin-left: 0 !important;
+    }
+    /* Khi Click mở rộng: Hiện đầy đủ "X người đang xem" trong 3 giây */
+    .live-online-interactive-pill.is-expanded .online-extra-text {
+        max-width: 140px;
+        opacity: 1;
+        margin-left: 4px !important;
     }
 </style>
 
@@ -487,31 +511,52 @@
         }
 
         // Global Real-time Online Users Count & Heartbeat
-        const onlineCountEls = document.querySelectorAll('.heroOnlineCountText');
-        if (onlineCountEls.length) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const onlineCountValEls = document.querySelectorAll('.online-count-val');
+        const heroTextEls = document.querySelectorAll('.heroOnlineCountText');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-            function updateGlobalOnlineUsersCount() {
-                fetch('{{ route("online-users.ping") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken || ''
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.success) {
-                        onlineCountEls.forEach(el => {
-                            el.textContent = `${data.count} đang xem`;
-                        });
-                    }
-                })
-                .catch(() => {});
-            }
-
-            updateGlobalOnlineUsersCount();
-            setInterval(updateGlobalOnlineUsersCount, 15000);
+        function updateGlobalOnlineUsersCount() {
+            fetch('{{ route("online-users.ping") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken || ''
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.success) {
+                    onlineCountValEls.forEach(el => {
+                        el.textContent = `${data.count}`;
+                    });
+                    heroTextEls.forEach(el => {
+                        el.textContent = `${data.count} đang xem`;
+                    });
+                }
+            })
+            .catch(() => {});
         }
+
+        updateGlobalOnlineUsersCount();
+        setInterval(updateGlobalOnlineUsersCount, 15000);
+
+        // Cơ chế Click -> Mở rộng chi tiết trong 3s -> Tự động thu gọn lại (Icon Mắt + Số)
+        const interactivePills = document.querySelectorAll('.live-online-interactive-pill');
+        interactivePills.forEach(pill => {
+            let expandTimer = null;
+            pill.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                // Mở rộng hiển thị chữ "người đang xem"
+                this.classList.add('is-expanded');
+                
+                if (expandTimer) clearTimeout(expandTimer);
+                
+                // 3 giây sau tự động thu gọn lại chỉ còn Icon Mắt + Số
+                expandTimer = setTimeout(() => {
+                    pill.classList.remove('is-expanded');
+                }, 3000);
+            });
+        });
     });
 </script>

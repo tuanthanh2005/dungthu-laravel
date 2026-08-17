@@ -29,13 +29,11 @@
             <span class="heroOnlineCountText">-- đang xem</span>
         </div>
 
-        {{-- Mobile Floating Live Online Circle Bubble (Bong bóng tròn đồng bộ với Chat FABs) --}}
-        <div class="mobile-live-online-float d-flex d-md-none flex-column align-items-center justify-content-center shadow" title="{{ __('Khách hàng đang online') }}">
-            <div class="d-flex align-items-center justify-content-center gap-1" style="line-height: 1;">
-                <span class="live-dot-pulse" style="width: 5px; height: 5px; background-color: #dc2626; border-radius: 50%; display: inline-block;"></span>
-                <i class="fa-solid fa-eye" style="color: #dc2626; font-size: 10px;"></i>
-            </div>
-            <span class="heroOnlineCountNumber" style="font-size: 10px; font-weight: 800; color: #dc2626; margin-top: 2px; line-height: 1;">--</span>
+        {{-- Mobile Floating Live Online Badge (Chặn vỡ khung Header Mobile - Xếp trên cụm Chat FABs) --}}
+        <div class="mobile-live-online-float d-flex d-md-none align-items-center shadow-sm" title="{{ __('Số khách hàng đang xem thực tế') }}">
+            <span class="live-dot-pulse" style="width: 6px; height: 6px; background-color: #dc2626; border-radius: 50%; display: inline-block; margin-right: 4px;"></span>
+            <i class="fa-solid fa-eye me-1" style="color: #dc2626; font-size: 10px;"></i>
+            <span class="heroOnlineCountText" style="font-size: 10px; font-weight: 800; color: #dc2626;">-- đang xem</span>
         </div>
 
         {{-- Desktop Nav Links --}}
@@ -463,20 +461,16 @@
     }
     .mobile-live-online-float {
         position: fixed;
-        bottom: 240px;
-        right: 24px;
-        z-index: 99999;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: #ffffff;
-        border: 2px solid #ef4444;
-        box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+        bottom: 245px;
+        right: 16px;
+        z-index: 9999;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(220, 38, 38, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
         pointer-events: auto;
-        transition: transform 0.2s ease;
-    }
-    .mobile-live-online-float:active {
-        transform: scale(0.92);
     }
 </style>
 
@@ -494,8 +488,7 @@
 
         // Global Real-time Online Users Count & Heartbeat
         const onlineCountEls = document.querySelectorAll('.heroOnlineCountText');
-        const onlineCountNumEls = document.querySelectorAll('.heroOnlineCountNumber');
-        if (onlineCountEls.length || onlineCountNumEls.length) {
+        if (onlineCountEls.length) {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
             function updateGlobalOnlineUsersCount() {
@@ -511,9 +504,6 @@
                     if (data && data.success) {
                         onlineCountEls.forEach(el => {
                             el.textContent = `${data.count} đang xem`;
-                        });
-                        onlineCountNumEls.forEach(el => {
-                            el.textContent = `${data.count}`;
                         });
                     }
                 })

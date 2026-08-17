@@ -136,7 +136,11 @@ class HomeController extends Controller
 
         // Lấy 4 sản phẩm Banner Hero: Admin gán thì ưu tiên lấy của Admin, thiếu thì random 1 tiếng đổi 1 lần
         $bannerProducts = Cache::remember('home.banner_products.' . date('YmdH'), 3600, function () {
-            $prods = Product::where('status', 'active')->where('show_on_banner', true)->latest()->take(4)->get();
+            $hasColumn = \Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_banner');
+            $prods = collect();
+            if ($hasColumn) {
+                $prods = Product::where('status', 'active')->where('show_on_banner', true)->latest()->take(4)->get();
+            }
             if ($prods->count() < 4) {
                 $needed = 4 - $prods->count();
                 $existingIds = $prods->pluck('id')->toArray();

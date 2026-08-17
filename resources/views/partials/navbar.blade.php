@@ -22,16 +22,6 @@
             <span>DungThu<span class="brand-dot">.com</span></span>
         </a>
 
-        {{-- Live Online Eye Badge for Desktop/Tablet (Click để xem chi tiết 3s rồi tự thu lại) --}}
-        <div class="online-eye-badge live-online-interactive-pill d-none d-md-flex align-items-center me-auto ms-2" 
-             title="{{ __('Nhấn để xem chi tiết số người đang xem') }}" 
-             style="padding: 4px 10px; border-radius: 20px; background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.2); font-size: 11px; font-weight: 700; color: #dc2626; white-space: nowrap; cursor: pointer; user-select: none;">
-            <span class="live-dot-pulse" style="width: 7px; height: 7px; background-color: #dc2626; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
-            <i class="fa-solid fa-eye me-1" style="color: #dc2626; font-size: 11px;"></i>
-            <span class="online-count-val">--</span>
-            <span class="online-extra-text text-danger fw-bold">người đang xem</span>
-        </div>
-
         {{-- Mobile Floating Live Online Badge (Click để mở rộng 3s rồi tự thu gọn lại) --}}
         <div class="mobile-live-online-float live-online-interactive-pill d-flex d-md-none align-items-center shadow-sm" 
              title="{{ __('Nhấn để xem chi tiết') }}"

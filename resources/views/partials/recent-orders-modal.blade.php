@@ -37,32 +37,33 @@
                             $price = $product->sale_price ?: $product->price;
                             $imgSrc = $product->image ? (str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image)) : asset('images/default-product.png');
                         @endphp
-                        <div class="d-flex align-items-center gap-3 p-3 bg-white rounded-3 shadow-sm border border-light position-relative">
-                            <!-- Thumbnail -->
-                            <img src="{{ $imgSrc }}" 
-                                 alt="{{ $product->name }}" 
-                                 style="width: 56px; height: 56px; object-fit: cover; border-radius: 12px; border: 1px solid #f1f5f9; flex-shrink: 0;">
-                            
-                            <!-- Content -->
-                            <div class="flex-grow-1 min-w-0">
-                                <h6 class="fw-bold mb-1 text-truncate text-dark" style="font-size: 13.5px;" title="{{ $product->name }}">
-                                    {{ $product->name }}
-                                </h6>
-                                <div class="d-flex align-items-center justify-content-between gap-2">
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25" style="font-size: 10.5px; font-weight: 600;">
-                                        <i class="fa-solid fa-bolt me-1"></i>{{ __('Đã giao tự động') }}
-                                    </span>
-                                    <span class="text-muted small" style="font-size: 11px;">
-                                        <i class="fa-solid fa-user me-1"></i>{{ $buyer }}
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="p-3 bg-white rounded-3 shadow-sm border border-light text-start">
+                            <div class="d-flex align-items-start gap-3">
+                                <!-- Thumbnail -->
+                                <img src="{{ $imgSrc }}" 
+                                     alt="{{ $product->name }}" 
+                                     style="width: 52px; height: 52px; object-fit: cover; border-radius: 10px; border: 1px solid #f1f5f9; flex-shrink: 0;">
+                                
+                                <!-- Details -->
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 13px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="{{ $product->name }}">
+                                            {{ $product->name }}
+                                        </h6>
+                                        <span class="fw-bold text-danger flex-shrink-0 ms-1" style="font-size: 13.5px;">
+                                            {{ number_format($price, 0, ',', '.') }}đ
+                                        </span>
+                                    </div>
 
-                            <!-- Price -->
-                            <div class="text-end flex-shrink-0">
-                                <span class="fw-bold text-danger" style="font-size: 13.5px;">
-                                    {{ number_format($price, 0, ',', '.') }}đ
-                                </span>
+                                    <div class="d-flex align-items-center justify-content-between gap-2 mt-2">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 py-1 px-2" style="font-size: 10.5px; font-weight: 600;">
+                                            <i class="fa-solid fa-bolt me-1"></i>{{ __('Đã giao tự động') }}
+                                        </span>
+                                        <span class="text-muted" style="font-size: 11px; font-weight: 500;">
+                                            <i class="fa-solid fa-user me-1 text-secondary"></i>{{ $buyer }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @endforeach

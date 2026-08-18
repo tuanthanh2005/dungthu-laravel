@@ -31,57 +31,13 @@
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-3">{{ __('Blog & nhận tin') }}</h6>
+                <h6 class="fw-bold mb-3">{{ __('Blog') }}</h6>
                 <ul class="footer-links mb-3">
                     <li><a href="{{ route('blog.topic', 'ai') }}">{{ __('Blog AI') }}</a></li>
                     <li><a href="{{ route('blog.topic', 'chatgpt') }}">{{ __('Hướng dẫn ChatGPT') }}</a></li>
                     <li><a href="{{ route('blog.topic', 'cursor') }}">{{ __('Hướng dẫn Cursor AI') }}</a></li>
                 </ul>
-                <form id="newsletter-form">
-                    @csrf
-                    <div class="input-group mb-3">
-                        <input type="email" name="email" class="form-control" placeholder="{{ __('Email của bạn') }}" required>
-                        <button class="btn btn-primary" type="submit" id="subscribe-btn">{{ __('Gửi') }}</button>
-                    </div>
-                    <div id="newsletter-message" class="small mt-2"></div>
-                </form>
             </div>
-            <script>
-                document.getElementById('newsletter-form').addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    const email = this.querySelector('input[name="email"]').value;
-                    const btn = document.getElementById('subscribe-btn');
-                    const message = document.getElementById('newsletter-message');
-
-                    btn.disabled = true;
-                    btn.textContent = @json(__('Đang gửi...'));
-
-                    fetch('{{ route("newsletter.subscribe") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                        },
-                        body: JSON.stringify({ email: email })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            message.textContent = data.message;
-                            message.style.color = data.success ? '#28a745' : '#dc3545';
-                            if (data.success) {
-                                this.reset();
-                            }
-                        })
-                        .catch(error => {
-                            message.textContent = '❌ ' + @json(__('Lỗi kết nối'));
-                            message.style.color = '#dc3545';
-                        })
-                        .finally(() => {
-                            btn.disabled = false;
-                            btn.textContent = @json(__('Gửi'));
-                        });
-                });
-            </script>
         </div>
         <div class="footer-copy">{{ date('Y') }} DungThu.com &mdash; Made with <i
                 class="fa-solid fa-heart text-danger"></i> in Vietnam</div>

@@ -161,7 +161,7 @@ class BlockBadBots
                     return redirect()->route('login')->with('info', '⏰ Bạn đã trải nghiệm xem trang web 5 phút với tư cách Khách vãng lai. Vui lòng đăng nhập hoặc tạo tài khoản miễn phí để tiếp tục lướt xem và sử dụng dịch vụ trên DungThu.com!');
                 }
 
-                // 4B. Kiểm tra số lượng Session khách vãng lai (> 10 session / IP)
+                // 4B. Kiểm tra số lượng Session khách vãng lai (> 30 session / IP)
                 $sessionId = $session->getId();
                 if ($sessionId) {
                     $cacheKey = 'guest_sessions_' . md5($ip);
@@ -172,9 +172,9 @@ class BlockBadBots
                         Cache::put($cacheKey, $guestSessions, now()->addHours(6));
                     }
 
-                    // Nếu IP phát sinh trên 10 session khách vãng lai khác nhau
-                    if (count($guestSessions) > 10) {
-                        // Tự động khóa IP 24h khi vượt quá 10 session rác liên tục
+                    // Nếu IP phát sinh trên 30 session khách vãng lai khác nhau
+                    if (count($guestSessions) > 30) {
+                        // Tự động khóa IP 24h khi vượt quá 30 session rác liên tục
                         Cache::put('banned_ip_' . $ip, true, now()->addHours(24));
 
                         // Tự động lưu nhật ký báo đỏ vào CSDL
@@ -182,7 +182,7 @@ class BlockBadBots
                             \App\Models\SuspiciousIpLog::updateOrCreate(
                                 ['ip_address' => $ip],
                                 [
-                                    'reason' => 'Phát sinh trên 10 session khách vãng lai liên tục (Spam session)',
+                                    'reason' => 'Phát sinh trên 30 session khách vãng lai liên tục (Spam session)',
                                     'url' => substr($request->fullUrl(), 0, 500),
                                     'user_agent' => substr($userAgent, 0, 500),
                                     'status' => 'auto_banned_24h',
@@ -196,7 +196,7 @@ class BlockBadBots
                             Cache::put('telegram_notified_ip_' . $ip, true, now()->addHour());
                             \App\Helpers\TelegramHelper::sendSuspiciousIpNotification(
                                 $ip,
-                                'Phát hiện phát sinh hơn 10 phiên (session) khách vãng lai dồn dập từ cùng 1 IP (Đã tự động ngắt kết nối & khóa 24h)',
+                                'Phát hiện phát sinh hơn 30 phiên (session) khách vãng lai dồn dập từ cùng 1 IP (Đã tự động ngắt kết nối & khóa 24h)',
                                 $userAgent,
                                 $request->fullUrl()
                             );
@@ -209,7 +209,7 @@ class BlockBadBots
                         }
 
                         // Chuyển hướng người dùng đến trang đăng nhập với thông báo rõ ràng
-                        return redirect()->route('login')->with('warning', '⚠️ Hệ thống phát hiện quá 10 phiên kết nối khách từ địa chỉ IP này. Để đảm bảo an toàn & bảo mật, vui lòng đăng nhập tài khoản để tiếp tục sử dụng website!');
+                        return redirect()->route('login')->with('warning', '⚠️ Hệ thống phát hiện quá 30 phiên kết nối khách từ địa chỉ IP này. Để đảm bảo an toàn & bảo mật, vui lòng đăng nhập tài khoản để tiếp tục sử dụng website!');
                     }
                 }
             }

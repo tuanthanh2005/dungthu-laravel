@@ -69,33 +69,48 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const modalEl = document.getElementById('spamWarningWelcomeModal');
-        if (!modalEl) return;
-
         const STORAGE_KEY = 'spam_warning_modal_closed_until';
         const closedUntil = localStorage.getItem(STORAGE_KEY);
         const now = Date.now();
 
-        // Nếu chưa đóng hoặc đã hết thời hạn 1 tiếng -> Tự động bật Modal sau 2.5 giây
-        if (!closedUntil || now >= parseInt(closedUntil, 10)) {
-            setTimeout(() => {
-                const bsModal = new bootstrap.Modal(modalEl);
-                bsModal.show();
-            }, 2500);
-        }
+        const shouldShowSpamModal = modalEl && (!closedUntil || now >= parseInt(closedUntil, 10));
 
-        // Khi người dùng nhấn nút Đóng, X, hoặc Tôi đã hiểu -> Lưu mốc thời gian ẩn 1 tiếng (3,600,000 ms)
-        const actionElements = modalEl.querySelectorAll('.close-spam-modal-btn');
-        actionElements.forEach(el => {
-            el.addEventListener('click', function() {
+        if (shouldShowSpamModal) {
+            // 1. Hiển thị Modal Cảnh Báo Spam ĐẦU TIÊN (sau 1.2s)
+            setTimeout(() => {
+                const bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                bsModal.show();
+            }, 1200);
+
+            // Khi đóng Modal Cảnh báo (bằng nút Đóng, Tôi đã hiểu, X, ESC, Backdrop) -> Mới cho phép mở Modal Đơn hàng mới
+            modalEl.addEventListener('hidden.bs.modal', function () {
                 const oneHourLater = Date.now() + 3600000;
                 localStorage.setItem(STORAGE_KEY, oneHourLater.toString());
-            });
-        });
 
-        // Nếu người dùng đóng Modal bằng cách click backdrop hoặc phím ESC
-        modalEl.addEventListener('hidden.bs.modal', function () {
-            const oneHourLater = Date.now() + 3600000;
-            localStorage.setItem(STORAGE_KEY, oneHourLater.toString());
-        });
+                if (typeof window.showRecentOrdersModal === 'function') {
+                    setTimeout(() => {
+                        window.showRecentOrdersModal();
+                    }, 400);
+                }
+            }, { once: true });
+        } else {
+            // 2. Nếu Modal Cảnh báo đã tắt 1h -> Hiển thị thẳng Modal Đơn hàng mới
+            if (typeof window.showRecentOrdersModal === 'function') {
+                setTimeout(() => {
+                    window.showRecentOrdersModal();
+                }, 1500);
+            }
+        }
+
+        if (modalEl) {
+            // Lưu mốc thời gian ẩn 1 tiếng khi click nút đóng/tôi đã hiểu
+            const actionElements = modalEl.querySelectorAll('.close-spam-modal-btn');
+            actionElements.forEach(el => {
+                el.addEventListener('click', function() {
+                    const oneHourLater = Date.now() + 3600000;
+                    localStorage.setItem(STORAGE_KEY, oneHourLater.toString());
+                });
+            });
+        }
     });
 </script>

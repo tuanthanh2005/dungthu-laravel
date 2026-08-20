@@ -145,7 +145,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    window.showRecentOrdersModal = function() {
         const modalEl = document.getElementById('recentOrdersWelcomeModal');
         if (!modalEl) return;
 
@@ -153,13 +153,18 @@
         const closedUntil = localStorage.getItem(STORAGE_KEY);
         const now = Date.now();
 
-        // Nếu chưa đóng hoặc đã hết thời hạn 1 tiếng -> Tự động bật Modal sau 1.5 giây
+        // Nếu chưa đóng hoặc đã hết thời hạn 1 tiếng -> Hiển thị Modal giao dịch
         if (!closedUntil || now >= parseInt(closedUntil, 10)) {
-            setTimeout(() => {
-                const bsModal = new bootstrap.Modal(modalEl);
-                bsModal.show();
-            }, 1500);
+            const bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            bsModal.show();
         }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalEl = document.getElementById('recentOrdersWelcomeModal');
+        if (!modalEl) return;
+
+        const STORAGE_KEY = 'recent_orders_modal_closed_until';
 
         // Khi người dùng nhấn nút Đóng, X, hoặc Mua sắm ngay -> Lưu mốc thời gian ẩn 1 tiếng (3,600,000 ms)
         const actionElements = modalEl.querySelectorAll('.close-recent-modal-btn, .shop-now-modal-btn');

@@ -83,48 +83,52 @@ class BlockBadBots
         }
 
         // 3. Phát hiện chuỗi tấn công SQL Injection / XSS / Directory Traversal trong URL & Params
-        $uri = rawurldecode($request->getRequestUri());
-        $maliciousPatterns = [
-            '/(\%27|\'|\"|\%22).*(or|and|union|select|insert|update|delete|drop|truncate|alter|exec|concat|information_schema)/i',
-            '/\b(union\s+select|select\s+.*\s+from|insert\s+into|delete\s+from|drop\s+table)\b/i',
-            '/(\%27|\')\s*OR\s*1\s*=\s*1/i',
-            '/test\s*[\'"]\s*or\s*1\s*=\s*1/i',
-            '/<script|javascript:|onerror\s*=|onload\s*=/i',
-            '/\/etc\/passwd|\/etc\/shadow|\.\.\/\.\.\//i',
-        ];
+        // Bỏ qua kiểm tra rà quét dữ liệu FORM đối với các đường dẫn quản trị (admin*) hoặc Admin đã đăng nhập
+        $isAdminRequest = $request->is('admin*') || (Auth::check() && optional(Auth::user())->is_admin);
 
-        $queryString = !empty($request->all()) ? http_build_query($request->all()) : '';
-        foreach ($maliciousPatterns as $pattern) {
-            if (preg_match($pattern, $uri) || ($queryString !== '' && preg_match($pattern, $queryString))) {
-                // Khóa IP tự động trong 24 giờ (86,400 giây)
-                Cache::put('banned_ip_' . $ip, true, now()->addHours(24));
-                
-                // Tự động lưu nhật ký báo đỏ vào CSDL
-                try {
-                    \App\Models\SuspiciousIpLog::updateOrCreate(
-                        ['ip_address' => $ip],
-                        [
-                            'reason' => 'Tấn công / rà quét lỗ hổng SQL Injection hoặc XSS',
-                            'url' => substr($request->fullUrl(), 0, 500),
-                            'user_agent' => substr($userAgent, 0, 500),
-                            'status' => 'auto_banned_24h',
-                            'banned_until' => now()->addHours(24),
-                        ]
-                    );
-                } catch (\Throwable $e) {}
+        if (!$isAdminRequest) {
+            $uri = rawurldecode($request->getRequestUri());
+            $maliciousPatterns = [
+                '/\b(union\s+all\s+select|union\s+select|select\s+.*\s+from|insert\s+into|delete\s+from|drop\s+table|truncate\s+table|alter\s+table)\b/i',
+                '/(\%27|\')\s*OR\s*[\'\"]?\d+[\'\"]?\s*=\s*[\'\"]?\d+/i',
+                '/test\s*[\'"]\s*or\s*1\s*=\s*1/i',
+                '/<script[\s>]|javascript:|onerror\s*=|onload\s*=/i',
+                '/\/etc\/passwd|\/etc\/shadow|\.\.\/\.\.\//i',
+            ];
 
-                // Gửi thông báo Telegram về IP đáng nghi ngờ (Throttle 1 giờ / 1 IP)
-                if (!Cache::has('telegram_notified_ip_' . $ip)) {
-                    Cache::put('telegram_notified_ip_' . $ip, true, now()->addHour());
-                    \App\Helpers\TelegramHelper::sendSuspiciousIpNotification(
-                        $ip,
-                        'Phát hiện tấn công / rà quét lỗ hổng SQL Injection hoặc XSS (Hệ thống đã tự động khóa IP 24h)',
-                        $userAgent,
-                        $request->fullUrl()
-                    );
+            $queryString = !empty($request->all()) ? http_build_query($request->all()) : '';
+            foreach ($maliciousPatterns as $pattern) {
+                if (preg_match($pattern, $uri) || ($queryString !== '' && preg_match($pattern, $queryString))) {
+                    // Khóa IP tự động trong 24 giờ (86,400 giây)
+                    Cache::put('banned_ip_' . $ip, true, now()->addHours(24));
+                    
+                    // Tự động lưu nhật ký báo đỏ vào CSDL
+                    try {
+                        \App\Models\SuspiciousIpLog::updateOrCreate(
+                            ['ip_address' => $ip],
+                            [
+                                'reason' => 'Tấn công / rà quét lỗ hổng SQL Injection hoặc XSS',
+                                'url' => substr($request->fullUrl(), 0, 500),
+                                'user_agent' => substr($userAgent, 0, 500),
+                                'status' => 'auto_banned_24h',
+                                'banned_until' => now()->addHours(24),
+                            ]
+                        );
+                    } catch (\Throwable $e) {}
+
+                    // Gửi thông báo Telegram về IP đáng nghi ngờ (Throttle 1 giờ / 1 IP)
+                    if (!Cache::has('telegram_notified_ip_' . $ip)) {
+                        Cache::put('telegram_notified_ip_' . $ip, true, now()->addHour());
+                        \App\Helpers\TelegramHelper::sendSuspiciousIpNotification(
+                            $ip,
+                            'Phát hiện tấn công / rà quét lỗ hổng SQL Injection hoặc XSS (Hệ thống đã tự động khóa IP 24h)',
+                            $userAgent,
+                            $request->fullUrl()
+                        );
+                    }
+
+                    return response('<h1>403 Access Denied</h1><p>Hành vi tấn công hoặc quét lỗ hổng đã bị phát hiện. Địa chỉ IP của bạn bị khóa 24 giờ.</p>', 403);
                 }
-
-                return response('<h1>403 Access Denied</h1><p>Hành vi tấn công hoặc quét lỗ hổng đã bị phát hiện. Địa chỉ IP của bạn bị khóa 24 giờ.</p>', 403);
             }
         }
 

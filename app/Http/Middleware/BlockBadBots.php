@@ -145,20 +145,20 @@ class BlockBadBots
             if (!$isExempt && $request->hasSession()) {
                 $session = $request->session();
 
-                // 4A. Kiểm tra thời gian duyệt web của Khách vãng lai (Giới hạn 3 phút = 180 giây)
+                // 4A. Kiểm tra thời gian duyệt web của Khách vãng lai (Giới hạn 5 phút = 300 giây)
                 if (!$session->has('guest_first_seen_at')) {
                     $session->put('guest_first_seen_at', time());
                 }
 
                 $firstSeen = (int) $session->get('guest_first_seen_at');
-                if ($firstSeen > 0 && (time() - $firstSeen) >= 180) {
+                if ($firstSeen > 0 && (time() - $firstSeen) >= 300) {
                     if ($request->expectsJson() || $request->is('api/*')) {
                         return response()->json([
-                            'message' => 'Bạn đã trải nghiệm xem web 3 phút với tư cách Khách vãng lai. Vui lòng đăng nhập để tiếp tục.'
+                            'message' => 'Bạn đã trải nghiệm xem web 5 phút với tư cách Khách vãng lai. Vui lòng đăng nhập để tiếp tục.'
                         ], 403);
                     }
 
-                    return redirect()->route('login')->with('info', '⏰ Bạn đã trải nghiệm xem trang web 3 phút với tư cách Khách vãng lai. Vui lòng đăng nhập hoặc tạo tài khoản miễn phí để tiếp tục lướt xem và sử dụng dịch vụ trên DungThu.com!');
+                    return redirect()->route('login')->with('info', '⏰ Bạn đã trải nghiệm xem trang web 5 phút với tư cách Khách vãng lai. Vui lòng đăng nhập hoặc tạo tài khoản miễn phí để tiếp tục lướt xem và sử dụng dịch vụ trên DungThu.com!');
                 }
 
                 // 4B. Kiểm tra số lượng Session khách vãng lai (> 10 session / IP)

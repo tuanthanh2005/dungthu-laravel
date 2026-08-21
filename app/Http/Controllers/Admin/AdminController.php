@@ -632,6 +632,15 @@ class AdminController extends Controller
         if ($request->filled('flash_sale')) {
             $query->where('is_flash_sale', true);
         }
+
+        // Filter by stock status (in_stock, out_of_stock)
+        if ($request->filled('stock_status')) {
+            if ($request->stock_status === 'in_stock') {
+                $query->where('stock', '>', 0);
+            } elseif ($request->stock_status === 'out_of_stock') {
+                $query->where('stock', '<=', 0);
+            }
+        }
         
         $products = $query->latest()->paginate(10)->appends($request->query());
         $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';

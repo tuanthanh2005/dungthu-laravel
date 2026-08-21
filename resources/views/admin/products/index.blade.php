@@ -182,28 +182,47 @@
                 </div>
             </div>
 
-            <!-- Category Filter -->
-            <div class="mb-4">
-                <div class="btn-group" role="group" aria-label="Category Filter">
-                    <a href="{{ route('admin.products') }}" 
-                       class="btn {{ !request('category') || request('category') == 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-4 me-2">
-                        <i class="fas fa-list me-2"></i>Tất cả
+            <!-- Stock & Category Filter -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 p-3 bg-light rounded-4 border border-light">
+                <!-- Bộ lọc Tồn kho -->
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="fw-bold text-secondary small me-1"><i class="fas fa-boxes me-1 text-primary"></i>Tồn kho:</span>
+                    <a href="{{ route('admin.products', array_merge(request()->except(['stock_status', 'page']))) }}" 
+                       class="btn btn-sm {{ !request('stock_status') || request('stock_status') == 'all' ? 'btn-dark' : 'btn-outline-dark' }} rounded-pill px-3 fw-bold">
+                        Tất cả
                     </a>
-                    <a href="{{ route('admin.products', array_merge(request()->except('page'), ['flash_sale' => 1])) }}" 
-                       class="btn {{ request('flash_sale') ? 'btn-danger' : 'btn-outline-danger' }} rounded-pill px-4 me-2">
-                        <i class="fas fa-bolt me-2"></i>Flash Sale
+                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['stock_status' => 'in_stock'])) }}" 
+                       class="btn btn-sm {{ request('stock_status') == 'in_stock' ? 'btn-success' : 'btn-outline-success' }} rounded-pill px-3 fw-bold">
+                        <i class="fas fa-check-circle me-1"></i>Còn hàng
                     </a>
-                    <a href="{{ route('admin.products', ['category' => 'tech']) }}" 
-                       class="btn {{ request('category') == 'tech' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-4 me-2">
-                        <i class="fas fa-laptop-code me-2"></i>Công nghệ
+                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['stock_status' => 'out_of_stock'])) }}" 
+                       class="btn btn-sm {{ request('stock_status') == 'out_of_stock' ? 'btn-danger' : 'btn-outline-danger' }} rounded-pill px-3 fw-bold">
+                        <i class="fas fa-times-circle me-1"></i>Hết hàng
                     </a>
-                    <a href="{{ route('admin.products', ['category' => 'ebooks']) }}" 
-                       class="btn {{ request('category') == 'ebooks' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-4 me-2">
-                        <i class="fas fa-book me-2"></i>Ebooks
+                </div>
+
+                <!-- Bộ lọc Danh mục & Loại -->
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="fw-bold text-secondary small me-1"><i class="fas fa-layer-group me-1 text-primary"></i>Danh mục:</span>
+                    <a href="{{ route('admin.products', array_merge(request()->except(['category', 'page']))) }}" 
+                       class="btn btn-sm {{ !request('category') || request('category') == 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-3 fw-bold">
+                        Tất cả
                     </a>
-                    <a href="{{ route('admin.products', ['category' => 'doc']) }}" 
-                       class="btn {{ request('category') == 'doc' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-4">
-                        <i class="fas fa-file-alt me-2"></i>Tài liệu
+                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['flash_sale' => request('flash_sale') ? null : 1])) }}" 
+                       class="btn btn-sm {{ request('flash_sale') ? 'btn-danger' : 'btn-outline-danger' }} rounded-pill px-3 fw-bold">
+                        <i class="fas fa-bolt me-1"></i>Flash Sale
+                    </a>
+                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['category' => 'tech'])) }}" 
+                       class="btn btn-sm {{ request('category') == 'tech' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-3 fw-bold">
+                        <i class="fas fa-laptop-code me-1"></i>Công nghệ
+                    </a>
+                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['category' => 'ebooks'])) }}" 
+                       class="btn btn-sm {{ request('category') == 'ebooks' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-3 fw-bold">
+                        <i class="fas fa-book me-1"></i>Ebooks
+                    </a>
+                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['category' => 'doc'])) }}" 
+                       class="btn btn-sm {{ request('category') == 'doc' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-3 fw-bold">
+                        <i class="fas fa-file-alt me-1"></i>Tài liệu
                     </a>
                 </div>
             </div>

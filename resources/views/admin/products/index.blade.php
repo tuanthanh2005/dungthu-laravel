@@ -183,13 +183,15 @@
             </div>
 
             <!-- Stock & Category Filter -->
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 p-3 bg-light rounded-4 border border-light">
+            <div class="d-flex flex-column gap-3 mb-4 p-3 bg-light rounded-4 border border-light">
                 <!-- Bộ lọc Tồn kho -->
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <span class="fw-bold text-secondary small me-1"><i class="fas fa-boxes me-1 text-primary"></i>Tồn kho:</span>
+                    <span class="badge bg-white text-dark border px-3 py-2 fw-bold" style="font-size: 13px;">
+                        <i class="fas fa-boxes me-1 text-primary"></i>Tồn kho:
+                    </span>
                     <a href="{{ route('admin.products', array_merge(request()->except(['stock_status', 'page']))) }}" 
                        class="btn btn-sm {{ !request('stock_status') || request('stock_status') == 'all' ? 'btn-dark' : 'btn-outline-dark' }} rounded-pill px-3 fw-bold">
-                        Tất cả
+                        Tất cả kho
                     </a>
                     <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['stock_status' => 'in_stock'])) }}" 
                        class="btn btn-sm {{ request('stock_status') == 'in_stock' ? 'btn-success' : 'btn-outline-success' }} rounded-pill px-3 fw-bold">
@@ -203,10 +205,12 @@
 
                 <!-- Bộ lọc Danh mục & Loại -->
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <span class="fw-bold text-secondary small me-1"><i class="fas fa-layer-group me-1 text-primary"></i>Danh mục:</span>
+                    <span class="badge bg-white text-dark border px-3 py-2 fw-bold" style="font-size: 13px;">
+                        <i class="fas fa-layer-group me-1 text-primary"></i>Danh mục:
+                    </span>
                     <a href="{{ route('admin.products', array_merge(request()->except(['category', 'page']))) }}" 
                        class="btn btn-sm {{ !request('category') || request('category') == 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill px-3 fw-bold">
-                        Tất cả
+                        Tất cả danh mục
                     </a>
                     <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['flash_sale' => request('flash_sale') ? null : 1])) }}" 
                        class="btn btn-sm {{ request('flash_sale') ? 'btn-danger' : 'btn-outline-danger' }} rounded-pill px-3 fw-bold">

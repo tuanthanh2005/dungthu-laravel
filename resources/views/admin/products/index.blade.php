@@ -189,15 +189,15 @@
                     <span class="badge bg-white text-dark border px-3 py-2 fw-bold" style="font-size: 13px;">
                         <i class="fas fa-boxes me-1 text-primary"></i>Tồn kho:
                     </span>
-                    <a href="{{ route('admin.products', array_merge(request()->except(['stock_status', 'page']))) }}" 
+                    <a href="{{ route('admin.products', array_merge(request()->query(), ['stock_status' => null, 'page' => null])) }}" 
                        class="btn btn-sm {{ !request('stock_status') || request('stock_status') == 'all' ? 'btn-dark' : 'btn-outline-dark' }} rounded-pill px-3 fw-bold">
                         Tất cả kho
                     </a>
-                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['stock_status' => 'in_stock'])) }}" 
+                    <a href="{{ route('admin.products', array_merge(request()->query(), ['stock_status' => 'in_stock', 'page' => null])) }}" 
                        class="btn btn-sm {{ request('stock_status') == 'in_stock' ? 'btn-success' : 'btn-outline-success' }} rounded-pill px-3 fw-bold">
                         <i class="fas fa-check-circle me-1"></i>Còn hàng
                     </a>
-                    <a href="{{ route('admin.products', array_merge(request()->except(['page']), ['stock_status' => 'out_of_stock'])) }}" 
+                    <a href="{{ route('admin.products', array_merge(request()->query(), ['stock_status' => 'out_of_stock', 'page' => null])) }}" 
                        class="btn btn-sm {{ request('stock_status') == 'out_of_stock' ? 'btn-danger' : 'btn-outline-danger' }} rounded-pill px-3 fw-bold">
                         <i class="fas fa-times-circle me-1"></i>Hết hàng
                     </a>

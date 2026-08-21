@@ -554,9 +554,12 @@
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(res => {
-                if (!res.ok) throw new Error('Network response was not ok');
-                return res.json();
+            .then(async res => {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    throw new Error(data.message || `Mã lỗi server: HTTP ${res.status}`);
+                }
+                return data;
             })
             .then(data => {
                 if (data.success) {
@@ -621,8 +624,8 @@
             .catch(err => {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Lỗi kết nối!',
-                    text: 'Không thể kết nối đến server.'
+                    title: 'Lỗi!',
+                    text: err.message || 'Không thể kết nối đến server.'
                 });
             })
             .finally(() => {

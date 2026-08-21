@@ -641,6 +641,15 @@ class AdminController extends Controller
                 $query->where('stock', '<=', 0);
             }
         }
+
+        // Filter by active status (active, hidden)
+        if ($request->filled('active_status')) {
+            if ($request->active_status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->active_status === 'hidden') {
+                $query->where('is_active', false);
+            }
+        }
         
         $products = $query->latest()->paginate(10)->appends($request->query());
         $flashSaleEnabled = SiteSetting::getValue('flash_sale_enabled', '1') === '1';

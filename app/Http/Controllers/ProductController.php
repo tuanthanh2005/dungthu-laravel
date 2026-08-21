@@ -308,7 +308,7 @@ class ProductController extends Controller
         $keywordLinks = self::seoKeywords();
         
         // Xử lý products
-        $query = Product::query();
+        $query = Product::query()->active();
         
         // Filter theo category_id nếu có
         if ($currentCategoryId != 'all') {
@@ -343,7 +343,7 @@ class ProductController extends Controller
             ->get();
         $keywordLinks = self::seoKeywords();
 
-        $query = Product::query();
+        $query = Product::query()->active();
         $this->applyKeywordSearch($query, $aliases);
 
         $items = $query->latest()->paginate(18)->withQueryString();

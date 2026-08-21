@@ -723,6 +723,25 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Cập nhật Combo AI thành công!');
     }
 
+    public function toggleProductActive(Product $product)
+    {
+        $product->is_active = !$product->is_active;
+        $product->save();
+
+        $statusText = $product->is_active ? 'Hiển thị' : 'Ẩn';
+        $message = "Đã chuyển sản phẩm sang trạng thái {$statusText}!";
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'value' => $product->is_active
+            ]);
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
     public function oldToggleProductFlashSale(Product $product)
     {
         $product->is_flash_sale = !$product->is_flash_sale;
@@ -907,6 +926,7 @@ class AdminController extends Controller
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
             'is_vpn' => $request->has('is_vpn') ? true : false,
+            'is_active' => $request->has('is_active') ? true : false,
             'duration_value' => $request->duration_value,
             'duration_type' => $request->duration_type,
         ]);
@@ -1100,6 +1120,7 @@ class AdminController extends Controller
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
             'is_vpn' => $request->has('is_vpn') ? true : false,
+            'is_active' => $request->has('is_active') ? true : false,
             'duration_value' => $request->duration_value,
             'duration_type' => $request->duration_type,
         ]);

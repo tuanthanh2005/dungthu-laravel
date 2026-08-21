@@ -34,7 +34,7 @@
     foreach ($realOrders as $order) {
         $firstItem = $order->orderItems->first();
         $product = $firstItem?->product;
-        if ($product) {
+        if ($product && ($product->is_active ?? true)) {
             $displayItems[] = [
                 'product_name' => $product->name,
                 'price' => $firstItem->price ?? ($product->sale_price ?: $product->price),
@@ -48,6 +48,7 @@
     if (count($displayItems) < 2) {
         $needed = 2 - count($displayItems);
         $fallbackProducts = \App\Models\Product::query()
+            ->where('is_active', true)
             ->inRandomOrder()
             ->take($needed)
             ->get();

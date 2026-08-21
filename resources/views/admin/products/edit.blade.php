@@ -298,6 +298,23 @@
                         <input class="form-check-input"
                                type="checkbox"
                                role="switch"
+                               id="is_active"
+                               name="is_active"
+                               value="1"
+                               {{ old('is_active', $product->is_active ?? true) ? 'checked' : '' }}
+                               style="width: 50px; height: 25px; cursor: pointer;">
+                        <label class="form-check-label fw-bold" for="is_active" style="margin-left: 10px; cursor: pointer;">
+                            <i class="fas fa-eye text-success me-2"></i>Trạng thái hiển thị sản phẩm (Hiển thị / Ẩn)
+                            <small class="text-muted d-block">Bật để hiển thị sản phẩm ra ngoài trang chủ & cửa hàng, tắt để ẩn</small>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               role="switch"
                                id="is_flash_sale"
                                name="is_flash_sale"
                                value="1"

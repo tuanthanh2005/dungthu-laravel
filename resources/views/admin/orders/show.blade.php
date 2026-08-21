@@ -258,8 +258,13 @@
                                     <img src="{{ $item->product->image }}" alt="{{ $item->product->name }}" class="img-fluid rounded" style="max-height: 80px;">
                                 @endif
                             </div>
-                            <div class="col-md-6">
-                                <div class="fw-bold">{{ $item->product->name }}</div>
+                            <div class="col-md-5">
+                                <div class="fw-bold d-flex align-items-center gap-2">
+                                    {{ $item->product->name }}
+                                    @if(!($item->product->is_active ?? true))
+                                        <span class="badge bg-secondary style="font-size: 10px;">Đã ẩn</span>
+                                    @endif
+                                </div>
                                 <small class="text-muted">
                                     @if($item->product->category == 'ebooks')
                                         <i class="fas fa-file-pdf text-danger me-1"></i>Tài liệu số
@@ -272,10 +277,21 @@
                                     @endif
                                 </small>
                             </div>
-                            <div class="col-md-2 text-center">
+                            <div class="col-md-3 text-center">
+                                @if($item->product)
+                                    <form action="{{ route('admin.products.toggle-active', $item->product) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm {{ $item->product->is_active ? 'btn-outline-success' : 'btn-outline-secondary' }} rounded-pill px-3 py-1" style="font-size: 11.5px; font-weight: 500;">
+                                            <i class="fas {{ $item->product->is_active ? 'fa-eye text-success' : 'fa-eye-slash text-secondary' }} me-1"></i>
+                                            <span>{{ $item->product->is_active ? 'Hiển thị' : 'Đã ẩn' }}</span>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                            <div class="col-md-1 text-center">
                                 <span class="badge bg-secondary">x{{ $item->quantity }}</span>
                             </div>
-                            <div class="col-md-2 text-end">
+                            <div class="col-md-1 text-end">
                                 <div class="fw-bold">{{ number_format($item->price, 0, ',', '.') }}đ</div>
                             </div>
                         </div>

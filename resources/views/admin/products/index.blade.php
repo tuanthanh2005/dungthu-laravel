@@ -221,6 +221,7 @@
                             <th>Giá</th>
                             <th>Flash Sale</th>
                             <th>Tồn kho</th>
+                            <th>Trạng thái</th>
                             <th>Gán Home</th>
                             <th>Hành động</th>
                         </tr>
@@ -281,6 +282,15 @@
                                 @else
                                     <span class="badge bg-danger">Hết hàng</span>
                                 @endif
+                            </td>
+                            <td>
+                                <form action="{{ route('admin.products.toggle-active', $product) }}" method="POST" class="d-inline ajax-toggle-form" data-type="active">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm {{ $product->is_active ? 'btn-success' : 'btn-secondary' }}" style="font-weight: 600; font-size: 11px; padding: 4px 10px; border-radius: 20px;">
+                                        <i class="fas {{ $product->is_active ? 'fa-eye' : 'fa-eye-slash' }} me-1"></i>
+                                        <span>{{ $product->is_active ? 'Hiển thị' : 'Đã ẩn' }}</span>
+                                    </button>
+                                </form>
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-1">
@@ -555,6 +565,16 @@
                             button.className = 'btn btn-sm w-100 btn-outline-success';
                         }
                         button.innerHTML = '<i class="fas fa-robot me-1"></i>Combo AI';
+                    } else if (type === 'active') {
+                        if (data.value) {
+                            button.className = 'btn btn-sm btn-success';
+                            button.style.borderRadius = '20px';
+                            button.innerHTML = '<i class="fas fa-eye me-1"></i><span>Hiển thị</span>';
+                        } else {
+                            button.className = 'btn btn-sm btn-secondary';
+                            button.style.borderRadius = '20px';
+                            button.innerHTML = '<i class="fas fa-eye-slash me-1"></i><span>Đã ẩn</span>';
+                        }
                     }
                 } else {
                     Swal.fire({

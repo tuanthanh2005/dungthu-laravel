@@ -35,6 +35,7 @@ class Product extends Model
         'is_combo_ai',
         'is_flash_sale',
         'is_vpn',
+        'is_active',
         'duration_value',
         'duration_type',
     ];
@@ -52,8 +53,14 @@ class Product extends Model
         'show_on_banner' => 'boolean',
         'is_combo_ai' => 'boolean',
         'is_flash_sale' => 'boolean',
+        'is_active' => 'boolean',
         'duration_value' => 'integer',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 
     protected static function boot()
     {

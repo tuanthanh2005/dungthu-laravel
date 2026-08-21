@@ -27,17 +27,18 @@ class HomeController extends Controller
         
         // Lấy sản phẩm featured cho trang home (Cache 10 phút)
         $featuredProducts = Cache::remember('home.featured_products', 600, function () {
-            return Product::featured(12)->get();
+            return Product::active()->featured(12)->get();
         });
         
         // Lấy sản phẩm độc quyền (Cache 10 phút)
         $highlightProducts = Cache::remember('home.highlight_products', 600, function () {
-            return Product::where('is_exclusive', true)->latest()->take(12)->get();
+            return Product::active()->where('is_exclusive', true)->latest()->take(12)->get();
         });
         
         // Lấy 24 sản phẩm mới nhất cho trang chủ (Cache 10 phút)
         $latestProducts = Cache::remember('home.latest_products', 600, function () {
             return Product::query()
+                ->active()
                 ->where('is_combo_ai', true)
                 ->latest()
                 ->take(24)
@@ -58,6 +59,7 @@ class HomeController extends Controller
         $saleProducts = Cache::remember('home.sale_products', 300, function () use ($flashSaleEnabled, $saleEndsAt) {
             if ($flashSaleEnabled && now()->lt($saleEndsAt)) {
                 $prods = Product::query()
+                    ->active()
                     ->where('is_flash_sale', true)
                     ->latest()
                     ->take(6)
@@ -66,7 +68,7 @@ class HomeController extends Controller
                     return $prods;
                 }
             }
-            return Product::query()->latest()->take(6)->get();
+            return Product::query()->active()->latest()->take(6)->get();
         });
         if ($saleProducts->isEmpty()) {
             $isExpired = true;
@@ -139,12 +141,13 @@ class HomeController extends Controller
             $hasColumn = \Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_banner');
             $prods = collect();
             if ($hasColumn) {
-                $prods = Product::where('show_on_banner', true)->latest()->take(4)->get();
+                $prods = Product::active()->where('show_on_banner', true)->latest()->take(4)->get();
             }
             if ($prods->count() < 4) {
                 $needed = 4 - $prods->count();
                 $existingIds = $prods->pluck('id')->toArray();
                 $randomFallback = Product::query()
+                    ->active()
                     ->whereNotIn('id', $existingIds)
                     ->inRandomOrder()
                     ->take($needed)

@@ -248,6 +248,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::post('/products/{product}/featured', [AdminController::class, 'toggleProductFeatured'])->name('admin.products.toggle-featured');
     Route::post('/products/{product}/exclusive', [AdminController::class, 'toggleProductExclusive'])->name('admin.products.toggle-exclusive');
     Route::post('/products/{product}/combo-ai', [AdminController::class, 'toggleProductComboAi'])->name('admin.products.toggle-combo-ai');
+    Route::post('/products/{product}/active', [AdminController::class, 'toggleProductActive'])->name('admin.products.toggle-active');
     Route::post('/flash-sale/toggle', [AdminController::class, 'toggleFlashSaleGlobal'])->name('admin.flash-sale.toggle');
 
     // Proxies Management

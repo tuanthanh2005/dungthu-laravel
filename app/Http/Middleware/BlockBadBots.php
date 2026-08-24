@@ -20,6 +20,11 @@ class BlockBadBots
             return $next($request);
         }
 
+        // Bỏ qua hoàn toàn kiểm tra bot/ua đối với các đường dẫn Webhook (Telegram, SePay...)
+        if ($request->is('api/telegram/*') || $request->is('webhook/*')) {
+            return $next($request);
+        }
+
         // 1. Kiểm tra IP đã bị ban chưa (Trong Cache hoặc CSDL)
         $isBanned = Cache::has('banned_ip_' . $ip);
 

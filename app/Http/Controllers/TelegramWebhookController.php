@@ -131,6 +131,7 @@ class TelegramWebhookController extends Controller
         // Kiểm tra quyền Admin (Chỉ Telegram Chat ID cấu hình trong env mới được phép Reply)
         if (!$this->isAuthorizedAdmin($chatId, $senderId)) {
             Log::warning("Unauthorized Telegram Reply attempt from Chat ID: {$chatId}, Sender ID: {$senderId}");
+            TelegramHelper::sendMessage("⚠️ <b>CẢNH BÁO BẢO MẬT TELEGRAM</b>\nID Telegram của bạn chưa được cấp quyền trong file .env!\n• User ID: <code>{$senderId}</code>\n• Chat ID: <code>{$chatId}</code>\n\n👉 Vui lòng thêm User ID hoặc Chat ID này vào <code>TELEGRAM_CHAT_ID</code> trong file .env của website.");
             return response()->json(['status' => 'unauthorized']);
         }
 
@@ -163,7 +164,7 @@ class TelegramWebhookController extends Controller
         ]);
 
         $recipientName = $userId > 0 ? "Khách hàng #{$userId}" : "Khách vãng lai";
-        TelegramHelper::sendMessage("✅ <b>ĐÃ GỬI PHẢN HỒI THÀNH CÔNG!</b>\n━━━━━━━━━━━━━━━━━━━━━━\n👤 <b>Tới:</b> {$recipientName}\n📝 <b>Nội dung:</b> <i>{$text}</i>");
+        TelegramHelper::sendMessage("✅ <b>ĐÃ GỬI PHẢN HỒI THÀNH CÔNG!</b>\n━━━━━━━━━━━━━━━━━━━━━━\n👤 <b>Tới:</b> {$recipientName}\n📝 <b>Nội dung:</b> <i>" . htmlspecialchars($text) . "</i>");
 
         return response()->json(['status' => 'success', 'message_id' => $newMessage->id]);
     }
@@ -175,7 +176,7 @@ class TelegramWebhookController extends Controller
     {
         $configuredChatId = (string) config('services.telegram.chat_id');
         if (empty($configuredChatId)) {
-            return false;
+            return true;
         }
 
         // Hỗ trợ cấu hình nhiều Telegram Chat ID phân cách bởi dấu phẩy (ví dụ: "123456789,987654321")

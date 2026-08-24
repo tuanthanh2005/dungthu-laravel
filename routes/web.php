@@ -243,6 +243,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     
     // Telegram Bot Integration Routes
     Route::get('/telegram/set-webhook', [\App\Http\Controllers\TelegramWebhookController::class, 'setWebhook'])->name('admin.telegram.set-webhook');
+    Route::get('/telegram/webhook-info', [\App\Http\Controllers\TelegramWebhookController::class, 'getWebhookInfo'])->name('admin.telegram.webhook-info');
 
     // Product Management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');

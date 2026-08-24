@@ -194,12 +194,12 @@ class TelegramWebhookController extends Controller
     }
 
     /**
-     * Route hỗ trợ đăng ký Webhook Telegram tự động
+     * Route hỗ trợ đăng ký Webhook Telegram tự động (Ép dùng HTTPS)
      */
     public function setWebhook()
     {
         $botToken = config('services.telegram.bot_token');
-        $webhookUrl = url('/api/telegram/webhook');
+        $webhookUrl = preg_replace('/^http:/i', 'https:', url('/api/telegram/webhook'));
 
         if (empty($botToken)) {
             return response()->json(['error' => 'Chưa cấu hình Telegram Bot Token trong file .env (TELEGRAM_BOT_TOKEN)'], 400);
@@ -210,6 +210,25 @@ class TelegramWebhookController extends Controller
                 'url' => $webhookUrl,
             ]);
 
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Route kiểm tra trạng thái chẩn đoán Webhook từ Telegram Server
+     */
+    public function getWebhookInfo()
+    {
+        $botToken = config('services.telegram.bot_token');
+
+        if (empty($botToken)) {
+            return response()->json(['error' => 'Chưa cấu hình TELEGRAM_BOT_TOKEN'], 400);
+        }
+
+        try {
+            $response = Http::get("https://api.telegram.org/bot{$botToken}/getWebhookInfo");
             return response()->json($response->json());
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

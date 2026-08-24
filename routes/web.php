@@ -60,6 +60,9 @@ Route::get('/api/products/random', [HomeController::class, 'getRandomProducts'])
 Route::get('/api/online-users/count', [\App\Http\Controllers\OnlineUserController::class, 'count'])->name('online-users.count');
 Route::post('/api/online-users/ping', [\App\Http\Controllers\OnlineUserController::class, 'ping'])->name('online-users.ping');
 
+// Telegram Webhook API
+Route::post('/api/telegram/webhook', [\App\Http\Controllers\TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
@@ -238,6 +241,9 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::match(['POST', 'DELETE'], '/suspicious-ips/clear', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'clear'])->name('admin.suspicious-ips.clear');
     Route::delete('/suspicious-ips/{id}', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'destroy'])->name('admin.suspicious-ips.destroy');
     
+    // Telegram Bot Integration Routes
+    Route::get('/telegram/set-webhook', [\App\Http\Controllers\TelegramWebhookController::class, 'setWebhook'])->name('admin.telegram.set-webhook');
+
     // Product Management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');
     Route::get('/products/create/{category?}', [AdminController::class, 'createProduct'])->name('admin.products.create');

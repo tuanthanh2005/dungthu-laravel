@@ -36,7 +36,7 @@ class TelegramHelper
     }
 
     /**
-     * Gửi thông báo đơn hàng mới qua Telegram
+     * Gửi thông báo đơn hàng mới qua Telegram kèm Nút bấm xử lý trực tiếp
      */
     public static function sendNewOrderNotification($order)
     {
@@ -46,14 +46,38 @@ class TelegramHelper
         // Tạo nội dung thông báo
         $message = self::formatOrderMessage($order);
 
+        $replyMarkup = [
+            'inline_keyboard' => [
+                [
+                    ['text' => '✅ Hoàn thành', 'callback_data' => "order:completed:{$order->id}"],
+                    ['text' => '🚚 Đang xử lý', 'callback_data' => "order:processing:{$order->id}"],
+                ],
+                [
+                    ['text' => '❌ Hủy đơn', 'callback_data' => "order:cancelled:{$order->id}"],
+                    ['text' => '🌐 Xem trên Web', 'url' => url("/admin/orders/{$order->id}")],
+                ]
+            ]
+        ];
+
         try {
             $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                 'chat_id' => $chatId,
                 'text' => $message,
                 'parse_mode' => 'HTML',
+                'reply_markup' => json_encode($replyMarkup),
             ]);
 
             if ($response->successful()) {
+                $data = $response->json();
+                $msgId = $data['result']['message_id'] ?? null;
+                if ($msgId) {
+                    \App\Models\TelegramMessageMapping::create([
+                        'telegram_message_id' => (string) $msgId,
+                        'telegram_chat_id' => (string) $chatId,
+                        'type' => 'order',
+                        'related_id' => $order->id,
+                    ]);
+                }
                 Log::info('Telegram notification sent successfully for order #' . $order->id);
                 return true;
             } else {
@@ -256,7 +280,7 @@ class TelegramHelper
     }
 
     /**
-     * Gửi thông báo có tin nhắn chat mới từ khách hàng
+     * Gửi thông báo có tin nhắn chat mới từ khách hàng kèm hỗ trợ trả lời 2 chiều
      */
     public static function sendNewChatMessageNotification($message)
     {
@@ -264,33 +288,99 @@ class TelegramHelper
         $chatId = config('services.telegram.chat_id');
 
         $user = $message->user;
-        $userName = $user ? $user->name : 'Khách lạ';
+        $userName = $user ? $user->name : 'Khách vãng lai';
         $userEmail = $user ? $user->email : 'N/A';
+        $userId = $message->user_id ?: 0;
 
         $text = "💬 <b>TIN NHẮN CHAT MỚI</b>\n";
         $text .= "━━━━━━━━━━━━━━━━━━━━━━\n\n";
-        $text .= "👤 <b>Người gửi:</b> " . $userName . "\n";
-        $text .= "📧 <b>Email:</b> " . $userEmail . "\n\n";
+        $text .= "👤 <b>Người gửi:</b> " . htmlspecialchars($userName) . "\n";
+        $text .= "📧 <b>Email:</b> " . htmlspecialchars($userEmail) . "\n\n";
         
         if ($message->message) {
-            $text .= "📝 <b>Nội dung:</b>\n<i>" . $message->message . "</i>\n\n";
+            $text .= "📝 <b>Nội dung:</b>\n<i>" . htmlspecialchars($message->message) . "</i>\n\n";
         }
         
         if ($message->image) {
-            $text .= "🖼 <b>Có đính kèm hình ảnh</b>\n\n";
+            $text .= "🖼 <b>Có đính kèm hình ảnh:</b> " . url($message->image) . "\n\n";
         }
 
-        $text .= "🔗 <a href=\"" . url('/admin/chat') . "\">Trả lời ngay tại đây</a>\n";
+        $text .= "💡 <i>Bấm <b>Reply (Trả lời)</b> tin nhắn này trên Telegram để phản hồi lại khách hàng!</i>\n\n";
         $text .= "⏰ <i>" . now()->format('H:i:s d/m/Y') . "</i>";
 
+        $replyMarkup = [
+            'inline_keyboard' => [
+                [
+                    ['text' => '🌐 Khung Chat Web', 'url' => url('/admin/chat')],
+                ]
+            ]
+        ];
+
         try {
-            Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
+                'reply_markup' => json_encode($replyMarkup),
             ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $msgId = $data['result']['message_id'] ?? null;
+                if ($msgId) {
+                    \App\Models\TelegramMessageMapping::create([
+                        'telegram_message_id' => (string) $msgId,
+                        'telegram_chat_id' => (string) $chatId,
+                        'type' => 'chat',
+                        'related_id' => $userId,
+                    ]);
+                }
+            }
         } catch (\Exception $e) {
             Log::error('Telegram Chat Notification Error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Phản hồi callback query (tạo thông báo toast trên Telegram khi bấm nút)
+     */
+    public static function answerCallbackQuery($callbackQueryId, $text)
+    {
+        $botToken = config('services.telegram.bot_token');
+
+        try {
+            Http::post("https://api.telegram.org/bot{$botToken}/answerCallbackQuery", [
+                'callback_query_id' => $callbackQueryId,
+                'text' => $text,
+                'show_alert' => true,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Telegram answerCallbackQuery Error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Chỉnh sửa nội dung tin nhắn Telegram sau khi xử lý thành công
+     */
+    public static function editMessageText($chatId, $messageId, $text, $replyMarkup = null)
+    {
+        $botToken = config('services.telegram.bot_token');
+
+        $params = [
+            'chat_id' => $chatId,
+            'message_id' => $messageId,
+            'text' => $text,
+            'parse_mode' => 'HTML',
+        ];
+
+        if ($replyMarkup) {
+            $params['reply_markup'] = json_encode($replyMarkup);
+        }
+
+        try {
+            Http::post("https://api.telegram.org/bot{$botToken}/editMessageText", $params);
+        } catch (\Exception $e) {
+            Log::error('Telegram editMessageText Error: ' . $e->getMessage());
         }
     }
 

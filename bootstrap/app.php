@@ -33,10 +33,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
 
         
-        // Exclude CSRF for OAuth callbacks and SePay webhook
+        // Exclude CSRF for OAuth callbacks, SePay webhook, and Telegram webhook
         $middleware->validateCsrfTokens(except: [
             'auth/*',
             'webhook/sepay',
+            'api/telegram/webhook',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

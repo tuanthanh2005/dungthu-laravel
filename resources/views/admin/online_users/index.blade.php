@@ -693,9 +693,60 @@
                     <i class="fas fa-filter text-primary me-1"></i> Bộ Lọc & Tìm Kiếm Lịch Sử
                 </h6>
 
-                <a href="{{ $exportUrl }}" class="btn btn-success btn-sm px-3 fw-bold">
-                    <i class="fas fa-file-excel me-1"></i> Xuất file Excel (Tối đa 100 bản ghi)
-                </a>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ $exportUrl }}" class="btn btn-success btn-sm px-3 fw-bold shadow-sm">
+                        <i class="fas fa-file-excel me-1"></i> Xuất file Excel (Tối đa 100 bản ghi)
+                    </a>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-outline-danger btn-sm dropdown-toggle fw-bold shadow-sm" type="button" id="clearHistoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-broom me-1"></i> Dọn dẹp nhật ký
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="clearHistoryDropdown">
+                            <li>
+                                <form action="{{ route('admin.online-users.clear-history') }}" method="POST" onsubmit="return confirm('Xóa lịch sử truy cập cũ hơn 7 ngày?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="days" value="7">
+                                    <button type="submit" class="dropdown-item text-dark">
+                                        <i class="fas fa-calendar-minus me-2 text-warning"></i>Xóa log cũ > 7 ngày
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{{ route('admin.online-users.clear-history') }}" method="POST" onsubmit="return confirm('Xóa lịch sử truy cập cũ hơn 14 ngày?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="days" value="14">
+                                    <button type="submit" class="dropdown-item text-dark">
+                                        <i class="fas fa-calendar-times me-2 text-secondary"></i>Xóa log cũ > 14 ngày
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{{ route('admin.online-users.clear-history') }}" method="POST" onsubmit="return confirm('Xóa lịch sử truy cập cũ hơn 30 ngày?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="days" value="30">
+                                    <button type="submit" class="dropdown-item text-dark">
+                                        <i class="fas fa-history me-2 text-info"></i>Xóa log cũ > 30 ngày
+                                    </button>
+                                </form>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('admin.online-users.clear-history') }}" method="POST" onsubmit="return confirm('⚠️ CẢNH BÁO: Xóa TOÀN BỘ lịch sử truy cập? (Vẫn giữ nguyên các phiên online hiện tại)');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="days" value="all">
+                                    <button type="submit" class="dropdown-item text-danger fw-bold">
+                                        <i class="fas fa-trash-alt me-2"></i>Xóa TOÀN BỘ lịch sử
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="card-body p-3">
                 <form action="{{ route('admin.online-users.index') }}" method="GET" class="row g-2 align-items-center">

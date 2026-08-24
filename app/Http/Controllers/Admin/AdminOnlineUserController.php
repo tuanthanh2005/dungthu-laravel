@@ -17,9 +17,9 @@ class AdminOnlineUserController extends Controller
      */
     public function index(Request $request)
     {
-        // Periodic auto cleanup: delete records older than 90 days (3 months)
+        // Periodic auto cleanup: delete records older than 14 days to prevent bloated logs
         try {
-            OnlineSession::where('last_activity', '<', Carbon::now()->subDays(90))->delete();
+            OnlineSession::where('last_activity', '<', Carbon::now()->subDays(14))->delete();
         } catch (\Throwable $e) {
             // Ignore DB errors if table missing
         }
@@ -264,5 +264,37 @@ class AdminOnlineUserController extends Controller
     public function destroy($id)
     {
         return $this->kick($id);
+    }
+
+    /**
+     * Clear historical online session records
+     */
+    public function clearHistory(Request $request)
+    {
+        $days = $request->input('days');
+        $query = OnlineSession::query();
+
+        // Keep current live sessions active in the last 10 minutes unless clearing all
+        if ($days !== 'all') {
+            $query->where('last_activity', '<', Carbon::now()->subMinutes(10));
+        }
+
+        if ($days === '7') {
+            $deleted = $query->where('last_activity', '<', Carbon::now()->subDays(7))->delete();
+            $message = "Đã dọn dẹp {$deleted} bản ghi lịch sử truy cập cũ hơn 7 ngày!";
+        } elseif ($days === '14') {
+            $deleted = $query->where('last_activity', '<', Carbon::now()->subDays(14))->delete();
+            $message = "Đã dọn dẹp {$deleted} bản ghi lịch sử truy cập cũ hơn 14 ngày!";
+        } elseif ($days === '30') {
+            $deleted = $query->where('last_activity', '<', Carbon::now()->subDays(30))->delete();
+            $message = "Đã dọn dẹp {$deleted} bản ghi lịch sử truy cập cũ hơn 30 ngày!";
+        } elseif ($days === 'all') {
+            $deleted = $query->delete();
+            $message = "Đã xóa toàn bộ {$deleted} bản ghi lịch sử truy cập!";
+        } else {
+            return back()->with('error', 'Lựa chọn dọn dẹp không hợp lệ.');
+        }
+
+        return redirect()->route('admin.online-users.index', ['tab' => 'manage'])->with('success', $message);
     }
 }

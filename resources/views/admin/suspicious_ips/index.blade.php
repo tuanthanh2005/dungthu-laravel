@@ -5,12 +5,50 @@
 @section('content')
 <div class="container-fluid py-4">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h1 class="h3 mb-0 text-gray-800 fw-bold">
                 <i class="fas fa-shield-virus text-danger me-2"></i>Nhật ký IP Nghi ngờ & Bảo mật
             </h1>
             <p class="text-muted small mb-0">Quản lý các địa chỉ IP phát sinh Cảnh báo đỏ (Tấn công SQLi/XSS, spam > 10 session...) và điều chỉnh trạng thái khóa/mở khóa.</p>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-outline-danger btn-sm dropdown-toggle shadow-sm" type="button" id="clearLogsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-broom me-1"></i>Dọn dẹp nhật ký
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="clearLogsDropdown">
+                <li>
+                    <form action="{{ route('admin.suspicious-ips.clear') }}" method="POST" onsubmit="return confirm('Xóa tất cả log cũ hơn 7 ngày?');">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="days" value="7">
+                        <button type="submit" class="dropdown-item text-dark">
+                            <i class="fas fa-calendar-minus me-2 text-warning"></i>Xóa log cũ > 7 ngày
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form action="{{ route('admin.suspicious-ips.clear') }}" method="POST" onsubmit="return confirm('Xóa tất cả log cũ hơn 30 ngày?');">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="days" value="30">
+                        <button type="submit" class="dropdown-item text-dark">
+                            <i class="fas fa-calendar-times me-2 text-secondary"></i>Xóa log cũ > 30 ngày
+                        </button>
+                    </form>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form action="{{ route('admin.suspicious-ips.clear') }}" method="POST" onsubmit="return confirm('⚠️ CẢNH BÁO: Xóa TOÀN BỘ nhật ký hiện có? Thao tác này không thể hoàn tác!');">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="days" value="all">
+                        <button type="submit" class="dropdown-item text-danger fw-bold">
+                            <i class="fas fa-trash-alt me-2"></i>Xóa TOÀN BỘ nhật ký
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </div>
 

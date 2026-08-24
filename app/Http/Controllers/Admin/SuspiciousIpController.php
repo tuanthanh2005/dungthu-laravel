@@ -129,4 +129,25 @@ class SuspiciousIpController extends Controller
 
         return back()->with('success', 'Đã xóa bản ghi nhật ký khỏi danh sách.');
     }
+
+    public function clear(Request $request)
+    {
+        $days = $request->input('days');
+        $query = SuspiciousIpLog::query();
+
+        if ($days === '7') {
+            $deleted = $query->where('created_at', '<', now()->subDays(7))->delete();
+            $message = "Đã dọn dẹp {$deleted} bản ghi nhật ký cũ hơn 7 ngày!";
+        } elseif ($days === '30') {
+            $deleted = $query->where('created_at', '<', now()->subDays(30))->delete();
+            $message = "Đã dọn dẹp {$deleted} bản ghi nhật ký cũ hơn 30 ngày!";
+        } elseif ($days === 'all') {
+            $deleted = $query->delete();
+            $message = "Đã xóa toàn bộ {$deleted} bản ghi nhật ký!";
+        } else {
+            return back()->with('error', 'Lựa chọn dọn dẹp không hợp lệ.');
+        }
+
+        return back()->with('success', $message);
+    }
 }

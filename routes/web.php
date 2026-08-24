@@ -234,6 +234,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // Suspicious IP Security Logs Management (IP Nghi Ngờ & Bảo Mật)
     Route::get('/suspicious-ips', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'index'])->name('admin.suspicious-ips.index');
     Route::post('/suspicious-ips/{id}/status', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'updateStatus'])->name('admin.suspicious-ips.update-status');
+    Route::delete('/suspicious-ips/clear', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'clear'])->name('admin.suspicious-ips.clear');
     Route::delete('/suspicious-ips/{id}', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'destroy'])->name('admin.suspicious-ips.destroy');
     
     // Product Management

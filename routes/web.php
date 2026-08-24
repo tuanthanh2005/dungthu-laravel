@@ -224,7 +224,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/online-users', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'index'])->name('admin.online-users.index');
     Route::get('/online-users/export', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'exportExcel'])->name('admin.online-users.export');
     Route::post('/online-users/{id}/kick', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'kick'])->name('admin.online-users.kick');
-    Route::delete('/online-users/clear-history', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'clearHistory'])->name('admin.online-users.clear-history');
+    Route::match(['POST', 'DELETE'], '/online-users/clear-history', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'clearHistory'])->name('admin.online-users.clear-history');
     Route::delete('/online-users/{id}', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'destroy'])->name('admin.online-users.delete');
 
     // Banned IPs Management (Khóa IP)
@@ -235,7 +235,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // Suspicious IP Security Logs Management (IP Nghi Ngờ & Bảo Mật)
     Route::get('/suspicious-ips', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'index'])->name('admin.suspicious-ips.index');
     Route::post('/suspicious-ips/{id}/status', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'updateStatus'])->name('admin.suspicious-ips.update-status');
-    Route::delete('/suspicious-ips/clear', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'clear'])->name('admin.suspicious-ips.clear');
+    Route::match(['POST', 'DELETE'], '/suspicious-ips/clear', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'clear'])->name('admin.suspicious-ips.clear');
     Route::delete('/suspicious-ips/{id}', [\App\Http\Controllers\Admin\SuspiciousIpController::class, 'destroy'])->name('admin.suspicious-ips.destroy');
     
     // Product Management

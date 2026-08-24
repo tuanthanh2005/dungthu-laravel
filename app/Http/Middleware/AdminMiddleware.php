@@ -111,8 +111,17 @@ class AdminMiddleware
             return $next($request);
         }
 
-        // Block all DELETE requests temporarily for security
-        if ($method === 'DELETE') {
+        // Cho phép các route dọn dẹp nhật ký (log cleanup) thực hiện xóa
+        $allowedCleanupRoutes = [
+            'admin.online-users.clear-history',
+            'admin.suspicious-ips.clear',
+            'admin.online-users.delete',
+            'admin.suspicious-ips.destroy',
+            'admin.online-users.kick',
+        ];
+
+        // Block DELETE requests temporarily for security except allowed cleanup routes
+        if ($method === 'DELETE' && !in_array($routeName, $allowedCleanupRoutes, true)) {
             return $this->deny($request, 'Chức năng xóa dữ liệu tạm thời bị khóa vì lý do bảo mật!');
         }
 

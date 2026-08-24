@@ -60,6 +60,7 @@ class BlockBadBots
             'baiduspider',
             'slurp',
             'linkedinbot',
+            'telegrambot',
         ];
 
         $isGoodBot = false;
@@ -136,11 +137,11 @@ class BlockBadBots
         if (!$isGoodBot && !Auth::check()) {
             // Bỏ qua kiểm tra giới hạn đối với các đường dẫn đăng nhập/đăng ký/static assets/webhooks/API
             $path = ltrim($request->path(), '/');
-            $exemptPaths = ['login', 'register', 'password', 'auth', 'webhook', 'guest-chat', 'api/online-users'];
+            $exemptPaths = ['login', 'register', 'password', 'auth', 'webhook', 'guest-chat', 'api/online-users', 'api/telegram'];
             $isExempt = false;
 
             foreach ($exemptPaths as $exempt) {
-                if (str_starts_with($path, $exempt)) {
+                if (str_starts_with($path, $exempt) || str_contains($path, $exempt)) {
                     $isExempt = true;
                     break;
                 }

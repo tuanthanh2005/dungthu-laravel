@@ -41,14 +41,14 @@ class TelegramWebhookController extends Controller
         $callbackId = $callbackQuery['id'];
         $callbackData = $callbackQuery['data'] ?? '';
         $message = $callbackQuery['message'] ?? [];
+        // 1. Kiểm tra quyền Admin (Chỉ Telegram Chat ID của Admin được phép tương tác)
         $chatId = $message['chat']['id'] ?? null;
         $messageId = $message['message_id'] ?? null;
         $adminTelegramId = $callbackQuery['from']['id'] ?? null;
 
-        // Kiểm tra quyền Admin (Chat ID)
-        $configuredChatId = config('services.telegram.chat_id');
-        if ((string)$chatId !== (string)$configuredChatId && (string)$adminTelegramId !== (string)$configuredChatId) {
-            TelegramHelper::answerCallbackQuery($callbackId, '⚠️ Bạn không có quyền thực hiện thao tác này!');
+        if (!$this->isAuthorizedAdmin($chatId, $adminTelegramId)) {
+            TelegramHelper::answerCallbackQuery($callbackId, '⚠️ CẢNH BÁO: Bạn không có quyền thực hiện thao tác này!');
+            Log::warning("Unauthorized Telegram Callback attempt from Chat ID: {$chatId}, Sender ID: {$adminTelegramId}");
             return response()->json(['status' => 'unauthorized']);
         }
 
@@ -126,6 +126,13 @@ class TelegramWebhookController extends Controller
         $replyMsgId = $replyTo['message_id'] ?? null;
         $text = trim($messageData['text'] ?? '');
         $chatId = $messageData['chat']['id'] ?? null;
+        $senderId = $messageData['from']['id'] ?? null;
+
+        // Kiểm tra quyền Admin (Chỉ Telegram Chat ID cấu hình trong env mới được phép Reply)
+        if (!$this->isAuthorizedAdmin($chatId, $senderId)) {
+            Log::warning("Unauthorized Telegram Reply attempt from Chat ID: {$chatId}, Sender ID: {$senderId}");
+            return response()->json(['status' => 'unauthorized']);
+        }
 
         if (!$replyMsgId || empty($text)) {
             return response()->json(['status' => 'empty']);
@@ -159,6 +166,30 @@ class TelegramWebhookController extends Controller
         TelegramHelper::sendMessage("✅ <b>ĐÃ GỬI PHẢN HỒI THÀNH CÔNG!</b>\n━━━━━━━━━━━━━━━━━━━━━━\n👤 <b>Tới:</b> {$recipientName}\n📝 <b>Nội dung:</b> <i>{$text}</i>");
 
         return response()->json(['status' => 'success', 'message_id' => $newMessage->id]);
+    }
+
+    /**
+     * Kiểm tra xem Telegram Chat ID / User ID gửi đến có thuộc danh sách Admin được cấp quyền không
+     */
+    private function isAuthorizedAdmin($chatId, $senderId = null): bool
+    {
+        $configuredChatId = (string) config('services.telegram.chat_id');
+        if (empty($configuredChatId)) {
+            return false;
+        }
+
+        // Hỗ trợ cấu hình nhiều Telegram Chat ID phân cách bởi dấu phẩy (ví dụ: "123456789,987654321")
+        $allowedIds = array_map('trim', explode(',', $configuredChatId));
+
+        if (in_array((string)$chatId, $allowedIds, true)) {
+            return true;
+        }
+
+        if ($senderId && in_array((string)$senderId, $allowedIds, true)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

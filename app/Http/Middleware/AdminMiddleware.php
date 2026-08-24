@@ -58,6 +58,7 @@ class AdminMiddleware
                 'admin.coupons*',
                 'admin.menu-settings*',
                 'admin.google-indexing.submit-all',
+                'admin.telegram*',
             ];
 
             $isAllowed = false;

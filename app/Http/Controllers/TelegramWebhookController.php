@@ -136,13 +136,16 @@ class TelegramWebhookController extends Controller
             ->where('type', 'chat')
             ->first();
 
-        if (!$mapping) {
-            // Nếu không tìm thấy trong mapping, gửi câu trả lời mặc định nếu có thể
-            TelegramHelper::sendMessage("⚠️ Không tìm thấy phiên chat tương ứng với tin nhắn này.");
-            return response()->json(['status' => 'mapping_not_found']);
+        $userId = null;
+        if ($mapping) {
+            $userId = $mapping->related_id;
+        } else {
+            // Fallback: Tự động ghép nối với tin nhắn mới nhất của khách hàng
+            $latestCustomerMessage = Message::where('is_admin', false)->latest()->first();
+            if ($latestCustomerMessage) {
+                $userId = $latestCustomerMessage->user_id;
+            }
         }
-
-        $userId = $mapping->related_id;
 
         // Lưu tin nhắn phản hồi của Admin vào Database
         $newMessage = Message::create([

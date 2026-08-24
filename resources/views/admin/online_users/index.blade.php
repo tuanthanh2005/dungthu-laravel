@@ -837,10 +837,30 @@
 
         <!-- Historical Log Table -->
         <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-header bg-white py-3 border-bottom border-light">
+            <div class="card-header bg-white py-3 border-bottom border-light d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <h6 class="fw-bold m-0 text-dark">
                     <i class="fas fa-list text-primary me-1"></i> Danh Sách Lịch Sử Khách Truy Cập (Định dạng Excel)
                 </h6>
+
+                <div class="d-flex align-items-center gap-2">
+                    <form action="{{ route('admin.online-users.clear-history') }}" method="POST" onsubmit="return confirm('Xóa tất cả nhật ký truy cập cũ hơn 7 ngày?');" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="days" value="7">
+                        <button type="submit" class="btn btn-warning btn-sm fw-bold text-dark shadow-sm">
+                            <i class="fas fa-broom me-1"></i> Xóa log > 7 ngày
+                        </button>
+                    </form>
+
+                    <form action="{{ route('admin.online-users.clear-history') }}" method="POST" onsubmit="return confirm('⚠️ CẢNH BÁO: Xóa TOÀN BỘ lịch sử truy cập? (Vẫn giữ các phiên online hiện tại)');" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="days" value="all">
+                        <button type="submit" class="btn btn-danger btn-sm fw-bold text-white shadow-sm">
+                            <i class="fas fa-trash-alt me-1"></i> Xóa tất cả log
+                        </button>
+                    </form>
+                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

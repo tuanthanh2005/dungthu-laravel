@@ -31,11 +31,12 @@
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-3">{{ __('Blog') }}</h6>
+                <h6 class="fw-bold mb-3">{{ __('Tải App & Trải nghiệm') }}</h6>
                 <ul class="footer-links mb-3">
-                    <li><a href="{{ route('blog.topic', 'ai') }}">{{ __('Blog AI') }}</a></li>
-                    <li><a href="{{ route('blog.topic', 'chatgpt') }}">{{ __('Hướng dẫn ChatGPT') }}</a></li>
-                    <li><a href="{{ route('blog.topic', 'cursor') }}">{{ __('Hướng dẫn Cursor AI') }}</a></li>
+                    <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal"><i class="fa-brands fa-android text-success me-1"></i> {{ __('App Android (.APK)') }}</a></li>
+                    <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal"><i class="fa-brands fa-apple text-white me-1"></i> {{ __('App iOS (iPhone/iPad)') }}</a></li>
+                    <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal"><i class="fa-solid fa-desktop text-primary me-1"></i> {{ __('App Desktop (Windows)') }}</a></li>
+                    <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal"><i class="fa-solid fa-bolt text-warning me-1"></i> {{ __('PWA Native Install') }}</a></li>
                 </ul>
             </div>
         </div>

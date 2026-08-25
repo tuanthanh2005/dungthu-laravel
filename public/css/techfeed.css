@@ -183,10 +183,10 @@ body {
 /* Desktop Nav Text Links */
 .nav-text-link {
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
     text-decoration: none;
-    padding: 6px 10px;
+    padding: 5px 7px;
     border-radius: 6px;
     white-space: nowrap;
     transition: color 0.2s, background 0.2s;
@@ -204,26 +204,28 @@ body {
 
 .desktop-nav-links {
     min-width: 0;
+    margin-right: 16px !important;
 }
 
 @media (min-width: 1200px) and (max-width: 1365.98px) {
     .navbar-techfeed .container-fluid {
-        max-width: 1180px;
+        max-width: 1280px;
     }
 
     .navbar-techfeed .navbar-brand {
-        font-size: 1.18rem;
+        font-size: 1.15rem;
     }
 
     .desktop-nav-links {
-        gap: 4px !important;
-        font-size: 13px !important;
+        gap: 2px !important;
+        font-size: 12.5px !important;
     }
 
     .nav-text-link {
-        padding: 6px 7px;
-        font-size: 0.78rem;
+        padding: 4px 5px;
+        font-size: 0.76rem;
     }
+}
 
     .search-bar-wrap {
         max-width: 210px !important;

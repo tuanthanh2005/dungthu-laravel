@@ -33,7 +33,7 @@
         </div>
 
         {{-- Desktop Nav Links --}}
-        <div class="d-none d-xl-flex align-items-center gap-2 mx-auto desktop-nav-links" style="font-size: 14px;">
+        <div class="d-none d-xl-flex align-items-center gap-1 gap-xxl-2 mx-auto desktop-nav-links" style="font-size: 13.5px;">
             @if($menuHome)
             <a href="{{ route('home') }}" class="nav-text-link {{ request()->routeIs('home') ? 'active' : '' }}">
                 <i class="fa-solid fa-house me-1"></i>{{ __('Trang chủ') }}
@@ -85,6 +85,9 @@
             <a href="javascript:void(0)" class="nav-text-link" data-bs-toggle="modal" data-bs-target="#quickContactModal">
                 <i class="fa-solid fa-headset me-1"></i>{{ __('Liên hệ') }}
             </a>
+            <a href="javascript:void(0)" class="btn btn-sm text-white fw-bold rounded-pill px-3 ms-2 me-2 shadow-sm d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#appDownloadModal" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); font-size: 13px; flex-shrink: 0;">
+                <i class="fa-solid fa-cloud-arrow-down"></i> {{ __('Tải App') }}
+            </a>
         </div>
 
         {{-- Compact menu for small laptops/tablets --}}
@@ -123,11 +126,12 @@
                 <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fa-solid fa-users me-2"></i>{{ __('Nhóm Zalo') }}</a></li>
                 @endif
                 <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ') }}</a></li>
+                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal" style="color: #ff5e00;"><i class="fa-solid fa-cloud-arrow-down me-2"></i>{{ __('Tải App') }}</a></li>
             </ul>
         </div>
 
         {{-- Search Icon (desktop) --}}
-        <button class="nav-icon-btn d-none d-xl-flex ms-auto me-3" type="button" data-bs-toggle="modal" data-bs-target="#searchProductsModal" aria-label="{{ __('Tìm kiếm') }}">
+        <button class="nav-icon-btn d-none d-xl-flex ms-3 me-3" type="button" data-bs-toggle="modal" data-bs-target="#searchProductsModal" aria-label="{{ __('Tìm kiếm') }}">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
 

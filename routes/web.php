@@ -41,6 +41,30 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
 Route::view('/chinh-sach', 'pages.privacy')->name('policy');
 
+// App Download Route (Android APK, iOS, Desktop EXE)
+Route::get('/download/app/{platform}', function ($platform) {
+    $platform = strtolower($platform);
+    $files = [
+        'android' => ['path' => public_path('downloads/dungthu-app.apk'), 'mime' => 'application/vnd.android.package-archive', 'name' => 'DungThu-AI.apk'],
+        'desktop' => ['path' => public_path('downloads/dungthu-desktop-setup.exe'), 'mime' => 'application/x-msdownload', 'name' => 'DungThu-AI-Desktop-Setup.exe'],
+        'ios'     => ['path' => public_path('downloads/dungthu-app.mobileconfig'), 'mime' => 'application/x-apple-aspen-config', 'name' => 'DungThu-AI.mobileconfig'],
+    ];
+
+    if (isset($files[$platform]) && file_exists($files[$platform]['path'])) {
+        return response()->download(
+            $files[$platform]['path'],
+            $files[$platform]['name'],
+            ['Content-Type' => $files[$platform]['mime']]
+        );
+    }
+
+    if ($platform === 'ios') {
+        return redirect('/')->with('info', __('Để thêm App vào iPhone, hãy mở Safari và chọn "Thêm vào màn hình chính" (Add to Home Screen).'));
+    }
+
+    return redirect('/')->with('info', __('File cài đặt ứng dụng cho :platform đang được chuẩn bị. Vui lòng thử lại sau!', ['platform' => strtoupper($platform)]));
+})->whereIn('platform', ['android', 'ios', 'desktop'])->name('app.download');
+
 // Guest AI chat (home only UI)
 Route::post('/guest-chat', [GuestChatController::class, 'send'])->middleware('throttle:15,1')->name('guest-chat.send');
 

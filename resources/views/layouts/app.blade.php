@@ -38,8 +38,14 @@
     <meta property="twitter:description" content="@yield('meta_description', __('Dùng Thử - Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.'))">
     <meta property="twitter:image" content="@yield('og_image', asset('images/dungthu-seo.png'))">
     
-    <!-- Favicon -->
+    <!-- Favicon & PWA -->
     <link rel="icon" type="image/png" href="{{ asset('images/dungthu.png') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#ff5e00">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dùng Thử AI">
+    <link rel="apple-touch-icon" href="{{ asset('images/dungthu.png') }}">
     @stack('head')
     
     <!-- Bootstrap & Font Awesome -->
@@ -92,6 +98,18 @@
     @include('partials.chat')
     @include('partials.recent-orders-modal')
     @include('partials.spam-warning-modal')
+    @include('partials.app-download-modal')
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('PWA Service Worker registered:', reg.scope))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+    </script>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

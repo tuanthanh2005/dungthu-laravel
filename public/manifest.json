@@ -1,0 +1,37 @@
+{
+  "name": "Dùng Thử AI - Blog & Sản Phẩm Số",
+  "short_name": "Dùng Thử",
+  "description": "Nền tảng khám phá AI, Blog công nghệ và sản phẩm số hàng đầu Việt Nam. Trải nghiệm & Mua sắm an toàn, chất lượng.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff5e00",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/images/dungthu.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/dungthu.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Cửa Hàng",
+      "url": "/shop",
+      "icons": [{ "src": "/images/dungthu.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "VPN",
+      "url": "/vpn",
+      "icons": [{ "src": "/images/dungthu.png", "sizes": "192x192" }]
+    }
+  ]
+}

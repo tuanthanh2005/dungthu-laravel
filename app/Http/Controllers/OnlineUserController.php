@@ -18,7 +18,8 @@ class OnlineUserController extends Controller
     public function count()
     {
         try {
-            if (!Schema::hasTable('online_sessions')) {
+            $hasTable = Cache::rememberForever('schema_has_online_sessions', fn () => Schema::hasTable('online_sessions'));
+            if (!$hasTable) {
                 return response()->json([
                     'success' => true,
                     'count' => 1,
@@ -74,7 +75,8 @@ class OnlineUserController extends Controller
     public function ping(Request $request)
     {
         try {
-            if (Schema::hasTable('online_sessions') && $request->hasSession()) {
+            $hasTable = Cache::rememberForever('schema_has_online_sessions', fn () => Schema::hasTable('online_sessions'));
+            if ($hasTable && $request->hasSession()) {
                 $sessionId = $request->session()->getId();
                 $lastPing = $request->session()->get('online_last_ping_at');
                 $now = time();

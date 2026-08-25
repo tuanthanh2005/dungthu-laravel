@@ -140,9 +140,14 @@ class BlockBadBots
 
         // 4. Theo dõi thời gian (5 phút) và số lượng Session (> 10 session) đối với Khách vãng lai
         if (!$isGoodBot && !Auth::check()) {
+            // Skip AJAX / JSON fetch requests (background heartbeat, pings, chat polling)
+            if ($request->ajax() || $request->wantsJson() || $request->isXmlHttpRequest()) {
+                return $next($request);
+            }
+
             // Bỏ qua kiểm tra giới hạn đối với các đường dẫn đăng nhập/đăng ký/static assets/webhooks/API
             $path = ltrim($request->path(), '/');
-            $exemptPaths = ['login', 'register', 'password', 'auth', 'webhook', 'guest-chat', 'api/online-users', 'api/telegram'];
+            $exemptPaths = ['login', 'register', 'password', 'auth', 'webhook', 'guest-chat', 'api/online-users', 'api/telegram', 'online-users'];
             $isExempt = false;
 
             foreach ($exemptPaths as $exempt) {

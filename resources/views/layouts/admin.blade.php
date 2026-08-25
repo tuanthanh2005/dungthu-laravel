@@ -554,28 +554,7 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
     }
 </style>
 
-<!-- Prevent pinch-to-zoom and double-tap zoom via JS -->
-<script>
-    // 1. Chặn pinch-to-zoom khi di chuyển ngón tay (touchmove)
-    document.addEventListener('touchmove', function (event) {
-        // event.scale chỉ có trên iOS Safari
-        if (event.scale !== 1 && event.scale !== undefined) {
-            event.preventDefault();
-        }
-        // Chặn trên các trình duyệt Android/Chrome
-        if (event.touches.length > 1) {
-            event.preventDefault();
-        }
-    }, { passive: false });
 
-    // 2. Chặn khởi động zoom khi chạm nhiều ngón (touchstart)
-    document.addEventListener('touchstart', function (event) {
-        if (event.touches.length > 1) {
-            event.preventDefault();
-        }
-    }, { passive: false });
-
-</script>
 
 <script>
     // Fetch and update admin sidebar badges/counters

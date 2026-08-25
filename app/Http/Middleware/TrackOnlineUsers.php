@@ -25,8 +25,9 @@ class TrackOnlineUsers
         }
 
         try {
-            // Check if online_sessions table exists in database
-            if (!Schema::hasTable('online_sessions')) {
+            // Check if online_sessions table exists in database (Cached to avoid DB query on every hit)
+            $hasTable = Cache::rememberForever('schema_has_online_sessions', fn () => Schema::hasTable('online_sessions'));
+            if (!$hasTable) {
                 return $response;
             }
 

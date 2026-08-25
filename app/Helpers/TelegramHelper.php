@@ -16,7 +16,7 @@ class TelegramHelper
         $chatId = config('services.telegram.chat_id');
 
         try {
-            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+            $response = Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
@@ -60,7 +60,7 @@ class TelegramHelper
         ];
 
         try {
-            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+            $response = Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                 'chat_id' => $chatId,
                 'text' => $message,
                 'parse_mode' => 'HTML',

@@ -35,7 +35,7 @@
                         <button class="nav-link active fw-bold py-2.5 px-2 rounded-3 d-flex align-items-center justify-content-center gap-2 border-0" 
                                 id="android-tab" data-bs-toggle="pill" data-bs-target="#android-app-pane" type="button" role="tab">
                             <i class="fa-brands fa-android icon-tab-android fs-5"></i>
-                            <span>Android (APK)</span>
+                            <span>Android App</span>
                         </button>
                     </li>
                     <li class="nav-item me-1" role="presentation">
@@ -64,37 +64,32 @@
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1.5 rounded-pill mb-2 fw-bold" style="font-size: 0.78rem;">
                                     <i class="fa-brands fa-android me-1"></i> Android WebView App
                                 </span>
-                                <h4 class="fw-bold text-dark mb-2" style="font-size: 1.3rem;">{{ __('Tải ứng dụng Android (.APK)') }}</h4>
+                                <h4 class="fw-bold text-dark mb-2" style="font-size: 1.3rem;">{{ __('Ứng dụng Android (WebView & PWA)') }}</h4>
                                 <p class="text-muted text-sm mb-3" style="font-size: 0.88rem; line-height: 1.5;">
-                                    {{ __('Ứng dụng gọn nhẹ, tải trực tiếp file APK hoặc cài đặt WebApp WebView không tốn dung lượng máy.') }}
+                                    {{ __('Cài đặt ứng dụng trực tiếp trên Android, chạy mượt mà như App native không tốn dung lượng máy.') }}
                                 </p>
 
                                 <div class="d-flex flex-column gap-2 mb-3">
-                                    <a href="{{ route('app.download', 'android') }}" class="btn btn-success btn-lg fw-bold rounded-3 d-inline-flex align-items-center justify-content-center gap-2 shadow-sm py-2.5" style="background: #16a34a; border-color: #16a34a;">
-                                        <i class="fa-solid fa-download fs-5"></i>
-                                        <span>{{ __('Tải Trực Tiếp File APK (.apk)') }}</span>
-                                    </a>
-
-                                    <button type="button" class="btn btn-outline-success fw-bold rounded-3 d-inline-flex align-items-center justify-content-center gap-2 btn-pwa-install py-2" id="pwaAndroidBtn" style="display: none;">
+                                    <button type="button" class="btn btn-success btn-lg fw-bold rounded-3 d-inline-flex align-items-center justify-content-center gap-2 btn-pwa-install py-2.5" id="pwaAndroidBtn" style="background: #16a34a; border-color: #16a34a;">
                                         <i class="fa-solid fa-bolt fs-5"></i>
-                                        <span>{{ __('Cài đặt Nhanh (PWA Native App)') }}</span>
+                                        <span>{{ __('Cài Đặt Nhanh Vào Điện Thoại (Android App)') }}</span>
                                     </button>
                                 </div>
 
                                 <div class="bg-white p-3 rounded-3 border border-slate-200 shadow-xs">
-                                    <h6 class="fw-bold mb-2 text-dark" style="font-size: 0.86rem;"><i class="fa-solid fa-circle-info text-info me-1"></i> {{ __('Hướng dẫn cài đặt file APK:') }}</h6>
+                                    <h6 class="fw-bold mb-2 text-dark" style="font-size: 0.86rem;"><i class="fa-solid fa-mobile-screen-button text-success me-1"></i> {{ __('Hướng dẫn cài đặt trên Android:') }}</h6>
                                     <ol class="mb-0 text-muted ps-3" style="font-size: 0.82rem; line-height: 1.6;">
-                                        <li>{{ __('Nhấn nút Tải file APK ở trên về điện thoại.') }}</li>
-                                        <li>{{ __('Mở file APK đã tải, cho phép "Cài đặt từ nguồn không xác định" nếu được hỏi.') }}</li>
-                                        <li>{{ __('Hoàn tất cài đặt và khởi chạy App Dùng Thử ngay!') }}</li>
+                                        <li>{{ __('Nhấn nút "Cài Đặt Nhanh" ở trên hoặc quét mã QR bằng camera điện thoại.') }}</li>
+                                        <li>{{ __('Chọn "Thêm vào màn hình chính" (Add to Home Screen) khi trình duyệt Chrome hỏi.') }}</li>
+                                        <li>{{ __('Biểu tượng App Dùng Thử AI sẽ xuất hiện trên màn hình chính Android!') }}</li>
                                     </ol>
                                 </div>
                             </div>
                             <div class="col-md-5 text-center">
                                 <div class="bg-white p-3 rounded-4 border border-slate-200 shadow-sm d-inline-block">
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ urlencode(route('app.download', 'android')) }}" alt="QR Code Android App" class="img-fluid rounded-3 mb-2" style="max-width: 160px; height: auto;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ urlencode(url('/')) }}" alt="QR Code Android App" class="img-fluid rounded-3 mb-2" style="max-width: 160px; height: auto;">
                                     <div class="text-xs text-muted fw-semibold" style="font-size: 0.78rem;">
-                                        <i class="fa-solid fa-qrcode me-1 text-success"></i>{{ __('Quét mã QR để tải APK trên Android') }}
+                                        <i class="fa-solid fa-qrcode me-1 text-success"></i>{{ __('Quét mã QR để mở App trên Android') }}
                                     </div>
                                 </div>
                             </div>

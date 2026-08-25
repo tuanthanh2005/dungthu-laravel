@@ -173,11 +173,6 @@
             </a>
             @endif
 
-            {{-- Mobile Tải App Button --}}
-            <a href="javascript:void(0)" class="btn btn-sm text-white fw-bold rounded-pill px-2.5 py-1 d-xl-none me-1" data-bs-toggle="modal" data-bs-target="#appDownloadModal" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); font-size: 12px; flex-shrink: 0;">
-                <i class="fa-solid fa-cloud-arrow-down"></i> {{ __('Tải App') }}
-            </a>
-
             {{-- Mobile/Tablet Search --}}
             <button class="nav-icon-btn d-xl-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchBar" aria-label="{{ __('Tìm kiếm') }}">
                 <i class="fa-solid fa-magnifying-glass"></i>

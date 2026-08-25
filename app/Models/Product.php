@@ -279,9 +279,9 @@ class Product extends Model
 
         $fake = (int) ($this->fake_sold ?? 0);
 
-        // Nếu chưa nhập fake_sold trong Admin, tự động phân bổ số ngẫu nhiên tự nhiên theo ID (từ 115 đến 1.065 sản phẩm)
+        // Nếu chưa nhập fake_sold trong Admin, tự động phân bổ số ngẫu nhiên tự nhiên theo ID (khoảng 25 đến 285 sản phẩm)
         if ($fake === 0 && $this->id) {
-            $fake = (($this->id * 149 + 37) % 950) + 115;
+            $fake = (($this->id * 37 + 19) % 260) + 25;
         }
 
         return $realSold + $fake;

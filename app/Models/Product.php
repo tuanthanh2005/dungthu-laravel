@@ -27,6 +27,7 @@ class Product extends Model
         'category_id',
         'delivery_type',
         'stock',
+        'fake_sold',
         'specs',
         'specs_en',
         'is_featured',
@@ -46,6 +47,7 @@ class Product extends Model
         'sale_price' => 'decimal:2',
         'sale_price_usd' => 'decimal:2',
         'stock' => 'integer',
+        'fake_sold' => 'integer',
         'specs' => 'array',
         'specs_en' => 'array',
         'is_featured' => 'boolean',
@@ -261,18 +263,21 @@ class Product extends Model
         return $this->stock > 0;
     }
 
-    // Số lượng thực tế đã bán từ Database (không tính đơn bị hủy)
+    // Số lượng đã bán (Thực tế từ DB + Số ảo fake_sold)
     public function getSoldCountAttribute()
     {
+        $realSold = 0;
         if (array_key_exists('sold_count', $this->attributes) && $this->attributes['sold_count'] !== null) {
-            return (int) $this->attributes['sold_count'];
+            $realSold = (int) $this->attributes['sold_count'];
+        } else {
+            $realSold = (int) $this->orderItems()
+                ->whereHas('order', function ($query) {
+                    $query->where('status', '!=', 'cancelled');
+                })
+                ->sum('quantity');
         }
 
-        return (int) $this->orderItems()
-            ->whereHas('order', function ($query) {
-                $query->where('status', '!=', 'cancelled');
-            })
-            ->sum('quantity');
+        return $realSold + (int) ($this->fake_sold ?? 0);
     }
 
     // Check user đã mua sản phẩm này chưa

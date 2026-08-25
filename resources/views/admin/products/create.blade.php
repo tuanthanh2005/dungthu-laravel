@@ -184,7 +184,7 @@
 
                 <!-- Price and Stock -->
                 <div class="row mb-4">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="price" class="form-label">
                             <i class="fas fa-dollar-sign me-2 text-primary"></i>Giá (VNĐ) <span class="text-danger">*</span>
                         </label>
@@ -201,7 +201,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="price_usd" class="form-label text-success">
                             <i class="fas fa-dollar-sign me-2"></i>Giá (USD)
                         </label>
@@ -217,7 +217,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="stock" class="form-label">
                             <i class="fas fa-warehouse me-2 text-primary"></i>Tồn kho <span class="text-danger">*</span>
                         </label>
@@ -230,6 +230,21 @@
                                placeholder="0"
                                required>
                         @error('stock')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fake_sold" class="form-label text-warning">
+                            <i class="fas fa-shopping-bag me-2"></i>Đã Bán (Ảo/Cộng thêm)
+                        </label>
+                        <input type="number" 
+                               class="form-control @error('fake_sold') is-invalid @enderror" 
+                               id="fake_sold" 
+                               name="fake_sold" 
+                               value="{{ old('fake_sold', 0) }}"
+                               min="0"
+                               placeholder="0">
+                        @error('fake_sold')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

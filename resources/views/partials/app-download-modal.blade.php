@@ -155,13 +155,9 @@
                                 </p>
 
                                 <div class="d-flex flex-column gap-2 mb-3">
-                                    <a href="{{ route('app.download', 'desktop') }}" class="btn btn-primary btn-lg fw-bold rounded-3 d-inline-flex align-items-center justify-content-center gap-2 shadow-sm py-2.5" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); border: none;">
-                                        <i class="fa-brands fa-windows fs-5"></i>
-                                        <span>{{ __('Tải App Cho Windows (.exe)') }}</span>
-                                    </a>
-
-                                    <button type="button" class="btn btn-outline-primary fw-bold rounded-3 d-inline-flex align-items-center justify-content-center gap-2 btn-pwa-install py-2" id="pwaDesktopBtn" style="display: none; border-color: #ff5e00; color: #ff5e00;">
-                                        <i class="fa-solid fa-download me-1"></i> {{ __('Cài Đặt Nhanh Vào Máy Tính (Chrome App)') }}
+                                    <button type="button" class="btn btn-primary btn-lg fw-bold rounded-3 d-inline-flex align-items-center justify-content-center gap-2 btn-pwa-install py-2.5 shadow-sm" id="pwaDesktopBtn" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); border: none;">
+                                        <i class="fa-solid fa-download fs-5"></i>
+                                        <span>{{ __('Cài Đặt Nhanh Vào Máy Tính (Chrome App)') }}</span>
                                     </button>
                                 </div>
 

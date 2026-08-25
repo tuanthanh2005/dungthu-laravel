@@ -263,7 +263,7 @@ class Product extends Model
         return $this->stock > 0;
     }
 
-    // Số lượng đã bán (Thực tế từ DB + Số ảo fake_sold)
+    // Số lượng đã bán (Thực tế từ DB + Số ảo fake_sold hoặc tự động sinh số ngẫu nhiên theo ID)
     public function getSoldCountAttribute()
     {
         $realSold = 0;
@@ -277,7 +277,14 @@ class Product extends Model
                 ->sum('quantity');
         }
 
-        return $realSold + (int) ($this->fake_sold ?? 0);
+        $fake = (int) ($this->fake_sold ?? 0);
+
+        // Nếu chưa nhập fake_sold trong Admin, tự động phân bổ số ngẫu nhiên tự nhiên theo ID (từ 115 đến 1.065 sản phẩm)
+        if ($fake === 0 && $this->id) {
+            $fake = (($this->id * 149 + 37) % 950) + 115;
+        }
+
+        return $realSold + $fake;
     }
 
     // Check user đã mua sản phẩm này chưa

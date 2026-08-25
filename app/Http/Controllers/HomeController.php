@@ -172,6 +172,10 @@ class HomeController extends Controller
             return $realCount > 100 ? $realCount : ($realCount + 1438);
         });
 
+        $totalProductCount = Cache::remember('home.total_product_count', 300, function () {
+            return Product::active()->count();
+        });
+
         return view('home', compact(
             'categories',
             'featuredProducts',
@@ -184,7 +188,8 @@ class HomeController extends Controller
             'saleEndsAt',
             'isExpired',
             'totalSoldCount',
-            'totalUserCount'
+            'totalUserCount',
+            'totalProductCount'
         ));
     }
 

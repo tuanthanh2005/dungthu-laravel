@@ -1882,7 +1882,7 @@
                 <!-- Feature Chips & Metrics (Centered) -->
                 <div class="hero-center-features">
                     <div class="hero-chip-clean">
-                        <i class="fa-solid fa-bag-shopping text-danger"></i> {{ __('Đã bán:') }} <strong class="text-dark">{{ number_format($totalSoldCount ?? \App\Models\Product::all()->sum(fn($p) => $p->sold_count)) }}</strong> {{ __('sản phẩm') }}
+                        <i class="fa-solid fa-layer-group text-danger"></i> {{ __('Sản phẩm:') }} <strong class="text-dark">{{ number_format($totalProductCount ?? \App\Models\Product::active()->count()) }}</strong> {{ __('loại AI & Software') }}
                     </div>
                     <div class="hero-chip-clean">
                         <i class="fa-solid fa-user-check text-primary"></i> {{ __('Khách hàng:') }} <strong class="text-dark">{{ number_format($totalUserCount ?? \App\Models\User::where('role', '!=', 'admin')->count()) }}</strong> {{ __('thành viên') }}

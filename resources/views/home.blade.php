@@ -247,7 +247,7 @@
         /* 4 Horizontal mini product cards centered below */
         .hero-center-showcase-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 10px;
             width: 100%;
             border-top: 1px solid #f3f4f6;
@@ -261,10 +261,12 @@
             padding: 6px 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             text-decoration: none;
             text-align: left;
             transition: all 0.2s ease-in-out;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .hero-mini-card:hover {
@@ -286,16 +288,20 @@
         .hero-mini-card .mini-content {
             flex-grow: 1;
             min-width: 0;
+            overflow: hidden;
         }
 
         .hero-mini-card .mini-title {
-            font-size: 0.76rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #1e293b;
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
             margin-bottom: 2px;
+            word-break: break-all;
         }
 
         .hero-mini-card .mini-price {

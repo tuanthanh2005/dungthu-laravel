@@ -212,6 +212,7 @@ class HomeController extends Controller
                     'slug' => $product->slug,
                     'image' => $product->image ?? 'https://via.placeholder.com/300',
                     'stock' => $product->stock,
+                    'sold_count' => $product->sold_count,
                     'formatted_price' => $product->formatted_price,
                     'formatted_original_price' => $product->formatted_original_price,
                     'show_url' => route('product.show', $product->slug),

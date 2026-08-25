@@ -236,8 +236,9 @@
                     </div>
                     <div class="ai-card-body">
                         <h3 class="ai-card-title">{{ $p->name }}</h3>
-                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-bottom: 12px;">
-                            {{ __('Còn lại') }}: <span class="{{ $p->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $p->stock > 0 ? $p->stock . ' ' . __('tài khoản') : __('Đặt trước') }}</span>
+                        <div class="d-flex justify-content-between align-items-center" style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-bottom: 12px;">
+                            <span>{{ __('Còn lại') }}: <span class="{{ $p->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $p->stock > 0 ? $p->stock . ' ' . __('tài khoản') : __('Đặt trước') }}</span></span>
+                            <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($p->sold_count) }}</span></span>
                         </div>
                         
                         <div class="ai-card-price-row">

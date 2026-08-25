@@ -261,6 +261,20 @@ class Product extends Model
         return $this->stock > 0;
     }
 
+    // Số lượng thực tế đã bán từ Database (không tính đơn bị hủy)
+    public function getSoldCountAttribute()
+    {
+        if (array_key_exists('sold_count', $this->attributes) && $this->attributes['sold_count'] !== null) {
+            return (int) $this->attributes['sold_count'];
+        }
+
+        return (int) $this->orderItems()
+            ->whereHas('order', function ($query) {
+                $query->where('status', '!=', 'cancelled');
+            })
+            ->sum('quantity');
+    }
+
     // Check user đã mua sản phẩm này chưa
     public function isPurchasedBy($userId)
     {

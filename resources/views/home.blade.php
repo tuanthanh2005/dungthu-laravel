@@ -2061,8 +2061,9 @@
                                         <div style="padding:8px;">
                                             <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">
                                                 {{ $sp->name }}</div>
-                                            <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
-                                                {{ __('Còn:') }} <span class="{{ $sp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $sp->stock }}</span>
+                                            <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
+                                                <span>{{ __('Còn:') }} <span class="{{ $sp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $sp->stock }}</span></span>
+                                                <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($sp->sold_count) }}</span></span>
                                             </div>
                                             <div style="color:#e53935;font-weight:800;">{{ $sp->formatted_price }}</div>
                                         </div>
@@ -2094,8 +2095,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="prod-name">{{ $fp->name }}</div>
-                                    <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        {{ __('Còn:') }} <span class="{{ $fp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $fp->stock }}</span>
+                                    <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
+                                        <span>{{ __('Còn:') }} <span class="{{ $fp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $fp->stock }}</span></span>
+                                        <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($fp->sold_count) }}</span></span>
                                     </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $fp->formatted_price }}</span>
@@ -2142,8 +2144,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="prod-name">{{ $hp->name }}</div>
-                                    <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        {{ __('Còn:') }} <span class="{{ $hp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $hp->stock }}</span>
+                                    <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
+                                        <span>{{ __('Còn:') }} <span class="{{ $hp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $hp->stock }}</span></span>
+                                        <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($hp->sold_count) }}</span></span>
                                     </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $hp->formatted_price }}</span>
@@ -2189,8 +2192,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="prod-name">{{ $cp->name }}</div>
-                                    <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        {{ __('Còn:') }} <span class="{{ $cp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $cp->stock }}</span>
+                                    <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
+                                        <span>{{ __('Còn:') }} <span class="{{ $cp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $cp->stock }}</span></span>
+                                        <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($cp->sold_count) }}</span></span>
                                     </div>
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $cp->formatted_price }}</span>
@@ -2489,8 +2493,9 @@
                                                         <img src="${sp.image}" alt="${sp.name}" style="width:100%;height:120px;object-fit:cover;">
                                                         <div style="padding:8px;">
                                                             <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">${sp.name}</div>
-                                                            <div style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
-                                                                ${@json(__('Còn:'))} <span class="${stockColorClass}">${sp.stock}</span>
+                                                            <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 2px;">
+                                                                <span>${@json(__('Còn:'))} <span class="${stockColorClass}">${sp.stock}</span></span>
+                                                                <span>${@json(__('Đã Bán:'))} <span class="text-secondary">${(sp.sold_count || 0).toLocaleString()}</span></span>
                                                             </div>
                                                             <div style="color:#e53935;font-weight:800;">${sp.formatted_price}</div>
                                                         </div>

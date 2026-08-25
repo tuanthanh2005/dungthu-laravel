@@ -864,8 +864,9 @@
                         </div>
                     @endif
                     
-                    <div class="stock-display mb-2" style="font-size: 0.75rem; color: #636e72; font-weight: 600;">
-                        {{ __('Còn:') }} <span class="{{ $product->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $product->stock }}</span>
+                    <div class="stock-display d-flex justify-content-between align-items-center mb-2" style="font-size: 0.75rem; color: #636e72; font-weight: 600;">
+                        <span>{{ __('Còn:') }} <span class="{{ $product->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $product->stock }}</span></span>
+                        <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($product->sold_count) }}</span></span>
                     </div>
                     
                     <div class="product-footer">

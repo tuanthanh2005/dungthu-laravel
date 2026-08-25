@@ -154,21 +154,21 @@
         }
 
         .hero-center-title {
-            font-size: 1.6rem;
+            font-size: 1.75rem;
             font-weight: 800;
             color: #111827;
-            line-height: 1.25;
-            margin: 0 auto 6px auto;
-            max-width: 800px;
+            line-height: 1.3;
+            margin: 0 auto 8px auto;
+            max-width: 1150px;
             letter-spacing: -0.02em;
         }
 
         .hero-center-desc {
-            font-size: 0.84rem;
-            color: #6b7280;
-            line-height: 1.45;
-            margin: 0 auto 10px auto;
-            max-width: 680px;
+            font-size: 0.88rem;
+            color: #4b5563;
+            line-height: 1.5;
+            margin: 0 auto 12px auto;
+            max-width: 950px;
         }
 
         .hero-center-features {

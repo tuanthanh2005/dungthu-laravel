@@ -176,6 +176,15 @@ class HomeController extends Controller
             return Product::active()->count();
         });
 
+        $todayVisitors = Cache::remember('home.today_visitors.' . date('YmdH'), 300, function () {
+            $count = 0;
+            if (\Illuminate\Support\Facades\Schema::hasTable('online_sessions')) {
+                $count = \App\Models\OnlineSession::whereDate('last_activity', \Carbon\Carbon::today())->count();
+            }
+            $baseHourOffset = ((int) date('H') + 1) * 37 + 219;
+            return $count > 50 ? $count : ($count + $baseHourOffset);
+        });
+
         return view('home', compact(
             'categories',
             'featuredProducts',
@@ -189,7 +198,8 @@ class HomeController extends Controller
             'isExpired',
             'totalSoldCount',
             'totalUserCount',
-            'totalProductCount'
+            'totalProductCount',
+            'todayVisitors'
         ));
     }
 

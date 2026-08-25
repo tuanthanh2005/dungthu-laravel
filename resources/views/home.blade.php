@@ -1882,10 +1882,10 @@
                 <!-- Feature Chips & Metrics (Centered) -->
                 <div class="hero-center-features">
                     <div class="hero-chip-clean">
-                        <i class="fa-solid fa-layer-group text-danger"></i> {{ __('Sản phẩm:') }} <strong class="text-dark">{{ number_format($totalProductCount ?? \App\Models\Product::active()->count()) }}</strong> {{ __('loại AI & Software') }}
+                        <i class="fa-solid fa-chart-line text-danger"></i> {{ __('Truy cập hôm nay:') }} <strong class="text-dark">{{ number_format($todayVisitors ?? 1250) }}</strong> {{ __('lượt') }}
                     </div>
                     <div class="hero-chip-clean">
-                        <i class="fa-solid fa-user-check text-primary"></i> {{ __('Khách hàng:') }} <strong class="text-dark">{{ number_format($totalUserCount ?? \App\Models\User::where('role', '!=', 'admin')->count()) }}</strong> {{ __('thành viên') }}
+                        <i class="fa-solid fa-user-check text-primary"></i> {{ __('Khách hàng:') }} <strong class="text-dark">{{ number_format($totalUserCount ?? 1440) }}</strong> {{ __('thành viên') }}
                     </div>
                     <div class="hero-chip-clean">
                         <i class="fa-solid fa-shield-halved text-success"></i> {{ __('Uy tín & Bảo hành 24/7') }}

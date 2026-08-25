@@ -237,8 +237,8 @@
 </style>
 
 <script>
-    // PWA Prompt Handler
     let deferredPrompt;
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -250,16 +250,80 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Luôn hiển thị nút PWA trên các trình duyệt hỗ trợ
+        const androidBtn = document.getElementById('pwaAndroidBtn');
+        const desktopBtn = document.getElementById('pwaDesktopBtn');
+        if (androidBtn) androidBtn.style.display = 'inline-flex';
+        if (desktopBtn) desktopBtn.style.display = 'inline-flex';
+
+        // Lắng nghe sự kiện click nút Cài đặt PWA
         const installBtns = document.querySelectorAll('.btn-pwa-install');
         installBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response to install prompt: ${outcome}`);
+                    console.log(`User choice: ${outcome}`);
+                    if (outcome === 'accepted') {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cài đặt thành công!',
+                                text: 'Ứng dụng Dùng Thử AI đã được thêm vào máy tính/điện thoại của bạn.',
+                                confirmButtonColor: '#ff5e00'
+                            });
+                        }
+                    }
                     deferredPrompt = null;
                 } else {
-                    alert('Trình duyệt của bạn hiện đã hỗ trợ PWA hoặc ứng dụng đã được cài đặt!');
+                    // Nếu deferredPrompt null (do đã cài hoặc vừa xóa app)
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Hướng dẫn cài đặt lại ứng dụng',
+                            html: `
+                                <div class="text-start" style="font-size: 0.9rem; line-height: 1.6;">
+                                    <p class="mb-2">Nếu bạn vừa <b>xóa App</b> và muốn cài đặt lại ngay:</p>
+                                    <ol class="ps-3 mb-3">
+                                        <li class="mb-1">Bấm nút <b>"Tải lại trang (F5)"</b> bên dưới để làm mới phiên làm việc.</li>
+                                        <li class="mb-1">Hoặc nhấp vào biểu tượng <b>Cài đặt <i class="fa-solid fa-download text-primary"></i></b> ở góc phải thanh địa chỉ Chrome/Edge.</li>
+                                        <li>Hoặc nhấn menu <b>3 chấm (⋮)</b> trên trình duyệt > chọn <b>"Cài đặt Dùng Thử AI"</b>.</li>
+                                    </ol>
+                                </div>
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: '<i class="fa-solid fa-rotate-right me-1"></i> Tải lại trang để cài lại',
+                            cancelButtonText: 'Đóng',
+                            confirmButtonColor: '#ff5e00',
+                            cancelButtonColor: '#64748b'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    } else {
+                        alert('Hãy tải lại trang (F5) hoặc bấm icon Cài đặt trên thanh địa chỉ trình duyệt để cài lại App!');
+                    }
+                }
+            });
+        });
+
+        // Thông báo khi bấm tải trực tiếp file APK / EXE
+        const downloadLinks = document.querySelectorAll('a[href*="/download/app/"]');
+        downloadLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (typeof Swal !== 'undefined') {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        timerProgressBar: true
+                    });
+                    Toast.fire({
+                        icon: 'info',
+                        title: '🚀 Đang khởi tạo tải xuống file ứng dụng...'
+                    });
                 }
             });
         });

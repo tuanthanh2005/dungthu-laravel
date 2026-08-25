@@ -10,13 +10,13 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/images/dungthu.png",
+      "src": "/images/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/images/dungthu.png",
+      "src": "/images/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -26,12 +26,12 @@
     {
       "name": "Cửa Hàng",
       "url": "/shop",
-      "icons": [{ "src": "/images/dungthu.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/images/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "VPN",
       "url": "/vpn",
-      "icons": [{ "src": "/images/dungthu.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/images/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

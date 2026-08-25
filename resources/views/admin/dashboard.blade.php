@@ -225,7 +225,7 @@
     </div>
 
     @php
-        $isAdmin = auth()->user()->role === 'superadmin_1';
+        $isAdmin = in_array(auth()->user()->role, ['superadmin_1', 'sieusuperadmin'], true);
         $colClass = $isAdmin ? 'col-xl-3 col-lg-6' : 'col-xl-4 col-lg-6';
     @endphp
 

@@ -189,26 +189,28 @@
                             <div class="fw-bold text-sm">{{ Auth::user()->name }}</div>
                             <div class="text-muted" style="font-size:0.78rem;">{{ Auth::user()->email }}</div>
                         </li>
-                        @if(Auth::user()->role === 'superadmin_1')
+                        @if(in_array(Auth::user()->role, ['superadmin_1', 'sieusuperadmin', 'blog_editor'], true))
                             <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>{{ __('Dashboard Admin') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>{{ __('Quản lý Menu') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('admin.proxies') }}"><i class="fas fa-network-wired me-2 text-info"></i>{{ __('Quản lý Proxy') }}</a></li>
-                            
-                            {{-- Collapsible Quản lý Buff --}}
-                            <li>
-                                <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#adminBuffCollapse" role="button" aria-expanded="false" aria-controls="adminBuffCollapse" onclick="event.stopPropagation();">
-                                    <span><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Quản lý Buff') }}</span>
-                                    <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
-                                </a>
-                                <div class="collapse px-2" id="adminBuffCollapse" onclick="event.stopPropagation();">
-                                    <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
-                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.dashboard') }}" style="font-size: 0.85rem;"><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Buff Dashboard') }}</a></li>
-                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.orders.index') }}" style="font-size: 0.85rem;"><i class="fas fa-list-alt me-2" style="color:#ec4899;"></i>{{ __('Đơn Buff') }}</a></li>
-                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.services.index') }}" style="font-size: 0.85rem;"><i class="fas fa-cogs me-2" style="color:#06b6d4;"></i>{{ __('Dịch vụ Buff') }}</a></li>
-                                        <li><a class="dropdown-item py-1" href="{{ route('admin.buff.servers.index') }}" style="font-size: 0.85rem;"><i class="fas fa-server me-2" style="color:#10b981;"></i>{{ __('Máy chủ Buff') }}</a></li>
-                                    </ul>
-                                </div>
-                            </li>
+                            @if(in_array(Auth::user()->role, ['superadmin_1', 'sieusuperadmin'], true))
+                                <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>{{ __('Quản lý Menu') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.proxies') }}"><i class="fas fa-network-wired me-2 text-info"></i>{{ __('Quản lý Proxy') }}</a></li>
+                                
+                                {{-- Collapsible Quản lý Buff --}}
+                                <li>
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#adminBuffCollapse" role="button" aria-expanded="false" aria-controls="adminBuffCollapse" onclick="event.stopPropagation();">
+                                        <span><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Quản lý Buff') }}</span>
+                                        <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
+                                    </a>
+                                    <div class="collapse px-2" id="adminBuffCollapse" onclick="event.stopPropagation();">
+                                        <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
+                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.dashboard') }}" style="font-size: 0.85rem;"><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Buff Dashboard') }}</a></li>
+                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.orders.index') }}" style="font-size: 0.85rem;"><i class="fas fa-list-alt me-2" style="color:#ec4899;"></i>{{ __('Đơn Buff') }}</a></li>
+                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.services.index') }}" style="font-size: 0.85rem;"><i class="fas fa-cogs me-2" style="color:#06b6d4;"></i>{{ __('Dịch vụ Buff') }}</a></li>
+                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.servers.index') }}" style="font-size: 0.85rem;"><i class="fas fa-server me-2" style="color:#10b981;"></i>{{ __('Máy chủ Buff') }}</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            @endif
                             <li><hr class="dropdown-divider"></li>
                         @endif
                         <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>{{ __('Trang chủ') }}</a></li>

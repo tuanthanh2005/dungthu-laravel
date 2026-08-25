@@ -28,19 +28,19 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
 
         Gate::define('community-post.update', function ($user, CommunityPost $post) {
-            return $user->role === 'superadmin_1' || $post->user_id === $user->id;
+            return in_array($user->role, ['superadmin_1', 'sieusuperadmin'], true) || $post->user_id === $user->id;
         });
 
         Gate::define('community-post.delete', function ($user, CommunityPost $post) {
-            return $user->role === 'superadmin_1' || $post->user_id === $user->id;
+            return in_array($user->role, ['superadmin_1', 'sieusuperadmin'], true) || $post->user_id === $user->id;
         });
 
         Gate::define('community-comment.update', function ($user, CommunityComment $comment) {
-            return $user->role === 'superadmin_1' || $comment->user_id === $user->id;
+            return in_array($user->role, ['superadmin_1', 'sieusuperadmin'], true) || $comment->user_id === $user->id;
         });
 
         Gate::define('community-comment.delete', function ($user, CommunityComment $comment) {
-            return $user->role === 'superadmin_1' || $comment->user_id === $user->id;
+            return in_array($user->role, ['superadmin_1', 'sieusuperadmin'], true) || $comment->user_id === $user->id;
         });
     }
 }

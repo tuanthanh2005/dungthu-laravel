@@ -1996,36 +1996,43 @@ class AdminController extends Controller
      */
     public function sidebarCounters()
     {
-        $unreadChats = Message::where('is_admin', false)
-            ->where('is_read', false)
-            ->count();
+        // Release session file lock immediately for background polling
+        session()->save();
 
-        $pendingOrders = Order::where('status', 'pending')->count();
+        $data = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_counters', 5, function () {
+            $unreadChats = Message::where('is_admin', false)
+                ->where('is_read', false)
+                ->count();
 
-        $pendingBuffOrders = \App\Models\BuffOrder::where('status', 'paid')->count();
+            $pendingOrders = Order::where('status', 'pending')->count();
 
-        $pendingCardExchanges = CardExchange::where('status', 'pending')->count();
+            $pendingBuffOrders = \App\Models\BuffOrder::where('status', 'paid')->count();
 
-        $abandonedCarts = AbandonedCart::where('reminder_stage', '<', 3)->count();
+            $pendingCardExchanges = CardExchange::where('status', 'pending')->count();
 
-        $pendingPreorders = \App\Models\PreOrder::where('status', 'pending')->count();
+            $abandonedCarts = AbandonedCart::where('reminder_stage', '<', 3)->count();
 
-        $pendingAffiliatesTotal = Affiliate::where('status', 'pending')->count() +
-            AffiliateInvoice::where('status', 'pending')->count() +
-            AffiliateWithdrawal::where('status', 'pending')->count();
+            $pendingPreorders = \App\Models\PreOrder::where('status', 'pending')->count();
 
-        $onlineUsersCount = \App\Models\OnlineSession::active(5)->count();
+            $pendingAffiliatesTotal = Affiliate::where('status', 'pending')->count() +
+                AffiliateInvoice::where('status', 'pending')->count() +
+                AffiliateWithdrawal::where('status', 'pending')->count();
 
-        return response()->json([
-            'unread_chats' => $unreadChats,
-            'pending_orders' => $pendingOrders,
-            'pending_buff_orders' => $pendingBuffOrders,
-            'pending_card_exchanges' => $pendingCardExchanges,
-            'abandoned_carts' => $abandonedCarts,
-            'pending_preorders' => $pendingPreorders,
-            'pending_affiliates_total' => $pendingAffiliatesTotal,
-            'online_users_count' => $onlineUsersCount,
-        ]);
+            $onlineUsersCount = \App\Models\OnlineSession::active(5)->count();
+
+            return [
+                'unread_chats' => $unreadChats,
+                'pending_orders' => $pendingOrders,
+                'pending_buff_orders' => $pendingBuffOrders,
+                'pending_card_exchanges' => $pendingCardExchanges,
+                'abandoned_carts' => $abandonedCarts,
+                'pending_preorders' => $pendingPreorders,
+                'pending_affiliates_total' => $pendingAffiliatesTotal,
+                'online_users_count' => $onlineUsersCount,
+            ];
+        });
+
+        return response()->json($data);
     }
 
 

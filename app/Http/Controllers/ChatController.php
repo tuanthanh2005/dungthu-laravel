@@ -110,6 +110,10 @@ class ChatController extends Controller
     // Lấy tin nhắn mới (polling)
     public function getNewMessages(Request $request)
     {
+        if (session()->isStarted()) {
+            session()->save();
+        }
+
         if (!Auth::check()) {
             return response()->json(['error' => 'Vui lòng đăng nhập'], 401);
         }
@@ -127,6 +131,10 @@ class ChatController extends Controller
     // User: Đếm tin nhắn chưa đọc từ admin
     public function unreadCount()
     {
+        if (session()->isStarted()) {
+            session()->save();
+        }
+
         if (!Auth::check()) {
             return response()->json(['error' => 'Vui lòng đăng nhập'], 401);
         }
@@ -157,6 +165,10 @@ class ChatController extends Controller
     // Admin: Tổng số tin nhắn chưa đọc từ khách hàng
     public function adminUnreadCount()
     {
+        if (session()->isStarted()) {
+            session()->save();
+        }
+
         if (!Auth::check() || !in_array(Auth::user()->role, ['superadmin_1', 'sieusuperadmin'])) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }

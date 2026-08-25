@@ -17,6 +17,11 @@ class OnlineUserController extends Controller
      */
     public function count()
     {
+        // Release session file lock immediately so background pings don't block user clicks
+        if (session()->isStarted()) {
+            session()->save();
+        }
+
         try {
             $hasTable = Cache::rememberForever('schema_has_online_sessions', fn () => Schema::hasTable('online_sessions'));
             if (!$hasTable) {

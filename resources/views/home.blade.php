@@ -1546,21 +1546,22 @@
         .combo-prod-card .prod-price-row {
             display: flex;
             align-items: baseline;
-            gap: 5px;
+            gap: 6px;
             flex-wrap: wrap;
             margin-bottom: 8px;
         }
 
         .combo-prod-card .prod-price {
-            font-size: .96rem;
+            font-size: 1.02rem;
             font-weight: 800;
-            color: #6366f1;
+            color: #e53935;
         }
 
         .combo-prod-card .prod-price-old {
-            font-size: .72rem;
+            font-size: .7rem;
             color: #9ca3af;
             text-decoration: line-through;
+            font-weight: 500;
         }
 
         .combo-prod-card .add-cart-btn {
@@ -2102,7 +2103,7 @@
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $fp->formatted_price }}</span>
                                         @if($fp->is_on_sale)
-                                            <span class="prod-price-old">{{ $fp->formatted_original_price }}</span>
+                                            <span class="prod-price-old"><small style="text-decoration:none; color:#9ca3af;">Gốc:</small> {{ $fp->formatted_original_price }}</span>
                                         @endif
                                     </div>
                                     @if($fp->stock > 0)
@@ -2151,7 +2152,7 @@
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $hp->formatted_price }}</span>
                                         @if($hp->is_on_sale)
-                                            <span class="prod-price-old">{{ $hp->formatted_original_price }}</span>
+                                            <span class="prod-price-old"><small style="text-decoration:none; color:#9ca3af;">Gốc:</small> {{ $hp->formatted_original_price }}</span>
                                         @endif
                                     </div>
                                     @if($hp->stock > 0)
@@ -2199,7 +2200,7 @@
                                     <div class="prod-price-row">
                                         <span class="prod-price">{{ $cp->formatted_price }}</span>
                                         @if($cp->is_on_sale)
-                                            <span class="prod-price-old">{{ $cp->formatted_original_price }}</span>
+                                            <span class="prod-price-old"><small style="text-decoration:none; color:#9ca3af;">Gốc:</small> {{ $cp->formatted_original_price }}</span>
                                         @endif
                                     </div>
                                     @if($cp->stock > 0)

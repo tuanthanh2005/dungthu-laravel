@@ -873,7 +873,7 @@
                         <div class="price-wrap">
                             <span class="price-current">{{ $product->formatted_price }}</span>
                             @if($product->is_on_sale)
-                                <span class="price-old">{{ $product->formatted_original_price }}</span>
+                                <span class="price-old"><small style="text-decoration:none; color:#b2bec3;">Gốc:</small> {{ $product->formatted_original_price }}</span>
                             @endif
                         </div>
                         @if($product->stock > 0)

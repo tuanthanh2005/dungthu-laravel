@@ -70,83 +70,67 @@
             padding: 10px 12px;
         }
 
-        .hero-banner-card {
+        /* 2. Minimalist Centered Hero Banner styles */
+        .hero-banner-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 10px 12px;
+        }
+
+        .hero-banner-card-centered {
             background: #ffffff;
-            border-radius: 24px;
-            padding: 24px 36px;
+            border-radius: 16px;
+            padding: 20px 28px 16px 28px;
             position: relative;
             overflow: hidden;
             border: 1px solid #e5e7eb;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            isolation: isolate;
-        }
-
-        /* Animated AI grid and data flow - disabled for cleaner white design */
-        .hero-banner-card::before {
-            display: none;
-        }
-
-        .hero-banner-card::after {
-            display: none;
-        }
-
-        .hero-banner-card > .row {
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Left Side Content */
-        .hero-left-content {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            text-align: center;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            height: 100%;
-            z-index: 2;
-            position: relative;
+            align-items: center;
         }
 
-        .hero-top-bar {
+        .hero-center-badges {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
-        .hero-ai-badge {
+        .hero-ai-badge-clean {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            color: #4f46e5;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-online-badge-clean {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(79, 70, 229, 0.08);
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            color: #4f46e5;
-            padding: 5px 12px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 3px 12px;
             border-radius: 50px;
             font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0;
+            font-weight: 700;
         }
 
-        .hero-online-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            background: #fff0f0;
-            border: 1px solid #ffcccc;
-            color: #b91c1c;
-            padding: 5px 14px;
-            border-radius: 50px;
-            font-size: 0.76rem;
-            font-weight: 800;
-            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .hero-online-badge .live-dot {
-            width: 9px;
-            height: 9px;
+        .hero-online-badge-clean .live-dot {
+            width: 8px;
+            height: 8px;
             background-color: #ef4444;
             border-radius: 50%;
             display: inline-block;
@@ -169,160 +153,155 @@
             }
         }
 
-        .hero-title {
-            font-size: 2.1rem;
+        .hero-center-title {
+            font-size: 1.6rem;
             font-weight: 800;
             color: #111827;
             line-height: 1.25;
-            margin-bottom: 10px;
-            letter-spacing: -0.025em;
+            margin: 0 auto 6px auto;
+            max-width: 800px;
+            letter-spacing: -0.02em;
         }
 
-        .hero-desc {
-            font-size: 0.92rem;
-            color: #4b5563;
-            line-height: 1.5;
-            margin-bottom: 16px;
-            max-width: 580px;
+        .hero-center-desc {
+            font-size: 0.84rem;
+            color: #6b7280;
+            line-height: 1.45;
+            margin: 0 auto 10px auto;
+            max-width: 680px;
         }
 
-        .hero-features {
+        .hero-center-features {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 18px;
         }
 
-        .hero-feature-chip {
+        .hero-chip-clean {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: #f3f4f6;
+            gap: 6px;
+            background: #f9fafb;
             border: 1px solid #e5e7eb;
             color: #374151;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 0.78rem;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 0.76rem;
             font-weight: 600;
         }
 
-        .hero-feature-chip i {
-            color: #0284c7;
-        }
-
-        .hero-actions {
+        .hero-center-actions {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
             flex-wrap: wrap;
-            gap: 16px;
         }
 
-        .hero-btn-primary {
+        .hero-btn-main {
             background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%);
             color: #ffffff !important;
             font-weight: 700;
-            font-size: 0.88rem;
-            padding: 10px 24px;
-            border-radius: 12px;
+            font-size: 0.84rem;
+            padding: 8px 22px;
+            border-radius: 10px;
             border: none;
-            box-shadow: 0 4px 15px rgba(255, 94, 0, 0.35);
-            transition: all 0.3s ease;
+            box-shadow: 0 3px 12px rgba(255, 94, 0, 0.25);
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-decoration: none;
         }
 
-        .hero-btn-primary:hover {
+        .hero-btn-main:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(255, 94, 0, 0.5);
+            box-shadow: 0 8px 24px rgba(255, 94, 0, 0.45);
         }
 
-        .hero-btn-secondary {
+        .hero-btn-sub {
             background: #ffffff;
             border: 1px solid #d1d5db;
             color: #374151 !important;
             font-weight: 700;
-            font-size: 0.88rem;
-            padding: 10px 24px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
+            font-size: 0.84rem;
+            padding: 8px 20px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-decoration: none;
         }
 
-        .hero-btn-secondary:hover {
+        .hero-btn-sub:hover {
             background: #f9fafb;
             border-color: #9ca3af;
             transform: translateY(-2px);
         }
 
-        /* Right Side Showcase Grid */
-        .hero-right-showcase {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .hero-banner-grid {
+        /* 4 Horizontal mini product cards centered below */
+        .hero-center-showcase-row {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
             width: 100%;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 12px;
         }
 
-        .hero-banner-item {
-            background: #ffffff;
+        .hero-mini-card {
+            background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px 12px;
-            text-align: center;
-            text-decoration: none;
-            color: inherit;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
-            transition: all 0.25s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero-banner-item:hover {
-            transform: translateY(-4px);
-            border-color: #ff5e00;
-            box-shadow: 0 10px 24px rgba(255, 94, 0, 0.12);
-        }
-
-        .hero-banner-item .item-img {
-            width: 48px;
-            height: 48px;
-            object-fit: cover;
             border-radius: 10px;
-            margin-bottom: 8px;
-            border: 1px solid #f1f5f9;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            text-align: left;
+            transition: all 0.2s ease-in-out;
         }
 
-        .hero-banner-item .item-title {
-            font-size: 12.5px;
+        .hero-mini-card:hover {
+            background: #ffffff;
+            border-color: #6366f1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+        }
+
+        .hero-mini-card .mini-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .hero-mini-card .mini-content {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .hero-mini-card .mini-title {
+            font-size: 0.76rem;
             font-weight: 700;
             color: #1e293b;
-            line-height: 1.35;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            white-space: nowrap;
             overflow: hidden;
-            height: 34px;
-            margin-bottom: 4px;
-            word-break: break-word;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
         }
 
-        .hero-banner-item .item-price {
-            font-size: 13px;
+        .hero-mini-card .mini-price {
+            font-size: 0.78rem;
             font-weight: 800;
-            color: #ef4444;
+            color: #e53935;
         }
 
         .floating-ai-card:hover {
@@ -1869,75 +1848,73 @@
     </div>
 
     <div style="background:#dae0e6;">
-        <!-- 2. Hero Banner Section -->
+        <!-- 2. Minimalist Centered Hero Banner Section -->
         <div class="hero-banner-container d-none d-lg-block">
-            <div class="hero-banner-card">
-                <div class="row align-items-center g-4">
-                    <!-- Left Column: Content & Call to Action -->
-                    <div class="col-lg-7">
-                        <div class="hero-left-content">
-                            <div class="hero-top-bar">
-                                <div class="hero-ai-badge">
-                                    <i class="fa-solid fa-bolt"></i> DungThu.com AI Hub
-                                </div>
-                                <div class="hero-online-badge" title="{{ __('Khách hàng đang online / xem sản phẩm thực tế') }}">
-                                    <span class="live-dot"></span>
-                                    <i class="fa-solid fa-users" style="color: #dc2626;"></i>
-                                    <span id="heroOnlineCountText" class="heroOnlineCountText">-- đang xem</span>
-                                </div>
-                            </div>
-                            <h2 class="hero-title">{!! __('Khám Phá Sức Mạnh AI<br>Tối Ưu Hiệu Suất Công Việc') !!}</h2>
-                            <p class="hero-desc">
-                                {{ __('Cung cấp tài khoản premium giá rẻ, phần mềm chuyên dụng và giải pháp tự động hóa giúp bạn bứt phá năng suất làm việc mỗi ngày. Nhanh chóng - Uy tín - Bảo hành trọn đời.') }}
-                            </p>
-                            
-                            <!-- Lợi ích nổi bật -->
-                            <div class="hero-features">
-                                <div class="hero-feature-chip">
-                                    <i class="fa-solid fa-circle-check"></i> {{ __('Kích hoạt tức thì') }}
-                                </div>
-                                <div class="hero-feature-chip">
-                                    <i class="fa-solid fa-shield-halved"></i> {{ __('Bảo hành uy tín') }}
-                                </div>
-                                <div class="hero-feature-chip">
-                                    <i class="fa-solid fa-headset"></i> {{ __('Hỗ trợ 24/7') }}
-                                </div>
-                            </div>
-
-                            <!-- Các hành động -->
-                            <div class="hero-actions">
-                                <a href="{{ route('shop') }}" class="hero-btn-primary">
-                                    <i class="fa-solid fa-store"></i> {{ __('Mua Tài Khoản AI') }}
-                                </a>
-                                <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" 
-                                   target="_blank" class="hero-btn-secondary">
-                                    <i class="fa-solid fa-users"></i> {{ __('Nhóm Zalo Hỗ Trợ') }}
-                                </a>
-                            </div>
-                        </div>
+            <div class="hero-banner-card-centered">
+                <!-- Top Badges -->
+                <div class="hero-center-badges">
+                    <div class="hero-ai-badge-clean">
+                        <i class="fa-solid fa-bolt"></i> DungThu.com AI Hub
                     </div>
-
-                    <!-- Right Column: Clean 2x2 Fixed Grid Showcase -->
-                    <div class="col-lg-5 col-xl-5 mt-4 mt-lg-0">
-                        <div class="hero-right-showcase">
-                            <div class="hero-banner-grid">
-                                @foreach($bannerProducts->take(4) as $bProduct)
-                                    @php
-                                        $bImg = $bProduct->image ? (str_starts_with($bProduct->image, 'http') ? $bProduct->image : asset('storage/' . $bProduct->image)) : asset('images/default-product.png');
-                                        $bPrice = $bProduct->sale_price ?: $bProduct->price;
-                                    @endphp
-                                    <a class="hero-banner-item" href="{{ route('product.show', $bProduct->slug) }}" title="{{ $bProduct->name }}">
-                                        <img class="item-img" src="{{ $bImg }}" alt="{{ $bProduct->name }}">
-                                        <div class="item-title">{{ $bProduct->name }}</div>
-                                        <div class="item-price">
-                                            {{ number_format($bPrice, 0, ',', '.') }}đ
-                                        </div>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
+                    <div class="hero-online-badge-clean" title="{{ __('Khách hàng đang online / xem sản phẩm thực tế') }}">
+                        <span class="live-dot"></span>
+                        <i class="fa-solid fa-users"></i>
+                        <span id="heroOnlineCountText" class="heroOnlineCountText">-- đang xem</span>
                     </div>
                 </div>
+
+                <!-- Main Title -->
+                <h1 class="hero-center-title">
+                    {{ __('Khám Phá Sức Mạnh AI — Tối Ưu Hiệu Suất Công Việc') }}
+                </h1>
+
+                <!-- Subtitle Description -->
+                <p class="hero-center-desc">
+                    {{ __('Cung cấp tài khoản premium giá rẻ, phần mềm chuyên dụng và giải pháp tự động hóa giúp bạn bứt phá năng suất làm việc mỗi ngày. Nhanh chóng — Uy tín — Bảo hành trọn đời.') }}
+                </p>
+
+                <!-- Feature Chips & Metrics (Centered) -->
+                <div class="hero-center-features">
+                    <div class="hero-chip-clean">
+                        <i class="fa-solid fa-bag-shopping text-danger"></i> {{ __('Đã bán:') }} <strong class="text-dark">{{ number_format($totalSoldCount ?? \App\Models\Product::all()->sum(fn($p) => $p->sold_count)) }}</strong> {{ __('sản phẩm') }}
+                    </div>
+                    <div class="hero-chip-clean">
+                        <i class="fa-solid fa-user-check text-primary"></i> {{ __('Khách hàng:') }} <strong class="text-dark">{{ number_format($totalUserCount ?? \App\Models\User::where('role', '!=', 'admin')->count()) }}</strong> {{ __('thành viên') }}
+                    </div>
+                    <div class="hero-chip-clean">
+                        <i class="fa-solid fa-shield-halved text-success"></i> {{ __('Uy tín & Bảo hành 24/7') }}
+                    </div>
+                </div>
+
+                <!-- CTA Buttons (Centered) -->
+                <div class="hero-center-actions">
+                    <a href="{{ route('shop') }}" class="hero-btn-main">
+                        <i class="fa-solid fa-store"></i> {{ __('Mua Tài Khoản AI') }}
+                    </a>
+                    <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" 
+                       target="_blank" class="hero-btn-sub">
+                        <i class="fa-solid fa-users"></i> {{ __('Nhóm Zalo Hỗ Trợ') }}
+                    </a>
+                </div>
+
+                <!-- Horizontal Clean Showcase Cards Row Below -->
+                @if(isset($bannerProducts) && $bannerProducts->count() > 0)
+                <div class="hero-center-showcase-row">
+                    @foreach($bannerProducts->take(4) as $bProduct)
+                        @php
+                            $bImg = $bProduct->image ? (str_starts_with($bProduct->image, 'http') ? $bProduct->image : asset('storage/' . $bProduct->image)) : asset('images/default-product.png');
+                            $bPrice = $bProduct->sale_price ?: $bProduct->price;
+                        @endphp
+                        <a class="hero-mini-card" href="{{ route('product.show', $bProduct->slug) }}" title="{{ $bProduct->name }}">
+                            <img class="mini-img" src="{{ $bImg }}" alt="{{ $bProduct->name }}">
+                            <div class="mini-content">
+                                <div class="mini-title">{{ $bProduct->name }}</div>
+                                <div class="mini-price">{{ number_format($bPrice, 0, ',', '.') }}đ</div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+                @endif
             </div>
         </div>
 

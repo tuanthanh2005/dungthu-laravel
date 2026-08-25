@@ -157,6 +157,14 @@ class HomeController extends Controller
             return $prods;
         });
 
+        $totalSoldCount = Cache::remember('home.total_sold_count', 300, function () {
+            return Product::all()->sum(fn($p) => $p->sold_count);
+        });
+
+        $totalUserCount = Cache::remember('home.total_user_count', 300, function () {
+            return \App\Models\User::where('role', '!=', 'admin')->count();
+        });
+
         return view('home', compact(
             'categories',
             'featuredProducts',
@@ -167,7 +175,9 @@ class HomeController extends Controller
             'recentPurchases',
             'saleProducts',
             'saleEndsAt',
-            'isExpired'
+            'isExpired',
+            'totalSoldCount',
+            'totalUserCount'
         ));
     }
 

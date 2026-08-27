@@ -75,6 +75,13 @@ class CustomerDuration extends Model
         return $query->where('is_completed', true);
     }
 
+    public function scopeExpiredHistory($query)
+    {
+        return $query->where('is_completed', true)
+            ->whereNotNull('expiry_date')
+            ->where('expiry_date', '<', now()->startOfDay());
+    }
+
     // Accessors
     public function getStatusAttribute()
     {

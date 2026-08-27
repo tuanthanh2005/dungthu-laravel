@@ -47,6 +47,8 @@ class CustomerDurationController extends Controller
                 $query->expiring();
             } elseif ($status === 'expired') {
                 $query->expired();
+            } elseif ($status === 'expired_history') {
+                $query->expiredHistory();
             } elseif ($status === 'completed') {
                 $query->completed();
             } elseif ($status === 'all') {
@@ -62,6 +64,7 @@ class CustomerDurationController extends Controller
         $activeCount = (clone $baseQuery)->active()->count();
         $expiringCount = (clone $baseQuery)->expiring()->count();
         $expiredCount = (clone $baseQuery)->expired()->count();
+        $expiredHistoryCount = (clone $baseQuery)->expiredHistory()->count();
         $completedCount = (clone $baseQuery)->completed()->count();
 
         // Paginate results
@@ -73,8 +76,54 @@ class CustomerDurationController extends Controller
             'activeCount',
             'expiringCount',
             'expiredCount',
+            'expiredHistoryCount',
             'completedCount'
         ));
+    }
+
+    /**
+     * Nhanh chóng ẩn hoặc hiện lại thời hạn dịch vụ.
+     */
+    public function toggleHide($id)
+    {
+        $customerDuration = CustomerDuration::findOrFail($id);
+        $customerDuration->is_completed = !$customerDuration->is_completed;
+        $customerDuration->save();
+
+        $msg = $customerDuration->is_completed 
+            ? 'Đã ẩn thời hạn dịch vụ thành công (Đánh dấu hoàn thành)!' 
+            : 'Đã hiện lại thời hạn dịch vụ vào danh sách theo dõi!';
+
+        return redirect()->back()->with('success', $msg);
+    }
+
+    /**
+     * Xử lý tác vụ chọn nhanh hàng loạt.
+     */
+    public function bulkAction(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:customer_durations,id',
+            'action' => 'required|string|in:hide,show,delete',
+        ]);
+
+        $ids = $request->input('ids');
+        $action = $request->input('action');
+        $count = count($ids);
+
+        if ($action === 'hide') {
+            CustomerDuration::whereIn('id', $ids)->update(['is_completed' => true]);
+            return redirect()->back()->with('success', "Đã ẩn thành công {$count} bản ghi thời hạn dịch vụ đã chọn!");
+        } elseif ($action === 'show') {
+            CustomerDuration::whereIn('id', $ids)->update(['is_completed' => false]);
+            return redirect()->back()->with('success', "Đã hiện lại thành công {$count} bản ghi thời hạn dịch vụ đã chọn!");
+        } elseif ($action === 'delete') {
+            CustomerDuration::whereIn('id', $ids)->delete();
+            return redirect()->back()->with('success', "Đã xóa thành công {$count} bản ghi thời hạn dịch vụ đã chọn!");
+        }
+
+        return redirect()->back();
     }
 
     /**

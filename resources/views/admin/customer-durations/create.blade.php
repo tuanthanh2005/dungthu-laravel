@@ -120,6 +120,24 @@
                     </div>
                 </div>
 
+                <!-- Trạng thái & Ghi chú Admin -->
+                <h5 class="fw-bold mb-3 text-primary"><i class="fas fa-tasks me-2"></i>Trạng Thái &amp; Ghi Chú Admin</h5>
+                <div class="card bg-light border-0 p-3 mb-4" style="border-radius: 12px;">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" name="is_completed" value="1" id="is_completed" {{ old('is_completed') ? 'checked' : '' }} style="width: 2.5em; height: 1.25em; cursor: pointer;">
+                        <label class="form-check-label fw-bold text-success ms-2 pt-1" for="is_completed" style="cursor: pointer;">
+                            <i class="fas fa-check-circle me-1"></i>Đã hoàn thành đơn (Tích chọn để xác nhận và ẨN khỏi danh sách hết hạn/theo dõi)
+                        </label>
+                    </div>
+                    <div>
+                        <label for="admin_note" class="form-label fw-bold">
+                            <i class="fas fa-sticky-note text-warning me-1"></i>Ghi chú Admin / Chú thích trạng thái:
+                        </label>
+                        <textarea name="admin_note" id="admin_note" class="form-control" rows="3" placeholder="Nhập ghi chú hoặc đánh dấu thông tin đơn hàng cho admin xem...">{{ old('admin_note') }}</textarea>
+                        <small class="text-muted mt-1 d-block">Ghi chú này sẽ hiển thị ngay bên dưới trạng thái thời hạn của khách để dễ quản lý.</small>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-end gap-3 mt-5">
                     <a href="{{ route('admin.customer-durations') }}" class="btn btn-outline-secondary rounded-pill px-4">Hủy bỏ</a>
                     <button type="submit" class="btn btn-primary rounded-pill px-5">

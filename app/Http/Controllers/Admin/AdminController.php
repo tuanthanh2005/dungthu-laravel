@@ -472,10 +472,20 @@ class AdminController extends Controller
     {
         $request->validate([
             'status' => 'required|in:pending,processing,shipped,delivered,completed,cancelled',
+            'status_note' => 'nullable|string',
         ]);
 
         $oldStatus = $order->status;
-        $order->update(['status' => $request->status]);
+        $order->update([
+            'status' => $request->status,
+            'status_note' => $request->status_note,
+        ]);
+
+        if ($request->filled('status_note')) {
+            CustomerDuration::where('order_id', $order->id)->update([
+                'admin_note' => $request->status_note,
+            ]);
+        }
 
         // Nếu đơn hàng được chuyển sang trạng thái completed, gửi email thông báo duyệt đơn + telegram
         if ($request->status === 'completed' && $oldStatus !== 'completed') {
@@ -503,8 +513,15 @@ class AdminController extends Controller
             'delivery_account' => $request->delivery_account,
             'delivery_key' => $request->delivery_key,
             'delivery_note' => $request->delivery_note,
+            'status_note' => $request->delivery_note,
             'status' => 'completed',
         ]);
+
+        if ($request->filled('delivery_note')) {
+            CustomerDuration::where('order_id', $order->id)->update([
+                'admin_note' => $request->delivery_note,
+            ]);
+        }
 
         // Gửi email bàn giao
         try {

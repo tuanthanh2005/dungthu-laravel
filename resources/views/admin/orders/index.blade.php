@@ -212,9 +212,13 @@
                             <span class="badge bg-{{ $order->status_color }} px-3 py-2">
                                 {{ $order->status_label }}
                             </span>
-                            @if($order->status == 'completed')
-                                <div class="mt-2">
-                                    <small class="badge bg-success">✅ Đã xác nhận</small>
+                            @if($order->status_note)
+                                <div class="mt-1">
+                                    <small class="text-muted" style="font-size: 11px;"><i class="fas fa-sticky-note text-warning me-1"></i>{{ \Illuminate\Support\Str::limit($order->status_note, 35) }}</small>
+                                </div>
+                            @elseif($order->status == 'completed')
+                                <div class="mt-1">
+                                    <small class="badge bg-success" style="font-size: 10px;">✅ Đã xác nhận</small>
                                 </div>
                             @endif
                         </div>

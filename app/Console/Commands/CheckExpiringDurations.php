@@ -26,10 +26,8 @@ class CheckExpiringDurations extends Command
     {
         $this->info('Đang kiểm tra thời hạn dịch vụ khách hàng...');
 
-        // Lấy các bản ghi sắp hết hạn trong 3 ngày tới
-        $expiringDurations = CustomerDuration::whereNotNull('expiry_date')
-            ->where('expiry_date', '>=', now()->startOfDay())
-            ->where('expiry_date', '<=', now()->addDays(3)->endOfDay())
+        // Lấy các bản ghi sắp hết hạn trong 3 ngày tới (bỏ qua các bản ghi đã hoàn thành)
+        $expiringDurations = CustomerDuration::expiring()
             ->orderBy('expiry_date', 'asc')
             ->get();
 

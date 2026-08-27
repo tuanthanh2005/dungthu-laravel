@@ -149,10 +149,12 @@
                 </div>
                 <div class="col-md-3 col-lg-3">
                     <select name="status" class="form-select">
-                        <option value="">Tất Cả Trạng Thái</option>
+                        <option value="">Chưa Hoàn Thành (Mặc định)</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Đang hoạt động</option>
                         <option value="expiring" {{ request('status') === 'expiring' ? 'selected' : '' }}>Sắp hết hạn (<= 3 ngày)</option>
                         <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Đã hết hạn</option>
+                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Đã hoàn thành (Đã ẩn)</option>
+                        <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>Tất cả (Bao gồm Đã hoàn thành)</option>
                     </select>
                 </div>
                 <div class="col-md-3 col-lg-2">
@@ -174,7 +176,7 @@
                         <th>TỔNG THỜI HẠN</th>
                         <th>NGÀY BẮT ĐẦU</th>
                         <th>NGÀY HẾT HẠN</th>
-                        <th>THỜI GIAN CÒN LẠI</th>
+                        <th>TRẠNG THÁI / CÒN LẠI</th>
                         <th class="text-center" style="width: 140px;">TÁC VỤ</th>
                     </tr>
                 </thead>
@@ -221,20 +223,33 @@
                                     <span class="text-muted italic">Chưa thiết lập</span>
                                 @endif
                             </td>
-                            <!-- Thời gian còn lại -->
+                            <!-- Trạng thái / Thời gian còn lại -->
                             <td>
                                 @php
                                     $status = $duration->status;
                                     $badgeClass = 'bg-success-light text-success';
-                                    if ($status === 'expired') {
+                                    if ($status === 'completed') {
+                                        $badgeClass = 'bg-secondary text-white';
+                                    } elseif ($status === 'expired') {
                                         $badgeClass = 'bg-danger-light text-danger';
                                     } elseif ($status === 'expiring') {
                                         $badgeClass = 'bg-warning-light text-warning';
                                     }
                                 @endphp
                                 <span class="badge {{ $badgeClass }} px-3 py-2 rounded-pill fw-semibold fs-7">
-                                    <i class="far fa-clock me-1"></i>{{ $duration->remaining_time }}
+                                    @if($status === 'completed')
+                                        <i class="fas fa-check-circle me-1"></i>Đã hoàn thành
+                                    @else
+                                        <i class="far fa-clock me-1"></i>{{ $duration->remaining_time }}
+                                    @endif
                                 </span>
+                                @if($duration->admin_note)
+                                    <div class="mt-2">
+                                        <small class="text-muted bg-light border rounded px-2 py-1 d-inline-block" style="font-size: 0.75rem; max-width: 220px; white-space: normal; word-break: break-word;">
+                                            <i class="fas fa-sticky-note text-warning me-1"></i>{{ $duration->admin_note }}
+                                        </small>
+                                    </div>
+                                @endif
                             </td>
                             <!-- Tác vụ -->
                             <td class="text-center">

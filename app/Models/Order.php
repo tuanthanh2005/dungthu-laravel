@@ -15,6 +15,7 @@ class Order extends Model
         'total_amount',
         'currency',
         'status',
+        'status_note',
         'order_type',
         'coupon_code',
         'discount_amount',
@@ -249,6 +250,7 @@ class Order extends Model
                     'total_duration' => $totalDuration,
                     'start_date' => $startDate,
                     'expiry_date' => $expiryDate,
+                    'admin_note' => $this->status_note ?? $this->delivery_note,
                 ]);
 
                 // Gửi Telegram thông báo cho admin

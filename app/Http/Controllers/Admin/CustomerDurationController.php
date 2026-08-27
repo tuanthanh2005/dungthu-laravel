@@ -47,7 +47,14 @@ class CustomerDurationController extends Controller
                 $query->expiring();
             } elseif ($status === 'expired') {
                 $query->expired();
+            } elseif ($status === 'completed') {
+                $query->completed();
+            } elseif ($status === 'all') {
+                // Show all records
             }
+        } else {
+            // Mặc định ẩn các đơn đã hoàn thành khỏi danh sách theo dõi
+            $query->where('is_completed', false);
         }
 
         // Stats calculation
@@ -55,6 +62,7 @@ class CustomerDurationController extends Controller
         $activeCount = (clone $baseQuery)->active()->count();
         $expiringCount = (clone $baseQuery)->expiring()->count();
         $expiredCount = (clone $baseQuery)->expired()->count();
+        $completedCount = (clone $baseQuery)->completed()->count();
 
         // Paginate results
         $durations = $query->orderBy('created_at', 'desc')->paginate(20);
@@ -64,7 +72,8 @@ class CustomerDurationController extends Controller
             'totalCount',
             'activeCount',
             'expiringCount',
-            'expiredCount'
+            'expiredCount',
+            'completedCount'
         ));
     }
 
@@ -97,7 +106,11 @@ class CustomerDurationController extends Controller
             'total_duration' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
             'expiry_date' => 'nullable|date',
+            'is_completed' => 'nullable|boolean',
+            'admin_note' => 'nullable|string',
         ]);
+
+        $validated['is_completed'] = $request->has('is_completed');
 
         // Auto-detect user info from user_id if not filled manually
         if ($request->filled('user_id') && (empty($validated['customer_name']) || empty($validated['customer_email']))) {
@@ -167,7 +180,11 @@ class CustomerDurationController extends Controller
             'total_duration' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
             'expiry_date' => 'nullable|date',
+            'is_completed' => 'nullable|boolean',
+            'admin_note' => 'nullable|string',
         ]);
+
+        $validated['is_completed'] = $request->has('is_completed');
 
         // Allow clearing expiry_date (admin may want to set it back to active/indefinite)
         $validated['expiry_date'] = $request->filled('expiry_date') ? $request->expiry_date : null;

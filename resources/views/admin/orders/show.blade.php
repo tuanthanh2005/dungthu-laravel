@@ -128,10 +128,15 @@
                             @endif
                         </span>
                     </div>
-                    <div>
+                    <div class="text-end">
                         <span class="badge bg-{{ $order->status_color }} fs-5 px-4 py-2">
                             {{ $order->status_label }}
                         </span>
+                        @if($order->status_note)
+                            <div class="mt-2 text-muted fs-7 bg-light rounded px-3 py-1 border text-start" style="max-width: 300px;">
+                                <i class="fas fa-sticky-note text-warning me-1"></i><strong>Chú thích:</strong> {{ $order->status_note }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -364,7 +369,7 @@
                 <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="row align-items-end">
+                    <div class="row align-items-end mb-3">
                         <div class="col-md-8">
                             <label class="form-label fw-bold">Trạng thái mới:</label>
                             <select name="status" class="form-select" required>
@@ -383,6 +388,10 @@
                                 <i class="fas fa-save me-2"></i>Cập nhật
                             </button>
                         </div>
+                    </div>
+                    <div>
+                        <label class="form-label fw-bold"><i class="fas fa-sticky-note me-1 text-warning"></i>Ghi chú / Chú thích trạng thái (Hiển thị ngay bên dưới trạng thái):</label>
+                        <textarea name="status_note" class="form-control" rows="2" placeholder="Nhập ghi chú hoặc chú thích cho trạng thái này...">{{ $order->status_note }}</textarea>
                     </div>
                 </form>
             </div>

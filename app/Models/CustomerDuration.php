@@ -19,11 +19,14 @@ class CustomerDuration extends Model
         'total_duration',
         'start_date',
         'expiry_date',
+        'is_completed',
+        'admin_note',
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'expiry_date' => 'datetime',
+        'is_completed' => 'boolean',
     ];
 
     // Relationships
@@ -45,28 +48,40 @@ class CustomerDuration extends Model
     // Scopes
     public function scopeActive($query)
     {
-        return $query->where(function ($q) {
-            $q->whereNull('expiry_date')
-              ->orWhere('expiry_date', '>', now()->addDays(3));
-        });
+        return $query->where('is_completed', false)
+            ->where(function ($q) {
+                $q->whereNull('expiry_date')
+                  ->orWhere('expiry_date', '>', now()->addDays(3));
+            });
     }
 
     public function scopeExpiring($query)
     {
-        return $query->whereNotNull('expiry_date')
+        return $query->where('is_completed', false)
+            ->whereNotNull('expiry_date')
             ->where('expiry_date', '>=', now()->startOfDay())
             ->where('expiry_date', '<=', now()->addDays(3)->endOfDay());
     }
 
     public function scopeExpired($query)
     {
-        return $query->whereNotNull('expiry_date')
+        return $query->where('is_completed', false)
+            ->whereNotNull('expiry_date')
             ->where('expiry_date', '<', now()->startOfDay());
+    }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where('is_completed', true);
     }
 
     // Accessors
     public function getStatusAttribute()
     {
+        if ($this->is_completed) {
+            return 'completed';
+        }
+
         if (is_null($this->expiry_date)) {
             return 'active';
         }
@@ -89,6 +104,9 @@ class CustomerDuration extends Model
     public function getStatusLabelAttribute()
     {
         $status = $this->status;
+        if ($status === 'completed') {
+            return 'Đã hoàn thành';
+        }
         if ($status === 'expired') {
             return 'Đã hết hạn';
         }
@@ -101,6 +119,9 @@ class CustomerDuration extends Model
     public function getStatusColorAttribute()
     {
         $status = $this->status;
+        if ($status === 'completed') {
+            return 'secondary';
+        }
         if ($status === 'expired') {
             return 'danger';
         }
@@ -112,6 +133,10 @@ class CustomerDuration extends Model
 
     public function getRemainingTimeAttribute()
     {
+        if ($this->is_completed) {
+            return 'Đã hoàn thành';
+        }
+
         if (is_null($this->expiry_date)) {
             return 'Chưa thiết lập';
         }

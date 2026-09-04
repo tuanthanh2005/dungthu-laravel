@@ -15,7 +15,15 @@ class AdminCouponController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Coupon::with(['user', 'order'])->latest();
+        // Filter base query to exclude coupons assigned to admin roles
+        $baseQuery = Coupon::where(function ($q) {
+            $q->whereNull('user_id')
+              ->orWhereHas('user', function ($uq) {
+                  $uq->whereNotIn('role', ['sieusuperadmin', 'superadmin_1', 'admin']);
+              });
+        });
+
+        $query = (clone $baseQuery)->with(['user', 'order'])->latest();
 
         // Search filter (code or assigned user name/email)
         if ($request->filled('search')) {
@@ -45,11 +53,11 @@ class AdminCouponController extends Controller
 
         $coupons = $query->paginate(15)->withQueryString();
 
-        // Stats summary
-        $totalCoupons = Coupon::count();
-        $unusedCoupons = Coupon::where('is_used', false)->count();
-        $usedCoupons = Coupon::where('is_used', true)->count();
-        $totalValue = Coupon::sum('value');
+        // Stats summary (filtered to exclude admin coupons)
+        $totalCoupons = (clone $baseQuery)->count();
+        $unusedCoupons = (clone $baseQuery)->where('is_used', false)->count();
+        $usedCoupons = (clone $baseQuery)->where('is_used', true)->count();
+        $totalValue = (clone $baseQuery)->sum('value');
 
         // Top customers filter / list (Users with most completed orders, excluding Admin roles)
         $topCustomers = User::whereNotIn('role', ['sieusuperadmin', 'superadmin_1', 'admin'])

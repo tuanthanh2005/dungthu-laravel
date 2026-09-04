@@ -598,6 +598,58 @@
                     </div>
                 </div>
 
+                {{-- Cấu hình Gemini AI --}}
+                <div class="settings-header mt-5">
+                    <h2><i class="fas fa-robot me-2" style="color: #8b5cf6;"></i>Cấu hình Gemini AI (Auto Blog Bán Hàng)</h2>
+                    <p class="text-muted mb-0">Cấu hình API Key và Model mặc định để tự động tạo bài viết blog chuẩn SEO & bán hàng bằng Google Gemini AI.</p>
+                </div>
+
+                <div class="row mb-4">
+                    {{-- Gemini API Key --}}
+                    <div class="col-md-7 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-purple mb-2" style="color: #7c3aed;">
+                                <i class="fas fa-key me-1"></i> Gemini API Key
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #8b5cf6;"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control border-start-0 border-end-0 ps-0" id="gemini_api_key_input" name="gemini_api_key" 
+                                       value="{{ \App\Models\SiteSetting::getValue('gemini_api_key', '') }}" 
+                                       placeholder="AIzaSy...">
+                                <button class="btn btn-outline-secondary bg-white border-start-0" type="button" onclick="toggleGeminiKeyVisibility()">
+                                    <i class="fas fa-eye" id="gemini_eye_icon"></i>
+                                </button>
+                            </div>
+                            <div class="form-text mt-2 text-muted">
+                                <i class="fas fa-info-circle me-1"></i> Lấy API Key miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" class="fw-bold text-primary">Google AI Studio <i class="fas fa-external-link-alt small"></i></a>. Nếu để trống, hệ thống sẽ ưu tiên dùng <code>GEMINI_API_KEY</code> trong file <code>.env</code>.
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Model Mặc Định --}}
+                    <div class="col-md-5 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-purple mb-2" style="color: #7c3aed;">
+                                <i class="fas fa-microchip me-1"></i> Model Gemini Mặc Định
+                            </label>
+                            @php
+                                $currentModel = \App\Models\SiteSetting::getValue('gemini_default_model', 'gemini-2.0-flash');
+                            @endphp
+                            <select name="gemini_default_model" class="form-select border-2">
+                                <option value="gemini-2.0-flash" {{ $currentModel == 'gemini-2.0-flash' ? 'selected' : '' }}>Gemini 2.0 Flash (Nhanh & Mới nhất - Khuyên dùng)</option>
+                                <option value="gemini-1.5-flash" {{ $currentModel == 'gemini-1.5-flash' ? 'selected' : '' }}>Gemini 1.5 Flash (Tốc độ cao)</option>
+                                <option value="gemini-1.5-pro" {{ $currentModel == 'gemini-1.5-pro' ? 'selected' : '' }}>Gemini 1.5 Pro (Sâu sắc & Chi tiết)</option>
+                                <option value="gemini-2.0-flash-lite" {{ $currentModel == 'gemini-2.0-flash-lite' ? 'selected' : '' }}>Gemini 2.0 Flash Lite</option>
+                                <option value="gemini-3.1-flash-lite" {{ $currentModel == 'gemini-3.1-flash-lite' ? 'selected' : '' }}>Gemini 3.1 Flash-Lite</option>
+                                <option value="gemini-3.5-flash" {{ $currentModel == 'gemini-3.5-flash' ? 'selected' : '' }}>Gemini 3.5 Flash</option>
+                            </select>
+                            <div class="form-text mt-2 text-muted">
+                                Dòng Model mặc định khi nhấn nút viết bài tự động bằng AI.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-center mt-4">
                     <button type="submit" class="save-btn">
                         <i class="fas fa-save me-2"></i>Lưu thay đổi
@@ -655,6 +707,19 @@
             </div>
         `;
         container.appendChild(row);
+    }
+    function toggleGeminiKeyVisibility() {
+        const input = document.getElementById('gemini_api_key_input');
+        const icon = document.getElementById('gemini_eye_icon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
     }
 </script>
 @endpush

@@ -24,6 +24,7 @@ use App\Mail\AbandonedCartReminder;
 use App\Helpers\TelegramHelper;
 use App\Helpers\PathHelper;
 use App\Services\GoogleIndexingService;
+use App\Services\GeminiBlogService;
 
 class AdminController extends Controller
 {
@@ -1604,6 +1605,62 @@ class AdminController extends Controller
         return redirect()->route('admin.blogs')->with('success', 'Thêm bài viết thành công!');
     }
 
+    /**
+     * Tạo bài viết tự động bằng Gemini AI
+     */
+    public function generateBlogAI(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'model' => 'nullable|string',
+            'api_key' => 'nullable|string',
+            'tone' => 'nullable|string',
+        ], [
+            'title.required' => 'Vui lòng nhập tiêu đề bài viết để AI phân tích và tự động viết!',
+        ]);
+
+        try {
+            $service = new GeminiBlogService();
+            $result = $service->generateBlogPost(
+                $request->input('title'),
+                $request->input('model', 'gemini-2.0-flash'),
+                $request->input('api_key'),
+                $request->input('tone', 'sales')
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo bài viết tự động thành công!',
+                'data' => $result,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
+     * Lưu nhanh Gemini API Key vào SiteSetting
+     */
+    public function saveGeminiKey(Request $request)
+    {
+        $request->validate([
+            'api_key' => 'required|string',
+        ]);
+
+        SiteSetting::setValue('gemini_api_key', trim($request->input('api_key')));
+        if ($request->filled('default_model')) {
+            SiteSetting::setValue('gemini_default_model', trim($request->input('default_model')));
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã lưu Gemini API Key thành công!',
+        ]);
+    }
+
     public function editBlog(Blog $blog)
     {
         $this->ensureBlogOwnership($blog);
@@ -1793,7 +1850,9 @@ class AdminController extends Controller
             'support_telegram_link',
             'support_telegram_username',
             'support_phone',
-            'support_email'
+            'support_email',
+            'gemini_api_key',
+            'gemini_default_model',
         ];
         foreach ($settingsKeys as $key) {
             if ($request->has($key)) {

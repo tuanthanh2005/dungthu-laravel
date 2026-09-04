@@ -312,6 +312,8 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/blogs', [AdminController::class, 'blogs'])->name('admin.blogs');
     Route::get('/blogs/create', [AdminController::class, 'createBlog'])->name('admin.blogs.create');
     Route::post('/blogs', [AdminController::class, 'storeBlog'])->name('admin.blogs.store');
+    Route::post('/blogs/generate-ai', [AdminController::class, 'generateBlogAI'])->name('admin.blogs.generate_ai');
+    Route::post('/blogs/save-gemini-key', [AdminController::class, 'saveGeminiKey'])->name('admin.blogs.save_gemini_key');
     Route::get('/blogs/{blog}/edit', [AdminController::class, 'editBlog'])->name('admin.blogs.edit');
     Route::put('/blogs/{blog}', [AdminController::class, 'updateBlog'])->name('admin.blogs.update');
     Route::delete('/blogs/{blog}', [AdminController::class, 'deleteBlog'])->name('admin.blogs.delete');

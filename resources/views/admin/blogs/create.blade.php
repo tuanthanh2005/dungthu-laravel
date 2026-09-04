@@ -95,12 +95,15 @@
                 <!-- Tiêu đề -->
                 <div class="mb-4">
                     <label for="title" class="form-label">
-                        <i class="fas fa-heading me-2"></i>Tiêu đề bài viết
+                        <i class="fas fa-heading me-2"></i>Tiêu đề bài viết <span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control" id="title" name="title" 
                            value="{{ old('title') }}" required 
                            placeholder="Nhập tiêu đề bài viết...">
                 </div>
+
+                <!-- Trợ lý Gemini AI Viết bài -->
+                @include('admin.blogs._ai_generator')
 
                 <!-- Mô tả ngắn -->
                 <div class="mb-4">

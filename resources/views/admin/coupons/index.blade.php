@@ -61,39 +61,22 @@
                 </div>
                 <div class="rounded-circle bg-warning bg-opacity-10 p-3 text-warning">
                     <i class="fas fa-coins fs-4"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Filter & Search Bar --}}
-    <div class="card border-0 shadow-sm rounded-3 mb-4">
-        <div class="card-body p-3">
-            <form action="{{ route('admin.coupons.index') }}" method="GET" class="row g-2 align-items-center">
-                <div class="col-md-5">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                        <input type="text" name="search" class="form-control bg-light border-start-0" placeholder="Tìm theo mã voucher, tên người dùng, email..." value="{{ request('search') }}">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <select name="status" class="form-select bg-light" onchange="this.form.submit()">
-                        <option value="">-- Tất cả trạng thái --</option>
-                        <option value="unused" {{ request('status') === 'unused' ? 'selected' : '' }}>Chưa sử dụng (Khả dụng)</option>
-                        <option value="used" {{ request('status') === 'used' ? 'selected' : '' }}>Đã sử dụng</option>
-                        <option value="assigned" {{ request('status') === 'assigned' ? 'selected' : '' }}>Đã gán riêng người dùng</option>
-                        <option value="unassigned" {{ request('status') === 'unassigned' ? 'selected' : '' }}>Chưa gán (Áp dụng chung)</option>
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary fw-bold flex-grow-1"><i class="fas fa-filter me-1"></i> Lọc</button>
-                    @if(request()->hasAny(['search', 'status']))
-                        <a href="{{ route('admin.coupons.index') }}" class="btn btn-light border" title="Xóa lọc"><i class="fas fa-undo"></i></a>
-                    @endif
-                </div>
-            </form>
-        </div>
-    </div>
+                </    {{-- Nav Tabs --}}
+    <ul class="nav nav-pills mb-3 gap-2" id="couponTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold rounded-pill px-4" id="coupons-list-tab" data-bs-toggle="tab" data-bs-target="#coupons-list-pane" type="button" role="tab" aria-controls="coupons-list-pane" aria-selected="true">
+                <i class="fas fa-list me-1.5"></i> Danh Sách Mã Voucher
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold rounded-pill px-4 text-danger border border-danger border-opacity-25 bg-white position-relative" id="top-customers-tab" data-bs-toggle="tab" data-bs-target="#top-customers-pane" type="button" role="tab" aria-controls="top-customers-pane" aria-selected="false">
+                <i class="fas fa-crown text-warning me-1.5"></i> Top Khách Đặt Đơn Nhiều (Gán Lộc)
+                @if(isset($topCustomers) && $topCustomers->count() > 0)
+                    <span class="badge bg-danger rounded-pill ms-1.5">{{ $topCustomers->count() }}</span>
+                @endif
+            </button>
+        </li>
+    </ul>
 
     {{-- Alert Success / Errors --}}
     @if(session('success'))
@@ -114,104 +97,226 @@
         </div>
     @endif
 
-    {{-- Main Table --}}
-    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-3" style="width: 60px;">ID</th>
-                        <th>Mã Voucher</th>
-                        <th>Giá Trị Giảm</th>
-                        <th>Người Được Gán (User)</th>
-                        <th>Trạng Thái</th>
-                        <th>Ngày Tạo</th>
-                        <th>Ngày Sử Dụng</th>
-                        <th class="text-end pe-3" style="width: 140px;">Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($coupons as $coupon)
-                        <tr>
-                            <td class="ps-3 fw-bold text-muted">#{{ $coupon->id }}</td>
-                            <td>
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 fs-6 font-monospace fw-bold user-select-all cursor-pointer" 
-                                      onclick="navigator.clipboard.writeText('{{ $coupon->code }}'); alert('Đã sao chép: {{ $coupon->code }}');"
-                                      title="Bấm để sao chép mã">
-                                    <i class="fas fa-copy me-1 opacity-75"></i>{{ $coupon->code }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="fw-extrabold text-danger fs-6">-{{ number_format($coupon->value, 0, ',', '.') }}đ</span>
-                            </td>
-                            <td>
-                                @if($coupon->user)
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 13px;">
-                                            {{ strtoupper(substr($coupon->user->name, 0, 1)) }}
+    <div class="tab-content" id="couponTabsContent">
+        {{-- Tab 1: Danh sách Mã Voucher --}}
+        <div class="tab-pane fade show active" id="coupons-list-pane" role="tabpanel" aria-labelledby="coupons-list-tab">
+            {{-- Filter & Search Bar --}}
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-3">
+                    <form action="{{ route('admin.coupons.index') }}" method="GET" class="row g-2 align-items-center">
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                                <input type="text" name="search" class="form-control bg-light border-start-0" placeholder="Tìm theo mã voucher, tên người dùng, email..." value="{{ request('search') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="status" class="form-select bg-light" onchange="this.form.submit()">
+                                <option value="">-- Tất cả trạng thái --</option>
+                                <option value="unused" {{ request('status') === 'unused' ? 'selected' : '' }}>Chưa sử dụng (Khả dụng)</option>
+                                <option value="used" {{ request('status') === 'used' ? 'selected' : '' }}>Đã sử dụng</option>
+                                <option value="assigned" {{ request('status') === 'assigned' ? 'selected' : '' }}>Đã gán riêng người dùng</option>
+                                <option value="unassigned" {{ request('status') === 'unassigned' ? 'selected' : '' }}>Chưa gán (Áp dụng chung)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary fw-bold flex-grow-1"><i class="fas fa-filter me-1"></i> Lọc</button>
+                            @if(request()->hasAny(['search', 'status']))
+                                <a href="{{ route('admin.coupons.index') }}" class="btn btn-light border" title="Xóa lọc"><i class="fas fa-undo"></i></a>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- Main Table --}}
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3" style="width: 60px;">ID</th>
+                                <th>Mã Voucher</th>
+                                <th>Giá Trị Giảm</th>
+                                <th>Người Được Gán (User)</th>
+                                <th>Trạng Thái</th>
+                                <th>Ngày Tạo</th>
+                                <th>Ngày Sử Dụng</th>
+                                <th class="text-end pe-3" style="width: 140px;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($coupons as $coupon)
+                                <tr>
+                                    <td class="ps-3 fw-bold text-muted">#{{ $coupon->id }}</td>
+                                    <td>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 fs-6 font-monospace fw-bold user-select-all cursor-pointer" 
+                                              onclick="navigator.clipboard.writeText('{{ $coupon->code }}'); alert('Đã sao chép: {{ $coupon->code }}');"
+                                              title="Bấm để sao chép mã">
+                                            <i class="fas fa-copy me-1 opacity-75"></i>{{ $coupon->code }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-extrabold text-danger fs-6">-{{ number_format($coupon->value, 0, ',', '.') }}đ</span>
+                                    </td>
+                                    <td>
+                                        @if($coupon->user)
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 13px;">
+                                                    {{ strtoupper(substr($coupon->user->name, 0, 1)) }}
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark mb-0 style-sm">{{ $coupon->user->name }}</div>
+                                                    <div class="text-muted" style="font-size: 11.5px;">{{ $coupon->user->email }}</div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span class="badge bg-light text-secondary border px-2 py-1" style="font-weight: 500;">
+                                                <i class="fas fa-globe me-1"></i> Áp dụng tất cả
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($coupon->is_used)
+                                            <span class="badge bg-secondary px-2.5 py-1.5"><i class="fas fa-check-double me-1"></i> Đã sử dụng</span>
+                                        @else
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1.5 fw-bold"><i class="fas fa-bolt me-1"></i> Khả dụng</span>
+                                        @endif
+                                    </td>
+                                    <td class="small text-muted">
+                                        {{ $coupon->created_at ? $coupon->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') : '-' }}
+                                    </td>
+                                    <td class="small text-muted">
+                                        @if($coupon->is_used && $coupon->used_at)
+                                            {{ $coupon->used_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}
+                                            @if($coupon->order)
+                                                <div style="font-size: 11px;"><a href="{{ route('admin.orders') }}?search={{ $coupon->order->order_code }}" target="_blank">Đơn #{{ $coupon->order->order_code }}</a></div>
+                                            @endif
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-end pe-3">
+                                        <div class="d-inline-flex gap-1">
+                                            {{-- Button Gán User --}}
+                                            <button type="button" class="btn btn-sm btn-light border text-info" 
+                                                    onclick="openAssignUserModal({{ $coupon->id }}, '{{ $coupon->code }}', '{{ $coupon->user ? $coupon->user->id : '' }}', '{{ $coupon->user ? addslashes($coupon->user->name . ' (' . $coupon->user->email . ')') : '' }}')" 
+                                                    title="Gán người dùng">
+                                                <i class="fas fa-user-tag"></i>
+                                            </button>
+                                            {{-- Button Xóa --}}
+                                            <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa mã voucher {{ $coupon->code }} không?');" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-light border text-danger" title="Xóa voucher">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
                                         </div>
-                                        <div>
-                                            <div class="fw-bold text-dark mb-0 style-sm">{{ $coupon->user->name }}</div>
-                                            <div class="text-muted" style="font-size: 11.5px;">{{ $coupon->user->email }}</div>
-                                        </div>
-                                    </div>
-                                @else
-                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-weight: 500;">
-                                        <i class="fas fa-globe me-1"></i> Áp dụng tất cả
-                                    </span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($coupon->is_used)
-                                    <span class="badge bg-secondary px-2.5 py-1.5"><i class="fas fa-check-double me-1"></i> Đã sử dụng</span>
-                                @else
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1.5 fw-bold"><i class="fas fa-bolt me-1"></i> Khả dụng</span>
-                                @endif
-                            </td>
-                            <td class="small text-muted">
-                                {{ $coupon->created_at ? $coupon->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') : '-' }}
-                            </td>
-                            <td class="small text-muted">
-                                @if($coupon->is_used && $coupon->used_at)
-                                    {{ $coupon->used_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}
-                                    @if($coupon->order)
-                                        <div style="font-size: 11px;"><a href="{{ route('admin.orders') }}?search={{ $coupon->order->order_code }}" target="_blank">Đơn #{{ $coupon->order->order_code }}</a></div>
-                                    @endif
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </td>
-                            <td class="text-end pe-3">
-                                <div class="d-inline-flex gap-1">
-                                    {{-- Button Gán User --}}
-                                    <button type="button" class="btn btn-sm btn-light border text-info" 
-                                            onclick="openAssignUserModal({{ $coupon->id }}, '{{ $coupon->code }}', '{{ $coupon->user ? $coupon->user->id : '' }}', '{{ $coupon->user ? addslashes($coupon->user->name . ' (' . $coupon->user->email . ')') : '' }}')" 
-                                            title="Gán người dùng">
-                                        <i class="fas fa-user-tag"></i>
-                                    </button>
-                                    {{-- Button Xóa --}}
-                                    <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa mã voucher {{ $coupon->code }} không?');" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-light border text-danger" title="Xóa voucher">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <i class="fas fa-ticket-alt fa-3x mb-3 text-secondary opacity-50"></i>
-                                <div>Chưa có mã voucher nào phù hợp.</div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <i class="fas fa-ticket-alt fa-3x mb-3 text-secondary opacity-50"></i>
+                                        <div>Chưa có mã voucher nào phù hợp.</div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                
+                @if($coupons->hasPages())
+                    <div class="card-footer bg-white border-0 py-3">
+                        {{ $coupons->links() }}
+                    </div>
+                @endif
+            </div>
         </div>
-        
+
+        {{-- Tab 2: Top Khách Hàng Đặt Đơn Nhiều (Gán Voucher Lộc) --}}
+        <div class="tab-pane fade" id="top-customers-pane" role="tabpanel" aria-labelledby="top-customers-tab">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-white py-3 px-4 d-flex align-items-center justify-content-between border-0">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                            <i class="fas fa-trophy text-warning"></i> Top Khách Hàng Đặt Đơn Nhiều Nhất
+                        </h5>
+                        <p class="text-muted small mb-0">Danh sách tự động xếp hạng khách hàng theo số đơn hoàn thành để Admin tặng Lộc Voucher</p>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4" style="width: 70px;">Hạng</th>
+                                <th>Khách Hàng</th>
+                                <th>Email & SĐT</th>
+                                <th class="text-center">Đơn Hoàn Thành</th>
+                                <th class="text-end">Tổng Chi Tiêu</th>
+                                <th class="text-end pe-4" style="width: 170px;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($topCustomers as $index => $customer)
+                                <tr>
+                                    <td class="ps-4 fw-bold">
+                                        @if($index == 0)
+                                            <span class="badge bg-warning text-dark px-2.5 py-1.5 fs-6"><i class="fas fa-crown me-1"></i> #1</span>
+                                        @elseif($index == 1)
+                                            <span class="badge bg-secondary text-white px-2.5 py-1.5 fs-6"><i class="fas fa-medal me-1"></i> #2</span>
+                                        @elseif($index == 2)
+                                            <span class="badge bg-danger bg-opacity-75 text-white px-2.5 py-1.5 fs-6"><i class="fas fa-award me-1"></i> #3</span>
+                                        @else
+                                            <span class="badge bg-light text-muted border px-2.5 py-1.5 fs-6">#{{ $index + 1 }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2.5">
+                                            <div class="rounded-circle bg-danger bg-opacity-10 text-danger fw-bold d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 14px;">
+                                                {{ strtoupper(substr($customer->name, 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark mb-0">{{ $customer->name }}</div>
+                                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25" style="font-size: 10px;">ID: #{{ $customer->id }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-medium text-dark small">{{ $customer->email }}</div>
+                                        <div class="text-muted" style="font-size: 11.5px;">{{ $customer->phone ?? 'Chưa có SĐT' }}</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1.5 fs-6 fw-bold">
+                                            <i class="fas fa-shopping-bag me-1"></i> {{ number_format($customer->orders_count) }} đơn
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong class="text-danger fs-6">{{ number_format($customer->orders_sum_total_amount ?? 0, 0, ',', '.') }}đ</strong>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button type="button" class="btn btn-sm btn-danger fw-bold rounded-pill px-3 shadow-sm"
+                                                onclick="giftCouponToUser({{ $customer->id }}, '{{ addslashes($customer->name) }}', '{{ addslashes($customer->email) }}')"
+                                                title="Tặng voucher cho khách hàng này">
+                                            <i class="fas fa-gift me-1"></i> Tặng Voucher
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="fas fa-users-slash fa-3x mb-3 text-secondary opacity-50"></i>
+                                        <div>Chưa có dữ liệu khách hàng hoàn thành đơn hàng.</div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>  
         @if($coupons->hasPages())
             <div class="card-footer bg-white border-0 py-3">
                 {{ $coupons->links() }}
@@ -438,6 +543,13 @@
         }
 
         const modalEl = document.getElementById('assignUserModal');
+        const bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        bsModal.show();
+    }
+
+    function giftCouponToUser(userId, userName, userEmail) {
+        selectUser('create', userId, `${userName} (${userEmail})`);
+        const modalEl = document.getElementById('createCouponModal');
         const bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
         bsModal.show();
     }

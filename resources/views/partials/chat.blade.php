@@ -1149,10 +1149,13 @@
                             </a>
                         </div>
                     @empty
-                        <div class="text-center py-4 text-muted">
+                        <div class="text-center py-4 text-muted px-3">
                             <i class="fas fa-box-open fa-3x mb-2 text-secondary opacity-50"></i>
-                            <h6 class="fw-bold text-dark mb-1">Hiện bạn chưa có voucher riêng nào</h6>
-                            <p class="small text-muted mb-0">Hãy theo dõi các chương trình ưu đãi hoặc liên hệ Admin để nhận quà nhé!</p>
+                            <h6 class="fw-bold text-dark mb-1">Bạn chưa có voucher riêng nào</h6>
+                            <p class="small text-muted mb-0" style="line-height: 1.5;">
+                                Bạn hãy hoàn thành 1 đơn hàng và dùng vé xoay may mắn nhận voucher.<br>
+                                Voucher Admin sẽ tặng ngẫu nhiên cho khách hàng đặt đơn nhiều!
+                            </p>
                         </div>
                     @endforelse
                 @else

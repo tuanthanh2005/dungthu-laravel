@@ -51,12 +51,26 @@ class AdminCouponController extends Controller
         $usedCoupons = Coupon::where('is_used', true)->count();
         $totalValue = Coupon::sum('value');
 
+        // Top customers filter / list (Users with most completed orders)
+        $topCustomers = User::withCount(['orders' => function ($q) {
+            $q->where('status', 'completed');
+        }])
+        ->withSum(['orders' => function ($q) {
+            $q->where('status', 'completed');
+        }], 'total_amount')
+        ->having('orders_count', '>', 0)
+        ->orderByDesc('orders_count')
+        ->orderByDesc('orders_sum_total_amount')
+        ->take(15)
+        ->get();
+
         return view('admin.coupons.index', compact(
             'coupons',
             'totalCoupons',
             'unusedCoupons',
             'usedCoupons',
-            'totalValue'
+            'totalValue',
+            'topCustomers'
         ));
     }
 

@@ -23,56 +23,71 @@
             <div class="modal-body p-3 p-sm-4" style="background-color: #f8fafc;">
                 
                 {{-- Box 1: Email --}}
-                <div class="p-3 bg-white rounded-3 shadow-sm border border-1 mb-3" style="border-color: #fecdd3 !important; border-left: 4px solid #f43f5e !important;">
+                <div class="p-3 bg-white rounded-3 shadow-sm border border-1 mb-2.5" style="border-color: #fecdd3 !important; border-left: 4px solid #f43f5e !important;">
                     <div class="d-flex align-items-start gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; background-color: #fff1f2;">
-                            <i class="fas fa-envelope-open-text text-danger" style="font-size: 18px;"></i>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px; background-color: #fff1f2;">
+                            <i class="fas fa-envelope-open-text text-danger" style="font-size: 17px;"></i>
                         </div>
                         <div>
-                            <h6 class="fw-bold text-dark mb-1" style="font-size: 14px;">
+                            <h6 class="fw-bold text-dark mb-1" style="font-size: 13.5px;">
                                 {{ __('Giao Hàng Qua Email') }}
                             </h6>
-                            <p class="text-secondary mb-0" style="font-size: 13px; line-height: 1.5;">
+                            <p class="text-secondary mb-0" style="font-size: 12.5px; line-height: 1.45;">
                                 {{ __('Khi thanh toán đơn hàng sẽ được giao qua email của bạn.') }}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {{-- Box 2 & 3 Container --}}
-                <div class="d-flex flex-column gap-2.5 text-start">
+                {{-- Box 2, 3 & 4 Container --}}
+                <div class="d-flex flex-column gap-2 text-start">
                     
                     {{-- Box 2: Zalo --}}
-                    <div class="p-3 bg-white rounded-3 shadow-sm border border-1 d-flex align-items-center justify-content-between gap-2" style="border-color: #bae6fd !important; border-left: 4px solid #0284c7 !important;">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px; background-color: #e0f2fe;">
-                                <i class="fas fa-comments text-info" style="font-size: 16px;"></i>
+                    <div class="p-2.5 px-3 bg-white rounded-3 shadow-sm border border-1 d-flex align-items-center justify-content-between gap-2" style="border-color: #bae6fd !important; border-left: 4px solid #0284c7 !important;">
+                        <div class="d-flex align-items-center gap-2.5">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #e0f2fe;">
+                                <i class="fas fa-comments text-info" style="font-size: 15px;"></i>
                             </div>
-                            <span class="text-dark fw-semibold" style="font-size: 13px; line-height: 1.45;">
+                            <span class="text-dark fw-semibold" style="font-size: 12.5px; line-height: 1.4;">
                                 {{ __('Liên hệ admin qua ZALO để được cấp nhanh hơn') }}
                             </span>
                         </div>
-                        <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-sm text-white fw-bold px-3 py-1.5 rounded-pill flex-shrink-0 d-inline-flex align-items-center gap-1 shadow-sm" style="background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%); font-size: 12px; border: none;">
-                            <i class="fas fa-paper-plane" style="font-size: 11px;"></i> Zalo
+                        <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="btn btn-sm text-white fw-bold px-2.5 py-1 rounded-pill flex-shrink-0 d-inline-flex align-items-center gap-1 shadow-sm" style="background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%); font-size: 11.5px; border: none;">
+                            <i class="fas fa-paper-plane" style="font-size: 10.5px;"></i> Zalo
                         </a>
                     </div>
 
-                    {{-- Box 3: Phone --}}
-                    <div class="p-3 bg-white rounded-3 shadow-sm border border-1 d-flex align-items-center justify-content-between gap-2" style="border-color: #bbf7d0 !important; border-left: 4px solid #16a34a !important;">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px; background-color: #dcfce7;">
-                                <i class="fas fa-phone-alt text-success" style="font-size: 16px;"></i>
+                    {{-- Box 3: Telegram --}}
+                    <div class="p-2.5 px-3 bg-white rounded-3 shadow-sm border border-1 d-flex align-items-center justify-content-between gap-2" style="border-color: #93c5fd !important; border-left: 4px solid #0088cc !important;">
+                        <div class="d-flex align-items-center gap-2.5">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #f0f9ff;">
+                                <i class="fab fa-telegram-plane" style="font-size: 16px; color: #0088cc;"></i>
                             </div>
-                            <div class="text-dark" style="font-size: 13px; line-height: 1.45;">
-                                <div class="fw-medium text-secondary" style="font-size: 12.5px;">{{ __('Gọi Điện hoặc Cuộc Gọi Nhỡ Cho ADMIN:') }}</div>
-                                <div class="d-flex align-items-center gap-2 mt-1">
-                                    <strong class="text-danger fw-extrabold" style="font-size: 15px; letter-spacing: 0.5px;">0772698113</strong>
-                                    <span class="badge bg-danger text-white px-2 py-0.5" style="font-size: 10.5px; font-weight: 600; border-radius: 6px;">{{ __('hỗ trợ siêu nhanh') }}</span>
+                            <span class="text-dark fw-semibold" style="font-size: 12.5px; line-height: 1.4;">
+                                {{ __('Liên hệ admin qua TELEGRAM để được cấp nhanh hơn') }}
+                            </span>
+                        </div>
+                        <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" class="btn btn-sm text-white fw-bold px-2.5 py-1 rounded-pill flex-shrink-0 d-inline-flex align-items-center gap-1 shadow-sm" style="background: linear-gradient(135deg, #0088cc 0%, #24a1de 100%); font-size: 11.5px; border: none;">
+                            <i class="fab fa-telegram-plane" style="font-size: 11px;"></i> Telegram
+                        </a>
+                    </div>
+
+                    {{-- Box 4: Phone --}}
+                    <div class="p-2.5 px-3 bg-white rounded-3 shadow-sm border border-1 d-flex align-items-center justify-content-between gap-2" style="border-color: #bbf7d0 !important; border-left: 4px solid #16a34a !important;">
+                        <div class="d-flex align-items-center gap-2.5">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px; background-color: #dcfce7;">
+                                <i class="fas fa-phone-alt text-success" style="font-size: 15px;"></i>
+                            </div>
+                            <div class="text-dark" style="font-size: 12.5px; line-height: 1.4;">
+                                <div class="fw-medium text-secondary" style="font-size: 12px;">{{ __('Gọi Điện hoặc Cuộc Gọi Nhỡ Cho ADMIN:') }}</div>
+                                <div class="d-flex align-items-center gap-1.5 mt-0.5">
+                                    <strong class="text-danger fw-extrabold" style="font-size: 14px; letter-spacing: 0.3px;">{{ \App\Helpers\SupportHelper::getPhone() }}</strong>
+                                    <span class="badge bg-danger text-white px-1.5 py-0.5" style="font-size: 10px; font-weight: 600; border-radius: 4px;">{{ __('hỗ trợ siêu nhanh') }}</span>
                                 </div>
                             </div>
                         </div>
-                        <a href="tel:0772698113" class="btn btn-sm text-white fw-bold px-3 py-1.5 rounded-pill flex-shrink-0 d-inline-flex align-items-center gap-1 shadow-sm me-0" style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); font-size: 12px; border: none;">
-                            <i class="fas fa-phone" style="font-size: 11px;"></i> Gọi
+                        <a href="tel:{{ \App\Helpers\SupportHelper::getPhone() }}" class="btn btn-sm text-white fw-bold px-2.5 py-1 rounded-pill flex-shrink-0 d-inline-flex align-items-center gap-1 shadow-sm me-0" style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); font-size: 11.5px; border: none;">
+                            <i class="fas fa-phone" style="font-size: 10.5px;"></i> Gọi
                         </a>
                     </div>
 

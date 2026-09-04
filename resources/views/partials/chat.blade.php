@@ -1445,8 +1445,8 @@
                 <i class="fas fa-phone-alt"></i>
             </div>
             <div class="popover-item-info">
-                <div class="popover-item-title">Gọi Trực Tiếp</div>
-                <div class="popover-item-sub">Hotline 24/7 ({{ \App\Helpers\SupportHelper::getPhone() }})</div>
+                <div class="popover-item-title">{{ __('Gọi Trực Tiếp') }}</div>
+                <div class="popover-item-sub">{{ __('Hotline 24/7') }} ({{ \App\Helpers\SupportHelper::getPhone() }})</div>
             </div>
             <i class="fas fa-chevron-right popover-arrow"></i>
         </a>

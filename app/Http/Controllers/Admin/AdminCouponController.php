@@ -7,6 +7,8 @@ use App\Models\Coupon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VoucherGiftedMail;
 
 class AdminCouponController extends Controller
 {
@@ -102,8 +104,9 @@ class AdminCouponController extends Controller
         $userId = $request->filled('user_id') ? (int) $request->user_id : null;
 
         $createdCount = 0;
+        $createdCoupons = [];
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($quantity, $value, $userId, $request, &$createdCount) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($quantity, $value, $userId, $request, &$createdCount, &$createdCoupons) {
             for ($i = 0; $i < $quantity; $i++) {
                 if ($quantity === 1 && $request->filled('code')) {
                     $code = strtoupper(trim($request->code));
@@ -114,16 +117,31 @@ class AdminCouponController extends Controller
                     }
                 }
 
-                Coupon::create([
+                $coupon = Coupon::create([
                     'code' => $code,
                     'value' => $value,
                     'user_id' => $userId,
                     'is_used' => false,
                 ]);
 
+                $createdCoupons[] = $coupon;
                 $createdCount++;
             }
         });
+
+        // Gửi email thông báo tặng Voucher cho người dùng
+        if ($userId && !empty($createdCoupons)) {
+            try {
+                $user = User::find($userId);
+                if ($user && $user->email) {
+                    foreach ($createdCoupons as $c) {
+                        Mail::to($user->email)->send(new VoucherGiftedMail($user, $c));
+                    }
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Lỗi gửi email voucher cho {$user->email}: " . $e->getMessage());
+            }
+        }
 
         return redirect()->back()->with('success', "Đã tạo thành công {$createdCount} mã voucher!");
     }
@@ -142,6 +160,18 @@ class AdminCouponController extends Controller
         $coupon->update([
             'user_id' => $userId,
         ]);
+
+        // Gửi email thông báo nếu gán cho 1 người dùng cụ thể
+        if ($userId) {
+            try {
+                $user = User::find($userId);
+                if ($user && $user->email) {
+                    Mail::to($user->email)->send(new VoucherGiftedMail($user, $coupon));
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Lỗi gửi email gán voucher cho {$user->email}: " . $e->getMessage());
+            }
+        }
 
         $userName = $userId ? User::find($userId)?->name : 'Áp dụng tất cả người dùng';
 

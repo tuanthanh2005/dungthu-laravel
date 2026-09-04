@@ -107,8 +107,16 @@ class AdminMiddleware
             }
         }
 
-        // 2. Bỏ qua nhập mã PIN nếu đã mở khóa Gate bảo mật
+        // 2. Bỏ qua nhập mã PIN nếu đã mở khóa Gate bảo mật hoặc gọi API AI trợ lý
         if (session('admin_unlocked') === true) {
+            return $next($request);
+        }
+
+        $exemptPinRoutes = [
+            'admin.blogs.generate_ai',
+            'admin.blogs.save_gemini_key',
+        ];
+        if ($routeName && in_array($routeName, $exemptPinRoutes, true)) {
             return $next($request);
         }
 

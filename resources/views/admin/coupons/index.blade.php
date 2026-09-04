@@ -61,7 +61,12 @@
                 </div>
                 <div class="rounded-circle bg-warning bg-opacity-10 p-3 text-warning">
                     <i class="fas fa-coins fs-4"></i>
-                </    {{-- Nav Tabs --}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Nav Tabs --}}
     <ul class="nav nav-pills mb-3 gap-2" id="couponTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active fw-bold rounded-pill px-4" id="coupons-list-tab" data-bs-toggle="tab" data-bs-target="#coupons-list-pane" type="button" role="tab" aria-controls="coupons-list-pane" aria-selected="true">
@@ -316,12 +321,6 @@
                 </div>
             </div>
         </div>
-    </div>  
-        @if($coupons->hasPages())
-            <div class="card-footer bg-white border-0 py-3">
-                {{ $coupons->links() }}
-            </div>
-        @endif
     </div>
 </div>
 

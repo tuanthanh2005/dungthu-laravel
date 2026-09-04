@@ -162,7 +162,7 @@
                                         </svg>
                                     </div>
                                     <div class="fw-bold text-dark mb-1 card-contact-title" style="font-size: 13.5px;">Zalo Admin</div>
-                                    <div class="text-muted mb-3 card-contact-sub" style="font-size: 11px;">Cấp nhanh qua Zalo</div>
+                                    <div class="text-muted mb-3 card-contact-sub" style="font-size: 11px;">{{ __('Cấp nhanh qua Zalo') }}</div>
                                 </div>
                                 <span class="btn btn-sm text-white fw-bold w-100 rounded-pill shadow-sm py-2 card-contact-btn" style="background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%); font-size: 11.5px; border: none;">
                                     <i class="fas fa-paper-plane me-1" style="font-size: 10px;"></i> {{ __('Chat Zalo') }}
@@ -180,7 +180,7 @@
                                         <i class="fab fa-telegram-plane" style="font-size: 18px; color: #0088cc;"></i>
                                     </div>
                                     <div class="fw-bold text-dark mb-1 card-contact-title" style="font-size: 13.5px;">Telegram Admin</div>
-                                    <div class="text-muted mb-3 card-contact-sub" style="font-size: 11px;">Cấp nhanh Telegram</div>
+                                    <div class="text-muted mb-3 card-contact-sub" style="font-size: 11px;">{{ __('Cấp nhanh Telegram') }}</div>
                                 </div>
                                 <span class="btn btn-sm text-white fw-bold w-100 rounded-pill shadow-sm py-2 card-contact-btn" style="background: linear-gradient(135deg, #0088cc 0%, #24a1de 100%); font-size: 11.5px; border: none;">
                                     <i class="fab fa-telegram-plane me-1" style="font-size: 10.5px;"></i> {{ __('Telegram') }}

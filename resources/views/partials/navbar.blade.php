@@ -137,6 +137,14 @@
 
         {{-- Right Actions --}}
         <div class="d-flex align-items-center gap-2 gap-sm-3">
+            {{-- Notification Bell Modal Trigger --}}
+            <button class="nav-icon-btn position-relative notification-bell-btn" type="button" data-bs-toggle="modal" data-bs-target="#spamWarningWelcomeModal" title="{{ __('Thông báo & Hỗ trợ') }}" aria-label="{{ __('Thông báo') }}">
+                <i class="fa-solid fa-bell text-warning" style="font-size: 1.15rem;"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm notification-pulse-badge" style="font-size: 10px; padding: 1.5px 5px; transform: translate(-45%, 15%) !important; line-height: 1;">
+                    !
+                </span>
+            </button>
+
             {{-- Language Switcher --}}
             <div class="dropdown">
                 <button class="nav-icon-btn d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;">
@@ -495,6 +503,35 @@
         max-width: 140px;
         opacity: 1;
         margin-left: 4px !important;
+    }
+    
+    /* Animation cho Icon Chuông lắc lắc & Badge ! nhấp nháy liên tục */
+    @keyframes bellBadgePulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); }
+        50% { transform: scale(1.25); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    @keyframes bellShakeContinuous {
+        0%, 100% { transform: rotate(0deg); }
+        10% { transform: rotate(18deg); }
+        20% { transform: rotate(-16deg); }
+        30% { transform: rotate(14deg); }
+        40% { transform: rotate(-12deg); }
+        50% { transform: rotate(8deg); }
+        60% { transform: rotate(-6deg); }
+        70% { transform: rotate(0deg); }
+    }
+    .notification-bell-btn .fa-bell {
+        animation: bellShakeContinuous 2s infinite ease-in-out;
+        transform-origin: top center;
+        display: inline-block;
+    }
+    .notification-pulse-badge {
+        animation: bellBadgePulse 1.3s infinite ease-in-out;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+        color: #ffffff !important;
+        font-weight: 900 !important;
+        border: 1.5px solid #ffffff;
     }
 </style>
 

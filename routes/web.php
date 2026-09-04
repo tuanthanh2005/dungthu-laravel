@@ -244,10 +244,14 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/users/{user}/history', [AdminController::class, 'userHistory'])->name('admin.users.history');
     Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
-    Route::post('/users/{user}/award-tickets', [AdminController::class, 'awardSpinTickets'])->name('admin.users.award-tickets');
     Route::post('/coupons/generate', [AdminController::class, 'generateCoupon'])->name('admin.coupons.generate');
     
-    // Online Users Management (Khách hàng đang xem)
+    // Coupon / Voucher Management (Exclusive to sieusuperadmin)
+    Route::get('/coupons', [\App\Http\Controllers\Admin\AdminCouponController::class, 'index'])->name('admin.coupons.index');
+    Route::post('/coupons', [\App\Http\Controllers\Admin\AdminCouponController::class, 'store'])->name('admin.coupons.store');
+    Route::delete('/coupons/{coupon}', [\App\Http\Controllers\Admin\AdminCouponController::class, 'destroy'])->name('admin.coupons.destroy');
+    Route::post('/coupons/{coupon}/assign', [\App\Http\Controllers\Admin\AdminCouponController::class, 'assignUser'])->name('admin.coupons.assign');
+    Route::get('/coupons/users-search', [\App\Http\Controllers\Admin\AdminCouponController::class, 'searchUsers'])->name('admin.coupons.users-search');
     Route::get('/online-users', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'index'])->name('admin.online-users.index');
     Route::get('/online-users/export', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'exportExcel'])->name('admin.online-users.export');
     Route::post('/online-users/{id}/kick', [\App\Http\Controllers\Admin\AdminOnlineUserController::class, 'kick'])->name('admin.online-users.kick');

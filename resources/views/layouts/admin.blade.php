@@ -209,6 +209,11 @@
             <span class="nav-icon"><i class="fas fa-users"></i></span>
             <span class="nav-text">Danh sách User</span>
         </a>
+        <a href="{{ route('admin.coupons.index') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.coupons*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-ticket-alt text-warning"></i></span>
+            <span class="nav-text">Quản lý Voucher</span>
+        </a>
         @endif
 
         @if(auth()->user()->role === 'superadmin_1')

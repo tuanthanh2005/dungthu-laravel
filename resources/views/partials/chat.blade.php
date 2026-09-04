@@ -89,6 +89,36 @@
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
 }
 
+@keyframes giftBoxWiggleContinuous {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    10% { transform: rotate(14deg) scale(1.08); }
+    20% { transform: rotate(-16deg) scale(1.08); }
+    30% { transform: rotate(14deg) scale(1.08); }
+    40% { transform: rotate(-12deg) scale(1.08); }
+    50% { transform: rotate(8deg) scale(1.05); }
+    60% { transform: rotate(-5deg) scale(1.02); }
+    70% { transform: rotate(0deg) scale(1); }
+}
+
+.gift-box-fab.is-wiggling {
+    animation: giftBoxWiggleContinuous 1.8s infinite ease-in-out;
+    box-shadow: 0 0 18px rgba(255, 65, 108, 0.7) !important;
+}
+
+.gift-box-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
 .chat-fab:hover::before {
     opacity: 0.8;
 }
@@ -1010,6 +1040,32 @@
 
 <div class="chat-fab-container">
 
+    @php
+        $userVouchers = collect();
+        $userVoucherCount = 0;
+        if (Auth::check()) {
+            $userVouchers = \App\Models\Coupon::where('user_id', Auth::id())
+                ->where('is_used', false)
+                ->latest()
+                ->get();
+            $userVoucherCount = $userVouchers->count();
+        }
+    @endphp
+
+    <!-- Floating Gift Box Button (Hộp Quà) nằm TRÊN 3 bong bóng chat -->
+    <button type="button" 
+            class="chat-fab gift-box-fab {{ $userVoucherCount > 0 ? 'is-wiggling' : '' }}" 
+            data-bs-toggle="modal" 
+            data-bs-target="#userVouchersModal" 
+            style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); border: none; text-decoration: none !important;" 
+            aria-label="{{ __('Kho Voucher của bạn') }}">
+        <i class="fas fa-gift fab-icon text-white" style="font-size: 22px;"></i>
+        @if($userVoucherCount > 0)
+            <span class="unread-badge gift-box-badge" style="display: flex; background: #ef4444; color: #ffffff; font-weight: 800;">{{ $userVoucherCount }}</span>
+        @endif
+        <span class="fab-tooltip">{{ __('Kho Voucher Khuyến Mãi') }}</span>
+    </button>
+
     <!-- Zalo Chat Button -->
     <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="chat-fab d-flex" style="background: #0068ff; text-decoration: none !important;" aria-label="{{ __('Liên hệ Zalo') }}">
         <div class="position-relative d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
@@ -1044,6 +1100,81 @@
         <span class="fab-tooltip">{{ __('Chat với Admin') }}</span>
     </button>
     @endif
+</div>
+
+<!-- Modal Kho Voucher Của Bạn -->
+<div class="modal fade" id="userVouchersModal" tabindex="-1" aria-labelledby="userVouchersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden; background: #ffffff;">
+            
+            {{-- Header --}}
+            <div class="modal-header border-0 text-white px-4 py-3 position-relative d-flex align-items-center justify-content-between" 
+                 style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);">
+                <div>
+                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2 mb-1" id="userVouchersModalLabel" style="font-size: 17px;">
+                        <i class="fas fa-gift text-warning"></i>
+                        {{ __('KHO VOUCHER CỦA BẠN') }}
+                    </h5>
+                    <div class="d-flex align-items-center gap-1.5 text-white-50" style="font-size: 11.5px;">
+                        <span class="text-white fw-medium">{{ __('Danh sách mã giảm giá ưu đãi dành riêng cho bạn') }}</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.9; filter: invert(1) brightness(2);"></button>
+            </div>
+
+            {{-- Body --}}
+            <div class="modal-body p-3.5 p-sm-4" style="background-color: #f8fafc; max-height: 440px; overflow-y: auto;">
+                @auth
+                    @forelse($userVouchers as $v)
+                        <div class="p-3 bg-white rounded-3 shadow-sm border border-danger border-opacity-25 mb-2.5 d-flex align-items-center justify-content-between gap-2" style="border-left: 4.5px solid #ff416c !important;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px; background: #fff1f2; color: #ff416c;">
+                                    <i class="fas fa-ticket-alt fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold text-dark font-monospace fs-6 text-uppercase">{{ $v->code }}</span>
+                                        <button class="btn btn-xs btn-outline-secondary px-1.5 py-0.5" onclick="navigator.clipboard.writeText('{{ $v->code }}'); alert('Đã sao chép: {{ $v->code }}');" title="Sao chép mã">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-danger fw-extrabold" style="font-size: 13.5px;">
+                                        Giảm {{ number_format($v->value, 0, ',', '.') }}đ
+                                    </div>
+                                    <div class="text-muted" style="font-size: 11px;">Mã riêng khả dụng cho tài khoản của bạn</div>
+                                </div>
+                            </div>
+                            <a href="{{ route('shop') }}" class="btn btn-sm text-white fw-bold px-3 py-1.5 rounded-pill shadow-sm flex-shrink-0" style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); font-size: 11.5px; border: none;">
+                                {{ __('Dùng ngay') }}
+                            </a>
+                        </div>
+                    @empty
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-box-open fa-3x mb-2 text-secondary opacity-50"></i>
+                            <h6 class="fw-bold text-dark mb-1">Hiện bạn chưa có voucher riêng nào</h6>
+                            <p class="small text-muted mb-0">Hãy theo dõi các chương trình ưu đãi hoặc liên hệ Admin để nhận quà nhé!</p>
+                        </div>
+                    @endforelse
+                @else
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-user-lock fa-3x mb-3 text-warning opacity-75"></i>
+                        <h6 class="fw-bold text-dark mb-1">Vui lòng đăng nhập</h6>
+                        <p class="small text-muted mb-3">Đăng nhập tài khoản để kiểm tra kho quà và mã giảm giá riêng của bạn.</p>
+                        <a href="{{ route('login') }}" class="btn btn-sm btn-primary fw-bold rounded-pill px-4">
+                            <i class="fas fa-sign-in-alt me-1"></i> Đăng Nhập Ngay
+                        </a>
+                    </div>
+                @endauth
+            </div>
+
+            {{-- Footer --}}
+            <div class="modal-footer border-0 p-3 bg-white d-flex align-items-center justify-content-end">
+                <button type="button" class="btn btn-sm btn-light border text-secondary px-4 rounded-pill" data-bs-dismiss="modal">
+                    {{ __('Đóng') }}
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 

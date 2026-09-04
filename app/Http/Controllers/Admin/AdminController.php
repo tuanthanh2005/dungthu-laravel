@@ -1610,6 +1610,14 @@ class AdminController extends Controller
      */
     public function generateBlogAI(Request $request)
     {
+        if ($request->filled('admin_pin')) {
+            $pin = (string) $request->input('admin_pin');
+            $expected = (string) config('admin.action_pin', '12112004');
+            if ($pin === $expected) {
+                session(['admin_unlocked' => true]);
+            }
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'model' => 'nullable|string',

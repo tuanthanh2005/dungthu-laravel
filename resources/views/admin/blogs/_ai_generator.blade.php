@@ -152,7 +152,38 @@
 </style>
 
 <script>
-function triggerBlogAIGeneration() {
+function promptAdminPin(callback) {
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Xác nhận thao tác Admin',
+            text: 'Vui lòng nhập mã PIN 8 số để xác thực:',
+            input: 'password',
+            inputAttributes: { maxlength: 8, pattern: '[0-9]{8}', inputmode: 'numeric' },
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#7c3aed',
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                const pin = result.value.trim();
+                if (!/^\d{8}$/.test(pin)) {
+                    Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Mã PIN phải đúng 8 số.' });
+                    return;
+                }
+                callback(pin);
+            }
+        });
+    } else {
+        const pin = prompt('Vui lòng nhập mã PIN 8 số để xác thực:');
+        if (pin && /^\d{8}$/.test(pin.trim())) {
+            callback(pin.trim());
+        } else if (pin) {
+            alert('Mã PIN phải đúng 8 số.');
+        }
+    }
+}
+
+function triggerBlogAIGeneration(adminPin = null) {
     const titleInput = document.getElementById('title');
     const titleValue = titleInput ? titleInput.value.trim() : '';
 
@@ -183,6 +214,15 @@ function triggerBlogAIGeneration() {
         progressText.textContent = steps[stepIdx];
     }, 2500);
 
+    const payload = {
+        title: titleValue,
+        model: model,
+        tone: tone
+    };
+    if (adminPin) {
+        payload.admin_pin = adminPin;
+    }
+
     fetch('{{ route("admin.blogs.generate_ai") }}', {
         method: 'POST',
         headers: {
@@ -190,11 +230,7 @@ function triggerBlogAIGeneration() {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({
-            title: titleValue,
-            model: model,
-            tone: tone
-        })
+        body: JSON.stringify(payload)
     })
     .then(async response => {
         const data = await response.json();
@@ -249,17 +285,30 @@ function triggerBlogAIGeneration() {
         clearInterval(stepInterval);
         progress.classList.add('d-none');
         btn.disabled = false;
+
+        if (err.message && (err.message.includes('8 số') || err.message.includes('xác nhận') || err.message.includes('PIN'))) {
+            promptAdminPin((pin) => {
+                triggerBlogAIGeneration(pin);
+            });
+            return;
+        }
+
         alert('❌ Lỗi: ' + err.message);
     });
 }
 
-function saveQuickGeminiKey() {
+function saveQuickGeminiKey(adminPin = null) {
     const keyInput = document.getElementById('quick_gemini_api_key');
     const key = keyInput ? keyInput.value.trim() : '';
 
     if (!key) {
         alert('Vui lòng nhập Gemini API Key!');
         return;
+    }
+
+    const payload = { api_key: key };
+    if (adminPin) {
+        payload.admin_pin = adminPin;
     }
 
     fetch('{{ route("admin.blogs.save_gemini_key") }}', {
@@ -269,9 +318,15 @@ function saveQuickGeminiKey() {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({ api_key: key })
+        body: JSON.stringify(payload)
     })
-    .then(res => res.json())
+    .then(async response => {
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Đã có lỗi xảy ra khi lưu Key!');
+        }
+        return data;
+    })
     .then(data => {
         if (data.success) {
             alert('✅ Đã lưu Gemini API Key thành công!');
@@ -290,6 +345,12 @@ function saveQuickGeminiKey() {
         }
     })
     .catch(err => {
+        if (err.message && (err.message.includes('8 số') || err.message.includes('xác nhận') || err.message.includes('PIN'))) {
+            promptAdminPin((pin) => {
+                saveQuickGeminiKey(pin);
+            });
+            return;
+        }
         alert('❌ Lỗi lưu key: ' + err.message);
     });
 }

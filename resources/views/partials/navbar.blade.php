@@ -494,7 +494,6 @@
     .shadow-techfeed.dropdown-menu,
     ul.shadow-techfeed {
         max-height: calc(100vh - 75px) !important;
-        overflow-y: overlay !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         min-width: 220px !important;
@@ -503,12 +502,11 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
         border: 1px solid rgba(0, 0, 0, 0.08) !important;
         border-radius: 14px !important;
-        scrollbar-width: thin !important;
-        scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
         margin-right: 6px !important;
         background-color: #ffffff !important;
     }
 
+    .dropdown-menu::-webkit-scrollbar,
     ul.shadow-techfeed::-webkit-scrollbar,
     .shadow-techfeed::-webkit-scrollbar,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar {
@@ -517,12 +515,14 @@
         background: transparent !important;
     }
 
+    .dropdown-menu::-webkit-scrollbar-track,
     ul.shadow-techfeed::-webkit-scrollbar-track,
     .shadow-techfeed::-webkit-scrollbar-track,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-track {
         background: transparent !important;
     }
 
+    .dropdown-menu::-webkit-scrollbar-thumb,
     ul.shadow-techfeed::-webkit-scrollbar-thumb,
     .shadow-techfeed::-webkit-scrollbar-thumb,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb {
@@ -530,10 +530,19 @@
         border-radius: 10px !important;
     }
 
+    .dropdown-menu::-webkit-scrollbar-thumb:hover,
     ul.shadow-techfeed::-webkit-scrollbar-thumb:hover,
     .shadow-techfeed::-webkit-scrollbar-thumb:hover,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb:hover {
         background: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    @supports (-moz-appearance: none) {
+        .shadow-techfeed.dropdown-menu,
+        ul.shadow-techfeed {
+            scrollbar-width: thin !important;
+            scrollbar-color: rgba(0, 0, 0, 0.25) transparent !important;
+        }
     }
 
     .shadow-techfeed .dropdown-item {

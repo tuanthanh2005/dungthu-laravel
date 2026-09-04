@@ -69,12 +69,9 @@
         .swal2-toast .swal2-icon { width: 2em !important; height: 2em !important; margin: 0.5em 0.8em 0.5em 0 !important; }
         .swal2-toast { flex-direction: row !important; align-items: center !important; }
 
-        /* Global Thin Scrollbar for Dropdowns */
+        /* Global Ultra-thin Scrollbar for Dropdowns */
         .dropdown-menu, ul.dropdown-menu {
-            overflow-y: overlay !important;
             overflow-y: auto !important;
-            scrollbar-width: thin !important;
-            scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
         }
         .dropdown-menu::-webkit-scrollbar, ul.dropdown-menu::-webkit-scrollbar {
             width: 3px !important;
@@ -90,6 +87,12 @@
         }
         .dropdown-menu::-webkit-scrollbar-thumb:hover, ul.dropdown-menu::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 0, 0, 0.5) !important;
+        }
+        @supports (-moz-appearance: none) {
+            .dropdown-menu, ul.dropdown-menu {
+                scrollbar-width: thin !important;
+                scrollbar-color: rgba(0, 0, 0, 0.25) transparent !important;
+            }
         }
 
         /* Fix Mobile Zoom & Overflow */

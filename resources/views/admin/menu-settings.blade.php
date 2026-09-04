@@ -470,28 +470,56 @@
                     {{-- Zalo Chat Link --}}
                     <div class="col-md-6 mb-3">
                         <div class="menu-item-row flex-column align-items-start h-100 mb-0">
-                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-comment-dots"></i> Link Chat Zalo</label>
+                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-comment-dots"></i> Link Chat Zalo 1</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0" style="color: #07be9e;"><i class="fas fa-comments"></i></span>
                                 <input type="url" class="form-control border-start-0 ps-0" name="support_zalo_link" 
                                        value="{{ \App\Helpers\SupportHelper::getZaloLink() }}" 
                                        placeholder="https://zalo.me/...">
                             </div>
-                            <div class="form-text mt-2 text-muted">Đường dẫn click chat Zalo cá nhân/OA.</div>
+                            <div class="form-text mt-2 text-muted">Đường dẫn click chat Zalo 1.</div>
                         </div>
                     </div>
 
                     {{-- Zalo Phone Number --}}
                     <div class="col-md-6 mb-3">
                         <div class="menu-item-row flex-column align-items-start h-100 mb-0">
-                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-phone-alt"></i> Số Zalo hiển thị</label>
+                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-phone-alt"></i> Số Zalo 1 hiển thị</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0" style="color: #07be9e;"><i class="fas fa-comment-alt"></i></span>
                                 <input type="text" class="form-control border-start-0 ps-0" name="support_zalo_number" 
                                        value="{{ \App\Helpers\SupportHelper::getZaloNumber() }}" 
                                        placeholder="0123456789">
                             </div>
-                            <div class="form-text mt-2 text-muted">Số điện thoại Zalo hiển thị ở phần thông tin.</div>
+                            <div class="form-text mt-2 text-muted">Số điện thoại Zalo 1 hiển thị ở phần thông tin.</div>
+                        </div>
+                    </div>
+
+                    {{-- Zalo 2 Chat Link --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-comment-dots"></i> Link Chat Zalo 2</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #07be9e;"><i class="fas fa-comments"></i></span>
+                                <input type="url" class="form-control border-start-0 ps-0" name="support_zalo_2_link" 
+                                       value="{{ \App\Helpers\SupportHelper::getZalo2Link() }}" 
+                                       placeholder="https://zalo.me/...">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Đường dẫn click chat Zalo 2.</div>
+                        </div>
+                    </div>
+
+                    {{-- Zalo 2 Phone Number --}}
+                    <div class="col-md-6 mb-3">
+                        <div class="menu-item-row flex-column align-items-start h-100 mb-0">
+                            <label class="form-label fw-bold text-success mb-2"><i class="fas fa-phone-alt"></i> Số Zalo 2 hiển thị</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="color: #07be9e;"><i class="fas fa-comment-alt"></i></span>
+                                <input type="text" class="form-control border-start-0 ps-0" name="support_zalo_2_number" 
+                                       value="{{ \App\Helpers\SupportHelper::getZalo2Number() }}" 
+                                       placeholder="0123456789">
+                            </div>
+                            <div class="form-text mt-2 text-muted">Số điện thoại Zalo 2 hiển thị ở phần thông tin.</div>
                         </div>
                     </div>
 

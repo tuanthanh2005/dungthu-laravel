@@ -1877,6 +1877,8 @@ class AdminController extends Controller
             'usd_exchange_rate',
             'support_zalo_link',
             'support_zalo_number',
+            'support_zalo_2_link',
+            'support_zalo_2_number',
             'support_telegram_link',
             'support_telegram_username',
             'support_phone',

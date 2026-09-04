@@ -1395,14 +1395,26 @@
         </a>
         @endif
 
-        {{-- Zalo Admin --}}
+        {{-- Zalo Admin 1 --}}
         <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" onclick="closeSupportMenuPopover()" class="support-popover-item">
             <div class="popover-item-icon" style="background: #0068ff; color: #fff;">
                 <i class="fas fa-comment-dots"></i>
             </div>
             <div class="popover-item-info">
-                <div class="popover-item-title">Zalo Admin</div>
-                <div class="popover-item-sub">{{ __('Cấp tài khoản & hỗ trợ nhanh') }}</div>
+                <div class="popover-item-title">Zalo Admin 1</div>
+                <div class="popover-item-sub">{{ __('Cấp tài khoản & hỗ trợ nhanh') }} ({{ \App\Helpers\SupportHelper::getZaloNumber() }})</div>
+            </div>
+            <i class="fas fa-chevron-right popover-arrow"></i>
+        </a>
+
+        {{-- Zalo Admin 2 --}}
+        <a href="{{ \App\Helpers\SupportHelper::getZalo2Link() }}" target="_blank" onclick="closeSupportMenuPopover()" class="support-popover-item">
+            <div class="popover-item-icon" style="background: #0068ff; color: #fff;">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="popover-item-info">
+                <div class="popover-item-title">Zalo Admin 2</div>
+                <div class="popover-item-sub">{{ __('Cấp tài khoản & hỗ trợ nhanh') }} ({{ \App\Helpers\SupportHelper::getZalo2Number() }})</div>
             </div>
             <i class="fas fa-chevron-right popover-arrow"></i>
         </a>
@@ -1415,6 +1427,18 @@
             <div class="popover-item-info">
                 <div class="popover-item-title">Telegram Admin</div>
                 <div class="popover-item-sub">{{ __('Hỗ trợ Telegram 24/7') }}</div>
+            </div>
+            <i class="fas fa-chevron-right popover-arrow"></i>
+        </a>
+
+        {{-- Gọi Trực Tiếp --}}
+        <a href="tel:{{ \App\Helpers\SupportHelper::getPhone() }}" onclick="closeSupportMenuPopover()" class="support-popover-item">
+            <div class="popover-item-icon" style="background: #10b981; color: #fff;">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <div class="popover-item-info">
+                <div class="popover-item-title">Gọi Trực Tiếp</div>
+                <div class="popover-item-sub">Hotline 24/7 ({{ \App\Helpers\SupportHelper::getPhone() }})</div>
             </div>
             <i class="fas fa-chevron-right popover-arrow"></i>
         </a>

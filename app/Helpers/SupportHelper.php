@@ -44,6 +44,22 @@ class SupportHelper
     }
 
     /**
+     * Get Zalo 2 Chat Link
+     */
+    public static function getZalo2Link()
+    {
+        return SiteSetting::getValue('support_zalo_2_link', 'https://zalo.me/0708910952');
+    }
+
+    /**
+     * Get Zalo 2 Number
+     */
+    public static function getZalo2Number()
+    {
+        return SiteSetting::getValue('support_zalo_2_number', '0708910952');
+    }
+
+    /**
      * Get Telegram Link
      */
     public static function getTelegramLink()

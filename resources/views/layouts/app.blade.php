@@ -71,18 +71,18 @@
 
         /* Global Thin Scrollbar for Dropdowns */
         .dropdown-menu::-webkit-scrollbar {
-            width: 3.5px !important;
+            width: 2px !important;
         }
         .dropdown-menu::-webkit-scrollbar-track {
             background: transparent !important;
         }
         .dropdown-menu::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2) !important;
+            background: rgba(0, 0, 0, 0.25) !important;
             border-radius: 10px !important;
         }
         .dropdown-menu {
             scrollbar-width: thin !important;
-            scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
+            scrollbar-color: rgba(0, 0, 0, 0.25) transparent !important;
         }
 
         /* Fix Mobile Zoom & Overflow */

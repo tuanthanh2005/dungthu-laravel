@@ -180,13 +180,13 @@
             </ul>
         </div>
 
-        {{-- Search Icon (desktop) --}}
-        <button class="nav-icon-btn d-none d-xl-flex ms-3 me-3" type="button" data-bs-toggle="modal" data-bs-target="#searchProductsModal" aria-label="{{ __('Tìm kiếm') }}">
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-
         {{-- Right Actions --}}
         <div class="d-flex align-items-center gap-2 gap-sm-3">
+            {{-- Search Icon (desktop) --}}
+            <button class="nav-icon-btn d-none d-xl-flex" type="button" data-bs-toggle="modal" data-bs-target="#searchProductsModal" aria-label="{{ __('Tìm kiếm') }}">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
             {{-- Notification Bell Modal Trigger --}}
             <button class="nav-icon-btn position-relative notification-bell-btn" type="button" data-bs-toggle="modal" data-bs-target="#spamWarningWelcomeModal" title="{{ __('Thông báo & Hỗ trợ') }}" aria-label="{{ __('Thông báo') }}">
                 <i class="fa-solid fa-bell text-warning" style="font-size: 1.15rem;"></i>

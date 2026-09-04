@@ -74,7 +74,8 @@ class HomeController extends Controller
             $isExpired = true;
         }
 
-        $recentPurchases = Cache::remember('home.recent_purchases.v2', now()->addMinutes(5), function () {
+        $cacheKey = 'home.recent_purchases.v3.' . app()->getLocale();
+        $recentPurchases = Cache::remember($cacheKey, now()->addMinutes(5), function () {
             $orders = Order::query()
                 ->with(['orderItems.product'])
                 ->whereNotIn('status', ['cancelled'])
@@ -87,11 +88,12 @@ class HomeController extends Controller
                     $extraItems = max(0, $order->orderItems->count() - 1);
 
                     $verb = in_array($order->status, ['completed', 'delivered', 'shipped'], true) ? __('vừa mua thành công') : __('vừa đặt hàng');
+                    $productName = (app()->getLocale() === 'en' && !empty($product?->name_en)) ? $product->name_en : ($product?->name ?? __('Sản phẩm'));
 
                     return [
                         'customer_name' => self::maskCustomerName((string) $order->customer_name),
                         'verb' => $verb,
-                        'product_name' => $product?->name ?? 'Sản phẩm',
+                        'product_name' => $productName,
                         'product_slug' => $product?->slug,
                         'product_url' => $product?->slug ? route('product.show', $product->slug) : null,
                         'extra_items' => $extraItems,
@@ -114,7 +116,7 @@ class HomeController extends Controller
                     return [
                         'customer_name' => self::maskCustomerName((string) optional($exchange->user)->name),
                         'verb' => __('vừa đổi thành công'),
-                        'product_name' => 'Đổi thẻ cào' . $cardType . ' ' . $cardValue,
+                        'product_name' => __('Đổi thẻ cào') . $cardType . ' ' . $cardValue,
                         'product_slug' => null,
                         'product_url' => route('card-exchange.index'),
                         'extra_items' => 0,

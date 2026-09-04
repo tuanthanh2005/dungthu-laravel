@@ -52,13 +52,15 @@ class AdminCouponController extends Controller
         $totalValue = Coupon::sum('value');
 
         // Top customers filter / list (Users with most completed orders)
-        $topCustomers = User::withCount(['orders' => function ($q) {
+        $topCustomers = User::whereHas('orders', function ($q) {
+            $q->where('status', 'completed');
+        })
+        ->withCount(['orders' => function ($q) {
             $q->where('status', 'completed');
         }])
         ->withSum(['orders' => function ($q) {
             $q->where('status', 'completed');
         }], 'total_amount')
-        ->having('orders_count', '>', 0)
         ->orderByDesc('orders_count')
         ->orderByDesc('orders_sum_total_amount')
         ->take(15)
@@ -92,26 +94,27 @@ class AdminCouponController extends Controller
 
         $createdCount = 0;
 
-        for ($i = 0; $i < $quantity; $i++) {
-            if ($quantity === 1 && $request->filled('code')) {
-                $code = strtoupper(trim($request->code));
-            } else {
-                $code = 'VOUCHER-' . strtoupper(Str::random(6));
-                // Ensure unique code
-                while (Coupon::where('code', $code)->exists()) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($quantity, $value, $userId, $request, &$createdCount) {
+            for ($i = 0; $i < $quantity; $i++) {
+                if ($quantity === 1 && $request->filled('code')) {
+                    $code = strtoupper(trim($request->code));
+                } else {
                     $code = 'VOUCHER-' . strtoupper(Str::random(6));
+                    while (Coupon::where('code', $code)->exists()) {
+                        $code = 'VOUCHER-' . strtoupper(Str::random(6));
+                    }
                 }
+
+                Coupon::create([
+                    'code' => $code,
+                    'value' => $value,
+                    'user_id' => $userId,
+                    'is_used' => false,
+                ]);
+
+                $createdCount++;
             }
-
-            Coupon::create([
-                'code' => $code,
-                'value' => $value,
-                'user_id' => $userId,
-                'is_used' => false,
-            ]);
-
-            $createdCount++;
-        }
+        });
 
         return redirect()->back()->with('success', "Đã tạo thành công {$createdCount} mã voucher!");
     }

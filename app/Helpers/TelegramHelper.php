@@ -10,17 +10,23 @@ class TelegramHelper
     /**
      * Gửi tin nhắn tùy chỉnh qua Telegram
      */
-    public static function sendMessage($text)
+    public static function sendMessage($text, $replyMarkup = null)
     {
         $botToken = config('services.telegram.bot_token');
         $chatId = config('services.telegram.chat_id');
 
         try {
-            $response = Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+            $data = [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
-            ]);
+            ];
+
+            if ($replyMarkup) {
+                $data['reply_markup'] = is_array($replyMarkup) ? json_encode($replyMarkup) : $replyMarkup;
+            }
+
+            $response = Http::timeout(5)->post("https://api.telegram.org/bot{$botToken}/sendMessage", $data);
 
             if ($response->successful()) {
                 Log::info('Telegram message sent successfully');

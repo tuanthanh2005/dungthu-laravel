@@ -440,6 +440,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/customer-durations', [CustomerDurationController::class, 'index'])->name('admin.customer-durations');
     Route::get('/customer-durations/create', [CustomerDurationController::class, 'create'])->name('admin.customer-durations.create');
     Route::post('/customer-durations', [CustomerDurationController::class, 'store'])->name('admin.customer-durations.store');
+    Route::post('/customer-durations/send-telegram', [CustomerDurationController::class, 'sendTelegramNotification'])->name('admin.customer-durations.send-telegram');
     Route::post('/customer-durations/bulk-action', [CustomerDurationController::class, 'bulkAction'])->name('admin.customer-durations.bulk-action');
     Route::patch('/customer-durations/{customerDuration}/toggle-hide', [CustomerDurationController::class, 'toggleHide'])->name('admin.customer-durations.toggle-hide');
     Route::get('/customer-durations/{customerDuration}/edit', [CustomerDurationController::class, 'edit'])->name('admin.customer-durations.edit');

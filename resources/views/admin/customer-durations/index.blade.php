@@ -67,9 +67,17 @@
             <h4 class="fw-bold mb-1">Thời hạn Gói dịch vụ Khách hàng</h4>
             <p class="text-muted mb-0">Theo dõi trạng thái, ẩn/hiện và thời gian còn lại của gói dịch vụ đã bán.</p>
         </div>
-        <a href="{{ route('admin.customer-durations.create') }}" class="btn btn-primary rounded-pill px-4">
-            <i class="fas fa-plus me-2"></i>Cấp Phát Thủ Công
-        </a>
+        <div class="d-flex gap-2 flex-wrap">
+            <form action="{{ route('admin.customer-durations.send-telegram') }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có muốn quét và gửi thông báo Telegram cho các khách hàng sắp hết hạn ngay bây giờ?');">
+                @csrf
+                <button type="submit" class="btn btn-outline-warning rounded-pill px-4 text-dark fw-semibold shadow-sm">
+                    <i class="fab fa-telegram-plane me-2 text-primary fs-5 align-middle"></i>Báo Telegram Ngay
+                </button>
+            </form>
+            <a href="{{ route('admin.customer-durations.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <i class="fas fa-plus me-2"></i>Cấp Phát Thủ Công
+            </a>
+        </div>
     </div>
 
     <!-- Alert Success -->

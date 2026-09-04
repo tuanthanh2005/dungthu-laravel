@@ -253,4 +253,17 @@ class CustomerDurationController extends Controller
 
         return redirect()->route('admin.customer-durations')->with('success', 'Xóa thời hạn dịch vụ thành công!');
     }
+
+    /**
+     * Gửi thông báo Telegram thủ công cho các khách hàng sắp hết hạn
+     */
+    public function sendTelegramNotification()
+    {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('durations:check-expiring');
+            return redirect()->back()->with('success', 'Đã tự động quét và gửi thông báo Telegram chi tiết cho các khách hàng sắp hết hạn thành công!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Lỗi khi gửi thông báo Telegram: ' . $e->getMessage());
+        }
+    }
 }

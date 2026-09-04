@@ -196,7 +196,8 @@
             </button>
 
             {{-- Language Switcher --}}
-            <div class="dropdown">
+            {{-- Language Selector (Desktop only) --}}
+            <div class="dropdown d-none d-md-block">
                 <button class="nav-icon-btn d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;">
                     @if(app()->getLocale() === 'en')
                         <img src="https://flagcdn.com/w40/us.png" width="20" alt="US" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); display: inline-block;">
@@ -301,6 +302,38 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         
+                        {{-- Language Selector Collapsible in User Dropdown --}}
+                        <li>
+                            <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileLangCollapse" role="button" aria-expanded="false" aria-controls="mobileLangCollapse" onclick="event.stopPropagation();">
+                                <span>
+                                    @if(app()->getLocale() === 'en')
+                                        <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" class="me-2" style="border-radius: 2px;">
+                                    @else
+                                        <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" class="me-2" style="border-radius: 2px;">
+                                    @endif
+                                    {{ __('Ngôn ngữ') }}
+                                </span>
+                                <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
+                            </a>
+                            <div class="collapse px-2" id="mobileLangCollapse" onclick="event.stopPropagation();">
+                                <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
+                                    <li>
+                                        <a class="dropdown-item py-1 d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 0.85rem;">
+                                            <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" style="border-radius: 2px;">
+                                            {{ __('Tiếng Việt') }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item py-1 d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 0.85rem;">
+                                            <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" style="border-radius: 2px;">
+                                            English
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        
                         <li><a class="dropdown-item" href="{{ route('minigame.index') }}"><i class="fas fa-gamepad me-2 text-danger"></i>{{ __('Vòng xoay may mắn') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>{{ __('Tài khoản') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>{{ __('Đơn hàng') }}</a></li>
@@ -314,9 +347,32 @@
                     </ul>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="nav-icon-btn" title="{{ __('Đăng nhập') }}" aria-label="{{ __('Đăng nhập') }}">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                </a>
+                <div class="dropdown">
+                    <button class="nav-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Tài khoản & Ngôn ngữ') }}">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 170px; border-radius: 12px;">
+                        <li>
+                            <a class="dropdown-item fw-bold text-primary" href="{{ route('login') }}">
+                                <i class="fa-solid fa-right-to-bracket me-2"></i>{{ __('Đăng nhập') }}
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><span class="dropdown-header text-muted py-1" style="font-size: 11px;">{{ __('Ngôn ngữ') }}</span></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 13px;">
+                                <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" style="border-radius: 2px;">
+                                {{ __('Tiếng Việt') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 13px;">
+                                <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" style="border-radius: 2px;">
+                                English
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             @endauth
         </div>
     </div>

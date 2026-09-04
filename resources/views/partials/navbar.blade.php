@@ -1,15 +1,123 @@
 @php
-    $menuHome        = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
-    $menuShop        = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
-    $menuBlog        = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
-    $menuCart        = \App\Models\SiteSetting::getValue('menu_cart', '1') === '1';
-    $menuWebdesign   = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
-    $menuBuff        = \App\Models\SiteSetting::getValue('menu_buff', '1') === '1';
-    $menuCommunity   = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
+    $menuHome         = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
+    $menuShop         = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
+    $menuVpn          = \App\Models\SiteSetting::getValue('menu_vpn', '1') === '1';
+    $menuBuff         = \App\Models\SiteSetting::getValue('menu_buff', '1') === '1';
+    $menuWebdesign    = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
     $menuCardExchange = \App\Models\SiteSetting::getValue('menu_card_exchange', '1') === '1';
-    $menuChat        = \App\Models\SiteSetting::getValue('menu_chat', '1') === '1';
-    $menuMinigame    = \App\Models\SiteSetting::getValue('menu_minigame', '1') === '1';
-    $menuZaloGroup   = \App\Models\SiteSetting::getValue('menu_zalo_group', '1') === '1';
+    $menuBlog         = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
+    $menuCommunity    = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
+    $menuMinigame     = \App\Models\SiteSetting::getValue('menu_minigame', '1') === '1';
+    $menuZaloGroup    = \App\Models\SiteSetting::getValue('menu_zalo_group', '1') === '1';
+    $menuCart         = \App\Models\SiteSetting::getValue('menu_cart', '1') === '1';
+    $menuChat         = \App\Models\SiteSetting::getValue('menu_chat', '1') === '1';
+
+    $navItems = [
+        [
+            'key'     => 'home',
+            'enabled' => $menuHome,
+            'url'     => route('home'),
+            'label'   => __('Trang chủ'),
+            'icon'    => 'fa-solid fa-house',
+            'active'  => request()->routeIs('home'),
+            'color'   => null,
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'shop',
+            'enabled' => $menuShop,
+            'url'     => route('shop'),
+            'label'   => __('Cửa hàng'),
+            'icon'    => 'fa-solid fa-shop',
+            'active'  => request()->routeIs('shop'),
+            'color'   => null,
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'vpn',
+            'enabled' => $menuVpn,
+            'url'     => route('vpn.index'),
+            'label'   => __('VPN'),
+            'icon'    => 'fa-solid fa-network-wired',
+            'active'  => request()->routeIs('vpn.*'),
+            'color'   => '#00bcd4',
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'buff',
+            'enabled' => $menuBuff,
+            'url'     => route('buff.index'),
+            'label'   => __('Buff MXH'),
+            'icon'    => 'fa-solid fa-rocket',
+            'active'  => request()->routeIs('buff.*'),
+            'color'   => '#ff5e00',
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'webdesign',
+            'enabled' => $menuWebdesign,
+            'url'     => route('web-design'),
+            'label'   => __('Thiết kế Web'),
+            'icon'    => 'fa-solid fa-code',
+            'active'  => request()->routeIs('web-design'),
+            'color'   => null,
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'card_exchange',
+            'enabled' => $menuCardExchange,
+            'url'     => route('card-exchange.index'),
+            'label'   => __('Đổi thẻ'),
+            'icon'    => 'fa-solid fa-credit-card',
+            'active'  => request()->routeIs('card-exchange.*'),
+            'color'   => null,
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'blog',
+            'enabled' => $menuBlog,
+            'url'     => route('blog.index'),
+            'label'   => __('Blog'),
+            'icon'    => 'fa-solid fa-newspaper',
+            'active'  => request()->routeIs('blog.*'),
+            'color'   => null,
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'community',
+            'enabled' => $menuCommunity,
+            'url'     => route('community.index'),
+            'label'   => __('Cộng đồng'),
+            'icon'    => 'fa-solid fa-users',
+            'active'  => request()->routeIs('community.*'),
+            'color'   => null,
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'minigame',
+            'enabled' => $menuMinigame,
+            'url'     => route('minigame.index'),
+            'label'   => __('Mini Game'),
+            'icon'    => 'fa-solid fa-gamepad',
+            'active'  => request()->routeIs('minigame.*'),
+            'color'   => '#e11d48',
+            'target'  => '_self',
+        ],
+        [
+            'key'     => 'zalo_group',
+            'enabled' => $menuZaloGroup,
+            'url'     => \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot'),
+            'label'   => __('Nhóm Zalo'),
+            'icon'    => 'fa-solid fa-comment-dots',
+            'active'  => false,
+            'color'   => '#0068ff',
+            'target'  => '_blank',
+        ],
+    ];
+
+    $enabledNavItems = array_filter($navItems, function($item) {
+        return $item['enabled'];
+    });
 @endphp
 
 <nav class="navbar navbar-expand-xl navbar-techfeed sticky-top" id="mainNavbar">
@@ -22,7 +130,7 @@
             <span>DungThu<span class="brand-dot">.com</span></span>
         </a>
 
-        {{-- Mobile Floating Live Online Badge (Click để mở rộng 3s rồi tự thu gọn lại) --}}
+        {{-- Mobile Floating Live Online Badge --}}
         <div class="mobile-live-online-float live-online-interactive-pill d-flex d-md-none align-items-center shadow-sm" 
              title="{{ __('Nhấn để xem chi tiết') }}"
              style="cursor: pointer; user-select: none;">
@@ -33,59 +141,19 @@
         </div>
 
         {{-- Desktop Nav Links --}}
-        <div class="d-none d-xl-flex align-items-center gap-1 gap-xxl-2 mx-auto desktop-nav-links" style="font-size: 13.5px;">
-            @if($menuHome)
-            <a href="{{ route('home') }}" class="nav-text-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                <i class="fa-solid fa-house me-1"></i>{{ __('Trang chủ') }}
-            </a>
-            @endif
-            @if($menuShop)
-            <a href="{{ route('shop') }}" class="nav-text-link {{ request()->routeIs('shop') ? 'active' : '' }}">
-                <i class="fa-solid fa-shop me-1"></i>{{ __('Cửa hàng') }}
-            </a>
-            @endif
-            <a href="{{ route('vpn.index') }}" class="nav-text-link {{ request()->routeIs('vpn.*') ? 'active' : '' }}" style="color: #00bcd4; font-weight: 700;">
-                <i class="fa-solid fa-network-wired me-1"></i>{{ __('VPN') }}
-            </a>
-            @if($menuBuff)
-            <a href="{{ route('buff.index') }}" class="nav-text-link {{ request()->routeIs('buff.*') ? 'active' : '' }}" style="color: #ff5e00; font-weight: 700;">
-                <i class="fa-solid fa-rocket me-1"></i>{{ __('Buff MXH') }}
-            </a>
-            @endif
-            @if($menuWebdesign)
-            <a href="{{ route('web-design') }}" class="nav-text-link {{ request()->routeIs('web-design') ? 'active' : '' }}">
-                <i class="fa-solid fa-code me-1"></i>{{ __('Thiết kế Web') }}
-            </a>
-            @endif
-            @if($menuCardExchange)
-            <a href="{{ route('card-exchange.index') }}" class="nav-text-link {{ request()->routeIs('card-exchange.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-credit-card me-1"></i>{{ __('Đổi thẻ') }}
-            </a>
-            @endif
-            @if($menuBlog)
-            <a href="{{ route('blog.index') }}" class="nav-text-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-newspaper me-1"></i>{{ __('Blog') }}
-            </a>
-            @endif
-            @if($menuCommunity)
-            <a href="{{ route('community.index') }}" class="nav-text-link {{ request()->routeIs('community.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-users me-1"></i>{{ __('Cộng đồng') }}
-            </a>
-            @endif
-            @if($menuMinigame)
-            <a href="{{ route('minigame.index') }}" class="nav-text-link {{ request()->routeIs('minigame.*') ? 'active' : '' }}" style="color: #e11d48; font-weight: 700;">
-                <i class="fa-solid fa-gamepad me-1"></i>{{ __('Mini Game') }}
-            </a>
-            @endif
-            @if($menuZaloGroup)
-            <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" class="nav-text-link fw-bold" style="color: #0068ff;">
-                <i class="fa-solid fa-comment-dots me-1"></i>{{ __('Nhóm Zalo') }}
-            </a>
-            @endif
-            <a href="javascript:void(0)" class="nav-text-link" data-bs-toggle="modal" data-bs-target="#quickContactModal">
+        <div class="d-none d-xl-flex align-items-center gap-1 gap-xxl-2 ms-2 me-auto desktop-nav-links" style="font-size: 13.5px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;">
+            @foreach($enabledNavItems as $item)
+                <a href="{{ $item['url'] }}" 
+                   target="{{ $item['target'] }}" 
+                   class="nav-text-link text-nowrap {{ $item['active'] ? 'active' : '' }}"
+                   @if($item['color']) style="color: {{ $item['color'] }}; font-weight: 700;" @endif>
+                    <i class="{{ $item['icon'] }} me-1"></i>{{ $item['label'] }}
+                </a>
+            @endforeach
+            <a href="javascript:void(0)" class="nav-text-link text-nowrap" data-bs-toggle="modal" data-bs-target="#quickContactModal">
                 <i class="fa-solid fa-headset me-1"></i>{{ __('Liên hệ') }}
             </a>
-            <a href="javascript:void(0)" class="btn btn-sm text-white fw-bold rounded-pill px-3 ms-2 me-2 shadow-sm d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#appDownloadModal" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); font-size: 13px; flex-shrink: 0;">
+            <a href="javascript:void(0)" class="btn btn-sm text-white fw-bold rounded-pill px-3 ms-1 me-1 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap" data-bs-toggle="modal" data-bs-target="#appDownloadModal" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); font-size: 13px; flex-shrink: 0;">
                 <i class="fa-solid fa-cloud-arrow-down"></i> {{ __('Tải App') }}
             </a>
         </div>
@@ -96,35 +164,17 @@
                 <i class="fa-solid fa-bars"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-techfeed">
-                @if($menuHome)
-                    <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>{{ __('Trang chủ') }}</a></li>
-                @endif
-                @if($menuShop)
-                    <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>{{ __('Cửa hàng') }}</a></li>
-                @endif
-                <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN') }}</a></li>
-                @if($menuBuff)
-                    <li><a class="dropdown-item fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00;"><i class="fa-solid fa-rocket me-2"></i>{{ __('Dịch Vụ MXH') }}</a></li>
-                @endif
-                @if($menuWebdesign)
-                    <li><a class="dropdown-item" href="{{ route('web-design') }}"><i class="fa-solid fa-code me-2 text-primary"></i>{{ __('Thiết Kế Website') }}</a></li>
-                @endif
-                @if($menuCardExchange)
-                    <li><a class="dropdown-item" href="{{ route('card-exchange.index') }}"><i class="fa-solid fa-credit-card me-2 text-warning"></i>{{ __('Đổi Thẻ Cào') }}</a></li>
-                @endif
-                @if($menuBlog)
-                    <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>{{ __('Blog') }}</a></li>
-                @endif
-                @if($menuCommunity)
-                    <li><a class="dropdown-item" href="{{ route('community.index') }}"><i class="fa-solid fa-users me-2 text-success"></i>{{ __('Cộng đồng') }}</a></li>
-                @endif
-                @if($menuMinigame)
-                    <li><a class="dropdown-item fw-bold" href="{{ route('minigame.index') }}" style="color: #e11d48;"><i class="fa-solid fa-gamepad me-2"></i>{{ __('Mini Game') }}</a></li>
-                @endif
+                @foreach($enabledNavItems as $item)
+                    <li>
+                        <a class="dropdown-item {{ $item['color'] ? 'fw-bold' : '' }}" 
+                           href="{{ $item['url'] }}" 
+                           target="{{ $item['target'] }}"
+                           @if($item['color']) style="color: {{ $item['color'] }};" @endif>
+                            <i class="{{ $item['icon'] }} me-2 {{ $item['color'] ? '' : 'text-primary' }}"></i>{{ $item['label'] }}
+                        </a>
+                    </li>
+                @endforeach
                 <li><hr class="dropdown-divider"></li>
-                @if($menuZaloGroup)
-                <li><a class="dropdown-item fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff;"><i class="fa-solid fa-users me-2"></i>{{ __('Nhóm Zalo') }}</a></li>
-                @endif
                 <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ') }}</a></li>
                 <li><a class="dropdown-item fw-bold" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal" style="color: #ff5e00;"><i class="fa-solid fa-cloud-arrow-down me-2"></i>{{ __('Tải App') }}</a></li>
             </ul>

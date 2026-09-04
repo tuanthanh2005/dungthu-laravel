@@ -1397,8 +1397,12 @@
 
         {{-- Zalo Admin 1 --}}
         <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" onclick="closeSupportMenuPopover()" class="support-popover-item">
-            <div class="popover-item-icon" style="background: #0068ff; color: #fff;">
-                <i class="fas fa-comment-dots"></i>
+            <div class="popover-item-icon" style="background: transparent; padding: 0; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 100 100" width="40" height="40" style="width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: block;">
+                    <rect width="100" height="100" rx="24" fill="#0068FF"/>
+                    <path d="M 20 28 C 20 22, 26 18, 33 18 L 67 18 C 74 18, 80 22, 80 28 L 80 58 C 80 64, 74 68, 67 68 L 50 68 L 34 81 L 34 68 L 33 68 C 26 68, 20 64, 20 58 Z" fill="#FFFFFF"/>
+                    <text x="50" y="43" fill="#0068FF" font-size="25" font-weight="900" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif" text-anchor="middle" dominant-baseline="central">Zalo</text>
+                </svg>
             </div>
             <div class="popover-item-info">
                 <div class="popover-item-title">Zalo Admin 1</div>
@@ -1409,8 +1413,12 @@
 
         {{-- Zalo Admin 2 --}}
         <a href="{{ \App\Helpers\SupportHelper::getZalo2Link() }}" target="_blank" onclick="closeSupportMenuPopover()" class="support-popover-item">
-            <div class="popover-item-icon" style="background: #0068ff; color: #fff;">
-                <i class="fas fa-comment-dots"></i>
+            <div class="popover-item-icon" style="background: transparent; padding: 0; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 100 100" width="40" height="40" style="width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: block;">
+                    <rect width="100" height="100" rx="24" fill="#0068FF"/>
+                    <path d="M 20 28 C 20 22, 26 18, 33 18 L 67 18 C 74 18, 80 22, 80 28 L 80 58 C 80 64, 74 68, 67 68 L 50 68 L 34 81 L 34 68 L 33 68 C 26 68, 20 64, 20 58 Z" fill="#FFFFFF"/>
+                    <text x="50" y="43" fill="#0068FF" font-size="25" font-weight="900" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif" text-anchor="middle" dominant-baseline="central">Zalo</text>
+                </svg>
             </div>
             <div class="popover-item-info">
                 <div class="popover-item-title">Zalo Admin 2</div>

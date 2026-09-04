@@ -154,8 +154,12 @@
                         <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="text-decoration-none h-100 d-block">
                             <div class="p-3 bg-white rounded-3 shadow-sm border border-info border-opacity-25 text-center h-100 transition-all d-flex flex-column justify-content-between card-contact" style="border-top: 3.5px solid #0284c7 !important;">
                                 <div>
-                                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center card-contact-icon" style="width: 40px; height: 40px; background-color: #e0f2fe;">
-                                        <i class="fas fa-comments text-info" style="font-size: 18px;"></i>
+                                    <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center card-contact-icon" style="width: 40px; height: 40px;">
+                                        <svg viewBox="0 0 100 100" width="40" height="40" style="width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: block;">
+                                            <rect width="100" height="100" rx="24" fill="#0068FF"/>
+                                            <path d="M 20 28 C 20 22, 26 18, 33 18 L 67 18 C 74 18, 80 22, 80 28 L 80 58 C 80 64, 74 68, 67 68 L 50 68 L 34 81 L 34 68 L 33 68 C 26 68, 20 64, 20 58 Z" fill="#FFFFFF"/>
+                                            <text x="50" y="43" fill="#0068FF" font-size="25" font-weight="900" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif" text-anchor="middle" dominant-baseline="central">Zalo</text>
+                                        </svg>
                                     </div>
                                     <div class="fw-bold text-dark mb-1 card-contact-title" style="font-size: 13.5px;">Zalo Admin</div>
                                     <div class="text-muted mb-3 card-contact-sub" style="font-size: 11px;">Cấp nhanh qua Zalo</div>

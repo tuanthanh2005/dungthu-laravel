@@ -16,6 +16,7 @@ use App\Models\ProductCategory;
 use App\Models\Affiliate;
 use App\Models\AffiliateInvoice;
 use App\Models\AffiliateWithdrawal;
+use App\Models\CustomerDuration;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SystemNotificationMail;
 use App\Mail\OrderApprovedMail;

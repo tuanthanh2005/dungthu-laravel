@@ -147,7 +147,7 @@
                                 <th>Trạng Thái</th>
                                 <th>Ngày Tạo</th>
                                 <th>Ngày Sử Dụng</th>
-                                <th class="text-end pe-3" style="width: 140px;">Hành Động</th>
+                                <th class="text-center" style="width: 140px;">Hành Động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -201,8 +201,8 @@
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td class="text-end pe-3">
-                                        <div class="d-inline-flex gap-1">
+                                    <td class="text-center">
+                                        <div class="d-inline-flex gap-1 justify-content-center">
                                             {{-- Button Gán User --}}
                                             <button type="button" class="btn btn-sm btn-light border text-info" 
                                                     onclick="openAssignUserModal({{ $coupon->id }}, '{{ $coupon->code }}', '{{ $coupon->user ? $coupon->user->id : '' }}', '{{ $coupon->user ? addslashes($coupon->user->name . ' (' . $coupon->user->email . ')') : '' }}')" 
@@ -260,7 +260,7 @@
                                 <th>Email & SĐT</th>
                                 <th class="text-center">Đơn Hoàn Thành</th>
                                 <th class="text-end">Tổng Chi Tiêu</th>
-                                <th class="text-end pe-4" style="width: 170px;">Hành Động</th>
+                                <th class="text-center" style="width: 160px;">Hành Động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -300,11 +300,12 @@
                                     <td class="text-end">
                                         <strong class="text-danger fs-6">{{ number_format($customer->orders_sum_total_amount ?? 0, 0, ',', '.') }}đ</strong>
                                     </td>
-                                    <td class="text-end pe-4">
-                                        <button type="button" class="btn btn-sm btn-danger fw-bold rounded-pill px-3 shadow-sm"
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm text-white fw-bold rounded-pill px-3 py-1.5 shadow-sm d-inline-flex align-items-center justify-content-center gap-1.5"
+                                                style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: #ffffff !important; border: none; font-size: 12px; white-space: nowrap;"
                                                 onclick="giftCouponToUser({{ $customer->id }}, '{{ addslashes($customer->name) }}', '{{ addslashes($customer->email) }}')"
                                                 title="Tặng voucher cho khách hàng này">
-                                            <i class="fas fa-gift me-1"></i> Tặng Voucher
+                                            <i class="fas fa-gift"></i> Tặng Voucher
                                         </button>
                                     </td>
                                 </tr>

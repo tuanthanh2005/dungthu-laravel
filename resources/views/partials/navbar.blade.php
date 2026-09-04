@@ -490,8 +490,11 @@
         display: none !important;
     }
 
-    .shadow-techfeed.dropdown-menu {
-        max-height: calc(100vh - 85px) !important;
+    /* Ultra-thin Floating Scrollbar for Dropdown Menu */
+    .shadow-techfeed.dropdown-menu,
+    ul.shadow-techfeed {
+        max-height: calc(100vh - 75px) !important;
+        overflow-y: overlay !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         min-width: 220px !important;
@@ -501,24 +504,34 @@
         border: 1px solid rgba(0, 0, 0, 0.08) !important;
         border-radius: 14px !important;
         scrollbar-width: thin !important;
-        scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
+        scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
         margin-right: 6px !important;
         background-color: #ffffff !important;
     }
 
+    ul.shadow-techfeed::-webkit-scrollbar,
+    .shadow-techfeed::-webkit-scrollbar,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar {
-        width: 2px !important;
+        width: 3px !important;
+        height: 3px !important;
+        background: transparent !important;
     }
 
+    ul.shadow-techfeed::-webkit-scrollbar-track,
+    .shadow-techfeed::-webkit-scrollbar-track,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-track {
         background: transparent !important;
     }
 
+    ul.shadow-techfeed::-webkit-scrollbar-thumb,
+    .shadow-techfeed::-webkit-scrollbar-thumb,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb {
         background: rgba(0, 0, 0, 0.25) !important;
         border-radius: 10px !important;
     }
 
+    ul.shadow-techfeed::-webkit-scrollbar-thumb:hover,
+    .shadow-techfeed::-webkit-scrollbar-thumb:hover,
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb:hover {
         background: rgba(0, 0, 0, 0.5) !important;
     }

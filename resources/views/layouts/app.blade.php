@@ -70,19 +70,26 @@
         .swal2-toast { flex-direction: row !important; align-items: center !important; }
 
         /* Global Thin Scrollbar for Dropdowns */
-        .dropdown-menu::-webkit-scrollbar {
-            width: 2px !important;
+        .dropdown-menu, ul.dropdown-menu {
+            overflow-y: overlay !important;
+            overflow-y: auto !important;
+            scrollbar-width: thin !important;
+            scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
         }
-        .dropdown-menu::-webkit-scrollbar-track {
+        .dropdown-menu::-webkit-scrollbar, ul.dropdown-menu::-webkit-scrollbar {
+            width: 3px !important;
+            height: 3px !important;
             background: transparent !important;
         }
-        .dropdown-menu::-webkit-scrollbar-thumb {
+        .dropdown-menu::-webkit-scrollbar-track, ul.dropdown-menu::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+        .dropdown-menu::-webkit-scrollbar-thumb, ul.dropdown-menu::-webkit-scrollbar-thumb {
             background: rgba(0, 0, 0, 0.25) !important;
             border-radius: 10px !important;
         }
-        .dropdown-menu {
-            scrollbar-width: thin !important;
-            scrollbar-color: rgba(0, 0, 0, 0.25) transparent !important;
+        .dropdown-menu::-webkit-scrollbar-thumb:hover, ul.dropdown-menu::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.5) !important;
         }
 
         /* Fix Mobile Zoom & Overflow */

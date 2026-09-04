@@ -471,10 +471,10 @@
                                      id="qr-code-image"
                                      style="max-width: 250px;">
                                 <div id="success-watermark" class="position-absolute top-50 start-50 translate-middle d-none" style="background: rgba(40, 167, 69, 0.95); color: white; padding: 15px 30px; border-radius: 30px; font-weight: bold; border: 4px solid white; transform: translate(-50%, -50%) rotate(-10deg) !important; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10;">
-                                    <i class="fas fa-check-circle me-2"></i>ĐÃ THANH TOÁN
+                                    <i class="fas fa-check-circle me-2"></i>{{ __('ĐÃ THANH TOÁN') }}
                                 </div>
                                 <div id="expired-watermark" class="position-absolute top-50 start-50 translate-middle d-none" style="background: rgba(220, 53, 69, 0.95); color: white; padding: 15px 30px; border-radius: 30px; font-weight: bold; border: 4px solid white; transform: translate(-50%, -50%) rotate(-10deg) !important; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10;">
-                                    <i class="fas fa-times-circle me-2"></i>HẾT HẠN
+                                    <i class="fas fa-times-circle me-2"></i>{{ __('HẾT HẠN') }}
                                 </div>
                             </div>
 
@@ -487,7 +487,7 @@
                                 <!-- Trạng thái quét thanh toán tự động -->
                                 <div id="payment-status-notice" class="alert alert-warning py-2 mb-3 border-0 rounded-pill text-white" style="background: rgba(255, 193, 7, 0.2); font-size: 0.85rem;">
                                     <span class="spinner-border spinner-border-sm me-2 text-warning animate-spin" role="status" aria-hidden="true"></span>
-                                    <span>Hệ thống đang quét giao dịch chuyển khoản tự động...</span>
+                                    <span>{{ __('Hệ thống đang quét giao dịch chuyển khoản tự động...') }}</span>
                                 </div>
 
                                 <div id="auto-check-status-badge" class="w-100 py-2 text-center rounded-pill fw-bold shadow-sm text-white" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); font-size: 0.95rem; user-select: none;">

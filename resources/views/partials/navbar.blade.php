@@ -500,22 +500,27 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
         border: 1px solid rgba(0, 0, 0, 0.08) !important;
         border-radius: 14px !important;
-        scrollbar-width: thin;
+        scrollbar-width: thin !important;
+        scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
         margin-right: 6px !important;
         background-color: #ffffff !important;
     }
 
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar {
-        width: 5px;
+        width: 3.5px !important;
     }
 
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-track {
-        background: transparent;
+        background: transparent !important;
     }
 
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.2) !important;
+        border-radius: 10px !important;
+    }
+
+    .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.4) !important;
     }
 
     .shadow-techfeed .dropdown-item {

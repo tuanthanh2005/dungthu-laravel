@@ -69,6 +69,22 @@
         .swal2-toast .swal2-icon { width: 2em !important; height: 2em !important; margin: 0.5em 0.8em 0.5em 0 !important; }
         .swal2-toast { flex-direction: row !important; align-items: center !important; }
 
+        /* Global Thin Scrollbar for Dropdowns */
+        .dropdown-menu::-webkit-scrollbar {
+            width: 3.5px !important;
+        }
+        .dropdown-menu::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+        .dropdown-menu::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2) !important;
+            border-radius: 10px !important;
+        }
+        .dropdown-menu {
+            scrollbar-width: thin !important;
+            scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
+        }
+
         /* Fix Mobile Zoom & Overflow */
         html, body {
             max-width: 100%;

@@ -96,7 +96,6 @@
     @include('partials.footer')
 
     @include('partials.chat')
-    @include('partials.recent-orders-modal')
     @include('partials.spam-warning-modal')
     @include('partials.app-download-modal')
 

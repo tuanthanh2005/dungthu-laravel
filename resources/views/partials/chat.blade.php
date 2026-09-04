@@ -47,7 +47,260 @@
     }
 }
 
-/* Hide FABs when chat widget is active to prevent overlapping */
+/* Hide pill button & popover when chat widget is active */
+.chat-widget.active ~ .contact-us-pill-wrapper,
+.chat-widget.active ~ .support-menu-popover {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(15px) !important;
+}
+
+/* ============================================
+   CONTACT US PILL BUTTON & POPOVER (NEW DESIGN)
+   ============================================ */
+.contact-us-pill-wrapper {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 100000;
+    transition: all 0.3s ease;
+}
+
+.contact-us-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 18px 5px 5px;
+    background: #ffffff;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2.5px solid transparent;
+    background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, #ff7e5f 0%, #feb47b 30%, #4682b4 70%, #00d2ff 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    user-select: none;
+    outline: none;
+}
+
+.contact-us-pill-btn .pill-icon-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #2d2926;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.contact-us-pill-btn .pill-text {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-left: 10px;
+    white-space: nowrap;
+    letter-spacing: -0.2px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 160px;
+    opacity: 1;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    transition: max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, margin 0.35s ease;
+}
+
+/* 5s Auto Collapse State */
+.contact-us-pill-btn.is-collapsed {
+    padding-right: 5px !important;
+}
+
+.contact-us-pill-btn.is-collapsed .pill-text {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    margin-left: 0 !important;
+}
+
+/* Hover: Always expand full text */
+.contact-us-pill-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    padding-right: 18px !important;
+}
+
+.contact-us-pill-btn:hover .pill-text {
+    max-width: 160px !important;
+    opacity: 1 !important;
+    margin-left: 10px !important;
+}
+
+.contact-us-pill-btn .pill-red-dot {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
+    background-color: #ff0000;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.5);
+    animation: pillDotPulse 2s infinite ease-in-out;
+}
+
+@keyframes pillDotPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
+/* POPOVER MENU */
+.support-menu-popover {
+    position: fixed;
+    bottom: 80px;
+    right: 24px;
+    width: 290px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: 100001;
+    display: none;
+    overflow: hidden;
+    animation: supportPopoverAnim 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@keyframes supportPopoverAnim {
+    from { opacity: 0; transform: translateY(12px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.support-menu-popover.active {
+    display: block;
+}
+
+.support-popover-header {
+    padding: 12px 16px;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.support-popover-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.support-popover-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    text-decoration: none !important;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.support-popover-item:hover {
+    background: #f1f5f9;
+    transform: translateX(-2px);
+}
+
+.popover-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.popover-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.popover-item-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.popover-item-sub {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.popover-arrow {
+    font-size: 11px;
+    color: #cbd5e1;
+    transition: transform 0.2s ease;
+}
+
+.support-popover-item:hover .popover-arrow {
+    color: #475569;
+    transform: translateX(2px);
+}
+
+@media (max-width: 991px) {
+    .contact-us-pill-wrapper {
+        bottom: 72px;
+        right: 12px;
+    }
+    .support-menu-popover {
+        bottom: 124px;
+        right: 12px;
+        width: 275px;
+    }
+}
+
+@media (max-width: 576px) {
+    .contact-us-pill-wrapper {
+        bottom: 70px;
+        right: 10px;
+    }
+    .support-menu-popover {
+        bottom: 120px;
+        right: 10px;
+        width: 270px;
+    }
+    .contact-us-pill-btn {
+        padding: 4px 14px 4px 4px;
+    }
+    .contact-us-pill-btn .pill-icon-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 15px;
+    }
+    .contact-us-pill-btn .pill-text {
+        font-size: 12.5px;
+        margin-left: 8px;
+    }
+    .contact-us-pill-btn .pill-red-dot {
+        top: 1px;
+        right: 3px;
+        width: 12px;
+        height: 12px;
+    }
+}
 .chat-widget.active ~ .chat-fab-container {
     opacity: 0;
     pointer-events: none;
@@ -618,42 +871,99 @@
 
 @media (max-width: 768px) {
     .chat-fab-container {
-        bottom: 80px;
-        right: 16px;
-        gap: 10px;
+        bottom: 55px;
+        right: 8px;
+        gap: 6px;
     }
 
     .chat-fab {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .chat-fab.gift-box-fab i {
+        font-size: 16px !important;
+    }
+
+    .gift-box-badge {
+        width: 16px;
+        height: 16px;
+        font-size: 9px;
+        top: -3px;
+        right: -3px;
+        border-width: 1px;
+    }
+
+    .chat-fab .unread-badge {
+        min-width: 18px;
+        height: 18px;
+        font-size: 9px;
+        top: -3px;
+        right: -3px;
+        border-width: 1.5px;
+        padding: 0 4px;
     }
 
     /* Scaling Zalo custom icon elements for mobile */
     .chat-fab .position-relative {
-        width: 30px !important;
-        height: 30px !important;
+        width: 24px !important;
+        height: 24px !important;
     }
 
     .chat-fab .position-relative i.fa-comment {
-        font-size: 28px !important;
+        font-size: 22px !important;
     }
 
     .chat-fab .position-relative span {
-        font-size: 14px !important;
+        font-size: 11px !important;
     }
 
     .chat-fab .fab-tooltip {
         display: none;
     }
 
+    /* Toggle Button for Mobile Collapsible Menu */
+    .chat-fab-toggle-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(30, 41, 59, 0.85);
+        backdrop-filter: blur(4px);
+        color: #ffffff;
+        border: 1.5px solid rgba(255, 255, 255, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        transition: all 0.25s ease;
+        margin-bottom: 2px;
+        align-self: flex-end;
+    }
+
+    .chat-fab-toggle-btn:hover, .chat-fab-toggle-btn:active {
+        background: rgba(15, 23, 42, 0.95);
+        transform: scale(1.1);
+    }
+
+    /* When Collapsed on Mobile: hide secondary icons, show main chat button + toggle */
+    .chat-fab-container.is-collapsed .chat-fab:not(.user-support):not(.admin-chat) {
+        display: none !important;
+    }
+
+    .chat-fab-container.is-collapsed #chatFabToggleIcon {
+        transform: rotate(180deg);
+    }
+
     .chat-widget {
-        bottom: 140px; 
-        right: 16px;
+        bottom: 110px; 
+        right: 8px;
         left: auto;
         width: 300px; 
         height: 480px; 
-        max-height: calc(100vh - 200px);
+        max-height: calc(100vh - 160px);
         border-radius: 16px;
     }
 
@@ -704,17 +1014,17 @@
 
 @media (max-width: 480px) {
     .chat-widget {
-        bottom: 140px;
-        right: 10px;
-        left: 10px;
+        bottom: 110px;
+        right: 8px;
+        left: 8px;
         width: auto;
         height: 420px;
         border-radius: 16px;
     }
 
     .chat-fab-container {
-        bottom: 80px;
-        right: 16px;
+        bottom: 50px;
+        right: 8px;
     }
 
     .chat-footer {
@@ -1038,68 +1348,107 @@
 @endauth
 
 
-<div class="chat-fab-container">
+@php
+    $userVouchers = collect();
+    $userVoucherCount = 0;
+    if (Auth::check()) {
+        $userVouchers = \App\Models\Coupon::where('user_id', Auth::id())
+            ->where('is_used', false)
+            ->latest()
+            ->get();
+        $userVoucherCount = $userVouchers->count();
+    }
+@endphp
 
-    @php
-        $userVouchers = collect();
-        $userVoucherCount = 0;
-        if (Auth::check()) {
-            $userVouchers = \App\Models\Coupon::where('user_id', Auth::id())
-                ->where('is_used', false)
-                ->latest()
-                ->get();
-            $userVoucherCount = $userVouchers->count();
-        }
-    @endphp
-
-    <!-- Floating Gift Box Button (Hộp Quà) nằm TRÊN 3 bong bóng chat -->
-    <button type="button" 
-            class="chat-fab gift-box-fab {{ $userVoucherCount > 0 ? 'is-wiggling' : '' }}" 
-            data-bs-toggle="modal" 
-            data-bs-target="#userVouchersModal" 
-            style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); border: none; text-decoration: none !important;" 
-            aria-label="{{ __('Kho Voucher của bạn') }}">
-        <i class="fas fa-gift fab-icon text-white" style="font-size: 22px;"></i>
-        @if($userVoucherCount > 0)
-            <span class="unread-badge gift-box-badge" style="display: flex; background: #ef4444; color: #ffffff; font-weight: 800;">{{ $userVoucherCount }}</span>
-        @endif
-        <span class="fab-tooltip">{{ __('Kho Voucher Khuyến Mãi') }}</span>
-    </button>
-
-    <!-- Zalo Chat Button -->
-    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="chat-fab d-flex" style="background: #0068ff; text-decoration: none !important;" aria-label="{{ __('Liên hệ Zalo') }}">
-        <div class="position-relative d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-            <i class="fa-solid fa-comment" style="color: #ffffff; font-size: 38px;"></i>
-            <span style="position: absolute; color: #0068ff; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-weight: 900; font-size: 19px; font-style: italic; top: 44%; left: 47%; transform: translate(-50%, -50%);">z</span>
+<!-- Support Menu Popover (Xuất hiện khi click "Liên hệ chúng tôi") -->
+<div class="support-menu-popover" id="supportMenuPopover">
+    <div class="support-popover-header">
+        <div class="fw-bold text-dark d-flex align-items-center gap-2" style="font-size: 13.5px;">
+            <i class="fas fa-headset text-danger"></i> {{ __('Liên Hệ & Hỗ Trợ') }}
         </div>
-        <span class="fab-tooltip">{{ __('Liên hệ Zalo') }}</span>
-    </a>
+        <button type="button" class="btn-close btn-sm ms-auto" onclick="closeSupportMenuPopover()" aria-label="Close"></button>
+    </div>
+    <div class="support-popover-body">
+        {{-- User Chat Hỗ Trợ --}}
+        <a href="javascript:void(0)" onclick="openUserChatFromPopover(event)" class="support-popover-item">
+            <div class="popover-item-icon bg-primary text-white">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="popover-item-info">
+                <div class="popover-item-title">{{ __('Chat Hỗ Trợ Admin 24/7') }}</div>
+                <div class="popover-item-sub">{{ __('Chat trực tiếp hệ thống') }}</div>
+            </div>
+            <i class="fas fa-chevron-right popover-arrow"></i>
+        </a>
 
-    <!-- Telegram Chat Button -->
-    <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" class="chat-fab d-flex" style="background: #0088cc; text-decoration: none !important;" aria-label="{{ __('Telegram Admin') }}">
-        <i class="fab fa-telegram fab-icon"></i>
-        <span class="fab-tooltip">{{ __('Telegram Admin') }}</span>
-    </a>
+        {{-- Affiliate Chat --}}
+        @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
+        <a href="javascript:void(0)" onclick="openAffiliateChatFromPopover(event)" class="support-popover-item">
+            <div class="popover-item-icon bg-danger text-white">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div class="popover-item-info">
+                <div class="popover-item-title">{{ __('Chat Hỗ Trợ CTV') }}</div>
+                <div class="popover-item-sub">{{ __('Trao đổi với Admin') }}</div>
+            </div>
+            <i class="fas fa-chevron-right popover-arrow"></i>
+        </a>
+        @endif
 
-    <!-- User Support Chat Button (user thường, không phải affiliate) -->
-    @auth
-    @if(!Auth::guard('affiliate')->check())
-    <button class="chat-fab user-support" onclick="toggleUserChat()" id="userChatFab" aria-label="{{ __('Hỗ trợ khách hàng') }}">
-        <i class="fas fa-comments fab-icon"></i>
-        <span class="unread-badge" id="userUnreadBadge" style="display: none;">0</span>
-        <span class="fab-tooltip">{{ __('Hỗ trợ khách hàng') }}</span>
+        {{-- Zalo Admin --}}
+        <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" onclick="closeSupportMenuPopover()" class="support-popover-item">
+            <div class="popover-item-icon" style="background: #0068ff; color: #fff;">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="popover-item-info">
+                <div class="popover-item-title">Zalo Admin</div>
+                <div class="popover-item-sub">{{ __('Cấp tài khoản & hỗ trợ nhanh') }}</div>
+            </div>
+            <i class="fas fa-chevron-right popover-arrow"></i>
+        </a>
+
+        {{-- Telegram Admin --}}
+        <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" onclick="closeSupportMenuPopover()" class="support-popover-item">
+            <div class="popover-item-icon" style="background: #0088cc; color: #fff;">
+                <i class="fab fa-telegram-plane"></i>
+            </div>
+            <div class="popover-item-info">
+                <div class="popover-item-title">Telegram Admin</div>
+                <div class="popover-item-sub">{{ __('Hỗ trợ Telegram 24/7') }}</div>
+            </div>
+            <i class="fas fa-chevron-right popover-arrow"></i>
+        </a>
+
+        {{-- Kho Voucher --}}
+        @auth
+        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#userVouchersModal" onclick="closeSupportMenuPopover()" class="support-popover-item">
+            <div class="popover-item-icon" style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); color: #fff;">
+                <i class="fas fa-gift"></i>
+            </div>
+            <div class="popover-item-info">
+                <div class="popover-item-title d-flex align-items-center gap-1.5">
+                    {{ __('Kho Voucher Khuyến Mãi') }}
+                    @if($userVoucherCount > 0)
+                        <span class="badge bg-danger rounded-pill" style="font-size: 10px;">{{ $userVoucherCount }}</span>
+                    @endif
+                </div>
+                <div class="popover-item-sub">{{ __('Xem mã giảm giá của bạn') }}</div>
+            </div>
+            <i class="fas fa-chevron-right popover-arrow"></i>
+        </a>
+        @endauth
+    </div>
+</div>
+
+<!-- Contact Us Pill Floating Button (Theo đúng thiết kế nút Bo Tròn Gradient + Red Dot) -->
+<div class="contact-us-pill-wrapper">
+    <button type="button" class="contact-us-pill-btn" onclick="toggleSupportMenuPopover(event)" aria-label="{{ __('Liên hệ chúng tôi') }}">
+        <div class="pill-icon-circle">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <span class="pill-text">{{ __('Liên hệ chúng tôi') }}</span>
+        <span class="pill-red-dot"></span>
     </button>
-    @endif
-    @endauth
-
-    <!-- Admin Chat Button (Only for Approved Affiliates) -->
-    @if(Auth::guard('affiliate')->check() && Auth::guard('affiliate')->user()->status === 'approved')
-    <button class="chat-fab admin-chat" onclick="toggleAffiliateChat()" id="affiliateChatFab">
-        <i class="fas fa-headset fab-icon"></i>
-        <span class="unread-badge" id="affiliateUnreadBadge" style="display: none;">0</span>
-        <span class="fab-tooltip">{{ __('Chat với Admin') }}</span>
-    </button>
-    @endif
 </div>
 
 <!-- Modal Kho Voucher Của Bạn -->
@@ -1572,6 +1921,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close on click outside
     document.addEventListener('click', function(event) {
+        const popover = document.getElementById('supportMenuPopover');
+        const pillBtn = document.querySelector('.contact-us-pill-btn');
+        if (popover?.contains(event.target) || pillBtn?.contains(event.target)) {
+            return;
+        }
+
         // Affiliate widget
         const affiliateWidget = document.getElementById('affiliateChatWidget');
         const affiliateBtn = document.getElementById('affiliateChatFab');
@@ -1873,5 +2228,69 @@ document.addEventListener('DOMContentLoaded', function() {
             autoGrowTextarea(this);
         });
     }
+
+    // Hiệu ứng tự động thu gọn (chỉ còn icon) <-> dãn ra (hiển thị đầy đủ chữ) mỗi 10 giây
+    setInterval(function() {
+        const pillBtn = document.querySelector('.contact-us-pill-btn');
+        const popover = document.getElementById('supportMenuPopover');
+        if (pillBtn && (!popover || !popover.classList.contains('active'))) {
+            pillBtn.classList.toggle('is-collapsed');
+        }
+    }, 10000);
+
+    // Close Support Popover on outside click
+    document.addEventListener('click', function(e) {
+        const popover = document.getElementById('supportMenuPopover');
+        const pillBtn = document.querySelector('.contact-us-pill-btn');
+        if (popover && popover.classList.contains('active')) {
+            if (!popover.contains(e.target) && (!pillBtn || !pillBtn.contains(e.target))) {
+                closeSupportMenuPopover();
+            }
+        }
+    });
 });
+
+function toggleSupportMenuPopover(e) {
+    if (e) e.stopPropagation();
+    const popover = document.getElementById('supportMenuPopover');
+    if (popover) {
+        popover.classList.toggle('active');
+    }
+}
+
+function closeSupportMenuPopover() {
+    const popover = document.getElementById('supportMenuPopover');
+    if (popover) {
+        popover.classList.remove('active');
+    }
+}
+
+function openUserChatFromPopover(e) {
+    if (e) e.stopPropagation();
+    closeSupportMenuPopover();
+    const widget = document.getElementById('userChatWidget');
+    if (widget) {
+        if (!userChatOpen) {
+            toggleUserChat();
+        }
+    } else {
+        @auth
+            const affWidget = document.getElementById('affiliateChatWidget');
+            if (affWidget) {
+                if (!affiliateChatOpen) toggleAffiliateChat();
+                return;
+            }
+        @endauth
+        window.location.href = "{{ route('login') }}";
+    }
+}
+
+function openAffiliateChatFromPopover(e) {
+    if (e) e.stopPropagation();
+    closeSupportMenuPopover();
+    const affWidget = document.getElementById('affiliateChatWidget');
+    if (affWidget && !affiliateChatOpen) {
+        toggleAffiliateChat();
+    }
+}
 </script>

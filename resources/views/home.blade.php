@@ -1071,15 +1071,15 @@
             position: fixed;
             left: 20px;
             bottom: 20px;
-            width: 340px;
+            width: 250px;
             max-width: calc(100vw - 40px);
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(10px);
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 0 5px 15px rgba(0, 0, 0, 0.06);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.5);
-            border-left: 5px solid #10b981;
-            padding: 14px 16px;
+            border-left: 4px solid #10b981;
+            padding: 8px 10px;
             z-index: 99999;
             opacity: 0;
             transform: translateX(-30px) scale(0.95);
@@ -1095,49 +1095,52 @@
 
         .rpt-toast .inner {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             align-items: center;
         }
 
         .rpt-toast .ava {
-            width: 44px;
-            height: 44px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: #fff;
             font-weight: 800;
-            font-size: 16px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
         }
 
         .rpt-toast .rn {
             font-weight: 800;
-            font-size: 0.86rem;
+            font-size: 0.8rem;
             color: #1f2937;
+            line-height: 1.1;
         }
 
         .rpt-toast .rs {
-            font-size: 0.76rem;
+            font-size: 0.7rem;
             color: #4b5563;
             margin-top: 1px;
+            line-height: 1.1;
         }
 
         .rpt-toast .rp {
-            font-size: 0.8rem;
+            font-size: 0.74rem;
             font-weight: 700;
             color: #ef4444;
             display: block;
-            margin-top: 3px;
+            margin-top: 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 220px;
+            max-width: 170px;
             text-decoration: none;
             transition: color 0.2s;
+            line-height: 1.2;
         }
 
         .rpt-toast .rp:hover {
@@ -1147,11 +1150,11 @@
 
         .rpt-toast .rc {
             position: absolute;
-            top: 10px;
-            right: 12px;
+            top: 6px;
+            right: 8px;
             background: none;
             border: none;
-            font-size: 18px;
+            font-size: 14px;
             color: #9ca3af;
             cursor: pointer;
             line-height: 1;
@@ -1165,20 +1168,27 @@
 
         @media (max-width: 991px) {
             .rpt-toast {
-                bottom: 76px; /* Positioned above the mobile bottom nav bar */
-                left: 12px;
-                width: 290px;
-                max-width: calc(100vw - 24px);
-                padding: 10px 12px;
+                bottom: 74px; /* Positioned above the mobile bottom nav bar */
+                left: 10px;
+                width: 230px;
+                max-width: calc(100vw - 20px);
+                padding: 7px 9px;
+                border-radius: 10px;
             }
             .rpt-toast .ava {
-                width: 38px;
-                height: 38px;
-                font-size: 14px;
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            .rpt-toast .rn {
+                font-size: 0.76rem;
+            }
+            .rpt-toast .rs {
+                font-size: 0.68rem;
             }
             .rpt-toast .rp {
-                max-width: 190px;
-                font-size: 0.76rem;
+                max-width: 150px;
+                font-size: 0.7rem;
             }
         }
 

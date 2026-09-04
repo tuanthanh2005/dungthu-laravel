@@ -350,10 +350,6 @@
         <i class="fa-solid fa-cloud-arrow-down" style="color: #ff5e00;"></i>
         <span style="color: #ff5e00; font-weight: bold;">{{ __('Tải App') }}</span>
     </a>
-    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="mobile-nav-item">
-        <i class="fa-solid fa-headset"></i>
-        <span>{{ __('Hỗ trợ') }}</span>
-    </a>
     @if($menuCart)
     <a href="{{ route('cart.index') }}" class="mobile-nav-item position-relative {{ request()->routeIs('cart.*') ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>

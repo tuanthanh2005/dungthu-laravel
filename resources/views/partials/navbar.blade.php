@@ -507,7 +507,7 @@
     }
 
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar {
-        width: 3.5px !important;
+        width: 2px !important;
     }
 
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-track {
@@ -515,12 +515,12 @@
     }
 
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.2) !important;
+        background: rgba(0, 0, 0, 0.25) !important;
         border-radius: 10px !important;
     }
 
     .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.4) !important;
+        background: rgba(0, 0, 0, 0.5) !important;
     }
 
     .shadow-techfeed .dropdown-item {

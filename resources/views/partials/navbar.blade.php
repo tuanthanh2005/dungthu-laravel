@@ -773,7 +773,7 @@
                         el.textContent = `${data.count}`;
                     });
                     heroTextEls.forEach(el => {
-                        el.textContent = `${data.count} đang xem`;
+                        el.textContent = `${data.count} {{ __('đang xem') }}`;
                     });
                 }
             })

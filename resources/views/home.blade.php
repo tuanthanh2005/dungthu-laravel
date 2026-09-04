@@ -1875,7 +1875,7 @@
                     <div class="hero-online-badge-clean" title="{{ __('Khách hàng đang online / xem sản phẩm thực tế') }}">
                         <span class="live-dot"></span>
                         <i class="fa-solid fa-users"></i>
-                        <span id="heroOnlineCountText" class="heroOnlineCountText">-- đang xem</span>
+                        <span id="heroOnlineCountText" class="heroOnlineCountText">-- {{ __('đang xem') }}</span>
                     </div>
                 </div>
 

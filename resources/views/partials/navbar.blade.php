@@ -195,31 +195,7 @@
                 </span>
             </button>
 
-            {{-- Language Switcher --}}
-            {{-- Language Selector (Desktop only) --}}
-            <div class="dropdown d-none d-md-block">
-                <button class="nav-icon-btn d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;">
-                    @if(app()->getLocale() === 'en')
-                        <img src="https://flagcdn.com/w40/us.png" width="20" alt="US" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); display: inline-block;">
-                    @else
-                        <img src="https://flagcdn.com/w40/vn.png" width="20" alt="VN" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); display: inline-block;">
-                    @endif
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 140px; border: none; border-radius: 12px;">
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 13.5px;">
-                            <img src="https://flagcdn.com/w40/vn.png" width="20" alt="VN" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15);">
-                            {{ __('Tiếng Việt') }}
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 13.5px;">
-                            <img src="https://flagcdn.com/w40/us.png" width="20" alt="US" style="border-radius: 2px; border: 1px solid rgba(0,0,0,0.15);">
-                            English
-                        </a>
-                    </li>
-                </ul>
-            </div>
+
 
             {{-- Cart --}}
             @if($menuCart)
@@ -509,6 +485,82 @@
 </div>
 
 <style>
+    /* Unified User & Header Dropdown Menu Optimization */
+    .dropdown:hover > .dropdown-menu:not(.show) {
+        display: none !important;
+    }
+
+    .shadow-techfeed.dropdown-menu {
+        max-height: calc(100vh - 85px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        min-width: 220px !important;
+        max-width: 270px !important;
+        padding: 6px 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border-radius: 14px !important;
+        scrollbar-width: thin;
+        margin-right: 6px !important;
+        background-color: #ffffff !important;
+    }
+
+    .shadow-techfeed.dropdown-menu::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .shadow-techfeed.dropdown-menu::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .shadow-techfeed.dropdown-menu::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    .shadow-techfeed .dropdown-item {
+        display: flex !important;
+        align-items: center !important;
+        padding: 8px 14px !important;
+        font-size: 13.5px !important;
+        color: #1f2937 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        transition: background-color 0.15s ease, color 0.15s ease !important;
+        border-radius: 8px !important;
+        margin: 2px 6px !important;
+        width: calc(100% - 12px) !important;
+        box-sizing: border-box !important;
+    }
+
+    .shadow-techfeed .dropdown-item:hover,
+    .shadow-techfeed .dropdown-item:focus {
+        background-color: rgba(255, 94, 0, 0.08) !important;
+        color: #ff5e00 !important;
+    }
+
+    .shadow-techfeed button.dropdown-item.text-danger:hover,
+    .shadow-techfeed button.dropdown-item.text-danger:focus {
+        color: #dc2626 !important;
+        background-color: rgba(220, 38, 38, 0.08) !important;
+    }
+
+    .shadow-techfeed .dropdown-item.active {
+        background-color: rgba(255, 94, 0, 0.12) !important;
+        color: #ff5e00 !important;
+        font-weight: 700;
+    }
+
+    @media (max-width: 576px) {
+        .shadow-techfeed.dropdown-menu {
+            right: 6px !important;
+            left: auto !important;
+            max-width: calc(100vw - 20px) !important;
+            width: 250px !important;
+        }
+    }
+
     .contact-modal-item:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);

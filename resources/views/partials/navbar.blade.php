@@ -348,32 +348,9 @@
                     </ul>
                 </div>
             @else
-                <div class="dropdown">
-                    <button class="nav-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Tài khoản & Ngôn ngữ') }}">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 170px; border-radius: 12px;">
-                        <li>
-                            <a class="dropdown-item fw-bold text-primary" href="{{ route('login') }}">
-                                <i class="fa-solid fa-right-to-bracket me-2"></i>{{ __('Đăng nhập') }}
-                            </a>
-                        </li>
-                        <li class="d-lg-none"><hr class="dropdown-divider"></li>
-                        <li class="d-lg-none"><span class="dropdown-header text-muted py-1" style="font-size: 11px;">{{ __('Ngôn ngữ') }}</span></li>
-                        <li class="d-lg-none">
-                            <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 13px;">
-                                <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" style="border-radius: 2px;">
-                                {{ __('Tiếng Việt') }}
-                            </a>
-                        </li>
-                        <li class="d-lg-none">
-                            <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 13px;">
-                                <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" style="border-radius: 2px;">
-                                English
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <a href="{{ route('login') }}" class="nav-icon-btn d-flex align-items-center justify-content-center text-decoration-none" title="{{ __('Đăng nhập') }}">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </a>
             @endauth
         </div>
     </div>

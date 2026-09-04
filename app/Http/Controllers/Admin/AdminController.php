@@ -235,6 +235,28 @@ class AdminController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
+    /**
+     * Award or deduct spin tickets for a user.
+     */
+    public function awardTickets(Request $request, User $user)
+    {
+        $request->validate([
+            'tickets' => 'required|integer',
+        ]);
+
+        $change = (int) $request->tickets;
+        $newTickets = max(0, (int) $user->spin_tickets + $change);
+        $user->update(['spin_tickets' => $newTickets]);
+
+        $actionText = $change >= 0 ? "cộng {$change}" : "trừ " . abs($change);
+
+        return response()->json([
+            'success' => true,
+            'spin_tickets' => $newTickets,
+            'message' => "Đã {$actionText} lượt quay cho {$user->name}. Tổng hiện tại: {$newTickets} lượt!",
+        ]);
+    }
+
     public function abandonedCarts()
     {
         $carts = AbandonedCart::query()

@@ -81,10 +81,10 @@
 
             {{-- Footer --}}
             <div class="modal-footer border-0 p-3 px-4 bg-white d-flex align-items-center justify-content-between">
-                <button type="button" class="btn btn-sm btn-light border text-secondary px-3.5 py-2 fw-medium rounded-pill close-spam-modal-btn" data-bs-dismiss="modal" style="font-size: 12.5px;">
-                    <i class="fas fa-times me-1"></i>{{ __('Đóng (Tắt 1h)') }}
+                <button type="button" class="btn btn-sm btn-light border text-secondary px-3.5 py-2 fw-medium rounded-pill close-spam-modal-btn" data-duration="600000" data-bs-dismiss="modal" style="font-size: 12.5px;">
+                    <i class="fas fa-times me-1"></i>{{ __('Đóng (Tắt 10p)') }}
                 </button>
-                <button type="button" class="btn btn-sm text-white px-4 py-2 fw-bold rounded-pill shadow-sm close-spam-modal-btn" data-bs-dismiss="modal" style="background: linear-gradient(135deg, #dc2626 0%, #f97316 100%); font-size: 12.5px; border: none;">
+                <button type="button" class="btn btn-sm text-white px-4 py-2 fw-bold rounded-pill shadow-sm close-spam-modal-btn" data-duration="300000" data-bs-dismiss="modal" style="background: linear-gradient(135deg, #dc2626 0%, #f97316 100%); font-size: 12.5px; border: none;">
                     <i class="fas fa-check me-1.5"></i>{{ __('Tôi đã hiểu') }}
                 </button>
             </div>
@@ -99,6 +99,9 @@
         const closedUntil = localStorage.getItem(STORAGE_KEY);
         const now = Date.now();
 
+        // Thời gian chờ mặc định (10 phút nếu đóng bằng X hoặc backdrop)
+        let activeCloseDuration = 600000;
+
         const shouldShowSpamModal = modalEl && (!closedUntil || now >= parseInt(closedUntil, 10));
 
         if (shouldShowSpamModal) {
@@ -108,10 +111,23 @@
                 bsModal.show();
             }, 1200);
 
+            // Gắn sự kiện click cho các nút để lưu khoảng thời gian tắt modal
+            if (modalEl) {
+                const actionElements = modalEl.querySelectorAll('.close-spam-modal-btn');
+                actionElements.forEach(el => {
+                    el.addEventListener('click', function() {
+                        const duration = parseInt(this.getAttribute('data-duration'), 10);
+                        if (!isNaN(duration)) {
+                            activeCloseDuration = duration;
+                        }
+                    });
+                });
+            }
+
             // Khi đóng Modal Cảnh báo (bằng nút Đóng, Tôi đã hiểu, X, ESC, Backdrop) -> Mới cho phép mở Modal Đơn hàng mới
             modalEl.addEventListener('hidden.bs.modal', function () {
-                const oneHourLater = Date.now() + 3600000;
-                localStorage.setItem(STORAGE_KEY, oneHourLater.toString());
+                const closedUntilTime = Date.now() + activeCloseDuration;
+                localStorage.setItem(STORAGE_KEY, closedUntilTime.toString());
 
                 if (typeof window.showRecentOrdersModal === 'function') {
                     setTimeout(() => {
@@ -120,23 +136,12 @@
                 }
             }, { once: true });
         } else {
-            // 2. Nếu Modal Cảnh báo đã tắt 1h -> Hiển thị thẳng Modal Đơn hàng mới
+            // 2. Nếu Modal Cảnh báo chưa hết thời gian tắt (5p hoặc 10p) -> Hiển thị thẳng Modal Đơn hàng mới
             if (typeof window.showRecentOrdersModal === 'function') {
                 setTimeout(() => {
                     window.showRecentOrdersModal();
                 }, 1500);
             }
-        }
-
-        if (modalEl) {
-            // Lưu mốc thời gian ẩn 1 tiếng khi click nút đóng/tôi đã hiểu
-            const actionElements = modalEl.querySelectorAll('.close-spam-modal-btn');
-            actionElements.forEach(el => {
-                el.addEventListener('click', function() {
-                    const oneHourLater = Date.now() + 3600000;
-                    localStorage.setItem(STORAGE_KEY, oneHourLater.toString());
-                });
-            });
         }
     });
 </script>

@@ -213,6 +213,31 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
 
+            {{-- Language Switcher (Desktop Only) --}}
+            <div class="dropdown d-none d-lg-flex">
+                <button class="nav-icon-btn d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Ngôn ngữ') }}" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;">
+                    @if(app()->getLocale() === 'en')
+                        <img src="https://flagcdn.com/w40/us.png" width="22" alt="US" style="border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+                    @else
+                        <img src="https://flagcdn.com/w40/vn.png" width="22" alt="VN" style="border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+                    @endif
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-techfeed" style="min-width: 150px; border-radius: 12px; padding: 6px;">
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 13px;">
+                            <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" style="border-radius: 2px;">
+                            {{ __('Tiếng Việt') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 13px;">
+                            <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" style="border-radius: 2px;">
+                            English
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             {{-- User Menu --}}
             @auth
                 <div class="dropdown">
@@ -278,8 +303,8 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         
-                        {{-- Language Selector Collapsible in User Dropdown --}}
-                        <li>
+                        {{-- Language Selector Collapsible in User Dropdown (Mobile Only) --}}
+                        <li class="d-lg-none">
                             <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileLangCollapse" role="button" aria-expanded="false" aria-controls="mobileLangCollapse" onclick="event.stopPropagation();">
                                 <span>
                                     @if(app()->getLocale() === 'en')
@@ -308,7 +333,7 @@
                                 </ul>
                             </div>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li class="d-lg-none"><hr class="dropdown-divider"></li>
                         
                         <li><a class="dropdown-item" href="{{ route('minigame.index') }}"><i class="fas fa-gamepad me-2 text-danger"></i>{{ __('Vòng xoay may mắn') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>{{ __('Tài khoản') }}</a></li>
@@ -333,15 +358,15 @@
                                 <i class="fa-solid fa-right-to-bracket me-2"></i>{{ __('Đăng nhập') }}
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><span class="dropdown-header text-muted py-1" style="font-size: 11px;">{{ __('Ngôn ngữ') }}</span></li>
-                        <li>
+                        <li class="d-lg-none"><hr class="dropdown-divider"></li>
+                        <li class="d-lg-none"><span class="dropdown-header text-muted py-1" style="font-size: 11px;">{{ __('Ngôn ngữ') }}</span></li>
+                        <li class="d-lg-none">
                             <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 13px;">
                                 <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" style="border-radius: 2px;">
                                 {{ __('Tiếng Việt') }}
                             </a>
                         </li>
-                        <li>
+                        <li class="d-lg-none">
                             <a class="dropdown-item d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 13px;">
                                 <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" style="border-radius: 2px;">
                                 English

@@ -521,20 +521,34 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
 
         e.preventDefault();
 
+        const openModal = form.closest('.modal') || document.querySelector('.modal.show');
+
         Swal.fire({
             title: @json(__('Xác nhận thao tác')),
             text: @json(__('Nhập mã PIN 8 số để xác nhận:')),
             input: 'password',
-            inputAttributes: { maxlength: 8, pattern: '[0-9]{8}', inputmode: 'numeric' },
+            inputAttributes: { maxlength: 8, pattern: '[0-9]{8}', inputmode: 'numeric', autofocus: 'autofocus' },
             showCancelButton: true,
             confirmButtonText: @json(__('Xác nhận')),
             cancelButtonText: @json(__('Hủy')),
             confirmButtonColor: '#667eea',
+            target: openModal || 'body',
+            didOpen: () => {
+                const swalInput = Swal.getInput();
+                if (swalInput) {
+                    setTimeout(() => swalInput.focus(), 100);
+                }
+            }
         }).then((result) => {
             if (!result.isConfirmed) return;
             const pin = result.value;
             if (!/^\d{8}$/.test(pin)) {
-                Swal.fire({ icon: 'error', title: @json(__('Lỗi')), text: @json(__('Mã PIN phải đúng 8 số.')) });
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: @json(__('Lỗi')), 
+                    text: @json(__('Mã PIN phải đúng 8 số.')),
+                    target: openModal || 'body'
+                });
                 return;
             }
             let input = form.querySelector('input[name="admin_pin"]');
@@ -556,6 +570,12 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
     /* Prevent double-tap to zoom on admin devices */
     html, body {
         touch-action: manipulation;
+    }
+    /* Fix SweetAlert focus & z-index when opened inside Bootstrap Modals */
+    .modal .swal2-container {
+        z-index: 1060 !important;
+        position: fixed !important;
+        inset: 0 !important;
     }
 </style>
 

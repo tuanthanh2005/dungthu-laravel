@@ -154,6 +154,7 @@
 <script>
 function promptAdminPin(callback) {
     if (typeof Swal !== 'undefined') {
+        const activeModal = document.querySelector('.modal.show');
         Swal.fire({
             title: 'Xác nhận thao tác Admin',
             text: 'Vui lòng nhập mã PIN 8 số để xác thực:',
@@ -163,11 +164,18 @@ function promptAdminPin(callback) {
             confirmButtonText: 'Xác nhận',
             cancelButtonText: 'Hủy',
             confirmButtonColor: '#7c3aed',
+            target: activeModal || 'body',
+            didOpen: () => {
+                const swalInput = Swal.getInput();
+                if (swalInput) {
+                    setTimeout(() => swalInput.focus(), 100);
+                }
+            }
         }).then((result) => {
             if (result.isConfirmed && result.value) {
                 const pin = result.value.trim();
                 if (!/^\d{8}$/.test(pin)) {
-                    Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Mã PIN phải đúng 8 số.' });
+                    Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Mã PIN phải đúng 8 số.', target: activeModal || 'body' });
                     return;
                 }
                 callback(pin);

@@ -51,8 +51,9 @@ class AdminCouponController extends Controller
         $usedCoupons = Coupon::where('is_used', true)->count();
         $totalValue = Coupon::sum('value');
 
-        // Top customers filter / list (Users with most completed orders)
-        $topCustomers = User::whereHas('orders', function ($q) {
+        // Top customers filter / list (Users with most completed orders, excluding Admin roles)
+        $topCustomers = User::whereNotIn('role', ['sieusuperadmin', 'superadmin_1', 'admin'])
+        ->whereHas('orders', function ($q) {
             $q->where('status', 'completed');
         })
         ->withCount(['orders' => function ($q) {
@@ -151,20 +152,24 @@ class AdminCouponController extends Controller
     }
 
     /**
-     * Live search users for AJAX dropdown.
+     * Live search users for AJAX dropdown (excludes admin accounts).
      */
     public function searchUsers(Request $request)
     {
         $q = trim($request->get('q', ''));
 
+        $query = User::whereNotIn('role', ['sieusuperadmin', 'superadmin_1', 'admin']);
+
         if (empty($q)) {
-            $users = User::latest()->limit(15)->get(['id', 'name', 'email', 'phone', 'role']);
+            $users = $query->latest()->limit(15)->get(['id', 'name', 'email', 'phone', 'role']);
         } else {
-            $users = User::where('name', 'like', "%{$q}%")
-                ->orWhere('email', 'like', "%{$q}%")
-                ->orWhere('phone', 'like', "%{$q}%")
-                ->limit(20)
-                ->get(['id', 'name', 'email', 'phone', 'role']);
+            $users = $query->where(function ($sub) use ($q) {
+                $sub->where('name', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('phone', 'like', "%{$q}%");
+            })
+            ->limit(20)
+            ->get(['id', 'name', 'email', 'phone', 'role']);
         }
 
         return response()->json($users->map(function ($user) {

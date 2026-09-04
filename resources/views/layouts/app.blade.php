@@ -154,7 +154,7 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 4500,
+                timer: 3000,
                 timerProgressBar: true,
                 didOpen: (toast) => {
                     toast.addEventListener('mouseenter', Swal.stopTimer);
@@ -256,7 +256,7 @@
             position: 'top-end',
             showConfirmButton: false,
             showCloseButton: true,
-            timer: 4000,
+            timer: 3000,
             timerProgressBar: true,
             width: '350px',
             padding: '12px',
@@ -285,7 +285,7 @@
             position: 'top-end',
             showConfirmButton: false,
             showCloseButton: true,
-            timer: 4000,
+            timer: 3000,
             timerProgressBar: true,
             width: '350px',
             padding: '12px',

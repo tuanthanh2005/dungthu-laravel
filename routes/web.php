@@ -518,3 +518,22 @@ Route::post('/go/{slug}/subscribe', [\App\Http\Controllers\SeoRouterController::
 Route::post('/webhook/sepay', [WebhookController::class, 'handleSepayWebhook'])->name('payment.webhook.sepay');
 Route::get('/api/payment/check-status/{orderCode}', [WebhookController::class, 'checkStatus'])->name('payment.check-status');
 Route::post('/api/payment/check-webhook/{orderCode}', [WebhookController::class, 'checkWebhook'])->middleware('throttle:10,1')->name('payment.check-webhook');
+
+// Web Cron Route - Tự động quét khách hàng hết hạn bằng URL (Dành cho Hosting / Cron-job.org)
+Route::get('/cron/check-expiring', function (\Illuminate\Http\Request $request) {
+    $secret = env('CRON_SECRET', 'dungthu_cron_secret_key_2026');
+    if ($request->query('key') !== $secret) {
+        return response()->json(['status' => 'error', 'message' => 'Unauthorized / Sai khoá bí mật'], 401);
+    }
+
+    try {
+        \Illuminate\Support\Facades\Artisan::call('durations:check-expiring');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã tự động quét và gửi thông báo Telegram khách hàng hết hạn thành công!',
+            'time' => now()->timezone('Asia/Ho_Chi_Minh')->toDateTimeString(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+    }
+});

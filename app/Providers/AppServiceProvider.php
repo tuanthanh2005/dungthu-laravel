@@ -42,5 +42,20 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('community-comment.delete', function ($user, CommunityComment $comment) {
             return in_array($user->role, ['superadmin_1', 'sieusuperadmin'], true) || $comment->user_id === $user->id;
         });
+
+        // Fallback tự động 100%: Quét khách hàng hết hạn khi có bất kỳ lượt truy cập web nào trong ngày (cho Hosting)
+        if (!app()->runningInConsole()) {
+            try {
+                $cacheKey = 'daily_expiring_check_ran_' . date('Y-m-d');
+                if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+                    \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->endOfDay());
+                    dispatch(function () {
+                        \Illuminate\Support\Facades\Artisan::call('durations:check-expiring');
+                    })->afterResponse();
+                }
+            } catch (\Throwable $e) {
+                // Ignore any exception to guarantee page load is never affected
+            }
+        }
     }
 }

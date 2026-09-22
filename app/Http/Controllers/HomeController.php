@@ -6,6 +6,7 @@ use App\Models\Blog;
 use App\Models\CardExchange;
 use App\Models\OnlineSession;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\SiteSetting;
@@ -165,8 +166,16 @@ class HomeController extends Controller
         });
 
         $totalSoldCount = Cache::remember('home.total_sold_count', 300, function () {
-            // Tối ưu: Dùng SQL sum trực tiếp tránh Product::all() nạp toàn bộ CSDL làm tràn RAM và bị N+1 query
-            $sum = (int) Product::query()->selectRaw('SUM(COALESCE(sold_count, 0) + COALESCE(fake_sold, 0)) as total_sum')->value('total_sum');
+            // Tối ưu: Dùng SQL sum trực tiếp từ OrderItem & Product::fake_sold để tránh lỗi missing column sold_count và không tràn RAM
+            $realSoldCount = (int) OrderItem::whereHas('order', function ($query) {
+                $query->where('status', '!=', 'cancelled');
+            })->sum('quantity');
+
+            $hasFakeSold = Cache::rememberForever('schema_has_fake_sold', fn () => Schema::hasColumn('products', 'fake_sold'));
+            $fakeSoldCount = $hasFakeSold ? (int) Product::query()->sum('fake_sold') : 0;
+
+            $sum = $realSoldCount + $fakeSoldCount;
+
             // Nếu bị chẵn đuôi (ví dụ 18.000), cộng số lẻ tự nhiên 387 thành 18.387 để khách hoàn toàn tin tưởng
             if ($sum % 10 === 0) {
                 $sum += 387;

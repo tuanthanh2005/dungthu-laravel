@@ -138,67 +138,40 @@ class BlockBadBots
             }
         }
 
-        // 4. Theo dõi thời gian (5 phút) và số lượng Session (> 10 session) đối với Khách vãng lai
-        if (!$isGoodBot && !Auth::check()) {
-            // Skip AJAX / JSON fetch requests (background heartbeat, pings, chat polling)
-            if ($request->ajax() || $request->wantsJson() || $request->isXmlHttpRequest()) {
-                return $next($request);
+        // Guests may browse freely, but after five minutes they must sign in
+        // before performing a state-changing action.  Do not redirect normal
+        // page views: doing that made the home page appear intermittently
+        // blank.  Do not use an IP/session-count limit here, because mobile
+        // networks and offices commonly share an IP.
+        if (!$isGoodBot && !Auth::check() && $request->hasSession()) {
+            $session = $request->session();
+            $firstSeen = (int) $session->get('guest_first_seen_at', 0);
+
+            if ($firstSeen === 0) {
+                $firstSeen = time();
+                $session->put('guest_first_seen_at', $firstSeen);
             }
 
-            // Bỏ qua kiểm tra giới hạn đối với các đường dẫn đăng nhập/đăng ký/static assets/webhooks/API
-            $path = ltrim($request->path(), '/');
-            $exemptPaths = ['login', 'register', 'password', 'auth', 'webhook', 'guest-chat', 'api/online-users', 'api/telegram', 'online-users'];
-            $isExempt = false;
+            $isSafeMethod = in_array($request->method(), ['GET', 'HEAD', 'OPTIONS'], true);
+            $isAuthOrInfrastructureRequest = $request->is(
+                'login',
+                'register',
+                'forgot-password',
+                'reset-password',
+                'auth/*',
+                'webhook/*',
+                'api/online-users/*',
+                'api/telegram/*'
+            );
 
-            foreach ($exemptPaths as $exempt) {
-                if (str_starts_with($path, $exempt) || str_contains($path, $exempt)) {
-                    $isExempt = true;
-                    break;
-                }
-            }
+            if (!$isSafeMethod && !$isAuthOrInfrastructureRequest && (time() - $firstSeen) >= 300) {
+                $message = 'Phiên trải nghiệm miễn phí đã hết. Vui lòng đăng nhập để tiếp tục thao tác.';
 
-            if (!$isExempt && $request->hasSession()) {
-                $session = $request->session();
-
-                // 4A. Kiểm tra thời gian duyệt web của Khách vãng lai (Giới hạn 5 phút = 300 giây)
-                if (!$session->has('guest_first_seen_at')) {
-                    $session->put('guest_first_seen_at', time());
-                }
-
-                $firstSeen = (int) $session->get('guest_first_seen_at');
-                if ($firstSeen > 0 && (time() - $firstSeen) >= 300) {
-                    if ($request->expectsJson() || $request->is('api/*')) {
-                        return response()->json([
-                            'message' => 'Bạn đã trải nghiệm xem web 5 phút với tư cách Khách vãng lai. Vui lòng đăng nhập để tiếp tục.'
-                        ], 403);
-                    }
-
-                    return redirect()->route('login')->with('info', '⏰ Bạn đã trải nghiệm xem trang web 5 phút với tư cách Khách vãng lai. Vui lòng đăng nhập hoặc tạo tài khoản miễn phí để tiếp tục lướt xem và sử dụng dịch vụ trên DungThu.com!');
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return response()->json(['message' => $message], 401);
                 }
 
-                // 4B. Kiểm tra số lượng Session khách vãng lai (> 10 session / IP)
-                $sessionId = $session->getId();
-                if ($sessionId) {
-                    $cacheKey = 'guest_sessions_' . md5($ip);
-                    $guestSessions = Cache::get($cacheKey, []);
-
-                    if (!in_array($sessionId, $guestSessions, true)) {
-                        $guestSessions[] = $sessionId;
-                        Cache::put($cacheKey, $guestSessions, now()->addHours(6));
-                    }
-
-                    // Nếu IP phát sinh trên 10 session khách vãng lai khác nhau -> Yêu cầu Đăng nhập (KHÔNG khóa IP)
-                    if (count($guestSessions) > 10) {
-                        if ($request->expectsJson() || $request->is('api/*')) {
-                            return response()->json([
-                                'message' => 'Phát hiện nhiều phiên kết nối từ IP của bạn. Vui lòng đăng nhập tài khoản để tiếp tục truy cập website.'
-                            ], 403);
-                        }
-
-                        // Chuyển hướng người dùng đến trang đăng nhập với thông báo yêu cầu đăng nhập
-                        return redirect()->route('login')->with('warning', '⚠️ Phát hiện nhiều phiên kết nối khách từ IP này. Vui lòng Đăng nhập tài khoản để tiếp tục truy cập website!');
-                    }
-                }
+                return redirect()->route('login')->with('info', $message);
             }
         }
 

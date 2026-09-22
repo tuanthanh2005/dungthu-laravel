@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\OnlineSession;
+use App\Models\SiteSetting;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -24,7 +25,7 @@ class OnlineUserController extends Controller
 
         try {
             $hasTable = Cache::rememberForever('schema_has_online_sessions', fn () => Schema::hasTable('online_sessions'));
-            if (!$hasTable) {
+            if (! $hasTable) {
                 return response()->json([
                     'success' => true,
                     'count' => 1,
@@ -51,7 +52,7 @@ class OnlineUserController extends Controller
             });
 
             // Optional baseline offset from SiteSetting if configured by admin (default 0)
-            $offset = (int) \App\Models\SiteSetting::getValue('online_users_offset', 0);
+            $offset = (int) SiteSetting::getValue('online_users_offset', 0);
             $displayCount = max(1, $stats['total_count'] + $offset);
 
             return response()->json([
@@ -60,7 +61,7 @@ class OnlineUserController extends Controller
                 'real_count' => $stats['total_count'],
                 'logged_in_count' => $stats['logged_in_count'],
                 'guest_count' => $stats['guest_count'],
-                'formatted' => $displayCount . ' đang xem',
+                'formatted' => $displayCount.' đang xem',
             ]);
         } catch (\Throwable $e) {
             return response()->json([
@@ -87,7 +88,7 @@ class OnlineUserController extends Controller
                 $now = time();
 
                 // Only update DB if last ping was more than 30 seconds ago
-                if ($sessionId && (!$lastPing || ($now - $lastPing) >= 30)) {
+                if ($sessionId && (! $lastPing || ($now - $lastPing) >= 30)) {
                     OnlineSession::updateOrCreate(
                         ['session_id' => $sessionId],
                         [
@@ -101,6 +102,9 @@ class OnlineUserController extends Controller
 
                     $request->session()->put('online_last_ping_at', $now);
                 }
+
+                // Tối ưu: Giải phóng Session Lock PHP ngay lập tức để không gây nghẽn các request khác của cùng 1 user trên Desktop PC
+                $request->session()->save();
             }
         } catch (\Throwable $e) {
             // Ignore

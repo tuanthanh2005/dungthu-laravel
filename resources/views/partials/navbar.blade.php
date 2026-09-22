@@ -736,6 +736,9 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
         function updateGlobalOnlineUsersCount() {
+            if (document.visibilityState && document.visibilityState !== 'visible') {
+                return;
+            }
             fetch('{{ route("online-users.ping") }}', {
                 method: 'POST',
                 headers: {
@@ -758,7 +761,7 @@
         }
 
         updateGlobalOnlineUsersCount();
-        setInterval(updateGlobalOnlineUsersCount, 15000);
+        setInterval(updateGlobalOnlineUsersCount, 30000);
 
         // Cơ chế Click -> Mở rộng chi tiết trong 3s -> Tự động thu gọn lại (Icon Mắt + Số)
         const interactivePills = document.querySelectorAll('.live-online-interactive-pill');

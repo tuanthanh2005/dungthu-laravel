@@ -1918,11 +1918,11 @@
                 <div class="hero-center-showcase-row">
                     @foreach($bannerProducts->take(4) as $bProduct)
                         @php
-                            $bImg = $bProduct->image ? (str_starts_with($bProduct->image, 'http') ? $bProduct->image : asset('storage/' . $bProduct->image)) : asset('images/default-product.png');
+                            $bImg = $bProduct->image_url;
                             $bPrice = $bProduct->sale_price ?: $bProduct->price;
                         @endphp
                         <a class="hero-mini-card" href="{{ route('product.show', $bProduct->slug) }}" title="{{ $bProduct->name }}">
-                            <img class="mini-img" src="{{ $bImg }}" alt="{{ $bProduct->name }}">
+                            <img class="mini-img" src="{{ $bImg }}" alt="{{ $bProduct->name }}" width="36" height="36" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';">
                             <div class="mini-content">
                                 <div class="mini-title">{{ $bProduct->name }}</div>
                                 <div class="mini-price">{{ number_format($bPrice, 0, ',', '.') }}đ</div>
@@ -2050,7 +2050,8 @@
                                         @if($sp->stock <= 0)
                                             <div style="position: absolute; top: 10px; right: 10px; background: #e53935; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 10;">{{ __('HẾT HÀNG') }}</div>
                                         @endif
-                                        <img src="{{ $sp->image ?? 'https://via.placeholder.com/300' }}" alt="{{ $sp->name }}" loading="lazy" decoding="async"
+                                        <img src="{{ $sp->image_url }}" alt="{{ $sp->name }}" loading="lazy" decoding="async"
+                                            onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';"
                                             style="width:100%;height:120px;object-fit:cover;">
                                         <div style="padding:8px;">
                                             <div style="font-size:.8rem;font-weight:700;height:40px;overflow:hidden;">
@@ -2080,8 +2081,9 @@
                             @foreach($featuredProducts->take(6) as $fp)
                             <a href="{{ route('product.show', $fp->slug) }}" class="combo-prod-card {{ $fp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
-                                    <img src="{{ $fp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}" loading="lazy" decoding="async"
-                                         alt="{{ $fp->name }}" loading="lazy">
+                                    <img src="{{ $fp->image_url }}" loading="lazy" decoding="async"
+                                         onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';"
+                                         alt="{{ $fp->name }}">
                                     @if($fp->is_on_sale)
                                         <span class="discount-badge">-{{ $fp->discount_percent }}%</span>
                                     @endif
@@ -2129,8 +2131,9 @@
                             @foreach($highlightProducts->take(6) as $hp)
                             <a href="{{ route('product.show', $hp->slug) }}" class="combo-prod-card {{ $hp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
-                                    <img src="{{ $hp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}" loading="lazy" decoding="async"
-                                         alt="{{ $hp->name }}" loading="lazy">
+                                    <img src="{{ $hp->image_url }}" loading="lazy" decoding="async"
+                                         onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';"
+                                         alt="{{ $hp->name }}">
                                     @if($hp->is_on_sale)
                                         <span class="discount-badge">-{{ $hp->discount_percent }}%</span>
                                     @endif
@@ -2178,8 +2181,9 @@
                             @foreach($latestProducts->take(12) as $cp)
                             <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card {{ $cp->stock <= 0 ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
-                                    <img src="{{ $cp->image ?? 'https://via.placeholder.com/300x225?text=Product' }}" loading="lazy" decoding="async"
-                                         alt="{{ $cp->name }}" loading="lazy">
+                                    <img src="{{ $cp->image_url }}" loading="lazy" decoding="async"
+                                         onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';"
+                                         alt="{{ $cp->name }}">
                                     @if($cp->is_on_sale)
                                         <span class="discount-badge">-{{ $cp->discount_percent }}%</span>
                                     @endif
@@ -2309,8 +2313,9 @@
                             <div id="sidebar-flash-sale-products">
                                 @foreach($saleProducts->take(3) as $sp)
                                     <a href="{{ route('product.show', $sp->slug) }}" class="tf-flash-item">
-                                        <img src="{{ $sp->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $sp->name }}"
-                                            loading="lazy">
+                                        <img src="{{ $sp->image_url }}" alt="{{ $sp->name }}"
+                                            loading="lazy" decoding="async"
+                                            onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';">
                                         <div>
                                             <div class="fn">{{ $sp->name }}</div>
                                             <div class="d-flex align-items-baseline gap-2 mt-1">
@@ -2330,8 +2335,9 @@
                             <div class="tf-widget-title">🔥 {{ __('Bán Chạy Tuần Này') }}</div>
                             @foreach($featuredProducts->take(5) as $ri => $prod)
                                 <a href="{{ route('product.show', $prod->slug) }}" class="tf-top-item">
-                                    <img src="{{ $prod->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $prod->name }}"
-                                        loading="lazy">
+                                    <img src="{{ $prod->image_url }}" alt="{{ $prod->name }}"
+                                        loading="lazy" decoding="async"
+                                        onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';">
                                     <div>
                                         <div class="name">{{ $prod->name }}</div>
                                         <div class="d-flex align-items-center gap-2">

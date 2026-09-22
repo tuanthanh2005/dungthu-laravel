@@ -257,6 +257,31 @@ class Product extends Model
         return number_format((float) ($this->price ?? 0), 0, ',', '.') . 'đ';
     }
 
+    // Chuẩn hóa đường dẫn ảnh sản phẩm: hỗ trợ URL tuyệt đối, public/images, storage, và fallback nội bộ siêu tốc
+    public function getImageUrlAttribute(): string
+    {
+        $img = $this->image;
+        if (empty($img)) {
+            return asset('images/dungthu.png');
+        }
+
+        if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
+            return $img;
+        }
+
+        $trimmed = ltrim($img, '/');
+
+        if (str_starts_with($trimmed, 'images/') || str_starts_with($trimmed, 'uploads/') || str_starts_with($trimmed, 'assets/')) {
+            return asset($trimmed);
+        }
+
+        if (str_starts_with($trimmed, 'storage/')) {
+            return asset($trimmed);
+        }
+
+        return asset('images/products/' . basename($trimmed));
+    }
+
     // Check còn hàng
     public function isInStock()
     {

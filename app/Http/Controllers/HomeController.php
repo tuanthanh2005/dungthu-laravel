@@ -264,7 +264,7 @@ class HomeController extends Controller
                     'id' => $product->id,
                     'name' => $product->name,
                     'slug' => $product->slug,
-                    'image' => $product->image ?? 'https://via.placeholder.com/300',
+                    'image' => $product->image_url,
                     'stock' => $product->stock,
                     'sold_count' => $product->sold_count,
                     'formatted_price' => $product->formatted_price,

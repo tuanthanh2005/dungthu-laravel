@@ -30,19 +30,20 @@ class HomeController extends Controller
         });
 
         // Lấy sản phẩm featured cho trang home (Cache 10 phút)
-        $featuredProducts = Cache::remember('home.featured_products', 600, function () {
-            return Product::active()->featured(12)->get();
+        $featuredProducts = Cache::remember('home.featured_products.v2', 600, function () {
+            return Product::active()->withSoldCount()->featured(12)->get();
         });
 
         // Lấy sản phẩm độc quyền (Cache 10 phút)
-        $highlightProducts = Cache::remember('home.highlight_products', 600, function () {
-            return Product::active()->where('is_exclusive', true)->latest()->take(12)->get();
+        $highlightProducts = Cache::remember('home.highlight_products.v2', 600, function () {
+            return Product::active()->withSoldCount()->where('is_exclusive', true)->latest()->take(12)->get();
         });
 
         // Lấy 24 sản phẩm mới nhất cho trang chủ (Cache 10 phút)
-        $latestProducts = Cache::remember('home.latest_products', 600, function () {
+        $latestProducts = Cache::remember('home.latest_products.v2', 600, function () {
             return Product::query()
                 ->active()
+                ->withSoldCount()
                 ->where('is_combo_ai', true)
                 ->latest()
                 ->take(24)
@@ -59,10 +60,11 @@ class HomeController extends Controller
         $saleEndsAt = now()->endOfDay();
         $isExpired = false;
 
-        $saleProducts = Cache::remember('home.sale_products', 300, function () use ($flashSaleEnabled, $saleEndsAt) {
+        $saleProducts = Cache::remember('home.sale_products.v2', 300, function () use ($flashSaleEnabled, $saleEndsAt) {
             if ($flashSaleEnabled && now()->lt($saleEndsAt)) {
                 $prods = Product::query()
                     ->active()
+                    ->withSoldCount()
                     ->where('is_flash_sale', true)
                     ->latest()
                     ->take(6)
@@ -72,7 +74,7 @@ class HomeController extends Controller
                 }
             }
 
-            return Product::query()->active()->latest()->take(6)->get();
+            return Product::query()->active()->withSoldCount()->latest()->take(6)->get();
         });
         if ($saleProducts->isEmpty()) {
             $isExpired = true;
@@ -256,6 +258,7 @@ class HomeController extends Controller
     public function getRandomProducts()
     {
         $products = Product::query()
+            ->withSoldCount()
             ->inRandomOrder()
             ->take(6)
             ->get()

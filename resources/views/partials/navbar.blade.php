@@ -761,7 +761,14 @@
         }
 
         updateGlobalOnlineUsersCount();
-        setInterval(updateGlobalOnlineUsersCount, 30000);
+        // Keep the counter fresh without waking hidden tabs or creating an
+        // unnecessary request for every visitor twice per minute.
+        setInterval(updateGlobalOnlineUsersCount, 60000);
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') {
+                updateGlobalOnlineUsersCount();
+            }
+        });
 
         // Cơ chế Click -> Mở rộng chi tiết trong 3s -> Tự động thu gọn lại (Icon Mắt + Số)
         const interactivePills = document.querySelectorAll('.live-online-interactive-pill');

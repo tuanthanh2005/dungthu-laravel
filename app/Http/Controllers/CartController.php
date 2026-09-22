@@ -68,7 +68,6 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
-        $this->syncAbandonedCart($cart);
 
         return redirect()->route('checkout');
     }
@@ -128,12 +127,21 @@ class CartController extends Controller
         if(empty($cart)) {
             return redirect()->route('shop')->with('error', 'Giỏ hàng của bạn đang trống!');
         }
+
+        // The previous implementation called Product::find() once for every
+        // cart item in three separate loops. Fetch the current product state
+        // once so checkout remains fast even with a large saved cart.
+        $productIds = array_map('intval', array_keys($cart));
+        $products = Product::query()
+            ->whereIn('id', $productIds)
+            ->get()
+            ->keyBy('id');
         
         // Kiểm tra tồn kho của sản phẩm trong giỏ hàng
         $adjusted = false;
         $messages = [];
         foreach($cart as $id => $details) {
-            $product = Product::find($id);
+            $product = $products->get((int) $id);
             if (!$product) {
                 unset($cart[$id]);
                 $adjusted = true;
@@ -165,7 +173,7 @@ class CartController extends Controller
         $hasPhysical = false;
         
         foreach($cart as $id => $details) {
-            $product = Product::find($id);
+            $product = $products->get((int) $id);
             if($product) {
                 if($product->delivery_type === 'digital') {
                     $hasDigital = true;
@@ -178,7 +186,7 @@ class CartController extends Controller
         // Calculate total amount
         $total = 0;
         foreach($cart as $id => $details) {
-            $product = Product::find($id);
+            $product = $products->get((int) $id);
             $price = $product ? (float) $product->effective_price : (float) $details['price'];
             $total += $price * $details['quantity'];
         }
@@ -614,5 +622,4 @@ class CartController extends Controller
         ]);
     }
 }
-
 

@@ -1730,9 +1730,13 @@ function appendAffiliateMessage(message, playSound = false) {
 
 function startAffiliatePolling() {
     const poll = () => {
+        if (document.visibilityState !== 'visible') {
+            affiliatePollingInterval = setTimeout(poll, 60000);
+            return;
+        }
         if (affiliateChatOpen) checkNewAffiliateMessages();
         else refreshAffiliateUnreadCount();
-        affiliatePollingInterval = setTimeout(poll, affiliateChatOpen ? 5000 : 30000);
+        affiliatePollingInterval = setTimeout(poll, affiliateChatOpen ? 10000 : 60000);
     };
     poll();
 }
@@ -2147,12 +2151,16 @@ function _appendUserMsg(msg, playSound) {
 
 function _startUserPolling() {
     const poll = () => {
+        if (document.visibilityState !== 'visible') {
+            userPollingInterval = setTimeout(poll, 60000);
+            return;
+        }
         if (userChatOpen) {
             _checkNewUserMessages();
         } else {
             _refreshUserUnreadCount();
         }
-        userPollingInterval = setTimeout(poll, userChatOpen ? 5000 : 30000);
+        userPollingInterval = setTimeout(poll, userChatOpen ? 10000 : 60000);
     };
     poll();
 }

@@ -146,6 +146,18 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Give immediate feedback and prevent duplicate POSTs while checkout
+        // is loading (slow networks otherwise allow repeated purchases).
+        document.addEventListener('submit', function (event) {
+            const button = event.submitter?.matches('[data-buy-now]') ? event.submitter : null;
+            if (!button || button.disabled) return;
+
+            button.disabled = true;
+            button.setAttribute('aria-busy', 'true');
+            button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>{{ __('Đang chuyển đến thanh toán...') }}';
+        });
+    </script>
 
     <!-- Global Laravel Flash Session Notifications (Toast/Alert) -->
     <script>

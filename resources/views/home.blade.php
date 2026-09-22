@@ -7,8 +7,18 @@
 @endsection
 
 @push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
+        /* Avoid needless compositing/animation work for visitors who opt out
+           of motion (especially useful on lower-end mobile devices). */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         /* =========================================================
         MARQUEE ANNOUNCEMENT & HERO BANNER
         ========================================================= */

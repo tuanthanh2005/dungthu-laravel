@@ -238,7 +238,7 @@
                         <i class="fas fa-shopping-cart me-2"></i> {{ __('Thêm vào giỏ') }}
                     </button>
                     @if($product->delivery_type === 'digital')
-                    <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" class="btn btn-warning btn-lg rounded-pill px-4 shadow">
+                    <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" data-buy-now class="btn btn-warning btn-lg rounded-pill px-4 shadow">
                         <i class="fas fa-bolt me-2"></i> {{ __('Mua ngay') }}
                     </button>
                     @endif

@@ -81,9 +81,13 @@ class Product extends Model
     {
         \Illuminate\Support\Facades\Cache::forget('home.categories');
         \Illuminate\Support\Facades\Cache::forget('home.featured_products');
+        \Illuminate\Support\Facades\Cache::forget('home.featured_products.v2');
         \Illuminate\Support\Facades\Cache::forget('home.highlight_products');
+        \Illuminate\Support\Facades\Cache::forget('home.highlight_products.v2');
         \Illuminate\Support\Facades\Cache::forget('home.latest_products');
+        \Illuminate\Support\Facades\Cache::forget('home.latest_products.v2');
         \Illuminate\Support\Facades\Cache::forget('home.sale_products');
+        \Illuminate\Support\Facades\Cache::forget('home.sale_products.v2');
         \Illuminate\Support\Facades\Cache::forget('home.banner_products');
         \Illuminate\Support\Facades\Cache::forget('home.banner_products.' . date('YmdH'));
     }
@@ -127,6 +131,21 @@ class Product extends Model
     public function scopeFeatured($query, $limit = 6)
     {
         return $query->where('is_featured', true)->latest()->limit($limit);
+    }
+
+    /**
+     * Load the real sold quantity for a product collection in one aggregate
+     * query.  Views must not call the orderItems relation per card.
+     */
+    public function scopeWithSoldCount($query)
+    {
+        return $query->withSum([
+            'orderItems as real_sold_count' => function ($orderItemsQuery) {
+                $orderItemsQuery->whereHas('order', function ($orderQuery) {
+                    $orderQuery->where('status', '!=', 'cancelled');
+                });
+            },
+        ], 'quantity');
     }
 
     public function getNameAttribute($value)
@@ -291,16 +310,16 @@ class Product extends Model
     // Số lượng đã bán (Thực tế từ DB + Số ảo fake_sold hoặc tự động sinh số ngẫu nhiên theo ID)
     public function getSoldCountAttribute()
     {
-        $realSold = 0;
-        if (array_key_exists('sold_count', $this->attributes) && $this->attributes['sold_count'] !== null) {
-            $realSold = (int) $this->attributes['sold_count'];
-        } else {
-            $realSold = (int) $this->orderItems()
+        // Collection pages load this aggregate with scopeWithSoldCount(). Keep
+        // the fallback for callers that need an individual product's actual
+        // value without changing their existing behaviour.
+        $realSold = array_key_exists('real_sold_count', $this->attributes)
+            ? (int) $this->attributes['real_sold_count']
+            : (int) $this->orderItems()
                 ->whereHas('order', function ($query) {
                     $query->where('status', '!=', 'cancelled');
                 })
                 ->sum('quantity');
-        }
 
         $fake = (int) ($this->fake_sold ?? 0);
 

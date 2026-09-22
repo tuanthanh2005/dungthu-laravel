@@ -45,7 +45,7 @@ class SeoRouterController extends Controller
         $keywordTitle = Str::headline(str_replace('-', ' ', $normalizedSlug));
         
         // Lấy danh sách sản phẩm bán chạy/liên quan để hiển thị bên dưới
-        $popularProducts = Product::latest()->take(4)->get();
+        $popularProducts = Product::active()->withSoldCount()->latest()->take(4)->get();
 
         return view('pages.seo-placeholder', [
             'slug' => $normalizedSlug,

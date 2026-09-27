@@ -539,64 +539,118 @@
 
                 <!-- Technical Specifications -->
                 <div class="mb-4">
-                    <label class="form-label">
-                        <i class="fas fa-cogs me-2 text-primary"></i>Thông Số Kỹ Thuật
-                    </label>
-                    <div id="specRows">
-                        @php
-                            $oldSpecKeys = old('spec_keys', ['']);
-                            $oldSpecValues = old('spec_values', ['']);
-                        @endphp
-                        @foreach($oldSpecKeys as $index => $oldSpecKey)
-                            <div class="row g-2 mb-2 spec-row-input">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="spec_keys[]" value="{{ $oldSpecKey }}" placeholder="Tên thông số">
-                                </div>
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="spec_values[]" value="{{ $oldSpecValues[$index] ?? '' }}" placeholder="Giá trị">
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRow(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
+                    @php
+                        $specType = old('spec_type', 'table');
+                        $specText = old('spec_text', '');
+                        $oldSpecKeys = old('spec_keys', ['']);
+                        $oldSpecValues = old('spec_values', ['']);
+                    @endphp
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+                        <label class="form-label mb-0">
+                            <i class="fas fa-cogs me-2 text-primary"></i>Thông Số Kỹ Thuật
+                        </label>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Kiểu nhập thông số">
+                            <input type="radio" class="btn-check" name="spec_type" id="spec_type_table" value="table" autocomplete="off" {{ $specType === 'table' ? 'checked' : '' }} onchange="switchSpecMode('table')">
+                            <label class="btn btn-outline-primary" for="spec_type_table">
+                                <i class="fas fa-table-list me-1"></i>Từng dòng (Key - Value)
+                            </label>
+
+                            <input type="radio" class="btn-check" name="spec_type" id="spec_type_text" value="text" autocomplete="off" {{ $specType === 'text' ? 'checked' : '' }} onchange="switchSpecMode('text')">
+                            <label class="btn btn-outline-primary" for="spec_type_text">
+                                <i class="fas fa-align-left me-1"></i>Dạng mô tả (Text)
+                            </label>
+                        </div>
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRow()">
-                        <i class="fas fa-plus me-1"></i>Thêm thông số
-                    </button>
+
+                    <!-- Mode Table (Key - Value) -->
+                    <div id="specTableContainer" style="{{ $specType === 'text' ? 'display: none;' : '' }}">
+                        <div id="specRows">
+                            @foreach($oldSpecKeys as $index => $oldSpecKey)
+                                <div class="row g-2 mb-2 spec-row-input">
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control" name="spec_keys[]" value="{{ $oldSpecKey }}" placeholder="Tên thông số">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control" name="spec_values[]" value="{{ $oldSpecValues[$index] ?? '' }}" placeholder="Giá trị">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRow(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRow()">
+                            <i class="fas fa-plus me-1"></i>Thêm thông số
+                        </button>
+                    </div>
+
+                    <!-- Mode Text (Textarea) -->
+                    <div id="specTextContainer" style="{{ $specType === 'text' ? '' : 'display: none;' }}">
+                        <textarea class="form-control" name="spec_text" id="spec_text" rows="6" placeholder="Nhập thông số kỹ thuật dạng mô tả (hỗ trợ xuống dòng, gạch đầu dòng, danh sách)...">{{ $specText }}</textarea>
+                        <div class="form-text text-muted mt-1">
+                            <i class="fas fa-info-circle me-1"></i>Bạn có thể nhập văn bản tự do, xuống dòng hoặc đoạn văn mô tả chi tiết thông số kỹ thuật.
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Technical Specifications (English) -->
                 <div class="mb-4">
-                    <label class="form-label text-success">
-                        <i class="fas fa-cogs me-2"></i>Thông Số Kỹ Thuật (Tiếng Anh)
-                    </label>
-                    <div id="specRowsEn">
-                        @php
-                            $oldSpecKeysEn = old('spec_keys_en', ['']);
-                            $oldSpecValuesEn = old('spec_values_en', ['']);
-                        @endphp
-                        @foreach($oldSpecKeysEn as $index => $oldSpecKeyEn)
-                            <div class="row g-2 mb-2 spec-row-input-en">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="spec_keys_en[]" value="{{ $oldSpecKeyEn }}" placeholder="Spec name (EN)">
-                                </div>
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="spec_values_en[]" value="{{ $oldSpecValuesEn[$index] ?? '' }}" placeholder="Value (EN)">
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRowEn(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
+                    @php
+                        $specTypeEn = old('spec_type_en', 'table');
+                        $specTextEn = old('spec_text_en', '');
+                        $oldSpecKeysEn = old('spec_keys_en', ['']);
+                        $oldSpecValuesEn = old('spec_values_en', ['']);
+                    @endphp
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+                        <label class="form-label mb-0 text-success">
+                            <i class="fas fa-cogs me-2"></i>Thông Số Kỹ Thuật (Tiếng Anh)
+                        </label>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Spec input mode EN">
+                            <input type="radio" class="btn-check" name="spec_type_en" id="spec_type_en_table" value="table" autocomplete="off" {{ $specTypeEn === 'table' ? 'checked' : '' }} onchange="switchSpecEnMode('table')">
+                            <label class="btn btn-outline-success" for="spec_type_en_table">
+                                <i class="fas fa-table-list me-1"></i>Từng dòng (EN)
+                            </label>
+
+                            <input type="radio" class="btn-check" name="spec_type_en" id="spec_type_en_text" value="text" autocomplete="off" {{ $specTypeEn === 'text' ? 'checked' : '' }} onchange="switchSpecEnMode('text')">
+                            <label class="btn btn-outline-success" for="spec_type_en_text">
+                                <i class="fas fa-align-left me-1"></i>Dạng mô tả (EN)
+                            </label>
+                        </div>
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRowEn()">
-                        <i class="fas fa-plus me-1"></i>Thêm thông số (EN)
-                    </button>
+
+                    <!-- Mode Table EN -->
+                    <div id="specTableContainerEn" style="{{ $specTypeEn === 'text' ? 'display: none;' : '' }}">
+                        <div id="specRowsEn">
+                            @foreach($oldSpecKeysEn as $index => $oldSpecKeyEn)
+                                <div class="row g-2 mb-2 spec-row-input-en">
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control" name="spec_keys_en[]" value="{{ $oldSpecKeyEn }}" placeholder="Spec name (EN)">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control" name="spec_values_en[]" value="{{ $oldSpecValuesEn[$index] ?? '' }}" placeholder="Value (EN)">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRowEn(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRowEn()">
+                            <i class="fas fa-plus me-1"></i>Thêm thông số (EN)
+                        </button>
+                    </div>
+
+                    <!-- Mode Text EN -->
+                    <div id="specTextContainerEn" style="{{ $specTypeEn === 'text' ? '' : 'display: none;' }}">
+                        <textarea class="form-control" name="spec_text_en" id="spec_text_en" rows="6" placeholder="Enter specifications in description/text format...">{{ $specTextEn }}</textarea>
+                        <div class="form-text text-muted mt-1">
+                            <i class="fas fa-info-circle me-1"></i>Free text format in English (supports new lines, bullet points).
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Product Features -->
@@ -748,12 +802,61 @@
         wrapper.appendChild(row);
     }
 
-    function removeSpecRowEn(button) {
-        const rows = document.querySelectorAll('.spec-row-input-en');
-        if (rows.length > 1) {
-            button.closest('.spec-row-input-en').remove();
+    function switchSpecMode(mode) {
+        const tableContainer = document.getElementById('specTableContainer');
+        const textContainer = document.getElementById('specTextContainer');
+        const textarea = document.getElementById('spec_text');
+
+        if (mode === 'text') {
+            tableContainer.style.display = 'none';
+            textContainer.style.display = 'block';
+
+            if (!textarea.value.trim()) {
+                const rows = document.querySelectorAll('.spec-row-input');
+                const lines = [];
+                rows.forEach(r => {
+                    const k = r.querySelector('input[name="spec_keys[]"]')?.value.trim();
+                    const v = r.querySelector('input[name="spec_values[]"]')?.value.trim();
+                    if (k || v) {
+                        lines.push(k && v ? `${k}: ${v}` : (k || v));
+                    }
+                });
+                if (lines.length > 0) {
+                    textarea.value = lines.join('\n');
+                }
+            }
         } else {
-            button.closest('.spec-row-input-en').querySelectorAll('input').forEach(input => input.value = '');
+            textContainer.style.display = 'none';
+            tableContainer.style.display = 'block';
+        }
+    }
+
+    function switchSpecEnMode(mode) {
+        const tableContainer = document.getElementById('specTableContainerEn');
+        const textContainer = document.getElementById('specTextContainerEn');
+        const textarea = document.getElementById('spec_text_en');
+
+        if (mode === 'text') {
+            tableContainer.style.display = 'none';
+            textContainer.style.display = 'block';
+
+            if (!textarea.value.trim()) {
+                const rows = document.querySelectorAll('.spec-row-input-en');
+                const lines = [];
+                rows.forEach(r => {
+                    const k = r.querySelector('input[name="spec_keys_en[]"]')?.value.trim();
+                    const v = r.querySelector('input[name="spec_values_en[]"]')?.value.trim();
+                    if (k || v) {
+                        lines.push(k && v ? `${k}: ${v}` : (k || v));
+                    }
+                });
+                if (lines.length > 0) {
+                    textarea.value = lines.join('\n');
+                }
+            }
+        } else {
+            textContainer.style.display = 'none';
+            tableContainer.style.display = 'block';
         }
     }
 </script>

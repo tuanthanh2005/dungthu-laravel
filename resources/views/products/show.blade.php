@@ -399,16 +399,32 @@
                                 </div>
 
                                 @if($product->specs)
-                                    <div class="row g-4 mt-2">
-                                        @foreach($product->specs as $key => $value)
-                                            <div class="col-lg-6">
-                                                <div class="p-3 bg-light rounded-3 mb-3">
-                                                    <i class="fas fa-info-circle text-primary me-2"></i><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                                    <p class="ms-4 mb-0 text-muted">{{ is_array($value) ? implode(', ', $value) : $value }}</p>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
+                                    @php
+                                        $isText = $product->isTextSpecs();
+                                        $textContent = $product->getSpecTextContent();
+                                        $hasTableSpecs = is_array($product->specs) && !$isText && count(array_filter($product->specs, function($v, $k) {
+                                            return $k !== '_type' && !empty($v);
+                                        }, ARRAY_FILTER_USE_BOTH)) > 0;
+                                    @endphp
+
+                                    @if($isText && !empty(trim($textContent)))
+                                        <div class="mt-4">
+                                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-line; line-height: 1.8; font-size: 0.95rem;">{!! nl2br(e($textContent)) !!}</div>
+                                        </div>
+                                    @elseif($hasTableSpecs)
+                                        <div class="row g-4 mt-2">
+                                            @foreach($product->specs as $key => $value)
+                                                @if($key !== '_type' && !empty($value))
+                                                    <div class="col-lg-6">
+                                                        <div class="p-3 bg-light rounded-3 mb-3">
+                                                            <i class="fas fa-info-circle text-primary me-2"></i><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                            <p class="ms-4 mb-0 text-muted">{{ is_array($value) ? implode(', ', $value) : $value }}</p>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
 

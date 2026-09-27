@@ -173,6 +173,28 @@ class Product extends Model
         return $specs;
     }
 
+    public function isTextSpecs(): bool
+    {
+        $specs = $this->specs;
+        if (is_string($specs)) {
+            return true;
+        }
+        return is_array($specs) && isset($specs['_type']) && $specs['_type'] === 'text';
+    }
+
+    public function getSpecTextContent(): string
+    {
+        $specs = $this->specs;
+        if (is_string($specs)) {
+            return $specs;
+        }
+        if (is_array($specs) && isset($specs['_type']) && $specs['_type'] === 'text') {
+            return (string) ($specs['content'] ?? '');
+        }
+        return '';
+    }
+
+
     public function getEffectivePriceAttribute()
     {
         $locale = app()->getLocale();

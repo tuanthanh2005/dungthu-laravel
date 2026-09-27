@@ -915,25 +915,47 @@ class AdminController extends Controller
             $fileType = $extension;
         }
         
-        // Xử lý specs động từ spec_keys và spec_values
+        // Xử lý specs động theo spec_type (dạng bảng key-value hoặc văn bản mô tả text)
+        $specType = $request->input('spec_type', 'table');
         $specs = [];
-        $keys = $request->input('spec_keys', []);
-        $values = $request->input('spec_values', []);
+        if ($specType === 'text') {
+            $specText = trim((string) $request->input('spec_text', ''));
+            if (!empty($specText)) {
+                $specs = [
+                    '_type' => 'text',
+                    'content' => $specText,
+                ];
+            }
+        } else {
+            $keys = $request->input('spec_keys', []);
+            $values = $request->input('spec_values', []);
 
-        foreach ($keys as $index => $key) {
-            if (!empty($key) && !empty($values[$index])) {
-                $specs[$key] = $values[$index];
+            foreach ($keys as $index => $key) {
+                if (!empty($key) && !empty($values[$index])) {
+                    $specs[$key] = $values[$index];
+                }
             }
         }
 
         // Xử lý specs tiếng Anh
+        $specTypeEn = $request->input('spec_type_en', 'table');
         $specsEn = [];
-        $keysEn = $request->input('spec_keys_en', []);
-        $valuesEn = $request->input('spec_values_en', []);
+        if ($specTypeEn === 'text') {
+            $specTextEn = trim((string) $request->input('spec_text_en', ''));
+            if (!empty($specTextEn)) {
+                $specsEn = [
+                    '_type' => 'text',
+                    'content' => $specTextEn,
+                ];
+            }
+        } else {
+            $keysEn = $request->input('spec_keys_en', []);
+            $valuesEn = $request->input('spec_values_en', []);
 
-        foreach ($keysEn as $index => $key) {
-            if (!empty($key) && !empty($valuesEn[$index])) {
-                $specsEn[$key] = $valuesEn[$index];
+            foreach ($keysEn as $index => $key) {
+                if (!empty($key) && !empty($valuesEn[$index])) {
+                    $specsEn[$key] = $valuesEn[$index];
+                }
             }
         }
 
@@ -1112,25 +1134,47 @@ class AdminController extends Controller
             $fileSize = $product->file_size;
         }
         
-        // Xử lý specs động từ spec_keys và spec_values
+        // Xử lý specs động theo spec_type (dạng bảng key-value hoặc văn bản mô tả text)
+        $specType = $request->input('spec_type', 'table');
         $specs = [];
-        $keys = $request->input('spec_keys', []);
-        $values = $request->input('spec_values', []);
+        if ($specType === 'text') {
+            $specText = trim((string) $request->input('spec_text', ''));
+            if (!empty($specText)) {
+                $specs = [
+                    '_type' => 'text',
+                    'content' => $specText,
+                ];
+            }
+        } else {
+            $keys = $request->input('spec_keys', []);
+            $values = $request->input('spec_values', []);
 
-        foreach ($keys as $index => $key) {
-            if (!empty($key) && !empty($values[$index])) {
-                $specs[$key] = $values[$index];
+            foreach ($keys as $index => $key) {
+                if (!empty($key) && !empty($values[$index])) {
+                    $specs[$key] = $values[$index];
+                }
             }
         }
 
         // Xử lý specs tiếng Anh
+        $specTypeEn = $request->input('spec_type_en', 'table');
         $specsEn = [];
-        $keysEn = $request->input('spec_keys_en', []);
-        $valuesEn = $request->input('spec_values_en', []);
+        if ($specTypeEn === 'text') {
+            $specTextEn = trim((string) $request->input('spec_text_en', ''));
+            if (!empty($specTextEn)) {
+                $specsEn = [
+                    '_type' => 'text',
+                    'content' => $specTextEn,
+                ];
+            }
+        } else {
+            $keysEn = $request->input('spec_keys_en', []);
+            $valuesEn = $request->input('spec_values_en', []);
 
-        foreach ($keysEn as $index => $key) {
-            if (!empty($key) && !empty($valuesEn[$index])) {
-                $specsEn[$key] = $valuesEn[$index];
+            foreach ($keysEn as $index => $key) {
+                if (!empty($key) && !empty($valuesEn[$index])) {
+                    $specsEn[$key] = $valuesEn[$index];
+                }
             }
         }
 

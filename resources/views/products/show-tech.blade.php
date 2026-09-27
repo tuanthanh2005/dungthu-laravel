@@ -339,10 +339,25 @@
             <div class="col-12">
                 <div class="tech-card">
                     <h5 class="fw-bold mb-4" style="color: #0f2027;"><i class="fas fa-cogs me-2 text-info"></i>{{ __('Thông Số Kỹ Thuật') }}</h5>
-                    @if($product->specs && count(array_filter($product->specs)) > 0)
+                    @php
+                        $isText = $product->isTextSpecs();
+                        $textContent = $product->getSpecTextContent();
+                        $specsData = $product->specs;
+                        $hasTableSpecs = is_array($specsData) && !$isText && count(array_filter($specsData, function($v, $k) {
+                            return $k !== '_type' && !empty($v);
+                        }, ARRAY_FILTER_USE_BOTH)) > 0;
+                    @endphp
+
+                    @if($isText && !empty(trim($textContent)))
+                        <div class="p-4 bg-light rounded-4 border-start border-4 border-info">
+                            <div class="text-dark" style="white-space: pre-line; line-height: 1.8; font-size: 0.98rem;">
+                                {!! nl2br(e($textContent)) !!}
+                            </div>
+                        </div>
+                    @elseif($hasTableSpecs)
                         <div class="row g-3">
-                            @foreach($product->specs as $key => $value)
-                                @if(!empty($value))
+                            @foreach($specsData as $key => $value)
+                                @if($key !== '_type' && !empty($value))
                                 <div class="col-md-6 col-lg-4">
                                     <div class="p-3 bg-light rounded-4 h-100 d-flex justify-content-between align-items-center">
                                         <span class="text-muted me-2" style="font-weight: 500;">{{ ucfirst(str_replace('_', ' ', $key)) }}:</span>

@@ -56,6 +56,47 @@
             font-size: 1.5rem;
             margin-right: 15px;
         }
+        /* Variant Option Selector */
+        .variant-option-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            user-select: none;
+        }
+        .variant-option-card:hover:not(.disabled) {
+            border-color: #0d6efd;
+            background: #f8fbff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
+        }
+        .variant-option-card.active {
+            border-color: #0d6efd !important;
+            background: #eff6ff !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.15);
+        }
+        .variant-option-card.disabled {
+            opacity: 0.55;
+            background: #f8f9fa;
+            cursor: not-allowed;
+            border-color: #e9ecef;
+        }
+        .variant-radio {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0d6efd;
+        }
+        .variant-option-card.active .variant-price-display {
+            color: #0b5ed7 !important;
+            font-weight: 800;
+        }
         .nav-tabs .nav-link {
             border: none;
             background: white;
@@ -204,41 +245,99 @@
             <h1 class="fw-bold mb-3">{{ $product->name }}</h1>
             <p class="lead text-muted mb-4">{{ Str::limit($product->description, 150, '......') }}</p>
             
-            <div class="mb-4">
+            @php
+                $hasVariants = $product->hasVariants();
+                $firstVariant = $hasVariants ? $product->activeVariants->first() : null;
+                $displayPrice = $firstVariant ? $firstVariant->formatted_price : $product->formatted_price;
+                $displayOriginalPrice = $firstVariant ? ($firstVariant->is_on_sale ? $firstVariant->formatted_original_price : '') : ($product->is_on_sale ? $product->formatted_original_price : '');
+                $displayIsOnSale = $firstVariant ? $firstVariant->is_on_sale : $product->is_on_sale;
+                $displayDiscountPercent = $firstVariant ? $firstVariant->discount_percent : $product->discount_percent;
+                $displayStock = $firstVariant ? $firstVariant->stock : $product->stock;
+                $canOrder = $hasVariants ? ($product->activeVariants->sum('stock') > 0 || $firstVariant->stock > 0) : ($product->stock > 0);
+            @endphp
+
+            <div class="mb-4" id="mainPriceContainer">
                 <div class="d-flex align-items-end gap-3 flex-wrap">
-                    <h2 class="text-primary fw-bold mb-0">{{ $product->formatted_price }}</h2>
-                    @if($product->is_on_sale)
-                        <div class="d-flex align-items-center gap-2 mb-1">
-                            <span class="text-muted text-decoration-line-through">{{ $product->formatted_original_price }}</span>
-                            <span class="badge bg-danger">-{{ $product->discount_percent }}%</span>
-                        </div>
-                    @endif
+                    <h2 class="text-primary fw-bold mb-0" id="mainPriceDisplay">{{ $displayPrice }}</h2>
+                    <div class="d-flex align-items-center gap-2 mb-1" id="mainSaleContainer" style="{{ $displayIsOnSale ? '' : 'display: none !important;' }}">
+                        <span class="text-muted text-decoration-line-through" id="mainOriginalPriceDisplay">{{ $displayOriginalPrice }}</span>
+                        <span class="badge bg-danger" id="mainDiscountBadge">-{{ $displayDiscountPercent }}%</span>
+                    </div>
                 </div>
-                <small class="text-muted">{{ __('Giá đã bao gồm VAT') }}</small>
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>{{ __('Giá đã bao gồm VAT') }}</small>
             </div>
             
-            @if($product->stock > 0)
-                <div class="d-flex align-items-center flex-wrap gap-2">
-                    <div class="alert alert-success d-inline-flex align-items-center mb-0">
-                        <i class="fas fa-check-circle"></i> {{ __('Còn hàng') }} ({{ $product->stock }} {{ __('sản phẩm') }})
+            <div id="stockStatusContainer" class="mb-3">
+                <div class="d-flex align-items-center flex-wrap gap-2" id="stockAlertSuccess" style="{{ $displayStock > 0 ? '' : 'display: none !important;' }}">
+                    <div class="alert alert-success d-inline-flex align-items-center mb-0 py-2 px-3 rounded-pill">
+                        <i class="fas fa-check-circle me-1"></i> 
+                        <span id="stockText">{{ __('Còn hàng') }} ({{ $displayStock }} {{ __('sản phẩm') }})</span>
                     </div>
                     <small class="text-muted">{{ __('Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat') }}</small>
                 </div>
-                @else
-                <div class="alert alert-danger d-inline-block">
-                    <i class="fas fa-times-circle"></i> {{ __('Hết hàng') }}
+                <div class="alert alert-danger py-2 px-3 rounded-pill" id="stockAlertDanger" style="{{ $displayStock <= 0 ? 'display: inline-block;' : 'display: none !important;' }}">
+                    <i class="fas fa-times-circle me-1"></i> {{ __('Hết hàng') }}
                 </div>
-            @endif
+            </div>
             
-            @if($product->stock > 0)
-            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
+            @if($canOrder)
+            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4" id="addToCartForm">
                 @csrf
+
+                @if($hasVariants)
+                <div class="variants-selector mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <label class="fw-bold text-uppercase d-flex align-items-center gap-2 mb-0" style="font-size: 0.85rem; letter-spacing: 0.5px; color: #2d3748;">
+                            <i class="fas fa-layer-group text-primary"></i> {{ __('Chọn gói / Thời gian') }}
+                        </label>
+                        <small class="text-muted">{{ __('Chọn gói phù hợp') }}</small>
+                    </div>
+                    <div class="variant-options d-flex flex-column gap-2" id="variantOptionsList">
+                        @foreach($product->activeVariants as $index => $variant)
+                            @php
+                                $isAvailable = $variant->stock > 0;
+                            @endphp
+                            <label class="variant-option-card {{ $loop->first ? 'active' : '' }} {{ !$isAvailable ? 'disabled' : '' }}" 
+                                   data-variant-id="{{ $variant->id }}">
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="radio" name="variant_id" value="{{ $variant->id }}" 
+                                           class="form-check-input mt-0 variant-radio" 
+                                           {{ $loop->first ? 'checked' : '' }}
+                                           {{ !$isAvailable ? 'disabled' : '' }}
+                                           data-price="{{ $variant->formatted_price }}"
+                                           data-original-price="{{ $variant->is_on_sale ? $variant->formatted_original_price : '' }}"
+                                           data-is-on-sale="{{ $variant->is_on_sale ? '1' : '0' }}"
+                                           data-discount-percent="{{ $variant->discount_percent }}"
+                                           data-stock="{{ $variant->stock }}"
+                                           data-name="{{ $variant->name_localized }}">
+                                    <div>
+                                        <div class="fw-bold text-dark variant-name">{{ $variant->name_localized }}</div>
+                                        @if($variant->duration_text)
+                                            <small class="text-muted"><i class="far fa-clock me-1"></i>{{ $variant->duration_text }}</small>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-primary variant-price-display">{{ $variant->formatted_price }}</div>
+                                    @if($variant->is_on_sale)
+                                        <small class="text-muted text-decoration-line-through d-block" style="font-size: 0.8rem;">{{ $variant->formatted_original_price }}</small>
+                                    @endif
+                                    @if(!$isAvailable)
+                                        <span class="badge bg-secondary" style="font-size: 0.7rem;">{{ __('Hết hàng') }}</span>
+                                    @endif
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 <div class="d-flex gap-3 mb-3 flex-wrap">
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+                    <button type="submit" id="btnAddToCart" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
                         <i class="fas fa-shopping-cart me-2"></i> {{ __('Thêm vào giỏ') }}
                     </button>
                     @if($product->delivery_type === 'digital')
-                    <button type="submit" formaction="{{ route('cart.buy-now', $product->id) }}" data-buy-now class="btn btn-warning btn-lg rounded-pill px-4 shadow">
+                    <button type="submit" id="btnBuyNow" formaction="{{ route('cart.buy-now', $product->id) }}" data-buy-now class="btn btn-warning btn-lg rounded-pill px-4 shadow">
                         <i class="fas fa-bolt me-2"></i> {{ __('Mua ngay') }}
                     </button>
                     @endif
@@ -582,5 +681,107 @@
 @push('scripts')
     <script>
         AOS.init({ duration: 800, once: true });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const variantRadios = document.querySelectorAll('.variant-radio');
+            if (!variantRadios.length) return;
+
+            const mainPrice = document.getElementById('mainPriceDisplay');
+            const mainSaleContainer = document.getElementById('mainSaleContainer');
+            const mainOriginalPrice = document.getElementById('mainOriginalPriceDisplay');
+            const mainDiscountBadge = document.getElementById('mainDiscountBadge');
+            const stockAlertSuccess = document.getElementById('stockAlertSuccess');
+            const stockAlertDanger = document.getElementById('stockAlertDanger');
+            const stockText = document.getElementById('stockText');
+            const btnAddToCart = document.getElementById('btnAddToCart');
+            const btnBuyNow = document.getElementById('btnBuyNow');
+
+            function updateVariantUI(radio) {
+                if (!radio) return;
+
+                // Active class on cards
+                document.querySelectorAll('.variant-option-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                const card = radio.closest('.variant-option-card');
+                if (card) {
+                    card.classList.add('active');
+                }
+
+                // Update price
+                const price = radio.dataset.price;
+                const originalPrice = radio.dataset.originalPrice;
+                const isOnSale = radio.dataset.isOnSale === '1';
+                const discountPercent = radio.dataset.discountPercent;
+                const stock = parseInt(radio.dataset.stock, 10);
+
+                if (mainPrice && price) {
+                    mainPrice.textContent = price;
+                }
+
+                if (mainSaleContainer) {
+                    if (isOnSale && originalPrice) {
+                        mainSaleContainer.style.setProperty('display', 'flex', 'important');
+                        if (mainOriginalPrice) mainOriginalPrice.textContent = originalPrice;
+                        if (mainDiscountBadge) mainDiscountBadge.textContent = '-' + discountPercent + '%';
+                    } else {
+                        mainSaleContainer.style.setProperty('display', 'none', 'important');
+                    }
+                }
+
+                // Update stock display and button state
+                if (stock > 0) {
+                    if (stockAlertSuccess) {
+                        stockAlertSuccess.style.setProperty('display', 'flex', 'important');
+                        if (stockText) stockText.textContent = 'Còn hàng (' + stock + ' sản phẩm)';
+                    }
+                    if (stockAlertDanger) {
+                        stockAlertDanger.style.setProperty('display', 'none', 'important');
+                    }
+                    if (btnAddToCart) {
+                        btnAddToCart.disabled = false;
+                        btnAddToCart.innerHTML = '<i class="fas fa-shopping-cart me-2"></i> {{ __("Thêm vào giỏ") }}';
+                    }
+                    if (btnBuyNow) btnBuyNow.disabled = false;
+                } else {
+                    if (stockAlertSuccess) {
+                        stockAlertSuccess.style.setProperty('display', 'none', 'important');
+                    }
+                    if (stockAlertDanger) {
+                        stockAlertDanger.style.setProperty('display', 'inline-block', 'important');
+                    }
+                    if (btnAddToCart) {
+                        btnAddToCart.disabled = true;
+                        btnAddToCart.innerHTML = '<i class="fas fa-ban me-2"></i> {{ __("Hết hàng") }}';
+                    }
+                    if (btnBuyNow) btnBuyNow.disabled = true;
+                }
+            }
+
+            variantRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    updateVariantUI(this);
+                });
+            });
+
+            // Also click on card to select radio
+            document.querySelectorAll('.variant-option-card').forEach(card => {
+                card.addEventListener('click', function (e) {
+                    if (this.classList.contains('disabled')) return;
+                    const radio = this.querySelector('.variant-radio');
+                    if (radio && !radio.checked) {
+                        radio.checked = true;
+                        updateVariantUI(radio);
+                    }
+                });
+            });
+
+            // Initial load
+            const checkedRadio = document.querySelector('.variant-radio:checked') || document.querySelector('.variant-radio:not(:disabled)');
+            if (checkedRadio) {
+                checkedRadio.checked = true;
+                updateVariantUI(checkedRadio);
+            }
+        });
     </script>
 @endpush

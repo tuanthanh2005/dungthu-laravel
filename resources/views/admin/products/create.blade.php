@@ -478,6 +478,87 @@
                     @enderror
                 </div>
 
+                <!-- Các loại / Gói dịch vụ (Variants) -->
+                @php
+                    $oldHasVariants = old('has_variants', false);
+                    $oldVariantNames = old('variant_names', []);
+                    $oldVariantPrices = old('variant_prices', []);
+                    $oldVariantSalePrices = old('variant_sale_prices', []);
+                    $oldVariantStocks = old('variant_stocks', []);
+                    $oldVariantDurValues = old('variant_duration_values', []);
+                    $oldVariantDurTypes = old('variant_duration_types', []);
+                @endphp
+                <div class="card mb-4 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0 !important;">
+                    <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">
+                                <i class="fas fa-layer-group text-primary me-2"></i>Các loại / Gói dịch vụ (Variants)
+                            </h6>
+                            <small class="text-muted">Bật khi sản phẩm có nhiều gói thời hạn, phiên bản hoặc mức giá khác nhau</small>
+                        </div>
+                        <div class="form-check form-switch m-0" style="padding-left: 2.5rem;">
+                            <input class="form-check-input" type="checkbox" role="switch" id="has_variants" name="has_variants" value="1" {{ $oldHasVariants ? 'checked' : '' }} onchange="toggleVariantsSection()" style="width: 46px; height: 22px; cursor: pointer;">
+                        </div>
+                    </div>
+                    <div class="card-body p-4" id="variantsContainer" style="{{ $oldHasVariants ? '' : 'display: none;' }}">
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle mb-2">
+                                <thead class="table-light">
+                                    <tr class="text-center text-nowrap" style="font-size: 0.85rem;">
+                                        <th style="min-width: 220px;">Tên gói / Phiên bản <span class="text-danger">*</span></th>
+                                        <th style="min-width: 140px;">Giá bán (VNĐ) <span class="text-danger">*</span></th>
+                                        <th style="min-width: 140px;">Giá gốc (VNĐ)</th>
+                                        <th style="min-width: 90px;">Kho</th>
+                                        <th style="min-width: 190px;">Thời hạn bảo hành</th>
+                                        <th style="width: 50px;">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="variantRows">
+                                    @if(!empty($oldVariantNames))
+                                        @foreach($oldVariantNames as $vIdx => $vName)
+                                            <tr class="variant-row">
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm" name="variant_names[]" value="{{ $vName }}" placeholder="VD: Gói 1 tháng, 10M Token..." required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm text-end" name="variant_prices[]" value="{{ $oldVariantPrices[$vIdx] ?? '' }}" placeholder="Giá bán" min="0" step="1000" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="{{ $oldVariantSalePrices[$vIdx] ?? '' }}" placeholder="Để trống nếu ko giảm" min="0" step="1000">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm text-center" name="variant_stocks[]" value="{{ $oldVariantStocks[$vIdx] ?? '10' }}" min="0">
+                                                </td>
+                                                <td>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="number" class="form-control" name="variant_duration_values[]" value="{{ $oldVariantDurValues[$vIdx] ?? '' }}" placeholder="Số" min="1">
+                                                        <select class="form-select" name="variant_duration_types[]">
+                                                            <option value="" {{ ($oldVariantDurTypes[$vIdx] ?? '') == '' ? 'selected' : '' }}>Không</option>
+                                                            <option value="days" {{ ($oldVariantDurTypes[$vIdx] ?? '') == 'days' ? 'selected' : '' }}>Ngày</option>
+                                                            <option value="months" {{ ($oldVariantDurTypes[$vIdx] ?? '') == 'months' ? 'selected' : '' }}>Tháng</option>
+                                                            <option value="years" {{ ($oldVariantDurTypes[$vIdx] ?? '') == 'years' ? 'selected' : '' }}>Năm</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeVariantRow(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="addVariantRow()">
+                                <i class="fas fa-plus me-1"></i>Thêm gói mới
+                            </button>
+                            <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Khi bật gói dịch vụ, khách hàng sẽ chọn gói trực tiếp khi mua.</small>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Image Upload -->
                 <div class="mb-4">
@@ -857,6 +938,63 @@
         } else {
             textContainer.style.display = 'none';
             tableContainer.style.display = 'block';
+        }
+    }
+
+    function toggleVariantsSection() {
+        const isChecked = document.getElementById('has_variants').checked;
+        const container = document.getElementById('variantsContainer');
+        container.style.display = isChecked ? 'block' : 'none';
+        if (isChecked && document.querySelectorAll('.variant-row').length === 0) {
+            addVariantRow();
+        }
+    }
+
+    function addVariantRow(data = {}) {
+        const tbody = document.getElementById('variantRows');
+        const tr = document.createElement('tr');
+        tr.className = 'variant-row';
+        tr.innerHTML = `
+            <td>
+                <input type="text" class="form-control form-control-sm" name="variant_names[]" value="${data.name || ''}" placeholder="VD: Gói 1 tháng, 10M Token..." required>
+                <input type="hidden" name="variant_ids[]" value="${data.id || ''}">
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm text-end" name="variant_prices[]" value="${data.price || ''}" placeholder="Giá bán" min="0" step="1000" required>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="${data.sale_price || ''}" placeholder="Để trống nếu ko giảm" min="0" step="1000">
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm text-center" name="variant_stocks[]" value="${data.stock !== undefined ? data.stock : '10'}" min="0">
+            </td>
+            <td>
+                <div class="input-group input-group-sm">
+                    <input type="number" class="form-control" name="variant_duration_values[]" value="${data.duration_value || ''}" placeholder="Số" min="1">
+                    <select class="form-select" name="variant_duration_types[]">
+                        <option value="" ${!data.duration_type ? 'selected' : ''}>Không</option>
+                        <option value="days" ${data.duration_type === 'days' ? 'selected' : ''}>Ngày</option>
+                        <option value="months" ${data.duration_type === 'months' || !data.duration_type ? 'selected' : ''}>Tháng</option>
+                        <option value="years" ${data.duration_type === 'years' ? 'selected' : ''}>Năm</option>
+                    </select>
+                </div>
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeVariantRow(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    function removeVariantRow(btn) {
+        const rows = document.querySelectorAll('.variant-row');
+        if (rows.length > 1) {
+            btn.closest('.variant-row').remove();
+        } else {
+            const tr = btn.closest('.variant-row');
+            tr.querySelectorAll('input').forEach(i => i.value = '');
         }
     }
 </script>

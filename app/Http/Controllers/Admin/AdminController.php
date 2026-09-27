@@ -17,6 +17,7 @@ use App\Models\Affiliate;
 use App\Models\AffiliateInvoice;
 use App\Models\AffiliateWithdrawal;
 use App\Models\CustomerDuration;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SystemNotificationMail;
 use App\Mail\OrderApprovedMail;
@@ -1019,6 +1020,47 @@ class AdminController extends Controller
             $product->features()->sync($request->features);
         }
 
+        // Xử lý các gói dịch vụ (Variants)
+        $hasVariants = $request->boolean('has_variants');
+        $variantNames = $request->input('variant_names', []);
+        $variantNamesEn = $request->input('variant_names_en', []);
+        $variantPrices = $request->input('variant_prices', []);
+        $variantSalePrices = $request->input('variant_sale_prices', []);
+        $variantStocks = $request->input('variant_stocks', []);
+        $variantDurationValues = $request->input('variant_duration_values', []);
+        $variantDurationTypes = $request->input('variant_duration_types', []);
+
+        $totalVariantStock = 0;
+        if ($hasVariants && !empty($variantNames)) {
+            foreach ($variantNames as $index => $name) {
+                $name = trim($name);
+                $price = $variantPrices[$index] ?? null;
+                if (!empty($name) && $price !== null && $price !== '') {
+                    $stock = (int) ($variantStocks[$index] ?? 0);
+                    $salePrice = !empty($variantSalePrices[$index]) ? (float) $variantSalePrices[$index] : null;
+                    $durationValue = !empty($variantDurationValues[$index]) ? (int) $variantDurationValues[$index] : null;
+                    $durationType = !empty($variantDurationTypes[$index]) ? $variantDurationTypes[$index] : null;
+
+                    ProductVariant::create([
+                        'product_id' => $product->id,
+                        'name' => $name,
+                        'name_en' => !empty($variantNamesEn[$index]) ? trim($variantNamesEn[$index]) : null,
+                        'price' => (float) $price,
+                        'sale_price' => $salePrice,
+                        'stock' => $stock,
+                        'duration_value' => $durationValue,
+                        'duration_type' => $durationType,
+                        'is_active' => true,
+                        'sort_order' => $index,
+                    ]);
+                    $totalVariantStock += $stock;
+                }
+            }
+            if ($totalVariantStock > 0) {
+                $product->update(['stock' => $totalVariantStock]);
+            }
+        }
+
         // Submit to Google Indexing
         GoogleIndexingService::submitProductSafe($product, 'product_create');
 
@@ -1237,6 +1279,60 @@ class AdminController extends Controller
             $product->features()->sync($request->features);
         } else {
             $product->features()->sync([]);
+        }
+
+        // Xử lý các gói dịch vụ (Variants)
+        $hasVariants = $request->boolean('has_variants');
+        $variantIds = $request->input('variant_ids', []);
+        $variantNames = $request->input('variant_names', []);
+        $variantNamesEn = $request->input('variant_names_en', []);
+        $variantPrices = $request->input('variant_prices', []);
+        $variantSalePrices = $request->input('variant_sale_prices', []);
+        $variantStocks = $request->input('variant_stocks', []);
+        $variantDurationValues = $request->input('variant_duration_values', []);
+        $variantDurationTypes = $request->input('variant_duration_types', []);
+
+        if ($hasVariants && !empty($variantNames)) {
+            $keptIds = [];
+            $totalVariantStock = 0;
+            foreach ($variantNames as $index => $name) {
+                $name = trim($name);
+                $price = $variantPrices[$index] ?? null;
+                if (!empty($name) && $price !== null && $price !== '') {
+                    $vId = $variantIds[$index] ?? null;
+                    $stock = (int) ($variantStocks[$index] ?? 0);
+                    $salePrice = !empty($variantSalePrices[$index]) ? (float) $variantSalePrices[$index] : null;
+                    $durationValue = !empty($variantDurationValues[$index]) ? (int) $variantDurationValues[$index] : null;
+                    $durationType = !empty($variantDurationTypes[$index]) ? $variantDurationTypes[$index] : null;
+
+                    $data = [
+                        'name' => $name,
+                        'name_en' => !empty($variantNamesEn[$index]) ? trim($variantNamesEn[$index]) : null,
+                        'price' => (float) $price,
+                        'sale_price' => $salePrice,
+                        'stock' => $stock,
+                        'duration_value' => $durationValue,
+                        'duration_type' => $durationType,
+                        'is_active' => true,
+                        'sort_order' => $index,
+                    ];
+
+                    if ($vId && ($variant = ProductVariant::where('product_id', $product->id)->find($vId))) {
+                        $variant->update($data);
+                        $keptIds[] = $variant->id;
+                    } else {
+                        $newVariant = ProductVariant::create(array_merge($data, ['product_id' => $product->id]));
+                        $keptIds[] = $newVariant->id;
+                    }
+                    $totalVariantStock += $stock;
+                }
+            }
+            ProductVariant::where('product_id', $product->id)->whereNotIn('id', $keptIds)->delete();
+            if ($totalVariantStock > 0) {
+                $product->update(['stock' => $totalVariantStock]);
+            }
+        } else {
+            ProductVariant::where('product_id', $product->id)->delete();
         }
 
         // Submit to Google Indexing

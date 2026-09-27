@@ -443,7 +443,7 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)->with(['comments', 'features'])->first();
+        $product = Product::where('slug', $slug)->with(['comments', 'features', 'activeVariants'])->first();
         
         if (!$product) {
             $keywordSlug = $this->resolveKeywordSlug($slug);

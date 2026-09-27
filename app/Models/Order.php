@@ -219,23 +219,38 @@ class Order extends Model
         foreach ($this->orderItems as $item) {
             $exists = CustomerDuration::where('order_id', $this->id)
                 ->where('product_id', $item->product_id)
+                ->when($item->variant_id, function($q) use ($item) {
+                    $q->where('product_name', 'like', '%' . $item->variant_name . '%');
+                })
                 ->exists();
 
             if (!$exists) {
                 $product = $item->product;
+                $variant = $item->variant;
                 $startDate = now();
                 $expiryDate = null;
                 $totalDuration = null;
 
-                // Nếu sản phẩm có thời hạn → tính expiry_date
-                if ($product && $product->duration_value && $product->duration_type) {
-                    if ($product->duration_type === 'days') {
-                        $expiryDate = $startDate->copy()->addDays($product->duration_value);
-                        $totalDuration = $product->duration_value . ' ngày';
-                    } elseif ($product->duration_type === 'months') {
-                        $expiryDate = $startDate->copy()->addMonths($product->duration_value);
-                        $totalDuration = $product->duration_value . ' tháng';
+                // Ưu tiên thời hạn của gói dịch vụ (variant), nếu không có thì lấy thời hạn sản phẩm
+                $durationValue = ($variant && $variant->duration_value) ? $variant->duration_value : ($product ? $product->duration_value : null);
+                $durationType = ($variant && $variant->duration_type) ? $variant->duration_type : ($product ? $product->duration_type : null);
+
+                if ($durationValue && $durationType) {
+                    if ($durationType === 'days') {
+                        $expiryDate = $startDate->copy()->addDays($durationValue);
+                        $totalDuration = $durationValue . ' ngày';
+                    } elseif ($durationType === 'months') {
+                        $expiryDate = $startDate->copy()->addMonths($durationValue);
+                        $totalDuration = $durationValue . ' tháng';
+                    } elseif ($durationType === 'years') {
+                        $expiryDate = $startDate->copy()->addYears($durationValue);
+                        $totalDuration = $durationValue . ' năm';
                     }
+                }
+
+                $productDisplayName = optional($product)->name ?? 'Sản phẩm #' . $item->product_id;
+                if ($item->variant_name) {
+                    $productDisplayName .= ' (' . $item->variant_name . ')';
                 }
 
                 $duration = CustomerDuration::create([
@@ -246,7 +261,7 @@ class Order extends Model
                     'customer_email' => $this->customer_email,
                     'customer_phone' => $this->customer_phone,
                     'product_id' => $item->product_id,
-                    'product_name' => optional($product)->name ?? 'Sản phẩm #' . $item->product_id,
+                    'product_name' => $productDisplayName,
                     'total_duration' => $totalDuration,
                     'start_date' => $startDate,
                     'expiry_date' => $expiryDate,

@@ -362,7 +362,7 @@
                     </div>
                     
                     <div class="cart-item-details">
-                        <a href="{{ route('product.show', \Str::slug($details['name'])) }}" class="text-decoration-none">
+                        <a href="{{ route('product.show', $details['slug'] ?? \Str::slug($details['base_name'] ?? $details['name'])) }}" class="text-decoration-none">
                             <h3 class="cart-item-title">{{ $details['name'] }}</h3>
                         </a>
                         <div class="cart-item-price">{{ $formatPrice($details['price']) }}</div>

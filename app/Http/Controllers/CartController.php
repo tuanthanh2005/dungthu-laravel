@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
@@ -20,23 +21,42 @@ class CartController extends Controller
         return view('cart.index', compact('cart'));
     }
 
-    public function add($id)
+    public function add(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        
-        if ($product->stock <= 0) {
+        $variantId = $request->input('variant_id');
+        $variant = null;
+
+        if ($variantId) {
+            $variant = ProductVariant::where('product_id', $product->id)->where('is_active', true)->findOrFail($variantId);
+            if ($variant->stock <= 0) {
+                return redirect()->back()->with('error', 'Gói dịch vụ "' . $variant->name . '" hiện đã hết hàng!');
+            }
+        } elseif ($product->stock <= 0) {
             return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
         }
-        
-        $cart = session()->get('cart', []);
 
-        if(isset($cart[$id])) {
-            $cart[$id]['quantity']++;
+        $cart = session()->get('cart', []);
+        $cartKey = $variant ? ($product->id . '_' . $variant->id) : (string) $product->id;
+        $price = $variant ? (float) $variant->effective_price : (float) $product->effective_price;
+        $name = $variant ? ($product->name . ' (' . $variant->name . ')') : $product->name;
+        $maxStock = $variant ? $variant->stock : $product->stock;
+
+        if (isset($cart[$cartKey])) {
+            if ($cart[$cartKey]['quantity'] >= $maxStock) {
+                return redirect()->back()->with('error', 'Không thể thêm vì đã đạt giới hạn tồn kho!');
+            }
+            $cart[$cartKey]['quantity']++;
         } else {
-            $cart[$id] = [
-                "name" => $product->name,
+            $cart[$cartKey] = [
+                "product_id" => $product->id,
+                "variant_id" => $variant ? $variant->id : null,
+                "variant_name" => $variant ? $variant->name : null,
+                "name" => $name,
+                "base_name" => $product->name,
+                "slug" => $product->slug,
                 "quantity" => 1,
-                "price" => $product->effective_price,
+                "price" => $price,
                 "image" => $product->image
             ];
         }
@@ -46,23 +66,41 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Đã thêm sản phẩm vào giỏ hàng!');
     }
 
-    public function buyNow($id)
+    public function buyNow(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        
-        if ($product->stock <= 0) {
+        $variantId = $request->input('variant_id');
+        $variant = null;
+
+        if ($variantId) {
+            $variant = ProductVariant::where('product_id', $product->id)->where('is_active', true)->findOrFail($variantId);
+            if ($variant->stock <= 0) {
+                return redirect()->back()->with('error', 'Gói dịch vụ "' . $variant->name . '" hiện đã hết hàng!');
+            }
+        } elseif ($product->stock <= 0) {
             return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
         }
-        
-        $cart = session()->get('cart', []);
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
+        $cart = session()->get('cart', []);
+        $cartKey = $variant ? ($product->id . '_' . $variant->id) : (string) $product->id;
+        $price = $variant ? (float) $variant->effective_price : (float) $product->effective_price;
+        $name = $variant ? ($product->name . ' (' . $variant->name . ')') : $product->name;
+        $maxStock = $variant ? $variant->stock : $product->stock;
+
+        if (isset($cart[$cartKey])) {
+            if ($cart[$cartKey]['quantity'] < $maxStock) {
+                $cart[$cartKey]['quantity']++;
+            }
         } else {
-            $cart[$id] = [
-                "name" => $product->name,
+            $cart[$cartKey] = [
+                "product_id" => $product->id,
+                "variant_id" => $variant ? $variant->id : null,
+                "variant_name" => $variant ? $variant->name : null,
+                "name" => $name,
+                "base_name" => $product->name,
+                "slug" => $product->slug,
                 "quantity" => 1,
-                "price" => $product->effective_price,
+                "price" => $price,
                 "image" => $product->image
             ];
         }
@@ -88,8 +126,20 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {
-            $product = Product::find($id);
-            if ($product && $cart[$id]['quantity'] >= $product->stock) {
+            $item = $cart[$id];
+            $variantId = $item['variant_id'] ?? null;
+            $productId = $item['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+
+            $maxStock = 0;
+            if ($variantId) {
+                $variant = ProductVariant::find($variantId);
+                $maxStock = $variant ? $variant->stock : 0;
+            } else {
+                $product = Product::find($productId);
+                $maxStock = $product ? $product->stock : 0;
+            }
+
+            if ($cart[$id]['quantity'] >= $maxStock) {
                 return redirect()->back()->with('error', 'Không thể tăng thêm số lượng vì đã đạt giới hạn tồn kho!');
             }
             $cart[$id]['quantity'] = max(1, (int) $cart[$id]['quantity'] + 1);
@@ -137,25 +187,44 @@ class CartController extends Controller
             ->get()
             ->keyBy('id');
         
-        // Kiểm tra tồn kho của sản phẩm trong giỏ hàng
+        // Kiểm tra tồn kho của sản phẩm/gói dịch vụ trong giỏ hàng
         $adjusted = false;
         $messages = [];
         foreach($cart as $id => $details) {
-            $product = $products->get((int) $id);
+            $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+            $variantId = $details['variant_id'] ?? null;
+            $product = Product::find($productId);
+
             if (!$product) {
                 unset($cart[$id]);
                 $adjusted = true;
                 $messages[] = "Sản phẩm không tồn tại đã được xóa khỏi giỏ hàng.";
                 continue;
             }
-            if ($product->stock <= 0) {
+
+            $currentStock = $product->stock;
+            $itemName = $product->name;
+
+            if ($variantId) {
+                $variant = ProductVariant::find($variantId);
+                if (!$variant || !$variant->is_active) {
+                    unset($cart[$id]);
+                    $adjusted = true;
+                    $messages[] = "Gói dịch vụ không còn khả dụng và đã được xóa khỏi giỏ hàng.";
+                    continue;
+                }
+                $currentStock = $variant->stock;
+                $itemName = $product->name . ' (' . $variant->name . ')';
+            }
+
+            if ($currentStock <= 0) {
                 unset($cart[$id]);
                 $adjusted = true;
-                $messages[] = "Sản phẩm '{$product->name}' đã hết hàng và được xóa khỏi giỏ hàng.";
-            } elseif ($details['quantity'] > $product->stock) {
-                $cart[$id]['quantity'] = $product->stock;
+                $messages[] = "Sản phẩm '{$itemName}' đã hết hàng và được xóa khỏi giỏ hàng.";
+            } elseif ($details['quantity'] > $currentStock) {
+                $cart[$id]['quantity'] = $currentStock;
                 $adjusted = true;
-                $messages[] = "Số lượng sản phẩm '{$product->name}' được điều chỉnh về {$product->stock} do vượt quá tồn kho.";
+                $messages[] = "Số lượng sản phẩm '{$itemName}' được điều chỉnh về {$currentStock} do vượt quá tồn kho.";
             }
         }
         
@@ -173,7 +242,8 @@ class CartController extends Controller
         $hasPhysical = false;
         
         foreach($cart as $id => $details) {
-            $product = $products->get((int) $id);
+            $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+            $product = Product::find($productId);
             if($product) {
                 if($product->delivery_type === 'digital') {
                     $hasDigital = true;
@@ -186,8 +256,7 @@ class CartController extends Controller
         // Calculate total amount
         $total = 0;
         foreach($cart as $id => $details) {
-            $product = $products->get((int) $id);
-            $price = $product ? (float) $product->effective_price : (float) $details['price'];
+            $price = (float) $details['price'];
             $total += $price * $details['quantity'];
         }
 
@@ -297,17 +366,36 @@ class CartController extends Controller
             }
         }
 
-        // Kiểm tra xem có sản phẩm nào thiếu kho không
+        // Kiểm tra xem có sản phẩm/gói dịch vụ nào thiếu kho không
         $outOfStockMessages = [];
         foreach($cart as $id => $details) {
-            $product = Product::find($id);
+            $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+            $variantId = $details['variant_id'] ?? null;
+            $product = Product::find($productId);
+
             if(!$product) {
                 $outOfStockMessages[] = "Sản phẩm không tồn tại.";
-            } elseif($product->stock < $details['quantity']) {
-                if ($product->stock <= 0) {
-                    $outOfStockMessages[] = "Sản phẩm '{$product->name}' đã hết hàng.";
+                continue;
+            }
+
+            $currentStock = $product->stock;
+            $itemName = $product->name;
+
+            if ($variantId) {
+                $variant = ProductVariant::find($variantId);
+                if (!$variant) {
+                    $outOfStockMessages[] = "Gói dịch vụ không tồn tại.";
+                    continue;
+                }
+                $currentStock = $variant->stock;
+                $itemName = $product->name . ' (' . $variant->name . ')';
+            }
+
+            if ($currentStock < $details['quantity']) {
+                if ($currentStock <= 0) {
+                    $outOfStockMessages[] = "Sản phẩm '{$itemName}' đã hết hàng.";
                 } else {
-                    $outOfStockMessages[] = "Sản phẩm '{$product->name}' chỉ còn {$product->stock} sản phẩm trong kho.";
+                    $outOfStockMessages[] = "Sản phẩm '{$itemName}' chỉ còn {$currentStock} sản phẩm trong kho.";
                 }
             }
         }
@@ -384,17 +472,30 @@ class CartController extends Controller
             ]);
 
             foreach($cart as $id => $details) {
-                $product = Product::find($id);
-                $price = $product ? (float) $product->effective_price : (float) $details['price'];
+                $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+                $variantId = $details['variant_id'] ?? null;
+                $variantName = $details['variant_name'] ?? null;
+                $price = (float) $details['price'];
+
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $id,
+                    'product_id' => $productId,
+                    'variant_id' => $variantId,
+                    'variant_name' => $variantName,
                     'quantity' => $details['quantity'],
                     'price' => $price,
                 ]);
 
+                // Trừ tồn kho variant nếu có
+                if ($variantId) {
+                    $variant = ProductVariant::find($variantId);
+                    if ($variant && $variant->stock >= $details['quantity']) {
+                        $variant->decrement('stock', $details['quantity']);
+                    }
+                }
+
                 // Trừ tồn kho nếu sản phẩm còn hàng sẵn
-                $product = Product::find($id);
+                $product = Product::find($productId);
                 if ($product && $product->stock >= $details['quantity']) {
                     $product->decrement('stock', $details['quantity']);
                 }

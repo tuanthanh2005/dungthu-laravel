@@ -103,6 +103,43 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    // Relationship với Variants (Gói dịch vụ)
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function activeVariants()
+    {
+        return $this->hasMany(ProductVariant::class)->where('is_active', true)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function hasVariants(): bool
+    {
+        return $this->relationLoaded('activeVariants')
+            ? $this->activeVariants->isNotEmpty()
+            : $this->activeVariants()->exists();
+    }
+
+    public function getMinPriceAttribute()
+    {
+        if ($this->hasVariants()) {
+            $min = $this->activeVariants->min(function ($v) {
+                return (float) $v->effective_price;
+            });
+            if ($min !== null) {
+                return (float) $min;
+            }
+        }
+        $price = (float) ($this->price ?? 0);
+        $salePrice = $this->sale_price === null ? null : (float) $this->sale_price;
+        if ($salePrice !== null && $salePrice > 0 && $salePrice < $price) {
+            return $salePrice;
+        }
+        return $price;
+    }
+
+
     // Relationship với Comments
     public function comments()
     {
@@ -218,6 +255,10 @@ class Product extends Model
 
         $price = (float) ($this->price ?? 0);
         $salePrice = $this->sale_price === null ? null : (float) $this->sale_price;
+
+        if ($price <= 0 && $this->hasVariants()) {
+            return (float) $this->min_price;
+        }
 
         if ($salePrice === null || $salePrice <= 0 || $salePrice >= $price) {
             return $price;

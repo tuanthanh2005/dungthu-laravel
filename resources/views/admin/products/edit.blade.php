@@ -6,494 +6,381 @@
 
 @push('styles')
 <style>
-
-    .admin-card {
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        max-width: 800px;
+    .form-container-wide {
+        max-width: 1480px;
         margin: 0 auto;
+    }
+
+    .form-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        background: #f8fafc;
+        border-bottom: 1px solid #eef2f6;
+        padding: 14px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .form-card-title {
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-card-body {
+        padding: 20px;
     }
 
     .form-label {
         font-weight: 600;
-        color: #2d3748;
-        margin-bottom: 8px;
+        font-size: 0.88rem;
+        color: #334155;
+        margin-bottom: 6px;
     }
 
     .form-control, .form-select {
         border-radius: 10px;
-        border: 2px solid #e2e8f0;
-        padding: 12px 16px;
-        transition: all 0.3s ease;
+        border: 1.5px solid #e2e8f0;
+        padding: 9px 14px;
+        font-size: 0.92rem;
+        transition: all 0.25s ease;
     }
 
     .form-control:focus, .form-select:focus {
         border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
     }
 
     .category-hint {
-        font-size: 0.9rem;
-        color: #6b7280;
-        margin-top: 6px;
+        font-size: 0.82rem;
+        color: #64748b;
+        margin-top: 5px;
     }
 
     .btn-submit {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
-        padding: 14px 40px;
+        padding: 11px 28px;
         border-radius: 25px;
         color: white;
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.3);
     }
 
     .btn-submit:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102,126,234,0.45);
+        color: white;
     }
 
     .image-preview {
-        max-width: 200px;
-        border-radius: 15px;
-        margin-top: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        max-width: 160px;
+        border-radius: 10px;
+        margin-top: 6px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .setting-switch-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .setting-switch-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .setting-switch-item:first-child {
+        padding-top: 0;
+    }
+
+    .sticky-sidebar-card {
+        position: sticky;
+        top: 80px;
+        z-index: 10;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
     }
 </style>
 @endpush
 
 @section('content')
-<div class="container-fluid px-0">
-        <div class="admin-card" data-aos="fade-up">
-            <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <div>
-                    <a href="{{ route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])) }}" class="btn btn-outline-secondary rounded-pill mb-2">
-                        <i class="fas fa-arrow-left me-2"></i>Quay lại
-                    </a>
-                    <h3 class="fw-bold mb-0">
-                        <i class="fas fa-edit text-primary me-3"></i>Chỉnh sửa Sản phẩm
-                    </h3>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-danger rounded-pill px-4" onclick="confirmDeleteCurrentProduct()">
-                        <i class="fas fa-trash-alt me-2"></i>Xóa sản phẩm
-                    </button>
-                </div>
-            </div>
+<div class="form-container-wide" data-aos="fade-up">
 
-            <!-- Success Message -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+    <!-- Top Action & Title Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <a href="{{ route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])) }}" class="btn btn-outline-secondary rounded-pill btn-sm mb-2">
+                <i class="fas fa-arrow-left me-1"></i>Quay lại danh sách
+            </a>
+            <h3 class="fw-bold mb-0 text-dark">
+                <i class="fas fa-edit text-primary me-2"></i>Chỉnh sửa Sản phẩm: {{ Str::limit($product->name, 40) }}
+            </h3>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-danger rounded-pill px-3" onclick="confirmDeleteCurrentProduct()">
+                <i class="fas fa-trash-alt me-1"></i>Xóa sản phẩm
+            </button>
+            <a href="{{ route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])) }}" class="btn btn-outline-secondary rounded-pill px-3">
+                <i class="fas fa-times me-1"></i>Hủy
+            </a>
+            <button type="submit" form="productForm" class="btn btn-submit">
+                <i class="fas fa-save me-1"></i>Cập nhật
+            </button>
+        </div>
+    </div>
 
-            <!-- Error Messages -->
-            @if($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Có lỗi xảy ra!</h6>
-                    <ul class="mb-0">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+    <!-- Success Message -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
-            <form action="{{ route('admin.products.update', array_merge(['product' => $product->id], request()->only(['page', 'search', 'category', 'flash_sale']))) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+    <!-- Error Messages -->
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <h6 class="alert-heading fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Có lỗi xảy ra!</h6>
+            <ul class="mb-0 ps-3">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
-                <!-- Product Name -->
-                <div class="mb-4">
-                    <label for="name" class="form-label">
-                        <i class="fas fa-tag me-2 text-primary"></i>Tên sản phẩm <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" 
-                           class="form-control @error('name') is-invalid @enderror" 
-                           id="name" 
-                           name="name" 
-                           value="{{ old('name', $product->name) }}"
-                           placeholder="Nhập tên sản phẩm..."
-                           required>
-                    @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+    <form id="productForm" action="{{ route('admin.products.update', array_merge(['product' => $product->id], request()->only(['page', 'search', 'category', 'flash_sale']))) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
-                <!-- Product Name (English) -->
-                <div class="mb-4">
-                    <label for="name_en" class="form-label text-success">
-                        <i class="fas fa-tag me-2"></i>Tên sản phẩm (Tiếng Anh)
-                    </label>
-                    <input type="text" 
-                           class="form-control @error('name_en') is-invalid @enderror" 
-                           id="name_en" 
-                           name="name_en" 
-                           value="{{ old('name_en', $product->name_en) }}"
-                           placeholder="Enter product name in English...">
-                    @error('name_en')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+        <div class="row g-4">
+            <!-- LEFT / MAIN COLUMN -->
+            <div class="col-xl-8 col-lg-7">
 
-                <!-- Description -->
-                <div class="mb-4">
-                    <label for="description" class="form-label">
-                        <i class="fas fa-align-left me-2 text-primary"></i>Mô tả <span class="text-danger">*</span>
-                    </label>
-                    <textarea class="form-control @error('description') is-invalid @enderror" 
-                              id="description" 
-                              name="description" 
-                              rows="4"
-                              placeholder="Nhập mô tả chi tiết sản phẩm..."
-                              required>{{ old('description', $product->description) }}</textarea>
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Description (English) -->
-                <div class="mb-4">
-                    <label for="description_en" class="form-label text-success">
-                        <i class="fas fa-align-left me-2"></i>Mô tả (Tiếng Anh)
-                    </label>
-                    <textarea class="form-control @error('description_en') is-invalid @enderror" 
-                              id="description_en" 
-                              name="description_en" 
-                              rows="4"
-                              placeholder="Enter detailed description in English...">{{ old('description_en', $product->description_en) }}</textarea>
-                    @error('description_en')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Category -->
-                <div class="mb-4">
-                    <label for="category_id" class="form-label">
-                        <i class="fas fa-list me-2 text-primary"></i>Danh mục <span class="text-danger">*</span>
-                    </label>
-                    <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" id="category_id" required>
-                        <option value="">-- Chọn danh mục --</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}"
-                                    data-type="{{ $cat->type }}"
-                                    {{ (string) old('category_id', $product->category_id) === (string) $cat->id ? 'selected' : '' }}>
-                                {{ $cat->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('category_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    @if($categories->isEmpty())
-                        <div class="text-danger mt-2">Chưa có danh mục phù hợp. Vui lòng thêm danh mục trước.</div>
-                    @else
-                        <div class="category-hint">Danh mục quyết định loại sản phẩm (ebooks / tài liệu).</div>
-                    @endif
-                </div>
-
-                <!-- Price and Stock -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <label for="price" class="form-label">
-                            <i class="fas fa-dollar-sign me-2 text-primary"></i>Giá (VNĐ) <span class="text-danger">*</span>
-                        </label>
-                        <input type="number" 
-                               class="form-control @error('price') is-invalid @enderror" 
-                               id="price" 
-                               name="price" 
-                               value="{{ old('price', $product->price) }}"
-                               min="0"
-                               step="1000"
-                               placeholder="0"
-                               required>
-                        @error('price')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-3">
-                        <label for="price_usd" class="form-label text-success">
-                            <i class="fas fa-dollar-sign me-2"></i>Giá (USD)
-                        </label>
-                        <input type="number" 
-                               class="form-control @error('price_usd') is-invalid @enderror" 
-                               id="price_usd" 
-                               name="price_usd" 
-                               value="{{ old('price_usd', $product->price_usd) }}"
-                               min="0"
-                               step="0.01"
-                               placeholder="Tự động tính nếu trống">
-                        @error('price_usd')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-3">
-                        <label for="stock" class="form-label">
-                            <i class="fas fa-warehouse me-2 text-primary"></i>Tồn kho <span class="text-danger">*</span>
-                        </label>
-                        <input type="number" 
-                               class="form-control @error('stock') is-invalid @enderror" 
-                               id="stock" 
-                               name="stock" 
-                               value="{{ old('stock', $product->stock) }}"
-                               min="0"
-                               placeholder="0"
-                               required>
-                        @error('stock')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-3">
-                        <label for="fake_sold" class="form-label text-warning">
-                            <i class="fas fa-shopping-bag me-2"></i>Đã Bán (Ảo/Cộng thêm)
-                        </label>
-                        <input type="number" 
-                               class="form-control @error('fake_sold') is-invalid @enderror" 
-                               id="fake_sold" 
-                               name="fake_sold" 
-                               value="{{ old('fake_sold', $product->fake_sold ?? 0) }}"
-                               min="0"
-                               placeholder="0">
-                        @error('fake_sold')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="form-check form-switch mb-2" style="padding-left: 2.5rem;">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   role="switch"
-                                   id="is_on_sale"
-                                   name="is_on_sale"
-                                   value="1"
-                                   {{ old('is_on_sale', (bool) $product->sale_price) ? 'checked' : '' }}
-                                   style="width: 46px; height: 22px; cursor: pointer;">
-                            <label class="form-check-label fw-bold" for="is_on_sale" style="margin-left: 8px; cursor: pointer;">
-                                <i class="fas fa-tags text-danger me-1"></i>Bật giảm giá
-                            </label>
+                <!-- 1. Basic Info Card -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-cube text-primary"></i> Thông tin sản phẩm
                         </div>
-                        <label for="sale_price" class="form-label">
-                            <i class="fas fa-tags me-2 text-danger"></i>Giá giảm (VNĐ)
-                        </label>
-                        <input type="number" 
-                               class="form-control @error('sale_price') is-invalid @enderror" 
-                               id="sale_price" 
-                               name="sale_price" 
-                               value="{{ old('sale_price', $product->sale_price) }}"
-                               min="0"
-                               step="1000"
-                               placeholder="Để trống nếu không giảm">
-                        @error('sale_price')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <small class="text-muted">Giá giảm phải nhỏ hơn giá gốc</small>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 0.75rem;">Cơ bản</span>
                     </div>
-                    <div class="col-md-6">
-                        <div style="height: 30px;"></div> <!-- spacer -->
-                        <label for="sale_price_usd" class="form-label text-success">
-                            <i class="fas fa-tags me-2"></i>Giá giảm (USD)
-                        </label>
-                        <input type="number" 
-                               class="form-control @error('sale_price_usd') is-invalid @enderror" 
-                               id="sale_price_usd" 
-                               name="sale_price_usd" 
-                               value="{{ old('sale_price_usd', $product->sale_price_usd) }}"
-                               min="0"
-                               step="0.01"
-                               placeholder="Tự động tính nếu trống">
-                        @error('sale_price_usd')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               role="switch"
-                               id="is_active"
-                               name="is_active"
-                               value="1"
-                               {{ old('is_active', $product->is_active ?? true) ? 'checked' : '' }}
-                               style="width: 50px; height: 25px; cursor: pointer;">
-                        <label class="form-check-label fw-bold" for="is_active" style="margin-left: 10px; cursor: pointer;">
-                            <i class="fas fa-eye text-success me-2"></i>Trạng thái hiển thị sản phẩm (Hiển thị / Ẩn)
-                            <small class="text-muted d-block">Bật để hiển thị sản phẩm ra ngoài trang chủ & cửa hàng, tắt để ẩn</small>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               role="switch"
-                               id="is_flash_sale"
-                               name="is_flash_sale"
-                               value="1"
-                               {{ old('is_flash_sale', $product->is_flash_sale ?? false) ? 'checked' : '' }}
-                               style="width: 50px; height: 25px; cursor: pointer;">
-                        <label class="form-check-label fw-bold" for="is_flash_sale" style="margin-left: 10px; cursor: pointer;">
-                            <i class="fas fa-bolt text-danger me-2"></i>Uu tien Flash Sale
-                            <small class="text-muted d-block">Dua len 4 o giam gia tren trang chu</small>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Sản phẩm VPN -->
-                <div class="mb-4">
-                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               role="switch"
-                               id="is_vpn"
-                               name="is_vpn"
-                               value="1"
-                               {{ old('is_vpn', $product->is_vpn ?? false) ? 'checked' : '' }}
-                               style="width: 50px; height: 25px; cursor: pointer;">
-                        <label class="form-check-label fw-bold" for="is_vpn" style="margin-left: 10px; cursor: pointer;">
-                            <i class="fas fa-network-wired text-info me-2"></i>Sản phẩm VPN
-                            <small class="text-muted d-block">Hiển thị trong trang VPN</small>
-                        </label>
-                    </div>
-                </div>
-                <!-- Featured Product -->
-                <div class="mb-4">
-                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
-                        <input class="form-check-input" 
-                               type="checkbox" 
-                               role="switch" 
-                               id="is_featured" 
-                               name="is_featured" 
-                               value="1"
-                               {{ old('is_featured', $product->is_featured) ? 'checked' : '' }}
-                               style="width: 50px; height: 25px; cursor: pointer;">
-                        <label class="form-check-label fw-bold" for="is_featured" style="margin-left: 10px; cursor: pointer;">
-                            <i class="fas fa-star text-warning me-2"></i>Sản phẩm nổi bật
-                            <small class="text-muted d-block">Hiển thị trên trang chủ - Hàng đầu tiên</small>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Exclusive Product -->
-                <div class="mb-4">
-                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
-                        <input class="form-check-input" 
-                               type="checkbox" 
-                               role="switch" 
-                               id="is_exclusive" 
-                               name="is_exclusive" 
-                               value="1"
-                               {{ old('is_exclusive', $product->is_exclusive ?? false) ? 'checked' : '' }}
-                               style="width: 50px; height: 25px; cursor: pointer;">
-                        <label class="form-check-label fw-bold" for="is_exclusive" style="margin-left: 10px; cursor: pointer;">
-                            <i class="fas fa-gem text-success me-2"></i>Sản phẩm độc quyền
-                            <small class="text-muted d-block">Hiển thị trên trang chủ - Hàng thứ 2</small>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Banner Hero Product (4 ô trang chủ) -->
-                <div class="mb-4">
-                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
-                        <input class="form-check-input" 
-                               type="checkbox" 
-                               role="switch" 
-                               id="show_on_banner" 
-                               name="show_on_banner" 
-                               value="1"
-                               {{ old('show_on_banner', $product->show_on_banner ?? false) ? 'checked' : '' }}
-                               style="width: 50px; height: 25px; cursor: pointer;">
-                        <label class="form-check-label fw-bold" for="show_on_banner" style="margin-left: 10px; cursor: pointer;">
-                            <i class="fas fa-desktop text-primary me-2"></i>Nổi bật Banner Hero (4 ô đầu trang chủ)
-                            <small class="text-muted d-block">Hiển thị trong 4 thẻ sản phẩm vừa cập nhật mới ở Banner chính</small>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Combo AI Giá Rẻ -->
-                <div class="mb-4">
-                    <div class="form-check form-switch" style="padding-left: 2.5rem;">
-                        <input class="form-check-input" 
-                               type="checkbox" 
-                               role="switch" 
-                               id="is_combo_ai" 
-                               name="is_combo_ai" 
-                               value="1"
-                               {{ old('is_combo_ai', $product->is_combo_ai ?? false) ? 'checked' : '' }}
-                               style="width: 50px; height: 25px; cursor: pointer;">
-                        <label class="form-check-label fw-bold" for="is_combo_ai" style="margin-left: 10px; cursor: pointer;">
-                            <i class="fas fa-robot text-primary me-2"></i>Combo AI giá rẻ
-                            <small class="text-muted d-block">Hiển thị ở trang chủ - mục Combo AI giá rẻ</small>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Delivery Type -->
-                <div class="mb-4">
-                    <label class="form-label">
-                        <i class="fas fa-shipping-fast me-2 text-primary"></i>Loại giao hàng <span class="text-danger">*</span>
-                    </label>
-                    <div class="d-flex gap-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="delivery_type" id="digital" value="digital" {{ old('delivery_type', $product->delivery_type) == 'digital' ? 'checked' : '' }} required>
-                            <label class="form-check-label" for="digital">
-                                <i class="fas fa-download me-1"></i>Sản phẩm số (Digital)
-                            </label>
+                    <div class="form-card-body">
+                        <!-- Product Names (VI & EN side-by-side) -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-tag me-1 text-primary"></i>Tên sản phẩm <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control @error('name') is-invalid @enderror" 
+                                       id="name" 
+                                       name="name" 
+                                       value="{{ old('name', $product->name) }}"
+                                       placeholder="Nhập tên sản phẩm..."
+                                       required>
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="name_en" class="form-label text-success">
+                                    <i class="fas fa-tag me-1"></i>Tên sản phẩm (Tiếng Anh)
+                                </label>
+                                <input type="text" 
+                                       class="form-control @error('name_en') is-invalid @enderror" 
+                                       id="name_en" 
+                                       name="name_en" 
+                                       value="{{ old('name_en', $product->name_en) }}"
+                                       placeholder="Enter product name in English...">
+                                @error('name_en')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="delivery_type" id="physical" value="physical" {{ old('delivery_type', $product->delivery_type) == 'physical' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="physical">
-                                <i class="fas fa-box me-1"></i>Giao hàng vật lý (Physical)
-                            </label>
+
+                        <!-- Descriptions (VI & EN side-by-side) -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="description" class="form-label">
+                                    <i class="fas fa-align-left me-1 text-primary"></i>Mô tả chi tiết <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control @error('description') is-invalid @enderror" 
+                                          id="description" 
+                                          name="description" 
+                                          rows="4"
+                                          placeholder="Nhập mô tả chi tiết sản phẩm..."
+                                          required>{{ old('description', $product->description) }}</textarea>
+                                @error('description')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="description_en" class="form-label text-success">
+                                    <i class="fas fa-align-left me-1"></i>Mô tả chi tiết (Tiếng Anh)
+                                </label>
+                                <textarea class="form-control @error('description_en') is-invalid @enderror" 
+                                          id="description_en" 
+                                          name="description_en" 
+                                          rows="4"
+                                          placeholder="Enter detailed description in English...">{{ old('description_en', $product->description_en) }}</textarea>
+                                @error('description_en')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
-                    @error('delivery_type')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
                 </div>
 
-                <!-- Thời hạn sản phẩm -->
-                <div class="mb-4">
-                    <label class="form-label">
-                        <i class="fas fa-clock me-2 text-primary"></i>Thời hạn sản phẩm
-                    </label>
-                    <div class="input-group">
-                        <input type="number" 
-                               class="form-control @error('duration_value') is-invalid @enderror" 
-                               id="duration_value" 
-                               name="duration_value" 
-                               value="{{ old('duration_value', $product->duration_value) }}" 
-                               min="1" 
-                               placeholder="Ví dụ: 1, 7, 30...">
-                        <select class="form-select @error('duration_type') is-invalid @enderror" 
-                                id="duration_type" 
-                                name="duration_type" 
-                                style="max-width: 150px;">
-                            <option value="">Không giới hạn</option>
-                            <option value="days" {{ old('duration_type', $product->duration_type) == 'days' ? 'selected' : '' }}>Ngày</option>
-                            <option value="months" {{ old('duration_type', $product->duration_type) == 'months' ? 'selected' : '' }}>Tháng</option>
-                        </select>
+                <!-- 2. Pricing & Stock Card -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-coins text-warning"></i> Giá bán & Tồn kho
+                        </div>
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-2 py-1" style="font-size: 0.75rem;">Bán hàng</span>
                     </div>
-                    <small class="text-muted">Nhập số lượng và chọn đơn vị (Ngày/Tháng). Ví dụ: 30 ngày, 3 tháng. Để trống hoặc chọn "Không giới hạn" nếu dùng vĩnh viễn.</small>
-                    @error('duration_value')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
-                    @error('duration_type')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
+                    <div class="form-card-body">
+                        <!-- Main Price / Stock Row -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-3 col-6">
+                                <label for="price" class="form-label">
+                                    <i class="fas fa-dollar-sign text-primary me-1"></i>Giá (VNĐ) <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" 
+                                       class="form-control @error('price') is-invalid @enderror" 
+                                       id="price" 
+                                       name="price" 
+                                       value="{{ old('price', $product->price) }}"
+                                       min="0"
+                                       step="1000"
+                                       placeholder="0"
+                                       required>
+                                @error('price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="price_usd" class="form-label text-success">
+                                    <i class="fas fa-dollar-sign me-1"></i>Giá (USD)
+                                </label>
+                                <input type="number" 
+                                       class="form-control @error('price_usd') is-invalid @enderror" 
+                                       id="price_usd" 
+                                       name="price_usd" 
+                                       value="{{ old('price_usd', $product->price_usd) }}"
+                                       min="0"
+                                       step="0.01"
+                                       placeholder="Tự động tính">
+                                @error('price_usd')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="stock" class="form-label">
+                                    <i class="fas fa-warehouse text-primary me-1"></i>Tồn kho <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" 
+                                       class="form-control @error('stock') is-invalid @enderror" 
+                                       id="stock" 
+                                       name="stock" 
+                                       value="{{ old('stock', $product->stock) }}"
+                                       min="0"
+                                       placeholder="0"
+                                       required>
+                                @error('stock')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="fake_sold" class="form-label text-warning">
+                                    <i class="fas fa-shopping-bag me-1"></i>Đã Bán (Ảo)
+                                </label>
+                                <input type="number" 
+                                       class="form-control @error('fake_sold') is-invalid @enderror" 
+                                       id="fake_sold" 
+                                       name="fake_sold" 
+                                       value="{{ old('fake_sold', $product->fake_sold ?? 0) }}"
+                                       min="0"
+                                       placeholder="0">
+                                @error('fake_sold')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Sale Row -->
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="form-check form-switch m-0 me-2" style="padding-left: 2.5rem;">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           role="switch"
+                                           id="is_on_sale"
+                                           name="is_on_sale"
+                                           value="1"
+                                           {{ old('is_on_sale', (bool) $product->sale_price) ? 'checked' : '' }}
+                                           style="width: 44px; height: 22px; cursor: pointer;">
+                                </div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="is_on_sale">
+                                    <i class="fas fa-tags text-danger me-1"></i>Áp dụng chương trình giảm giá
+                                </label>
+                            </div>
+                            <div class="row g-3 mt-1">
+                                <div class="col-md-6">
+                                    <label for="sale_price" class="form-label small text-muted">Giá giảm (VNĐ)</label>
+                                    <input type="number" 
+                                           class="form-control @error('sale_price') is-invalid @enderror" 
+                                           id="sale_price" 
+                                           name="sale_price" 
+                                           value="{{ old('sale_price', $product->sale_price) }}"
+                                           min="0"
+                                           step="1000"
+                                           placeholder="Để trống nếu không giảm">
+                                    @error('sale_price')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sale_price_usd" class="form-label small text-muted">Giá giảm (USD)</label>
+                                    <input type="number" 
+                                           class="form-control @error('sale_price_usd') is-invalid @enderror" 
+                                           id="sale_price_usd" 
+                                           name="sale_price_usd" 
+                                           value="{{ old('sale_price_usd', $product->sale_price_usd) }}"
+                                           min="0"
+                                           step="0.01"
+                                           placeholder="Tự động tính nếu trống">
+                                    @error('sale_price_usd')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Các loại / Gói dịch vụ (Variants) -->
+                <!-- 3. Variants Card -->
                 @php
                     $existingVariants = $product->variants;
                     $hasVariants = old('has_variants') !== null ? old('has_variants') : ($existingVariants->count() > 0);
@@ -505,47 +392,43 @@
                     $oldVariantDurTypes = old('variant_duration_types', []);
                     $oldVariantIds = old('variant_ids', []);
                 @endphp
-                <div class="card mb-4 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0 !important;">
-                    <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center">
+                <div class="form-card">
+                    <div class="form-card-header">
                         <div>
-                            <h6 class="mb-0 fw-bold text-dark">
-                                <i class="fas fa-layer-group text-primary me-2"></i>Các loại / Gói dịch vụ (Variants)
-                            </h6>
-                            <small class="text-muted">Bật khi sản phẩm có nhiều gói thời hạn, phiên bản hoặc mức giá khác nhau</small>
+                            <div class="form-card-title">
+                                <i class="fas fa-layer-group text-primary"></i> Các loại / Gói dịch vụ (Variants)
+                            </div>
+                            <small class="text-muted" style="font-size: 0.8rem;">Bật khi sản phẩm có nhiều gói hạn, phiên bản hoặc mức giá khác nhau</small>
                         </div>
                         <div class="form-check form-switch m-0" style="padding-left: 2.5rem;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="has_variants" name="has_variants" value="1" {{ $hasVariants ? 'checked' : '' }} onchange="toggleVariantsSection()" style="width: 46px; height: 22px; cursor: pointer;">
+                            <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="has_variants" name="has_variants" value="1" {{ $hasVariants ? 'checked' : '' }} onchange="toggleVariantsSection()" style="width: 46px; height: 22px;">
                         </div>
                     </div>
-                    <div class="card-body p-4" id="variantsContainer" style="{{ $hasVariants ? '' : 'display: none;' }}">
+                    <div class="form-card-body" id="variantsContainer" style="{{ $hasVariants ? '' : 'display: none;' }}">
                         <!-- AI & Quick Text Input for Variants -->
-                        <div class="p-3 mb-3 rounded-4" style="background: linear-gradient(135deg, #f0f7ff 0%, #f5f3ff 100%); border: 1.5px dashed #a5b4fc;">
+                        <div class="p-3 mb-3 rounded-3" style="background: linear-gradient(135deg, #f0f7ff 0%, #f5f3ff 100%); border: 1.5px dashed #a5b4fc;">
                             <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                                <label class="fw-bold text-dark d-flex align-items-center gap-2 mb-0" style="font-size: 0.92rem;">
-                                    <i class="fas fa-wand-magic-sparkles text-primary"></i> Nhập nhanh nhiều gói bằng AI (Theo mô tả của Leader)
+                                <label class="fw-bold text-dark d-flex align-items-center gap-2 mb-0" style="font-size: 0.88rem;">
+                                    <i class="fas fa-wand-magic-sparkles text-primary"></i> Nhập nhanh nhiều gói bằng AI (Theo mô tả Leader)
                                 </label>
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 0.75rem;">
-                                    <i class="fas fa-robot me-1"></i>Tự động nhận diện mô tả ở cuối dòng
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 0.72rem;">
+                                    <i class="fas fa-robot me-1"></i>Nhận diện mô tả ở cuối dòng
                                 </span>
                             </div>
-                            <p class="text-muted small mb-2" style="font-size: 0.85rem;">
-                                Dán danh sách các gói (mỗi dòng 1 gói) hoặc đoạn chat mô tả của Leader. AI sẽ tự động phân tách, nghe theo mô tả/ghi chú ở cuối các dòng và tự động tạo đủ các ô:
-                            </p>
-                            <textarea class="form-control mb-2" id="aiVariantsInput" rows="3" 
+                            <textarea class="form-control mb-2" id="aiVariantsInput" rows="2" 
                                       placeholder="Ví dụ dán vào đây:
 Gói 1 tháng: 35k (giá gốc 50k) - 1 profile, cấp sẵn, kho 50
-Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30
-Gói 12 tháng: 350k - tặng thêm 1 tháng, kho 20"></textarea>
+Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                             <div class="d-flex gap-2 justify-content-between align-items-center flex-wrap">
                                 <small class="text-muted" style="font-size: 0.8rem;">
-                                    <i class="fas fa-info-circle text-info me-1"></i>Hệ thống sẽ giữ trọn vẹn các yêu cầu/ghi chú ở cuối dòng vào tên gói và thiết lập đúng giá, kho, hạn dùng.
+                                    <i class="fas fa-info-circle text-info me-1"></i>Hệ thống tự động phân tách và gán thông số từ mô tả.
                                 </small>
                                 <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="parseVariantsFast()">
                                         <i class="fas fa-bolt me-1 text-warning"></i>Phân tích nhanh
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" id="btnRunAiVariants" onclick="parseVariantsWithAI()">
-                                        <i class="fas fa-wand-magic-sparkles me-1"></i>AI Phân Tích & Tạo Gói
+                                        <i class="fas fa-wand-magic-sparkles me-1"></i>AI Phân Tích
                                     </button>
                                 </div>
                             </div>
@@ -554,13 +437,13 @@ Gói 12 tháng: 350k - tặng thêm 1 tháng, kho 20"></textarea>
                         <div class="table-responsive">
                             <table class="table table-bordered align-middle mb-2">
                                 <thead class="table-light">
-                                    <tr class="text-center text-nowrap" style="font-size: 0.85rem;">
-                                        <th style="min-width: 220px;">Tên gói / Phiên bản <span class="text-danger">*</span></th>
-                                        <th style="min-width: 140px;">Giá bán (VNĐ) <span class="text-danger">*</span></th>
-                                        <th style="min-width: 140px;">Giá gốc (VNĐ)</th>
-                                        <th style="min-width: 90px;">Kho</th>
-                                        <th style="min-width: 190px;">Thời hạn bảo hành</th>
-                                        <th style="width: 50px;">Xóa</th>
+                                    <tr class="text-center text-nowrap" style="font-size: 0.82rem;">
+                                        <th style="min-width: 200px;">Tên gói / Phiên bản <span class="text-danger">*</span></th>
+                                        <th style="min-width: 120px;">Giá bán (VNĐ) <span class="text-danger">*</span></th>
+                                        <th style="min-width: 120px;">Giá gốc (VNĐ)</th>
+                                        <th style="min-width: 80px;">Kho</th>
+                                        <th style="min-width: 170px;">Thời hạn bảo hành</th>
+                                        <th style="width: 45px;">Xóa</th>
                                     </tr>
                                 </thead>
                                 <tbody id="variantRows">
@@ -568,14 +451,14 @@ Gói 12 tháng: 350k - tặng thêm 1 tháng, kho 20"></textarea>
                                         @foreach($oldVariantNames as $vIdx => $vName)
                                             <tr class="variant-row">
                                                 <td>
-                                                    <input type="text" class="form-control form-control-sm" name="variant_names[]" value="{{ $vName }}" placeholder="VD: Gói 1 tháng, 10M Token..." required>
+                                                    <input type="text" class="form-control form-control-sm" name="variant_names[]" value="{{ $vName }}" placeholder="VD: Gói 1 tháng..." required>
                                                     <input type="hidden" name="variant_ids[]" value="{{ $oldVariantIds[$vIdx] ?? '' }}">
                                                 </td>
                                                 <td>
                                                     <input type="number" class="form-control form-control-sm text-end" name="variant_prices[]" value="{{ $oldVariantPrices[$vIdx] ?? '' }}" placeholder="Giá bán" min="0" step="1000" required>
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="{{ $oldVariantSalePrices[$vIdx] ?? '' }}" placeholder="Để trống nếu ko giảm" min="0" step="1000">
+                                                    <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="{{ $oldVariantSalePrices[$vIdx] ?? '' }}" placeholder="Trống nếu ko giảm" min="0" step="1000">
                                                 </td>
                                                 <td>
                                                     <input type="number" class="form-control form-control-sm text-center" name="variant_stocks[]" value="{{ $oldVariantStocks[$vIdx] ?? '10' }}" min="0">
@@ -602,14 +485,14 @@ Gói 12 tháng: 350k - tặng thêm 1 tháng, kho 20"></textarea>
                                         @foreach($existingVariants as $variant)
                                             <tr class="variant-row">
                                                 <td>
-                                                    <input type="text" class="form-control form-control-sm" name="variant_names[]" value="{{ $variant->name }}" placeholder="VD: Gói 1 tháng, 10M Token..." required>
+                                                    <input type="text" class="form-control form-control-sm" name="variant_names[]" value="{{ $variant->name }}" placeholder="VD: Gói 1 tháng..." required>
                                                     <input type="hidden" name="variant_ids[]" value="{{ $variant->id }}">
                                                 </td>
                                                 <td>
                                                     <input type="number" class="form-control form-control-sm text-end" name="variant_prices[]" value="{{ (int)$variant->price }}" placeholder="Giá bán" min="0" step="1000" required>
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="{{ $variant->sale_price ? (int)$variant->sale_price : '' }}" placeholder="Để trống nếu ko giảm" min="0" step="1000">
+                                                    <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="{{ $variant->sale_price ? (int)$variant->sale_price : '' }}" placeholder="Trống nếu ko giảm" min="0" step="1000">
                                                 </td>
                                                 <td>
                                                     <input type="number" class="form-control form-control-sm text-center" name="variant_stocks[]" value="{{ $variant->stock }}" min="0">
@@ -636,317 +519,521 @@ Gói 12 tháng: 350k - tặng thêm 1 tháng, kho 20"></textarea>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="addVariantRow()">
-                                <i class="fas fa-plus me-1"></i>Thêm gói mới
-                            </button>
-                            <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Khi bật gói dịch vụ, khách hàng sẽ chọn gói trực tiếp khi mua.</small>
-                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 mt-1" onclick="addVariantRow()">
+                            <i class="fas fa-plus me-1"></i>Thêm gói mới
+                        </button>
                     </div>
                 </div>
 
-                <!-- Image Upload -->
-                <div class="mb-4">
-                    <label for="image" class="form-label">
-                        <i class="fas fa-image me-2 text-primary"></i>Hình ảnh sản phẩm
-                    </label>
-                    
-                    @if($product->image)
-                        <div class="mb-3">
-                            <label class="form-label">Hình ảnh hiện tại:</label><br>
-                            <img src="{{ $product->image }}" alt="{{ $product->name }}" id="currentImage" class="image-preview">
+                <!-- 4. Specifications Card (Side-by-side VI & EN) -->
+                @php
+                    $specsVal = $product->getRawOriginal('specs');
+                    if (is_string($specsVal)) {
+                        $decoded = json_decode($specsVal, true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                            $specsVal = $decoded;
+                        }
+                    }
+
+                    $specType = old('spec_type');
+                    $specText = old('spec_text');
+                    $currentSpecs = [];
+
+                    if ($specType === null) {
+                        if (is_array($specsVal) && isset($specsVal['_type']) && $specsVal['_type'] === 'text') {
+                            $specType = 'text';
+                            $specText = $specsVal['content'] ?? '';
+                        } elseif (is_string($specsVal) && !empty($specsVal)) {
+                            $specType = 'text';
+                            $specText = $specsVal;
+                        } else {
+                            $specType = 'table';
+                            $specText = '';
+                            $currentSpecs = is_array($specsVal) ? $specsVal : [];
+                        }
+                    } else {
+                        if ($specType === 'table') {
+                            $oldKeys = old('spec_keys', []);
+                            $oldValues = old('spec_values', []);
+                            foreach ($oldKeys as $oldIndex => $oldKey) {
+                                $currentSpecs[$oldKey] = $oldValues[$oldIndex] ?? '';
+                            }
+                        }
+                    }
+                    $currentSpecs = count(array_filter($currentSpecs ?? [])) > 0 ? $currentSpecs : ['' => ''];
+
+                    $specsEnVal = $product->specs_en;
+                    if (is_string($specsEnVal)) {
+                        $decodedEn = json_decode($specsEnVal, true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($decodedEn)) {
+                            $specsEnVal = $decodedEn;
+                        }
+                    }
+
+                    $specTypeEn = old('spec_type_en');
+                    $specTextEn = old('spec_text_en');
+                    $currentSpecsEn = [];
+
+                    if ($specTypeEn === null) {
+                        if (is_array($specsEnVal) && isset($specsEnVal['_type']) && $specsEnVal['_type'] === 'text') {
+                            $specTypeEn = 'text';
+                            $specTextEn = $specsEnVal['content'] ?? '';
+                        } elseif (is_string($specsEnVal) && !empty($specsEnVal)) {
+                            $specTypeEn = 'text';
+                            $specTextEn = $specsEnVal;
+                        } else {
+                            $specTypeEn = 'table';
+                            $specTextEn = '';
+                            $currentSpecsEn = is_array($specsEnVal) ? $specsEnVal : [];
+                        }
+                    } else {
+                        if ($specTypeEn === 'table') {
+                            $oldKeysEn = old('spec_keys_en', []);
+                            $oldValuesEn = old('spec_values_en', []);
+                            foreach ($oldKeysEn as $oldIndex => $oldKey) {
+                                $currentSpecsEn[$oldKey] = $oldValuesEn[$oldIndex] ?? '';
+                            }
+                        }
+                    }
+                    $currentSpecsEn = count(array_filter($currentSpecsEn ?? [])) > 0 ? $currentSpecsEn : ['' => ''];
+                @endphp
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-sliders-h text-primary"></i> Thông số kỹ thuật
                         </div>
-                    @endif
-                    
-                    <input type="file" 
-                           class="form-control @error('image') is-invalid @enderror" 
-                           id="image" 
-                           name="image"
-                           accept="image/*"
-                           onchange="previewImage(event)">
-                    <small class="text-muted">Chọn file ảnh mới (JPEG, PNG, JPG, GIF - tối đa 2MB). Ảnh sẽ tự động crop về 500x334 pixels. Để trống nếu không muốn thay đổi.</small>
-                    @error('image')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
-                    
-                    <!-- New Image Preview -->
-                    <div id="imagePreview" class="mt-3" style="display: none;">
-                        <div class="card" style="max-width: 300px;">
-                            <div class="card-body p-2">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <small class="text-muted">Ảnh mới (Preview):</small>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="removeImage()">
-                                        <i class="fas fa-times"></i>
+                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2 py-1" style="font-size: 0.75rem;">Chi tiết kỹ thuật</span>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="row g-4">
+                            <!-- Specs VN -->
+                            <div class="col-md-6 border-end-md">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
+                                    <label class="form-label mb-0 fw-bold">
+                                        <i class="fas fa-cogs text-primary me-1"></i>Thông số (Tiếng Việt)
+                                    </label>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <input type="radio" class="btn-check" name="spec_type" id="spec_type_table" value="table" autocomplete="off" {{ $specType === 'table' ? 'checked' : '' }} onchange="switchSpecMode('table')">
+                                        <label class="btn btn-outline-primary py-0 px-2" for="spec_type_table" style="font-size: 0.78rem;">Dòng</label>
+
+                                        <input type="radio" class="btn-check" name="spec_type" id="spec_type_text" value="text" autocomplete="off" {{ $specType === 'text' ? 'checked' : '' }} onchange="switchSpecMode('text')">
+                                        <label class="btn btn-outline-primary py-0 px-2" for="spec_type_text" style="font-size: 0.78rem;">Text</label>
+                                    </div>
+                                </div>
+
+                                <div id="specTableContainer" style="{{ $specType === 'text' ? 'display: none;' : '' }}">
+                                    <div id="specRows">
+                                        @foreach($currentSpecs as $specKey => $specValue)
+                                            <div class="row g-1 mb-2 spec-row-input">
+                                                <div class="col-5">
+                                                    <input type="text" class="form-control form-control-sm" name="spec_keys[]" value="{{ $specKey }}" placeholder="Tên thông số">
+                                                </div>
+                                                <div class="col-5">
+                                                    <input type="text" class="form-control form-control-sm" name="spec_values[]" value="{{ is_array($specValue) ? implode(', ', $specValue) : $specValue }}" placeholder="Giá trị">
+                                                </div>
+                                                <div class="col-2">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeSpecRow(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill mt-1" onclick="addSpecRow()">
+                                        <i class="fas fa-plus me-1"></i>Thêm dòng
                                     </button>
                                 </div>
-                                <img id="preview" src="" alt="Preview" class="img-fluid rounded" style="width: 100%; height: auto;">
+
+                                <div id="specTextContainer" style="{{ $specType === 'text' ? '' : 'display: none;' }}">
+                                    <textarea class="form-control" name="spec_text" id="spec_text" rows="5" placeholder="Nhập thông số kỹ thuật dạng mô tả tự do...">{{ $specText }}</textarea>
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">Hỗ trợ xuống dòng, gạch đầu dòng tự do.</small>
+                                </div>
+                            </div>
+
+                            <!-- Specs EN -->
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
+                                    <label class="form-label mb-0 fw-bold text-success">
+                                        <i class="fas fa-cogs me-1"></i>Thông số (Tiếng Anh)
+                                    </label>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <input type="radio" class="btn-check" name="spec_type_en" id="spec_type_en_table" value="table" autocomplete="off" {{ $specTypeEn === 'table' ? 'checked' : '' }} onchange="switchSpecEnMode('table')">
+                                        <label class="btn btn-outline-success py-0 px-2" for="spec_type_en_table" style="font-size: 0.78rem;">Lines</label>
+
+                                        <input type="radio" class="btn-check" name="spec_type_en" id="spec_type_en_text" value="text" autocomplete="off" {{ $specTypeEn === 'text' ? 'checked' : '' }} onchange="switchSpecEnMode('text')">
+                                        <label class="btn btn-outline-success py-0 px-2" for="spec_type_en_text" style="font-size: 0.78rem;">Text</label>
+                                    </div>
+                                </div>
+
+                                <div id="specTableContainerEn" style="{{ $specTypeEn === 'text' ? 'display: none;' : '' }}">
+                                    <div id="specRowsEn">
+                                        @foreach($currentSpecsEn as $specKey => $specValue)
+                                            <div class="row g-1 mb-2 spec-row-input-en">
+                                                <div class="col-5">
+                                                    <input type="text" class="form-control form-control-sm" name="spec_keys_en[]" value="{{ $specKey }}" placeholder="Spec name">
+                                                </div>
+                                                <div class="col-5">
+                                                    <input type="text" class="form-control form-control-sm" name="spec_values_en[]" value="{{ is_array($specValue) ? implode(', ', $specValue) : $specValue }}" placeholder="Value">
+                                                </div>
+                                                <div class="col-2">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeSpecRowEn(this)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button type="button" class="btn btn-outline-success btn-sm rounded-pill mt-1" onclick="addSpecRowEn()">
+                                        <i class="fas fa-plus me-1"></i>Add line
+                                    </button>
+                                </div>
+
+                                <div id="specTextContainerEn" style="{{ $specTypeEn === 'text' ? '' : 'display: none;' }}">
+                                    <textarea class="form-control" name="spec_text_en" id="spec_text_en" rows="5" placeholder="Enter specifications in description/text format...">{{ $specTextEn }}</textarea>
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">English free text format.</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- File Upload Section for Ebooks -->
-                <div id="fileUploadSection" class="mb-4" style="display: none;">
-                    <label class="form-label">
-                        <i class="fas fa-file-upload me-2"></i>File tải về
-                    </label>
-                    
-                    @if($product->file_path)
+            </div>
+
+            <!-- RIGHT / SIDEBAR COLUMN -->
+            <div class="col-xl-4 col-lg-5">
+
+                <!-- 1. Actions Card (Sticky) -->
+                <div class="form-card sticky-sidebar-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-rocket text-primary"></i> Hành động
+                        </div>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1" style="font-size: 0.72rem;">Sẵn sàng</span>
+                    </div>
+                    <div class="form-card-body d-flex flex-column gap-2">
+                        <button type="submit" class="btn btn-submit w-100 py-2">
+                            <i class="fas fa-save me-1"></i> Cập nhật sản phẩm
+                        </button>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])) }}" class="btn btn-outline-secondary w-50 rounded-pill">
+                                <i class="fas fa-times me-1"></i> Hủy
+                            </a>
+                            <button type="button" class="btn btn-outline-danger w-50 rounded-pill" onclick="confirmDeleteCurrentProduct()">
+                                <i class="fas fa-trash-alt me-1"></i> Xóa SP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Classification & Delivery -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-folder-open text-primary"></i> Phân loại & Giao hàng
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <!-- Category -->
                         <div class="mb-3">
-                            <label class="form-label">File hiện tại:</label><br>
-                            <div class="alert alert-info">
-                                <i class="fas fa-file-{{ $product->file_type }} me-2"></i>
-                                <strong>{{ basename($product->file_path) }}</strong>
-                                <span class="badge bg-primary ms-2">{{ $product->formatted_file_size }}</span>
+                            <label for="category_id" class="form-label">
+                                <i class="fas fa-list me-1 text-primary"></i>Danh mục <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" id="category_id" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}"
+                                            data-type="{{ $cat->type }}"
+                                            {{ (string) old('category_id', $product->category_id) === (string) $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            @if($categories->isEmpty())
+                                <small class="text-danger d-block mt-1">Chưa có danh mục phù hợp.</small>
+                            @else
+                                <div class="category-hint">Danh mục quyết định giao thức & tải file (ebooks / tài liệu).</div>
+                            @endif
+                        </div>
+
+                        <!-- Delivery Type -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-shipping-fast me-1 text-primary"></i>Loại giao hàng <span class="text-danger">*</span>
+                            </label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="delivery_type" id="digital" value="digital" {{ old('delivery_type', $product->delivery_type) == 'digital' ? 'checked' : '' }} required>
+                                    <label class="form-check-label cursor-pointer" for="digital">
+                                        <i class="fas fa-download me-1 text-primary"></i>Digital (Số)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="delivery_type" id="physical" value="physical" {{ old('delivery_type', $product->delivery_type) == 'physical' ? 'checked' : '' }}>
+                                    <label class="form-check-label cursor-pointer" for="physical">
+                                        <i class="fas fa-box me-1 text-warning"></i>Physical (Vật lý)
+                                    </label>
+                                </div>
+                            </div>
+                            @error('delivery_type')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Duration -->
+                        <div>
+                            <label class="form-label">
+                                <i class="fas fa-clock me-1 text-primary"></i>Thời hạn sản phẩm
+                            </label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" 
+                                       class="form-control @error('duration_value') is-invalid @enderror" 
+                                       id="duration_value" 
+                                       name="duration_value" 
+                                       value="{{ old('duration_value', $product->duration_value) }}" 
+                                       min="1" 
+                                       placeholder="Số lượng (1, 7, 30...)">
+                                <select class="form-select @error('duration_type') is-invalid @enderror" 
+                                        id="duration_type" 
+                                        name="duration_type" 
+                                        style="max-width: 130px;">
+                                    <option value="">Không giới hạn</option>
+                                    <option value="days" {{ old('duration_type', $product->duration_type) == 'days' ? 'selected' : '' }}>Ngày</option>
+                                    <option value="months" {{ old('duration_type', $product->duration_type) == 'months' ? 'selected' : '' }}>Tháng</option>
+                                </select>
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">Để trống hoặc chọn "Không giới hạn" nếu dùng vĩnh viễn.</small>
+                            @error('duration_value')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Image & Download File -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-images text-primary"></i> Hình ảnh & Tài liệu
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <!-- Product Image -->
+                        <div class="mb-3">
+                            <label for="image" class="form-label">
+                                <i class="fas fa-image me-1 text-primary"></i>Hình ảnh sản phẩm
+                            </label>
+
+                            @if($product->image)
+                                <div class="mb-2 text-center p-2 bg-light rounded-3 border">
+                                    <img src="{{ $product->image }}" alt="{{ $product->name }}" id="currentImage" class="image-preview mb-1" style="max-height: 120px; object-fit: contain;">
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Ảnh đang dùng</small>
+                                </div>
+                            @endif
+
+                            <input type="file" 
+                                   class="form-control form-control-sm @error('image') is-invalid @enderror" 
+                                   id="image" 
+                                   name="image" 
+                                   accept="image/*"
+                                   onchange="previewImage(event)">
+                            <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">Crop chuẩn 500x334 pixels. Để trống nếu giữ nguyên.</small>
+                            @error('image')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+
+                            <!-- Image Preview -->
+                            <div id="imagePreview" class="mt-2" style="display: none;">
+                                <div class="card p-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-muted">Ảnh mới tải lên:</small>
+                                        <button type="button" class="btn btn-sm btn-outline-danger p-0 px-2" onclick="removeImage()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <img id="preview" src="" alt="Preview" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                                </div>
                             </div>
                         </div>
-                    @endif
-                    
-                    <input type="file" 
-                           class="form-control @error('file') is-invalid @enderror" 
-                           id="file" 
-                           name="file"
-                           accept=".pdf,.doc,.docx,.txt,.zip,.rar"
-                           onchange="previewFile(event)">
-                    <small class="text-muted">Chọn file PDF, DOC, DOCX, TXT, ZIP, hoặc RAR (tối đa 50MB). Để trống nếu không muốn thay đổi.</small>
-                    @error('file')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
-                    
-                    <!-- File Preview -->
-                    <div id="filePreview" class="mt-3" style="display: none;">
-                        <div class="alert alert-success">
-                            <strong>File mới:</strong> <span id="fileName"></span>
-                            <span class="badge bg-dark ms-2" id="fileSize"></span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Technical Specifications -->
-                <div class="mb-4">
-                    @php
-                        $specsVal = $product->getRawOriginal('specs');
-                        if (is_string($specsVal)) {
-                            $decoded = json_decode($specsVal, true);
-                            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                                $specsVal = $decoded;
-                            }
-                        }
-
-                        $specType = old('spec_type');
-                        $specText = old('spec_text');
-                        $currentSpecs = [];
-
-                        if ($specType === null) {
-                            if (is_array($specsVal) && isset($specsVal['_type']) && $specsVal['_type'] === 'text') {
-                                $specType = 'text';
-                                $specText = $specsVal['content'] ?? '';
-                            } elseif (is_string($specsVal) && !empty($specsVal)) {
-                                $specType = 'text';
-                                $specText = $specsVal;
-                            } else {
-                                $specType = 'table';
-                                $specText = '';
-                                $currentSpecs = is_array($specsVal) ? $specsVal : [];
-                            }
-                        } else {
-                            if ($specType === 'table') {
-                                $oldKeys = old('spec_keys', []);
-                                $oldValues = old('spec_values', []);
-                                foreach ($oldKeys as $oldIndex => $oldKey) {
-                                    $currentSpecs[$oldKey] = $oldValues[$oldIndex] ?? '';
-                                }
-                            }
-                        }
-                        $currentSpecs = count(array_filter($currentSpecs ?? [])) > 0 ? $currentSpecs : ['' => ''];
-                    @endphp
-                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
-                        <label class="form-label mb-0">
-                            <i class="fas fa-cogs me-2 text-primary"></i>Thông Số Kỹ Thuật
-                        </label>
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Kiểu nhập thông số">
-                            <input type="radio" class="btn-check" name="spec_type" id="spec_type_table" value="table" autocomplete="off" {{ $specType === 'table' ? 'checked' : '' }} onchange="switchSpecMode('table')">
-                            <label class="btn btn-outline-primary" for="spec_type_table">
-                                <i class="fas fa-table-list me-1"></i>Từng dòng (Key - Value)
+                        <!-- Ebooks File Section -->
+                        <div id="fileUploadSection" style="display: none;">
+                            <hr class="my-3">
+                            <label class="form-label">
+                                <i class="fas fa-file-upload me-1 text-primary"></i>File tải về (Ebook/Tài liệu)
                             </label>
 
-                            <input type="radio" class="btn-check" name="spec_type" id="spec_type_text" value="text" autocomplete="off" {{ $specType === 'text' ? 'checked' : '' }} onchange="switchSpecMode('text')">
-                            <label class="btn btn-outline-primary" for="spec_type_text">
-                                <i class="fas fa-align-left me-1"></i>Dạng mô tả (Text)
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Mode Table (Key - Value) -->
-                    <div id="specTableContainer" style="{{ $specType === 'text' ? 'display: none;' : '' }}">
-                        <div id="specRows">
-                            @foreach($currentSpecs as $specKey => $specValue)
-                                <div class="row g-2 mb-2 spec-row-input">
-                                    <div class="col-md-5">
-                                        <input type="text" class="form-control" name="spec_keys[]" value="{{ $specKey }}" placeholder="Tên thông số">
+                            @if($product->file_path)
+                                <div class="mb-2 p-2 bg-light rounded-3 border">
+                                    <div class="small fw-bold text-truncate">
+                                        <i class="fas fa-file-{{ $product->file_type }} text-primary me-1"></i>
+                                        {{ basename($product->file_path) }}
                                     </div>
-                                    <div class="col-md-5">
-                                        <input type="text" class="form-control" name="spec_values[]" value="{{ is_array($specValue) ? implode(', ', $specValue) : $specValue }}" placeholder="Giá trị">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRow(this)">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                                    <span class="badge bg-primary mt-1" style="font-size: 0.72rem;">{{ $product->formatted_file_size }}</span>
                                 </div>
-                            @endforeach
-                        </div>
-                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRow()">
-                            <i class="fas fa-plus me-1"></i>Thêm thông số
-                        </button>
-                    </div>
+                            @endif
 
-                    <!-- Mode Text (Textarea) -->
-                    <div id="specTextContainer" style="{{ $specType === 'text' ? '' : 'display: none;' }}">
-                        <textarea class="form-control" name="spec_text" id="spec_text" rows="6" placeholder="Nhập thông số kỹ thuật dạng mô tả (hỗ trợ xuống dòng, gạch đầu dòng, danh sách)...">{{ $specText }}</textarea>
-                        <div class="form-text text-muted mt-1">
-                            <i class="fas fa-info-circle me-1"></i>Bạn có thể nhập văn bản tự do, xuống dòng hoặc đoạn văn mô tả chi tiết thông số kỹ thuật.
-                        </div>
-                    </div>
-                </div>
+                            <input type="file" 
+                                   class="form-control form-control-sm @error('file') is-invalid @enderror" 
+                                   id="file" 
+                                   name="file"
+                                   accept=".pdf,.doc,.docx,.txt,.zip,.rar"
+                                   onchange="previewFile(event)">
+                            <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">PDF, DOC, DOCX, ZIP (tối đa 50MB). Để trống nếu giữ file cũ.</small>
+                            @error('file')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
 
-                <!-- Technical Specifications (English) -->
-                <div class="mb-4">
-                    @php
-                        $specsEnVal = $product->specs_en;
-                        if (is_string($specsEnVal)) {
-                            $decodedEn = json_decode($specsEnVal, true);
-                            if (json_last_error() === JSON_ERROR_NONE && is_array($decodedEn)) {
-                                $specsEnVal = $decodedEn;
-                            }
-                        }
-
-                        $specTypeEn = old('spec_type_en');
-                        $specTextEn = old('spec_text_en');
-                        $currentSpecsEn = [];
-
-                        if ($specTypeEn === null) {
-                            if (is_array($specsEnVal) && isset($specsEnVal['_type']) && $specsEnVal['_type'] === 'text') {
-                                $specTypeEn = 'text';
-                                $specTextEn = $specsEnVal['content'] ?? '';
-                            } elseif (is_string($specsEnVal) && !empty($specsEnVal)) {
-                                $specTypeEn = 'text';
-                                $specTextEn = $specsEnVal;
-                            } else {
-                                $specTypeEn = 'table';
-                                $specTextEn = '';
-                                $currentSpecsEn = is_array($specsEnVal) ? $specsEnVal : [];
-                            }
-                        } else {
-                            if ($specTypeEn === 'table') {
-                                $oldKeysEn = old('spec_keys_en', []);
-                                $oldValuesEn = old('spec_values_en', []);
-                                foreach ($oldKeysEn as $oldIndex => $oldKey) {
-                                    $currentSpecsEn[$oldKey] = $oldValuesEn[$oldIndex] ?? '';
-                                }
-                            }
-                        }
-                        $currentSpecsEn = count(array_filter($currentSpecsEn ?? [])) > 0 ? $currentSpecsEn : ['' => ''];
-                    @endphp
-                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
-                        <label class="form-label mb-0 text-success">
-                            <i class="fas fa-cogs me-2"></i>Thông Số Kỹ Thuật (Tiếng Anh)
-                        </label>
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Spec input mode EN">
-                            <input type="radio" class="btn-check" name="spec_type_en" id="spec_type_en_table" value="table" autocomplete="off" {{ $specTypeEn === 'table' ? 'checked' : '' }} onchange="switchSpecEnMode('table')">
-                            <label class="btn btn-outline-success" for="spec_type_en_table">
-                                <i class="fas fa-table-list me-1"></i>Từng dòng (EN)
-                            </label>
-
-                            <input type="radio" class="btn-check" name="spec_type_en" id="spec_type_en_text" value="text" autocomplete="off" {{ $specTypeEn === 'text' ? 'checked' : '' }} onchange="switchSpecEnMode('text')">
-                            <label class="btn btn-outline-success" for="spec_type_en_text">
-                                <i class="fas fa-align-left me-1"></i>Dạng mô tả (EN)
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Mode Table EN -->
-                    <div id="specTableContainerEn" style="{{ $specTypeEn === 'text' ? 'display: none;' : '' }}">
-                        <div id="specRowsEn">
-                            @foreach($currentSpecsEn as $specKey => $specValue)
-                                <div class="row g-2 mb-2 spec-row-input-en">
-                                    <div class="col-md-5">
-                                        <input type="text" class="form-control" name="spec_keys_en[]" value="{{ $specKey }}" placeholder="Spec name (EN)">
-                                    </div>
-                                    <div class="col-md-5">
-                                        <input type="text" class="form-control" name="spec_values_en[]" value="{{ is_array($specValue) ? implode(', ', $specValue) : $specValue }}" placeholder="Value (EN)">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecRowEn(this)">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                            <div id="filePreview" class="mt-2" style="display: none;">
+                                <div class="alert alert-success p-2 small mb-0">
+                                    <strong>File mới:</strong> <span id="fileName"></span>
+                                    <span class="badge bg-dark ms-1" id="fileSize"></span>
                                 </div>
-                            @endforeach
-                        </div>
-                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpecRowEn()">
-                            <i class="fas fa-plus me-1"></i>Thêm thông số (EN)
-                        </button>
-                    </div>
-
-                    <!-- Mode Text EN -->
-                    <div id="specTextContainerEn" style="{{ $specTypeEn === 'text' ? '' : 'display: none;' }}">
-                        <textarea class="form-control" name="spec_text_en" id="spec_text_en" rows="6" placeholder="Enter specifications in description/text format...">{{ $specTextEn }}</textarea>
-                        <div class="form-text text-muted mt-1">
-                            <i class="fas fa-info-circle me-1"></i>Free text format in English (supports new lines, bullet points).
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Features -->
-                <div class="mb-4">
-                    <label class="form-label">
-                        <i class="fas fa-star me-2 text-warning"></i>Tính Năng
-                    </label>
-                    @if(isset($features) && $features->count() > 0)
-                        @php
-                            $selectedFeatures = old('features', $product->features->pluck('id')->toArray());
-                        @endphp
-                        <div class="row g-2">
-                            @foreach($features as $feature)
-                                <div class="col-md-6">
-                                    <div class="form-check border rounded-3 p-3 h-100" style="padding-left: 2.5rem !important;">
-                                        <input class="form-check-input" type="checkbox" name="features[]" value="{{ $feature->id }}" id="feature_{{ $feature->id }}" {{ in_array($feature->id, $selectedFeatures) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="feature_{{ $feature->id }}">
-                                            <i class="{{ $feature->icon }} me-2" style="color: {{ $feature->color }}"></i>
-                                            <strong>{{ $feature->name }}</strong>
+                <!-- 4. Settings & Display Locations -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-toggle-on text-primary"></i> Cài đặt hiển thị & Vị trí
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <!-- is_active -->
+                        <div class="setting-switch-item">
+                            <div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="is_active">
+                                    <i class="fas fa-eye text-success me-1"></i>Hiển thị sản phẩm
+                                </label>
+                                <small class="text-muted d-block" style="font-size: 0.78rem;">Cho phép hiển thị trên trang chủ & cửa hàng</small>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="is_active" name="is_active" value="1" {{ old('is_active', $product->is_active ?? true) ? 'checked' : '' }} style="width: 44px; height: 22px;">
+                            </div>
+                        </div>
+
+                        <!-- is_flash_sale -->
+                        <div class="setting-switch-item">
+                            <div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="is_flash_sale">
+                                    <i class="fas fa-bolt text-danger me-1"></i>Ưu tiên Flash Sale
+                                </label>
+                                <small class="text-muted d-block" style="font-size: 0.78rem;">Đưa lên các ô giảm giá nổi bật</small>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="is_flash_sale" name="is_flash_sale" value="1" {{ old('is_flash_sale', $product->is_flash_sale ?? false) ? 'checked' : '' }} style="width: 44px; height: 22px;">
+                            </div>
+                        </div>
+
+                        <!-- is_vpn -->
+                        <div class="setting-switch-item">
+                            <div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="is_vpn">
+                                    <i class="fas fa-network-wired text-info me-1"></i>Sản phẩm VPN
+                                </label>
+                                <small class="text-muted d-block" style="font-size: 0.78rem;">Hiển thị trong chuyên trang VPN</small>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="is_vpn" name="is_vpn" value="1" {{ old('is_vpn', $product->is_vpn ?? false) ? 'checked' : '' }} style="width: 44px; height: 22px;">
+                            </div>
+                        </div>
+
+                        <!-- is_featured -->
+                        <div class="setting-switch-item">
+                            <div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="is_featured">
+                                    <i class="fas fa-star text-warning me-1"></i>Sản phẩm nổi bật
+                                </label>
+                                <small class="text-muted d-block" style="font-size: 0.78rem;">Trang chủ - Hàng đầu tiên</small>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $product->is_featured) ? 'checked' : '' }} style="width: 44px; height: 22px;">
+                            </div>
+                        </div>
+
+                        <!-- is_exclusive -->
+                        <div class="setting-switch-item">
+                            <div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="is_exclusive">
+                                    <i class="fas fa-gem text-success me-1"></i>Sản phẩm độc quyền
+                                </label>
+                                <small class="text-muted d-block" style="font-size: 0.78rem;">Trang chủ - Hàng thứ 2</small>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="is_exclusive" name="is_exclusive" value="1" {{ old('is_exclusive', $product->is_exclusive ?? false) ? 'checked' : '' }} style="width: 44px; height: 22px;">
+                            </div>
+                        </div>
+
+                        <!-- show_on_banner -->
+                        <div class="setting-switch-item">
+                            <div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="show_on_banner">
+                                    <i class="fas fa-desktop text-primary me-1"></i>Banner Hero (4 ô đầu)
+                                </label>
+                                <small class="text-muted d-block" style="font-size: 0.78rem;">4 thẻ sản phẩm cập nhật mới ở Banner</small>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="show_on_banner" name="show_on_banner" value="1" {{ old('show_on_banner', $product->show_on_banner ?? false) ? 'checked' : '' }} style="width: 44px; height: 22px;">
+                            </div>
+                        </div>
+
+                        <!-- is_combo_ai -->
+                        <div class="setting-switch-item">
+                            <div>
+                                <label class="form-check-label fw-bold cursor-pointer" for="is_combo_ai">
+                                    <i class="fas fa-robot text-primary me-1"></i>Combo AI giá rẻ
+                                </label>
+                                <small class="text-muted d-block" style="font-size: 0.78rem;">Mục Combo AI giá rẻ trên trang chủ</small>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="is_combo_ai" name="is_combo_ai" value="1" {{ old('is_combo_ai', $product->is_combo_ai ?? false) ? 'checked' : '' }} style="width: 44px; height: 22px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Features Card -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-title">
+                            <i class="fas fa-check-circle text-primary"></i> Tính Năng SP
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        @if(isset($features) && $features->count() > 0)
+                            @php
+                                $selectedFeatures = old('features', $product->features->pluck('id')->toArray());
+                            @endphp
+                            <div class="d-flex flex-column gap-2">
+                                @foreach($features as $feature)
+                                    <div class="form-check p-2 border rounded-3 d-flex align-items-center gap-2 m-0" style="padding-left: 2.2rem !important;">
+                                        <input class="form-check-input cursor-pointer" type="checkbox" name="features[]" value="{{ $feature->id }}" id="feature_{{ $feature->id }}" {{ in_array($feature->id, $selectedFeatures) ? 'checked' : '' }}>
+                                        <label class="form-check-label cursor-pointer flex-grow-1" for="feature_{{ $feature->id }}">
+                                            <i class="{{ $feature->icon }} me-1" style="color: {{ $feature->color }}"></i>
+                                            <span class="fw-semibold" style="font-size: 0.88rem;">{{ $feature->name }}</span>
                                             @if($feature->description)
-                                                <small class="text-muted d-block">{{ $feature->description }}</small>
+                                                <small class="text-muted d-block" style="font-size: 0.75rem;">{{ $feature->description }}</small>
                                             @endif
                                         </label>
                                     </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle me-2"></i>Chưa có tính năng nào cho loại sản phẩm này.
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Submit Buttons -->
-                <div class="d-flex gap-3 justify-content-between align-items-center mt-5 flex-wrap">
-                    <button type="button" class="btn btn-outline-danger rounded-pill px-4" onclick="confirmDeleteCurrentProduct()">
-                        <i class="fas fa-trash-alt me-2"></i>Xóa sản phẩm này
-                    </button>
-                    <div class="d-flex gap-3">
-                        <a href="{{ route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])) }}" class="btn btn-outline-secondary rounded-pill px-4">
-                            <i class="fas fa-times me-2"></i>Hủy
-                        </a>
-                        <button type="submit" class="btn btn-submit">
-                            <i class="fas fa-save me-2"></i>Cập nhật sản phẩm
-                        </button>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="alert alert-info mb-0 small">
+                                <i class="fas fa-info-circle me-1"></i>Chưa có tính năng nào cho loại sản phẩm này.
+                            </div>
+                        @endif
                     </div>
                 </div>
-            </form>
+
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 @endsection
 
@@ -1237,7 +1324,7 @@ Gói 12 tháng: 350k - tặng thêm 1 tháng, kho 20"></textarea>
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    window.location.href = @json(route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])));
+                    window.location.href = '{{ route('admin.products', request()->only(['page', 'search', 'category', 'flash_sale'])) }}';
                 });
             }
         });

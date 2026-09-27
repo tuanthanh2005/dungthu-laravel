@@ -689,7 +689,7 @@
         });
     }
 
-    // AJAX Delete Forms
+    // AJAX Delete Forms with Password / PIN Verification
     document.querySelectorAll('.ajax-delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -698,61 +698,74 @@
             const row = this.closest('tr');
 
             Swal.fire({
-                title: 'Xác nhận xóa?',
-                text: `Bạn có chắc muốn xóa sản phẩm "${name}"?`,
+                title: 'Xác nhận xóa sản phẩm?',
+                html: `Bạn có chắc muốn xóa vĩnh viễn sản phẩm "<strong>${name}</strong>"?<br><span class="text-danger small mt-2 d-block"><i class="fas fa-shield-alt me-1"></i>Hành động này không thể hoàn tác! Vui lòng nhập mật khẩu xác nhận:</span>`,
                 icon: 'warning',
+                input: 'password',
+                inputPlaceholder: 'Nhập mật khẩu hệ thống / mã PIN...',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    autocorrect: 'off',
+                    autocomplete: 'current-password'
+                },
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Đồng ý xóa',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(url, {
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash me-1"></i> Đồng ý xóa',
+                cancelButtonText: 'Hủy',
+                showLoaderOnConfirm: true,
+                preConfirm: (password) => {
+                    if (!password || password.trim() === '') {
+                        Swal.showValidationMessage('Vui lòng nhập mật khẩu xác nhận!');
+                        return false;
+                    }
+                    return fetch(url, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                             'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         body: new URLSearchParams({
-                            '_method': 'DELETE'
+                            '_method': 'DELETE',
+                            'password': password,
+                            'admin_pin': password
                         })
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: data.message,
-                                toast: true,
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
-                            
-                            // Fade out row
-                            row.style.transition = 'all 0.5s ease';
-                            row.style.opacity = '0';
-                            row.style.transform = 'translateX(20px)';
-                            setTimeout(() => {
-                                row.remove();
-                            }, 500);
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Thất bại!',
-                                text: data.message || 'Không thể xóa sản phẩm.'
-                            });
-                        }
-                    })
-                    .catch(err => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi kết nối!',
-                            text: 'Không thể kết nối đến server.'
+                    .then(response => {
+                        return response.json().then(data => {
+                            if (!response.ok || !data.success) {
+                                throw new Error(data.message || 'Mật khẩu xác nhận không chính xác!');
+                            }
+                            return data;
                         });
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(error.message || 'Có lỗi xảy ra, vui lòng thử lại.');
                     });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed && result.value && result.value.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: result.value.message || 'Đã xóa sản phẩm thành công!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    
+                    // Fade out row
+                    if (row) {
+                        row.style.transition = 'all 0.5s ease';
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateX(20px)';
+                        setTimeout(() => {
+                            row.remove();
+                        }, 500);
+                    }
                 }
             });
         });

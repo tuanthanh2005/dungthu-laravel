@@ -1342,14 +1342,68 @@ class AdminController extends Controller
         return redirect()->route('admin.products', $queryParams)->with('success', 'Cập nhật sản phẩm thành công!');
     }
 
-    public function deleteProduct(Product $product)
+    /**
+     * Phân tích văn bản mô tả gói của Leader bằng AI Gemini
+     */
+    public function parseVariantsAI(Request $request)
     {
+        $request->validate([
+            'raw_text' => 'required|string|max:5000',
+            'product_name' => 'nullable|string|max:255',
+            'api_key' => 'nullable|string',
+        ]);
+
+        $rawText = trim($request->input('raw_text'));
+        $productName = $request->input('product_name');
+        $apiKey = $request->input('api_key');
+
+        try {
+            $service = new GeminiBlogService();
+            $variants = $service->parseProductVariants($rawText, $apiKey, $productName);
+
+            return response()->json([
+                'success' => true,
+                'variants' => $variants,
+                'message' => 'Đã phân tích thành công ' . count($variants) . ' gói dịch vụ theo mô tả của Leader!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
+    }
+
+    public function deleteProduct(Request $request, Product $product)
+    {
+        $password = (string) ($request->input('password') ?? $request->input('admin_pin') ?? $request->input('confirm_password') ?? $request->input('pin') ?? '');
+
+        if ($password === '') {
+            $msg = 'Vui lòng nhập mật khẩu xác nhận để xóa sản phẩm!';
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 403);
+            }
+            return redirect()->back()->with('error', $msg);
+        }
+
+        $actionPin = (string) config('admin.action_pin', '12112004');
+        $gatePassword = (string) config('admin.gate_password', 'sieusuperadmin_secret_gate');
+        $isUserPassword = auth()->check() && \Illuminate\Support\Facades\Hash::check($password, auth()->user()->password);
+
+        if (!$isUserPassword && $password !== $actionPin && $password !== $gatePassword) {
+            $msg = 'Mật khẩu xác nhận không chính xác! Không thể xóa sản phẩm.';
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 403);
+            }
+            return redirect()->back()->with('error', $msg);
+        }
+
         // Xóa ảnh nếu có
         if ($product->image) {
             $imagePath = parse_url($product->image, PHP_URL_PATH);
             $fullPath = PathHelper::publicRootPath($imagePath);
             if (file_exists($fullPath)) {
-                unlink($fullPath);
+                @unlink($fullPath);
             }
         }
         
@@ -1357,13 +1411,21 @@ class AdminController extends Controller
         if ($product->file_path) {
             $filePath = PathHelper::publicRootPath('files/' . $product->file_path);
             if (file_exists($filePath)) {
-                unlink($filePath);
+                @unlink($filePath);
             }
+        }
+
+        // Xóa liên kết tính năng và các gói biến thể
+        try {
+            $product->features()->detach();
+            $product->variants()->delete();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Error detaching relations on product delete: ' . $e->getMessage());
         }
         
         $product->delete();
 
-        if (request()->ajax() || request()->wantsJson()) {
+        if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Xóa sản phẩm thành công!'

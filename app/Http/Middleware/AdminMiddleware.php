@@ -115,6 +115,7 @@ class AdminMiddleware
         $exemptPinRoutes = [
             'admin.blogs.generate_ai',
             'admin.blogs.save_gemini_key',
+            'admin.products.parse-variants-ai',
         ];
         if ($routeName && in_array($routeName, $exemptPinRoutes, true)) {
             return $next($request);
@@ -127,6 +128,7 @@ class AdminMiddleware
             'admin.online-users.delete',
             'admin.suspicious-ips.destroy',
             'admin.online-users.kick',
+            'admin.products.delete',
         ];
 
         // Block DELETE requests temporarily for security except allowed cleanup routes

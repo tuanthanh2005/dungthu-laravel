@@ -175,4 +175,104 @@ PROMPT;
             throw $e;
         }
     }
+
+    /**
+     * Bóc tách các gói dịch vụ/biến thể sản phẩm bằng Gemini AI
+     */
+    public function parseProductVariants(
+        string $rawInput,
+        ?string $apiKey = null,
+        ?string $productName = null
+    ): array {
+        $key = self::getApiKey($apiKey);
+        if (empty($key)) {
+            throw new \Exception('Chưa cấu hình Gemini API Key! Vui lòng nhập API Key tại trang Cài Đặt hoặc trong khung trợ lý AI.');
+        }
+
+        $formattedModel = 'gemini-2.0-flash';
+
+        $prompt = <<<PROMPT
+Bạn là chuyên gia phân tích và chuẩn hóa dữ liệu sản phẩm thương mại điện tử.
+Người dùng (Admin/Nhân viên) cung cấp một văn bản ghi chép các gói dịch vụ, phiên bản hoặc biến thể sản phẩm, trong đó có kèm mô tả và yêu cầu của LEADER ở cuối các dòng hoặc cuối văn bản.
+
+TÊN SẢN PHẨM (NẾU CÓ): "{$productName}"
+
+VĂN BẢN ĐẦU VÀO CỦA LEADER:
+"""
+{$rawInput}
+"""
+
+QUY TẮC BÓC TÁCH VÀ CHUẨN HÓA BẮT BUỘC:
+1. MỖI DÒNG thường là một gói sản phẩm. Đọc kỹ từng dòng để phân tách đầy đủ các gói.
+2. ĐẶC BIỆT LƯU Ý MÔ TẢ CỦA LEADER Ở CUỐI CÁC DÒNG:
+   - Leader thường ghi chú thêm ở cuối mỗi dòng hoặc cuối đoạn (ví dụ: '- 1 thiết bị', '- bảo hành 30 ngày', '- tài khoản cấp sẵn', '- kho 50 cái', '- gói 12 tháng tặng 1 tháng', '- profile riêng', v.v.).
+   - Bạn PHẢI TUÂN THEO các mô tả này và ghép thông tin quan trọng vào "name" (Tên gói) một cách súc tích, chuyên nghiệp. Ví dụ: "Gói 1 Tháng (1 Profile, Cấp Sẵn)".
+3. "price": Giá bán thực tế (BẮT BUỘC là số nguyên VNĐ, ví dụ: 35k -> 35000, 99.000đ -> 99000, 1tr2 -> 1200000). Không để trống.
+4. "sale_price": Giá gốc trước khi giảm (số nguyên VNĐ). Nếu có giá gốc/giá gạch/giá niêm yết thì điền, nếu không có để null.
+5. "stock": Tồn kho (số nguyên). Mặc định là 10 nếu không nói rõ, hoặc theo số lượng kho mà Leader chỉ định ở cuối dòng hoặc cuối văn bản.
+6. "duration_value": Giá trị thời hạn dạng số nguyên (Ví dụ: 1, 3, 6, 12, 30). Nếu vĩnh viễn hoặc không thời hạn thì để null.
+7. "duration_type": Đơn vị thời hạn: chỉ chọn 1 trong các giá trị ['days', 'months', 'years'] hoặc null nếu không có thời hạn.
+   - Ví dụ: "30 ngày" -> duration_value: 30, duration_type: "days"
+   - Ví dụ: "3 tháng" -> duration_value: 3, duration_type: "months"
+   - Ví dụ: "1 năm" -> duration_value: 1, duration_type: "years"
+
+ĐỊNH DẠNG ĐẦU RA BẮT BUỘC:
+Trả về DUY NHẤT 1 mảng JSON thuần túy (không kèm giải thích markdown ngoài):
+[
+  {
+    "name": "Tên gói kèm ghi chú của leader",
+    "price": 35000,
+    "sale_price": 50000,
+    "stock": 10,
+    "duration_value": 1,
+    "duration_type": "months"
+  }
+]
+PROMPT;
+
+        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$formattedModel}:generateContent?key={$key}";
+
+        try {
+            $response = Http::timeout(45)
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($endpoint, [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $prompt]
+                            ]
+                        ]
+                    ],
+                    'generationConfig' => [
+                        'temperature' => 0.2,
+                        'responseMimeType' => 'application/json'
+                    ]
+                ]);
+
+            if ($response->failed()) {
+                $errorData = $response->json();
+                $errorMessage = $errorData['error']['message'] ?? $response->body();
+                Log::error("Gemini parseProductVariants Error: " . $errorMessage);
+                throw new \Exception("Lỗi Gemini API: " . $errorMessage);
+            }
+
+            $responseData = $response->json();
+            $rawText = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $cleanJson = preg_replace('/^```(?:json)?\s*|\s*```$/i', '', trim($rawText));
+            $parsed = json_decode($cleanJson, true);
+
+            if (!is_array($parsed)) {
+                throw new \Exception("Không thể phân tích dữ liệu gói từ phản hồi của AI.");
+            }
+
+            if (isset($parsed['variants']) && is_array($parsed['variants'])) {
+                $parsed = $parsed['variants'];
+            }
+
+            return $parsed;
+        } catch (\Exception $e) {
+            Log::error("parseProductVariants Exception: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }

@@ -501,6 +501,39 @@
                         </div>
                     </div>
                     <div class="card-body p-4" id="variantsContainer" style="{{ $oldHasVariants ? '' : 'display: none;' }}">
+                        <!-- AI & Quick Text Input for Variants -->
+                        <div class="p-3 mb-3 rounded-4" style="background: linear-gradient(135deg, #f0f7ff 0%, #f5f3ff 100%); border: 1.5px dashed #a5b4fc;">
+                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                <label class="fw-bold text-dark d-flex align-items-center gap-2 mb-0" style="font-size: 0.92rem;">
+                                    <i class="fas fa-wand-magic-sparkles text-primary"></i> Nhập nhanh nhiều gói bằng AI (Theo mô tả của Leader)
+                                </label>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 0.75rem;">
+                                    <i class="fas fa-robot me-1"></i>Tự động nhận diện mô tả ở cuối dòng
+                                </span>
+                            </div>
+                            <p class="text-muted small mb-2" style="font-size: 0.85rem;">
+                                Dán danh sách các gói (mỗi dòng 1 gói) hoặc đoạn chat mô tả của Leader. AI sẽ tự động phân tách, nghe theo mô tả/ghi chú ở cuối các dòng và tự động tạo đủ các ô:
+                            </p>
+                            <textarea class="form-control mb-2" id="aiVariantsInput" rows="3" 
+                                      placeholder="Ví dụ dán vào đây:
+Gói 1 tháng: 35k (giá gốc 50k) - 1 profile, cấp sẵn, kho 50
+Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30
+Gói 12 tháng: 350k - tặng thêm 1 tháng, kho 20"></textarea>
+                            <div class="d-flex gap-2 justify-content-between align-items-center flex-wrap">
+                                <small class="text-muted" style="font-size: 0.8rem;">
+                                    <i class="fas fa-info-circle text-info me-1"></i>Hệ thống sẽ giữ trọn vẹn các yêu cầu/ghi chú ở cuối dòng vào tên gói và thiết lập đúng giá, kho, hạn dùng.
+                                </small>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="parseVariantsFast()">
+                                        <i class="fas fa-bolt me-1 text-warning"></i>Phân tích nhanh
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" id="btnRunAiVariants" onclick="parseVariantsWithAI()">
+                                        <i class="fas fa-wand-magic-sparkles me-1"></i>AI Phân Tích & Tạo Gói
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-bordered align-middle mb-2">
                                 <thead class="table-light">
@@ -996,6 +1029,203 @@
             const tr = btn.closest('.variant-row');
             tr.querySelectorAll('input').forEach(i => i.value = '');
         }
+    }
+
+    function populateVariantsFromList(variantsList) {
+        if (!variantsList || !Array.isArray(variantsList) || variantsList.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Không có dữ liệu',
+                text: 'Không tìm thấy gói nào từ nội dung nhập vào.'
+            });
+            return;
+        }
+
+        const toggle = document.getElementById('has_variants');
+        if (toggle && !toggle.checked) {
+            toggle.checked = true;
+            toggleVariantsSection();
+        }
+
+        const tbody = document.getElementById('variantRows');
+        tbody.innerHTML = '';
+
+        variantsList.forEach(item => {
+            addVariantRow({
+                name: item.name || '',
+                price: item.price || '',
+                sale_price: item.sale_price || '',
+                stock: item.stock !== undefined ? item.stock : 10,
+                duration_value: item.duration_value || '',
+                duration_type: item.duration_type || 'months'
+            });
+        });
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: `Đã tự động tạo ${variantsList.length} gói dịch vụ theo mô tả của Leader.`,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+
+    function parseVariantsWithAI() {
+        const textInput = document.getElementById('aiVariantsInput');
+        const rawText = textInput ? textInput.value.trim() : '';
+
+        if (!rawText) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Chưa có nội dung',
+                text: 'Vui lòng dán danh sách các gói hoặc mô tả của Leader vào ô văn bản!'
+            });
+            return;
+        }
+
+        const btn = document.getElementById('btnRunAiVariants');
+        const originalHtml = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>AI đang phân tích mô tả Leader...';
+        }
+
+        const productNameInput = document.getElementById('name');
+        const productName = productNameInput ? productNameInput.value : '';
+
+        fetch(@json(route('admin.products.parse-variants-ai')), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                raw_text: rawText,
+                product_name: productName
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.variants) {
+                populateVariantsFromList(data.variants);
+            } else {
+                throw new Error(data.message || 'Lỗi khi phân tích dữ liệu AI');
+            }
+        })
+        .catch(err => {
+            console.warn('AI Parse failed, falling back to fast regex parser:', err);
+            const fastVariants = runFastRegexParser(rawText);
+            if (fastVariants.length > 0) {
+                populateVariantsFromList(fastVariants);
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Phân tích tự động',
+                    text: `Đã phân tích nhanh ${fastVariants.length} gói theo quy tắc văn bản (AI có thông báo: ${err.message})`
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Không thể phân tích',
+                    text: err.message || 'Có lỗi xảy ra khi gọi AI phân tích.'
+                });
+            }
+        })
+        .finally(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        });
+    }
+
+    function runFastRegexParser(rawText) {
+        const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const results = [];
+
+        lines.forEach(line => {
+            let price = '';
+            let salePrice = '';
+            let durationValue = '';
+            let durationType = '';
+            let stock = 10;
+
+            const originalPriceMatch = line.match(/(?:gốc|cũ|niêm yết|thị trường|km)\s*[:=]?\s*([0-9\.,]+)\s*(k|đ|vnd|triệu|tr)?/i);
+            if (originalPriceMatch) {
+                let num = parseFloat(originalPriceMatch[1].replace(/\./g, '').replace(/,/g, ''));
+                let unit = (originalPriceMatch[2] || '').toLowerCase();
+                if (unit === 'k') num *= 1000;
+                else if (unit === 'tr' || unit === 'triệu') num *= 1000000;
+                salePrice = Math.round(num);
+            }
+
+            const priceMatches = [...line.matchAll(/(?:giá|bán|chỉ)?\s*([0-9\.,]+)\s*(k|đ|vnd|triệu|tr)\b/gi)];
+            if (priceMatches.length > 0) {
+                let bestMatch = priceMatches[0];
+                let num = parseFloat(bestMatch[1].replace(/\./g, '').replace(/,/g, ''));
+                let unit = (bestMatch[2] || '').toLowerCase();
+                if (unit === 'k') num *= 1000;
+                else if (unit === 'tr' || unit === 'triệu') num *= 1000000;
+                price = Math.round(num);
+            } else {
+                const plainNum = line.match(/\b([1-9][0-9]{3,7})\b/);
+                if (plainNum) {
+                    price = parseInt(plainNum[1], 10);
+                }
+            }
+
+            const durMatch = line.match(/\b([0-9]+)\s*(ngày|tháng|năm|day|days|month|months|year|years)\b/i);
+            if (durMatch) {
+                durationValue = parseInt(durMatch[1], 10);
+                const u = durMatch[2].toLowerCase();
+                if (u.includes('ngày') || u.includes('day')) durationType = 'days';
+                else if (u.includes('tháng') || u.includes('month')) durationType = 'months';
+                else if (u.includes('năm') || u.includes('year')) durationType = 'years';
+            }
+
+            const stockMatch = line.match(/(?:kho|sl|stock)\s*[:=]?\s*([0-9]+)/i);
+            if (stockMatch) {
+                stock = parseInt(stockMatch[1], 10);
+            }
+
+            let cleanName = line;
+            cleanName = cleanName.replace(/[:=]\s*[0-9\.,]+\s*(?:k|đ|vnd|triệu|tr)?/gi, '');
+            cleanName = cleanName.replace(/\([^\)]*(?:gốc|cũ|km)[^\)]*\)/gi, '');
+            cleanName = cleanName.replace(/(?:kho|sl|stock)\s*[:=]?\s*[0-9]+/gi, '');
+            cleanName = cleanName.replace(/\s{2,}/g, ' ').trim();
+            if (cleanName.endsWith('-') || cleanName.endsWith(':')) {
+                cleanName = cleanName.slice(0, -1).trim();
+            }
+
+            results.push({
+                name: cleanName || line,
+                price: price || 0,
+                sale_price: salePrice || null,
+                stock: stock,
+                duration_value: durationValue || (durationType === 'months' ? 1 : null),
+                duration_type: durationType || 'months'
+            });
+        });
+
+        return results;
+    }
+
+    function parseVariantsFast() {
+        const textInput = document.getElementById('aiVariantsInput');
+        const rawText = textInput ? textInput.value.trim() : '';
+
+        if (!rawText) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Chưa có nội dung',
+                text: 'Vui lòng dán danh sách các gói hoặc mô tả của Leader vào ô văn bản!'
+            });
+            return;
+        }
+
+        const variants = runFastRegexParser(rawText);
+        populateVariantsFromList(variants);
     }
 </script>
 @endpush

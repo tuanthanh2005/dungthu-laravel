@@ -278,6 +278,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');
     Route::get('/products/create/{category?}', [AdminController::class, 'createProduct'])->name('admin.products.create');
     Route::post('/products', [AdminController::class, 'storeProduct'])->name('admin.products.store');
+    Route::post('/products/parse-variants-ai', [AdminController::class, 'parseVariantsAI'])->name('admin.products.parse-variants-ai');
     Route::get('/products/{product}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit');
     Route::put('/products/{product}', [AdminController::class, 'updateProduct'])->name('admin.products.update');
     Route::delete('/products/{product}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');

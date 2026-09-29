@@ -14,32 +14,33 @@
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 18px;
+        padding: 18px 20px;
+        margin-bottom: 16px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
     .order-box-title {
-        font-size: 1.05rem;
+        font-size: 1rem;
         font-weight: 700;
         color: #1e293b;
-        margin-bottom: 16px;
-        padding-bottom: 10px;
+        margin-bottom: 14px;
+        padding-bottom: 8px;
         border-bottom: 1px solid #f1f5f9;
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
+    /* Product Item in List */
     .order-item-card {
         display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 12px;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 12px;
         border: 1px solid #f1f5f9;
         border-radius: 10px;
         background: #ffffff;
-        margin-bottom: 10px;
+        margin-bottom: 9px;
         transition: border-color 0.15s ease;
     }
 
@@ -48,8 +49,8 @@
     }
 
     .order-item-img {
-        width: 54px;
-        height: 54px;
+        width: 48px;
+        height: 48px;
         border-radius: 8px;
         object-fit: cover;
         flex-shrink: 0;
@@ -57,13 +58,44 @@
         border: 1px solid #e2e8f0;
     }
 
+    .order-item-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .order-item-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.35;
+        margin-bottom: 4px;
+        word-break: break-word;
+    }
+
+    .order-item-variant {
+        font-size: 0.75rem;
+        padding: 2px 7px;
+        border-radius: 4px;
+        margin-bottom: 4px;
+        display: inline-block;
+    }
+
+    .order-item-pricing {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-top: 3px;
+        font-size: 0.85rem;
+    }
+
+    /* Info list rows */
     .info-list-row {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        padding: 9px 0;
-        border-bottom: 1px dashed #e2e8f0;
-        font-size: 0.92rem;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px dashed #f1f5f9;
+        font-size: 0.9rem;
     }
 
     .info-list-row:last-child {
@@ -74,8 +106,8 @@
     .info-list-label {
         color: #64748b;
         font-weight: 500;
-        min-width: 130px;
         flex-shrink: 0;
+        margin-right: 12px;
     }
 
     .info-list-value {
@@ -83,6 +115,10 @@
         font-weight: 600;
         text-align: right;
         word-break: break-word;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
     }
 
     .customer-note-highlight {
@@ -90,7 +126,7 @@
         border: 1px solid #e2e8f0;
         border-left: 4px solid #ff5e00;
         border-radius: 8px;
-        padding: 12px 14px;
+        padding: 10px 12px;
         margin-top: 10px;
     }
 
@@ -98,31 +134,32 @@
         background: #f0fdf4;
         border: 1px solid #86efac;
         border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 18px;
+        padding: 16px;
+        margin-bottom: 16px;
     }
 
     .admin-note-box {
         background: #fffbeb;
         border: 1px solid #fde68a;
         border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 18px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
     }
 
     .copy-btn-mini {
         background: #f1f5f9;
         border: 1px solid #cbd5e1;
         color: #334155;
-        border-radius: 6px;
-        padding: 2px 8px;
-        font-size: 0.78rem;
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 0.75rem;
         cursor: pointer;
         transition: all 0.15s ease;
         display: inline-flex;
         align-items: center;
         gap: 4px;
         font-weight: 600;
+        flex-shrink: 0;
     }
 
     .copy-btn-mini:hover {
@@ -139,12 +176,12 @@
     /* Basic Order Tracking Timeline */
     .basic-timeline {
         position: relative;
-        padding-left: 24px;
+        padding-left: 22px;
     }
 
     .timeline-item {
         position: relative;
-        padding-bottom: 20px;
+        padding-bottom: 16px;
     }
 
     .timeline-item:last-child {
@@ -154,9 +191,9 @@
     .timeline-item::before {
         content: '';
         position: absolute;
-        left: -18px;
-        top: 7px;
-        bottom: -7px;
+        left: -16px;
+        top: 6px;
+        bottom: -6px;
         width: 2px;
         background-color: #e2e8f0;
     }
@@ -171,10 +208,10 @@
 
     .timeline-dot {
         position: absolute;
-        left: -23px;
-        top: 2px;
-        width: 12px;
-        height: 12px;
+        left: -21px;
+        top: 3px;
+        width: 11px;
+        height: 11px;
         border-radius: 50%;
         background-color: #cbd5e1;
         border: 2px solid #ffffff;
@@ -192,19 +229,26 @@
     }
 
     /* Quick Action Buttons */
+    .support-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
     .support-btn-pill {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 6px;
         width: 100%;
-        padding: 9px 14px;
+        padding: 8px 10px;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.84rem;
         text-decoration: none;
         transition: all 0.15s ease;
         border: 1px solid transparent;
+        text-align: center;
     }
 
     .btn-zalo-direct {
@@ -235,41 +279,53 @@
         color: #0f172a;
     }
 
+    /* Mobile Responsive Polish */
     @media (max-width: 768px) {
         .order-detail-page {
-            padding: 72px 10px 40px;
+            padding: 68px 10px 40px;
         }
 
         .order-box {
-            padding: 15px;
+            padding: 13px 14px;
             border-radius: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
-        .order-header-flex {
-            flex-direction: column;
-            align-items: flex-start !important;
-            gap: 12px;
-        }
-
-        .info-list-row {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 3px;
-        }
-
-        .info-list-value {
-            text-align: left;
-            width: 100%;
+        .order-box-title {
+            font-size: 0.93rem;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
         }
 
         .order-item-card {
-            padding: 10px;
+            padding: 9px 10px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .order-item-img {
-            width: 46px;
-            height: 46px;
+            width: 44px;
+            height: 44px;
+        }
+
+        .info-list-row {
+            padding: 7px 0;
+            font-size: 0.86rem;
+        }
+
+        .info-list-label {
+            margin-right: 8px;
+        }
+
+        .customer-note-highlight {
+            padding: 9px 11px;
+            margin-top: 8px;
+        }
+
+        .delivery-handover-box {
+            padding: 13px 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
         }
     }
 </style>
@@ -339,52 +395,32 @@
 @endphp
 
 <div class="order-detail-page">
-    <div class="container" style="max-width: 1060px;">
+    <div class="container" style="max-width: 1040px;">
         
         {{-- Navigation & Top Back Button --}}
-        <div class="mb-3">
-            <a href="{{ route('user.orders') }}" class="btn btn-sm btn-white bg-white border text-secondary rounded-pill px-3 py-1.5 shadow-sm text-decoration-none d-inline-flex align-items-center gap-2">
+        <div class="mb-2.5">
+            <a href="{{ route('user.orders') }}" class="btn btn-sm btn-white bg-white border text-secondary rounded-pill px-3 py-1 shadow-sm text-decoration-none d-inline-flex align-items-center gap-1.5" style="font-size: 0.85rem;">
                 <i class="fa-solid fa-arrow-left"></i>
-                <span>{{ __('Quay lại danh sách đơn hàng') }}</span>
+                <span>{{ __('Quay lại đơn hàng') }}</span>
             </a>
         </div>
 
-        {{-- Order Header Card --}}
+        {{-- Order Header Card (Gọn gàng trên cả Mobile và Desktop) --}}
         <div class="order-box">
-            <div class="d-flex justify-content-between align-items-center order-header-flex">
-                <div>
-                    <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
-                        <h4 class="fw-bold mb-0 text-dark">
-                            {{ __('Đơn hàng') }} #{{ $order->id }}
-                        </h4>
-                        @if($order->order_code)
-                            <span class="badge bg-light text-dark border px-2 py-1 font-monospace" style="font-size: 0.9rem;">
-                                {{ $order->order_code }}
-                            </span>
-                            <button type="button" class="copy-btn-mini js-copy-btn" data-copy="{{ $order->order_code }}" title="{{ __('Sao chép mã đơn hàng') }}">
-                                <i class="fa-regular fa-copy"></i>
-                                <span>Copy</span>
-                            </button>
-                        @endif
-                    </div>
-                    
-                    <div class="text-muted small d-flex align-items-center flex-wrap gap-3 mt-1">
-                        <span>
-                            <i class="fa-regular fa-calendar me-1"></i>{{ $order->created_at->format('d/m/Y H:i') }}
+            {{-- Top row: Order ID + Status Badge --}}
+            <div class="d-flex justify-content-between align-items-center mb-1.5">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.15rem;">
+                        {{ __('Đơn hàng') }} #{{ $order->id }}
+                    </h5>
+                    @if($order->order_code)
+                        <span class="badge bg-light text-dark border px-2 py-0.5 font-monospace" style="font-size: 0.82rem;">
+                            {{ $order->order_code }}
                         </span>
-                        <span>
-                            <i class="fa-solid fa-tag me-1 text-secondary"></i>
-                            @if($order->order_type == 'qr')
-                                {{ __('Đơn TikTok Deal') }}
-                            @elseif($order->order_type == 'document')
-                                {{ __('Đơn Tài liệu / Ebook') }}
-                            @elseif($order->order_type == 'shipping')
-                                {{ __('Đơn Giao hàng vật lý') }}
-                            @else
-                                {{ __('Đơn Digital / Phần mềm') }}
-                            @endif
-                        </span>
-                    </div>
+                        <button type="button" class="copy-btn-mini js-copy-btn" data-copy="{{ $order->order_code }}" title="{{ __('Sao chép mã đơn hàng') }}">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    @endif
                 </div>
 
                 <div>
@@ -398,36 +434,56 @@
                             default => 'bg-secondary text-white'
                         };
                     @endphp
-                    <span class="badge {{ $badgeBg }} fs-6 px-3 py-2 rounded-pill shadow-sm">
+                    <span class="badge {{ $badgeBg }} px-2.5 py-1 rounded-pill" style="font-size: 0.82rem;">
                         {{ $order->status_label }}
                     </span>
                 </div>
+            </div>
+
+            {{-- Bottom row: Date & Type info --}}
+            <div class="text-muted small d-flex align-items-center flex-wrap gap-2" style="font-size: 0.82rem;">
+                <span>
+                    <i class="fa-regular fa-calendar me-1"></i>{{ $order->created_at->format('d/m/Y H:i') }}
+                </span>
+                <span>•</span>
+                <span>
+                    <i class="fa-solid fa-tag me-1 text-secondary"></i>
+                    @if($order->order_type == 'qr')
+                        {{ __('Đơn TikTok Deal') }}
+                    @elseif($order->order_type == 'document')
+                        {{ __('Đơn Tài liệu / Ebook') }}
+                    @elseif($order->order_type == 'shipping')
+                        {{ __('Đơn Giao hàng vật lý') }}
+                    @else
+                        {{ __('Đơn Digital / Phần mềm') }}
+                    @endif
+                </span>
             </div>
         </div>
 
         {{-- Digital Delivery Box (Nếu có bàn giao tài khoản / Key / Ghi chú từ Admin) --}}
         @if($order->delivery_account || $order->delivery_key || $order->delivery_note || ($order->status == 'completed' && $order->orderItems->contains(fn($i) => optional($i->product)->category == 'ebooks' && optional($i->product)->file_path)))
             <div class="delivery-handover-box">
-                <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-success border-opacity-25">
+                <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-success border-opacity-25">
                     <i class="fa-solid fa-circle-check text-success fs-5"></i>
-                    <h5 class="fw-bold mb-0 text-success">
+                    <h6 class="fw-bold mb-0 text-success" style="font-size: 0.95rem;">
                         {{ __('Thông tin bàn giao sản phẩm') }}
-                    </h5>
+                    </h6>
                 </div>
 
                 {{-- Account info --}}
                 @if($order->delivery_account)
-                    <div class="mb-3">
+                    <div class="mb-2.5">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="small fw-bold text-dark">
                                 <i class="fa-solid fa-user-lock text-success me-1"></i>{{ __('Tài khoản / Mật khẩu:') }}
                             </span>
                             <button type="button" class="copy-btn-mini js-copy-btn" data-copy="{{ $order->delivery_account }}">
                                 <i class="fa-regular fa-copy"></i>
-                                <span>{{ __('Copy tài khoản') }}</span>
+                                <span>{{ __('Copy') }}</span>
                             </button>
                         </div>
-                        <div class="bg-white border rounded-3 p-2.5 font-monospace text-dark" style="word-break: break-all;">
+                        <div class="bg-white border rounded p-2 font-monospace text-dark" style="word-break: break-all; font-size: 0.85rem;">
                             {{ $order->delivery_account }}
                         </div>
                     </div>
@@ -435,17 +491,17 @@
 
                 {{-- License Key --}}
                 @if($order->delivery_key)
-                    <div class="mb-3">
+                    <div class="mb-2.5">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="small fw-bold text-dark">
                                 <i class="fa-solid fa-key text-warning me-1"></i>{{ __('Mã kích hoạt / License Key:') }}
                             </span>
                             <button type="button" class="copy-btn-mini js-copy-btn" data-copy="{{ $order->delivery_key }}">
                                 <i class="fa-regular fa-copy"></i>
-                                <span>{{ __('Copy mã key') }}</span>
+                                <span>{{ __('Copy') }}</span>
                             </button>
                         </div>
-                        <div class="bg-white border rounded-3 p-2.5 font-monospace text-dark" style="word-break: break-all;">
+                        <div class="bg-white border rounded p-2 font-monospace text-dark" style="word-break: break-all; font-size: 0.85rem;">
                             {{ $order->delivery_key }}
                         </div>
                     </div>
@@ -455,9 +511,9 @@
                 @if($order->delivery_note)
                     <div class="mb-2">
                         <span class="small fw-bold text-dark d-block mb-1">
-                            <i class="fa-solid fa-clipboard-list text-primary me-1"></i>{{ __('Hướng dẫn kích hoạt & Lưu ý:') }}
+                            <i class="fa-solid fa-clipboard-list text-primary me-1"></i>{{ __('Hướng dẫn & Lưu ý:') }}
                         </span>
-                        <div class="bg-white border rounded-3 p-3 text-secondary" style="white-space: pre-line; font-size: 0.92rem; line-height: 1.6;">
+                        <div class="bg-white border rounded p-2.5 text-secondary" style="white-space: pre-line; font-size: 0.85rem; line-height: 1.5;">
                             {!! nl2br(e($order->delivery_note)) !!}
                         </div>
                     </div>
@@ -466,8 +522,8 @@
                 {{-- Ebook Downloads --}}
                 @foreach($order->orderItems as $item)
                     @if($order->status == 'completed' && $item->product && $item->product->category == 'ebooks' && $item->product->file_path)
-                        <div class="mt-3 pt-2 border-top border-success border-opacity-25">
-                            <a href="{{ route('product.download', $item->product) }}" class="btn btn-success fw-bold px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2">
+                        <div class="mt-2.5 pt-2 border-top border-success border-opacity-25">
+                            <a href="{{ route('product.download', $item->product) }}" class="btn btn-sm btn-success fw-bold px-3 py-1.5 rounded-pill d-inline-flex align-items-center gap-2">
                                 <i class="fa-solid fa-download"></i>
                                 <span>{{ __('Tải file:') }} {{ $item->product->name }}</span>
                             </a>
@@ -482,15 +538,15 @@
             <div class="admin-note-box">
                 <div class="d-flex align-items-center gap-2 mb-1 text-dark fw-bold">
                     <i class="fa-solid fa-circle-exclamation text-warning fs-5"></i>
-                    <span>{{ __('Thông báo từ Admin về đơn hàng:') }}</span>
+                    <span style="font-size: 0.9rem;">{{ __('Ghi chú từ Admin:') }}</span>
                 </div>
-                <div class="text-secondary small mt-1" style="white-space: pre-line; line-height: 1.5;">
+                <div class="text-secondary small mt-1" style="white-space: pre-line; line-height: 1.45;">
                     {{ $order->status_note }}
                 </div>
             </div>
         @endif
 
-        <div class="row g-3">
+        <div class="row g-2.5">
             {{-- Left Column: Products & Customer Details --}}
             <div class="col-lg-8">
                 
@@ -512,10 +568,10 @@
                                     </div>
                                 @endif
 
-                                <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-bold text-dark text-truncate mb-1" style="font-size: 0.95rem;">
+                                <div class="order-item-body">
+                                    <div class="order-item-title">
                                         @if($item->product)
-                                            <a href="{{ route('product.show', $item->product->slug ?? $item->product->id) }}" class="text-dark text-decoration-none hover-primary">
+                                            <a href="{{ route('product.show', $item->product->slug ?? $item->product->id) }}" class="text-dark text-decoration-none">
                                                 {{ $item->product->name }}
                                             </a>
                                         @else
@@ -523,31 +579,25 @@
                                         @endif
                                     </div>
 
-                                    <div class="d-flex align-items-center flex-wrap gap-2 text-muted small">
-                                        @if($item->variant_name)
-                                            <span class="badge bg-light text-secondary border">
-                                                {{ $item->variant_name }}
-                                            </span>
-                                        @endif
+                                    @if($item->variant_name)
+                                        <span class="badge bg-light text-secondary border order-item-variant">
+                                            {{ $item->variant_name }}
+                                        </span>
+                                    @endif
 
-                                        <span>
+                                    <div class="order-item-pricing">
+                                        <span class="text-muted">
                                             {{ __('Số lượng:') }} <strong class="text-dark">x{{ $item->quantity }}</strong>
+                                            <span class="mx-1">•</span>
+                                            {{ $order->currency === 'USD' ? '$' . number_format($item->price, 2) : number_format($item->price, 0, ',', '.') . 'đ' }}
                                         </span>
 
-                                        <span>•</span>
-
-                                        <span>
-                                            {{ __('Đơn giá:') }} {{ $order->currency === 'USD' ? '$' . number_format($item->price, 2) : number_format($item->price, 0, ',', '.') . 'đ' }}
+                                        <span class="fw-bold text-primary" style="font-size: 0.95rem;">
+                                            @php
+                                                $itemTotal = $item->price * $item->quantity;
+                                            @endphp
+                                            {{ $order->currency === 'USD' ? '$' . number_format($itemTotal, 2) : number_format($itemTotal, 0, ',', '.') . 'đ' }}
                                         </span>
-                                    </div>
-                                </div>
-
-                                <div class="text-end ps-2 flex-shrink-0">
-                                    <div class="fw-bold text-primary" style="font-size: 0.98rem;">
-                                        @php
-                                            $itemTotal = $item->price * $item->quantity;
-                                        @endphp
-                                        {{ $order->currency === 'USD' ? '$' . number_format($itemTotal, 2) : number_format($itemTotal, 0, ',', '.') . 'đ' }}
                                     </div>
                                 </div>
                             </div>
@@ -559,19 +609,19 @@
                 <div class="order-box">
                     <div class="order-box-title">
                         <i class="fa-solid fa-address-card text-primary"></i>
-                        <span>{{ __('Thông tin khách hàng & Ghi chú khi mua') }}</span>
+                        <span>{{ __('Thông tin người nhận') }}</span>
                     </div>
 
-                    {{-- Customer Identity Rows --}}
+                    {{-- Customer Identity Rows (Gọn gàng 2 bên) --}}
                     <div class="info-list-row">
-                        <span class="info-list-label"><i class="fa-solid fa-user me-1.5 text-muted"></i>{{ __('Họ và tên:') }}</span>
+                        <span class="info-list-label"><i class="fa-solid fa-user me-1 text-muted"></i>{{ __('Họ và tên:') }}</span>
                         <span class="info-list-value">{{ $order->customer_name }}</span>
                     </div>
 
                     <div class="info-list-row">
-                        <span class="info-list-label"><i class="fa-solid fa-phone me-1.5 text-muted"></i>{{ __('Số điện thoại:') }}</span>
+                        <span class="info-list-label"><i class="fa-solid fa-phone me-1 text-muted"></i>{{ __('Số điện thoại:') }}</span>
                         <span class="info-list-value">
-                            <a href="tel:{{ $order->customer_phone }}" class="text-decoration-none text-dark me-2">
+                            <a href="tel:{{ $order->customer_phone }}" class="text-decoration-none text-dark">
                                 {{ $order->customer_phone }}
                             </a>
                             <button type="button" class="copy-btn-mini js-copy-btn" data-copy="{{ $order->customer_phone }}" title="{{ __('Copy số điện thoại') }}">
@@ -581,9 +631,9 @@
                     </div>
 
                     <div class="info-list-row">
-                        <span class="info-list-label"><i class="fa-solid fa-envelope me-1.5 text-muted"></i>{{ __('Email:') }}</span>
+                        <span class="info-list-label"><i class="fa-solid fa-envelope me-1 text-muted"></i>{{ __('Email:') }}</span>
                         <span class="info-list-value">
-                            <span class="me-2">{{ $order->customer_email }}</span>
+                            <span>{{ $order->customer_email }}</span>
                             <button type="button" class="copy-btn-mini js-copy-btn" data-copy="{{ $order->customer_email }}" title="{{ __('Copy email') }}">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
@@ -592,17 +642,17 @@
 
                     @if($parsedAddress['zalo'])
                         <div class="info-list-row">
-                            <span class="info-list-label"><i class="fa-solid fa-comment-dots me-1.5 text-primary"></i>{{ __('Zalo liên hệ:') }}</span>
+                            <span class="info-list-label"><i class="fa-solid fa-comment-dots me-1 text-primary"></i>{{ __('Zalo:') }}</span>
                             <span class="info-list-value text-primary fw-bold">{{ $parsedAddress['zalo'] }}</span>
                         </div>
                     @endif
 
                     @if($parsedAddress['facebook'])
                         <div class="info-list-row">
-                            <span class="info-list-label"><i class="fa-brands fa-facebook me-1.5 text-primary"></i>{{ __('Facebook:') }}</span>
+                            <span class="info-list-label"><i class="fa-brands fa-facebook me-1 text-primary"></i>{{ __('Facebook:') }}</span>
                             <span class="info-list-value">
                                 <a href="{{ Str::startsWith($parsedAddress['facebook'], 'http') ? $parsedAddress['facebook'] : 'https://' . $parsedAddress['facebook'] }}" target="_blank" class="text-primary text-decoration-none">
-                                    {{ $parsedAddress['facebook'] }}
+                                    {{ Str::limit($parsedAddress['facebook'], 28) }}
                                 </a>
                             </span>
                         </div>
@@ -610,15 +660,15 @@
 
                     @if($parsedAddress['payment_method'])
                         <div class="info-list-row">
-                            <span class="info-list-label"><i class="fa-solid fa-wallet me-1.5 text-muted"></i>{{ __('Phương thức TT:') }}</span>
+                            <span class="info-list-label"><i class="fa-solid fa-wallet me-1 text-muted"></i>{{ __('Phương thức TT:') }}</span>
                             <span class="info-list-value">{{ $parsedAddress['payment_method'] }}</span>
                         </div>
                     @endif
 
                     @if($order->order_type == 'shipping' && $parsedAddress['shipping_address'])
                         <div class="info-list-row">
-                            <span class="info-list-label"><i class="fa-solid fa-location-dot me-1.5 text-danger"></i>{{ __('Địa chỉ nhận hàng:') }}</span>
-                            <span class="info-list-value text-start">{{ $parsedAddress['shipping_address'] }}</span>
+                            <span class="info-list-label"><i class="fa-solid fa-location-dot me-1 text-danger"></i>{{ __('Địa chỉ nhận hàng:') }}</span>
+                            <span class="info-list-value text-end">{{ $parsedAddress['shipping_address'] }}</span>
                         </div>
                     @endif
 
@@ -627,14 +677,14 @@
                         <div class="customer-note-highlight">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small fw-bold text-dark">
-                                    <i class="fa-regular fa-pen-to-square text-primary me-1"></i>{{ __('Email nâng cấp / Ghi chú bạn đã nhập:') }}
+                                    <i class="fa-regular fa-pen-to-square text-primary me-1"></i>{{ __('Ghi chú / Email nâng cấp bạn nhập:') }}
                                 </span>
                                 <button type="button" class="copy-btn-mini js-copy-btn" data-copy="{{ $parsedAddress['customer_note'] }}">
                                     <i class="fa-regular fa-copy"></i>
-                                    <span>{{ __('Copy ghi chú') }}</span>
+                                    <span>Copy</span>
                                 </button>
                             </div>
-                            <div class="fw-bold text-dark" style="white-space: pre-wrap; word-break: break-word; font-size: 0.92rem; line-height: 1.5;">
+                            <div class="fw-bold text-dark" style="white-space: pre-wrap; word-break: break-word; font-size: 0.88rem; line-height: 1.45;">
                                 {{ $parsedAddress['customer_note'] }}
                             </div>
                         </div>
@@ -642,15 +692,8 @@
 
                     {{-- Extra notes if any --}}
                     @if(!empty($parsedAddress['extra_notes']))
-                        <div class="mt-2 p-2 bg-light rounded text-muted small" style="white-space: pre-line;">
-                            <strong>{{ __('Ghi chú thêm:') }}</strong>
-                            {{ implode("\n", $parsedAddress['extra_notes']) }}
-                        </div>
-                    @endif
-
-                    @if(!$parsedAddress['customer_note'] && empty($parsedAddress['extra_notes']) && $order->order_type != 'shipping')
-                        <div class="mt-2 text-muted small fst-italic">
-                            <i class="fa-solid fa-circle-info me-1"></i>{{ __('Đơn hàng kỹ thuật số (không yêu cầu vận chuyển vật lý).') }}
+                        <div class="mt-2 p-2 bg-light rounded text-muted small" style="white-space: pre-line; font-size: 0.82rem;">
+                            <strong>{{ __('Ghi chú thêm:') }}</strong> {{ implode("\n", $parsedAddress['extra_notes']) }}
                         </div>
                     @endif
                 </div>
@@ -701,42 +744,38 @@
                     </div>
                 </div>
 
-                {{-- Fast Support Actions Box --}}
+                {{-- Fast Support Actions Box (2x2 Buttons Grid) --}}
                 <div class="order-box">
                     <div class="order-box-title">
                         <i class="fa-solid fa-headset text-primary"></i>
                         <span>{{ __('Hỗ trợ đơn hàng') }}</span>
                     </div>
 
-                    <p class="text-muted small mb-3" style="line-height: 1.45;">
-                        {{ __('Nếu cần hỗ trợ hoặc kích hoạt nhanh, bạn có thể copy mã đơn hàng và nhắn qua Zalo/Telegram Admin.') }}
-                    </p>
-
-                    <div class="d-flex flex-column gap-2">
+                    <div class="support-actions-grid">
                         {{-- Copy Order Info --}}
                         <button type="button" class="support-btn-pill btn-support-copy js-copy-btn" data-copy="{{ $supportCopyText }}">
                             <i class="fa-regular fa-copy text-primary"></i>
-                            <span>{{ __('Copy mã & thông tin đơn') }}</span>
+                            <span>{{ __('Copy mã đơn') }}</span>
                         </button>
 
                         {{-- Direct Zalo Admin --}}
                         <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" rel="noopener noreferrer" class="support-btn-pill btn-zalo-direct">
                             <i class="fa-solid fa-comment-dots"></i>
-                            <span>{{ __('Nhắn Zalo Admin') }}</span>
+                            <span>{{ __('Zalo Admin') }}</span>
                         </a>
 
                         {{-- Direct Telegram Admin --}}
                         @if(\App\Helpers\SupportHelper::getTelegramLink())
                             <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" rel="noopener noreferrer" class="support-btn-pill btn-telegram-direct">
                                 <i class="fa-brands fa-telegram"></i>
-                                <span>{{ __('Telegram Admin') }}</span>
+                                <span>{{ __('Telegram') }}</span>
                             </a>
                         @endif
 
                         {{-- Zalo Group --}}
                         <a href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" rel="noopener noreferrer" class="support-btn-pill btn-light border text-primary">
                             <i class="fa-solid fa-users"></i>
-                            <span>{{ __('Tham gia nhóm Zalo') }}</span>
+                            <span>{{ __('Nhóm Zalo') }}</span>
                         </a>
                     </div>
                 </div>
@@ -748,27 +787,27 @@
                         <span>{{ __('Tiến trình xử lý') }}</span>
                     </div>
 
-                    <div class="basic-timeline mt-2">
+                    <div class="basic-timeline mt-1">
                         {{-- Step 1: Placed --}}
                         <div class="timeline-item active">
                             <div class="timeline-dot"></div>
-                            <div class="fw-bold text-dark small">{{ __('Đã đặt hàng') }}</div>
-                            <div class="text-muted" style="font-size: 0.8rem;">{{ $order->created_at->format('d/m/Y H:i') }}</div>
+                            <div class="fw-bold text-dark small" style="font-size: 0.85rem;">{{ __('Đã đặt hàng') }}</div>
+                            <div class="text-muted" style="font-size: 0.78rem;">{{ $order->created_at->format('d/m/Y H:i') }}</div>
                         </div>
 
                         {{-- Step 2: Processing --}}
                         <div class="timeline-item {{ in_array($order->status, ['processing', 'shipped', 'delivered', 'completed']) ? 'active' : '' }}">
                             <div class="timeline-dot"></div>
-                            <div class="fw-bold text-dark small">{{ __('Đang xử lý') }}</div>
-                            <div class="text-muted" style="font-size: 0.8rem;">{{ __('Hệ thống kiểm tra & chuẩn bị giao') }}</div>
+                            <div class="fw-bold text-dark small" style="font-size: 0.85rem;">{{ __('Đang xử lý') }}</div>
+                            <div class="text-muted" style="font-size: 0.78rem;">{{ __('Kiểm tra & chuẩn bị giao') }}</div>
                         </div>
 
                         {{-- Shipping Step (Only for physical orders) --}}
                         @if($order->order_type == 'shipping')
                             <div class="timeline-item {{ in_array($order->status, ['shipped', 'delivered', 'completed']) ? 'active' : '' }}">
                                 <div class="timeline-dot"></div>
-                                <div class="fw-bold text-dark small">{{ __('Đang giao hàng') }}</div>
-                                <div class="text-muted" style="font-size: 0.8rem;">{{ __('Đơn vị vận chuyển đang phát') }}</div>
+                                <div class="fw-bold text-dark small" style="font-size: 0.85rem;">{{ __('Đang giao hàng') }}</div>
+                                <div class="text-muted" style="font-size: 0.78rem;">{{ __('Đơn vị vận chuyển đang phát') }}</div>
                             </div>
                         @endif
 
@@ -776,19 +815,19 @@
                         @if($order->status == 'completed')
                             <div class="timeline-item active">
                                 <div class="timeline-dot bg-success" style="box-shadow: 0 0 0 2px #22c55e;"></div>
-                                <div class="fw-bold text-success small">{{ __('Đã hoàn thành') }}</div>
-                                <div class="text-muted" style="font-size: 0.8rem;">{{ __('Đơn hàng đã bàn giao thành công') }}</div>
+                                <div class="fw-bold text-success small" style="font-size: 0.85rem;">{{ __('Đã hoàn thành') }}</div>
+                                <div class="text-muted" style="font-size: 0.78rem;">{{ __('Đã bàn giao thành công') }}</div>
                             </div>
                         @elseif($order->status == 'cancelled')
                             <div class="timeline-item cancelled">
                                 <div class="timeline-dot"></div>
-                                <div class="fw-bold text-danger small">{{ __('Đã hủy đơn') }}</div>
-                                <div class="text-muted" style="font-size: 0.8rem;">{{ __('Đơn hàng đã bị hủy') }}</div>
+                                <div class="fw-bold text-danger small" style="font-size: 0.85rem;">{{ __('Đã hủy đơn') }}</div>
+                                <div class="text-muted" style="font-size: 0.78rem;">{{ __('Đơn hàng đã bị hủy') }}</div>
                             </div>
                         @else
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <div class="fw-bold text-muted small">{{ __('Hoàn tất bàn giao') }}</div>
+                                <div class="fw-bold text-muted small" style="font-size: 0.85rem;">{{ __('Hoàn tất bàn giao') }}</div>
                             </div>
                         @endif
                     </div>
@@ -836,7 +875,7 @@
 
                 if (success) {
                     this.classList.add('copied');
-                    this.innerHTML = '<i class="fa-solid fa-check"></i> <span>{{ __("Đã chép") }}</span>';
+                    this.innerHTML = '<i class="fa-solid fa-check"></i>';
                     setTimeout(() => {
                         this.classList.remove('copied');
                         this.innerHTML = originalHtml;

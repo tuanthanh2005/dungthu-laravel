@@ -301,8 +301,11 @@ class ProductController extends Controller
         }
         
         // Lấy danh sách categories active
-        $categories = ProductCategory::where('is_active', true)
-            ->withCount('products')
+        $categories = ProductCategory::active()
+            ->hasActiveProducts()
+            ->withCount(['products' => function ($q) {
+                $q->active();
+            }])
             ->orderBy('name')
             ->get();
         $keywordLinks = self::seoKeywords();
@@ -312,6 +315,9 @@ class ProductController extends Controller
         
         // Filter theo category_id nếu có
         if ($currentCategoryId != 'all') {
+            if (!$categories->contains('id', (int) $currentCategoryId)) {
+                return redirect()->route('shop');
+            }
             $query->where('category_id', $currentCategoryId);
         }
         
@@ -337,8 +343,11 @@ class ProductController extends Controller
         $aliases = $keywordConfig['aliases'] ?? [str_replace('-', ' ', $keywordSlug)];
         $currentCategoryId = 'all';
 
-        $categories = ProductCategory::where('is_active', true)
-            ->withCount('products')
+        $categories = ProductCategory::active()
+            ->hasActiveProducts()
+            ->withCount(['products' => function ($q) {
+                $q->active();
+            }])
             ->orderBy('name')
             ->get();
         $keywordLinks = self::seoKeywords();

@@ -22,9 +22,12 @@ class HomeController extends Controller
     {
         // Lấy danh sách categories active và show_on_home (Cache 10 phút)
         $categories = Cache::remember('home.categories', 600, function () {
-            return ProductCategory::where('is_active', true)
+            return ProductCategory::active()
                 ->where('show_on_home', true)
-                ->withCount('products')
+                ->hasActiveProducts()
+                ->withCount(['products' => function ($q) {
+                    $q->active();
+                }])
                 ->orderBy('name')
                 ->get();
         });

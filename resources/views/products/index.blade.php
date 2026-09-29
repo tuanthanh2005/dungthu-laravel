@@ -764,6 +764,7 @@
             </a>
             
             @foreach($categories as $category)
+            @if(($category->products_count ?? 0) > 0)
             <a href="{{ route('shop', ['category_id' => $category->id]) }}" class="category-filter-link">
                 <button class="category-filter-btn {{ $currentCategoryId == $category->id ? 'active' : '' }}" type="button">
                     <div class="category-icon-wrap">
@@ -791,6 +792,7 @@
                     @endif
                 </button>
             </a>
+            @endif
             @endforeach
         </div>
     </div>

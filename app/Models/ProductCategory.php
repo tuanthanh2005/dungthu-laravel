@@ -59,4 +59,21 @@ class ProductCategory extends Model
     {
         return $this->hasMany(Product::class, 'category_id');
     }
+
+    public function activeProducts()
+    {
+        return $this->hasMany(Product::class, 'category_id')->where('is_active', true);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeHasActiveProducts($query)
+    {
+        return $query->whereHas('products', function ($q) {
+            $q->where('is_active', true);
+        });
+    }
 }

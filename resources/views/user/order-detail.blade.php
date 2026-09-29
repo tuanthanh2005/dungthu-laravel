@@ -515,7 +515,7 @@
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="fw-bold text-dark text-truncate mb-1" style="font-size: 0.95rem;">
                                         @if($item->product)
-                                            <a href="{{ route('product.detail', $item->product->slug ?? $item->product->id) }}" class="text-dark text-decoration-none hover-primary">
+                                            <a href="{{ route('product.show', $item->product->slug ?? $item->product->id) }}" class="text-dark text-decoration-none hover-primary">
                                                 {{ $item->product->name }}
                                             </a>
                                         @else

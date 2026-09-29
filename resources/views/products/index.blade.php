@@ -618,9 +618,9 @@
             
             /* Category Filter */
             .category-section {
-                padding: 1.5rem 1rem;
+                padding: 10px 8px;
                 border-radius: 16px;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1rem;
             }
             .section-heading h4 {
                 font-size: 1.2rem;
@@ -752,7 +752,7 @@
     <!-- Category Filter -->
     @if(isset($categories) && $categories->count() > 0)
     <div class="category-section" data-aos="fade-up" data-aos-delay="100">
-        <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <div class="d-flex flex-wrap gap-2 gap-sm-3 justify-content-center">
             <!-- All Categories -->
             <a href="{{ route('shop') }}" class="category-filter-link {{ $currentCategoryId == 'all' ? 'active' : '' }}">
                 <button class="category-filter-btn {{ $currentCategoryId == 'all' ? 'active' : '' }}" type="button">

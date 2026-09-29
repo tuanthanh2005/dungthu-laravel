@@ -7,7 +7,7 @@
     .order-detail-page {
         background-color: #f8fafc;
         min-height: calc(100vh - 80px);
-        padding: 85px 0 50px;
+        padding: 20px 0 40px;
     }
 
     .order-box {
@@ -282,7 +282,7 @@
     /* Mobile Responsive Polish */
     @media (max-width: 768px) {
         .order-detail-page {
-            padding: 68px 10px 40px;
+            padding: 14px 10px 30px;
         }
 
         .order-box {

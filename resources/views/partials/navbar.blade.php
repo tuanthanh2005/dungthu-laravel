@@ -2,11 +2,11 @@
     $menuHome         = \App\Models\SiteSetting::getValue('menu_home', '1') === '1';
     $menuShop         = \App\Models\SiteSetting::getValue('menu_shop', '1') === '1';
     $menuVpn          = \App\Models\SiteSetting::getValue('menu_vpn', '1') === '1';
-    $menuBuff         = \App\Models\SiteSetting::getValue('menu_buff', '1') === '1';
+    $menuBuff         = false;
     $menuWebdesign    = \App\Models\SiteSetting::getValue('menu_webdesign', '1') === '1';
     $menuCardExchange = \App\Models\SiteSetting::getValue('menu_card_exchange', '1') === '1';
     $menuBlog         = \App\Models\SiteSetting::getValue('menu_blog', '1') === '1';
-    $menuCommunity    = \App\Models\SiteSetting::getValue('menu_community', '1') === '1';
+    $menuCommunity    = false;
     $menuMinigame     = \App\Models\SiteSetting::getValue('menu_minigame', '1') === '1';
     $menuZaloGroup    = \App\Models\SiteSetting::getValue('menu_zalo_group', '1') === '1';
     $menuCart         = \App\Models\SiteSetting::getValue('menu_cart', '1') === '1';
@@ -43,16 +43,7 @@
             'color'   => '#00bcd4',
             'target'  => '_self',
         ],
-        [
-            'key'     => 'buff',
-            'enabled' => $menuBuff,
-            'url'     => route('buff.index'),
-            'label'   => __('Buff MXH'),
-            'icon'    => 'fa-solid fa-rocket',
-            'active'  => request()->routeIs('buff.*'),
-            'color'   => '#ff5e00',
-            'target'  => '_self',
-        ],
+
         [
             'key'     => 'webdesign',
             'enabled' => $menuWebdesign,
@@ -83,16 +74,7 @@
             'color'   => null,
             'target'  => '_self',
         ],
-        [
-            'key'     => 'community',
-            'enabled' => $menuCommunity,
-            'url'     => route('community.index'),
-            'label'   => __('Cộng đồng'),
-            'icon'    => 'fa-solid fa-users',
-            'active'  => request()->routeIs('community.*'),
-            'color'   => null,
-            'target'  => '_self',
-        ],
+
         [
             'key'     => 'minigame',
             'enabled' => $menuMinigame,
@@ -292,10 +274,8 @@
                                     @else
                                         <li><a class="dropdown-item py-1" href="{{ route('affiliate.login') }}" style="font-size: 0.85rem;"><i class="fas fa-handshake me-2"></i>{{ __('Đăng ký CTV') }}</a></li>
                                     @endif
-                                    <li><a class="dropdown-item py-1 fw-bold" href="{{ route('buff.index') }}" style="color: #ff5e00; font-size: 0.85rem;"><i class="fas fa-rocket me-2"></i>{{ __('Buff Mạng XH') }}</a></li>
                                     <li><a class="dropdown-item py-1" href="{{ route('web-design') }}" style="font-size: 0.85rem;"><i class="fa-solid fa-code me-2 text-primary"></i>{{ __('Thiết Kế Website') }}</a></li>
                                     <li><a class="dropdown-item py-1" href="{{ route('card-exchange.index') }}" style="font-size: 0.85rem;"><i class="fas fa-exchange-alt me-2 text-warning"></i>{{ __('Đổi thẻ cào') }}</a></li>
-                                    <li><a class="dropdown-item py-1" href="{{ route('community.index') }}" style="font-size: 0.85rem;"><i class="fas fa-users me-2 text-success"></i>{{ __('Cộng đồng') }}</a></li>
                                     <li><a class="dropdown-item py-1 fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff; font-size: 0.85rem;"><i class="fas fa-users me-2"></i>{{ __('Nhóm Zalo') }}</a></li>
                                     <li><a class="dropdown-item py-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal" style="font-size: 0.85rem;"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ') }}</a></li>
                                 </ul>

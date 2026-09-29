@@ -138,6 +138,28 @@
         margin-bottom: 16px;
     }
 
+    .delivery-content-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px 14px;
+        color: #334155;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+    .delivery-credential-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        color: #0f172a;
+        font-size: 0.88rem;
+        word-break: break-all;
+    }
+
     .admin-note-box {
         background: #fffbeb;
         border: 1px solid #fde68a;
@@ -473,8 +495,8 @@
 
                 {{-- Account info --}}
                 @if($order->delivery_account)
-                    <div class="mb-2.5">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1.5">
                             <span class="small fw-bold text-dark">
                                 <i class="fa-solid fa-user-lock text-success me-1"></i>{{ __('Tài khoản / Mật khẩu:') }}
                             </span>
@@ -483,7 +505,7 @@
                                 <span>{{ __('Copy') }}</span>
                             </button>
                         </div>
-                        <div class="bg-white border rounded p-2 font-monospace text-dark" style="word-break: break-all; font-size: 0.85rem;">
+                        <div class="delivery-credential-box">
                             {{ $order->delivery_account }}
                         </div>
                     </div>
@@ -491,8 +513,8 @@
 
                 {{-- License Key --}}
                 @if($order->delivery_key)
-                    <div class="mb-2.5">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1.5">
                             <span class="small fw-bold text-dark">
                                 <i class="fa-solid fa-key text-warning me-1"></i>{{ __('Mã kích hoạt / License Key:') }}
                             </span>
@@ -501,7 +523,7 @@
                                 <span>{{ __('Copy') }}</span>
                             </button>
                         </div>
-                        <div class="bg-white border rounded p-2 font-monospace text-dark" style="word-break: break-all; font-size: 0.85rem;">
+                        <div class="delivery-credential-box">
                             {{ $order->delivery_key }}
                         </div>
                     </div>
@@ -510,17 +532,17 @@
                 {{-- Admin Instruction / Delivery Note --}}
                 @if($order->delivery_note)
                     <div class="mb-2">
-                        <span class="small fw-bold text-dark d-block mb-1">
+                        <span class="small fw-bold text-dark d-block mb-1.5">
                             <i class="fa-solid fa-clipboard-list text-primary me-1"></i>{{ __('Hướng dẫn & Lưu ý:') }}
                         </span>
-                        <div class="bg-white border rounded p-2.5 text-secondary" style="white-space: pre-line; font-size: 0.85rem; line-height: 1.5;">{{ trim($order->delivery_note) }}</div>
+                        <div class="delivery-content-box">{{ trim($order->delivery_note) }}</div>
                     </div>
                 @endif
 
                 {{-- Ebook Downloads --}}
                 @foreach($order->orderItems as $item)
                     @if($order->status == 'completed' && $item->product && $item->product->category == 'ebooks' && $item->product->file_path)
-                        <div class="mt-2.5 pt-2 border-top border-success border-opacity-25">
+                        <div class="mt-3 pt-2 border-top border-success border-opacity-25">
                             <a href="{{ route('product.download', $item->product) }}" class="btn btn-sm btn-success fw-bold px-3 py-1.5 rounded-pill d-inline-flex align-items-center gap-2">
                                 <i class="fa-solid fa-download"></i>
                                 <span>{{ __('Tải file:') }} {{ $item->product->name }}</span>
@@ -534,15 +556,15 @@
         {{-- Admin Status Note (chỉ hiện khi khác delivery_note) --}}
         @if($order->status_note && trim($order->status_note) !== trim($order->delivery_note ?? ''))
             <div class="admin-note-box">
-                <div class="d-flex align-items-center gap-2 mb-1 text-dark fw-bold">
+                <div class="d-flex align-items-center gap-2 mb-1.5 text-dark fw-bold">
                     <i class="fa-solid fa-circle-exclamation text-warning fs-5"></i>
                     <span style="font-size: 0.9rem;">{{ __('Ghi chú từ Admin:') }}</span>
                 </div>
-                <div class="text-secondary small mt-1" style="white-space: pre-line; line-height: 1.45;">{{ trim($order->status_note) }}</div>
+                <div class="delivery-content-box">{{ trim($order->status_note) }}</div>
             </div>
         @endif
 
-        <div class="row g-2.5">
+        <div class="row g-3">
             {{-- Left Column: Products & Customer Details --}}
             <div class="col-lg-8">
                 

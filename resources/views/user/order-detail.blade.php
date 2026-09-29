@@ -398,8 +398,8 @@
     <div class="container" style="max-width: 1040px;">
         
         {{-- Navigation & Top Back Button --}}
-        <div class="mb-2.5">
-            <a href="{{ route('user.orders') }}" class="btn btn-sm btn-white bg-white border text-secondary rounded-pill px-3 py-1 shadow-sm text-decoration-none d-inline-flex align-items-center gap-1.5" style="font-size: 0.85rem;">
+        <div class="mb-3" style="margin-bottom: 14px !important;">
+            <a href="{{ route('user.orders') }}" class="btn btn-sm btn-white bg-white border text-secondary rounded-pill px-3 py-1.5 shadow-sm text-decoration-none d-inline-flex align-items-center gap-2" style="font-size: 0.85rem;">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>{{ __('Quay lại đơn hàng') }}</span>
             </a>

@@ -380,10 +380,12 @@
         <span>{{ __('Cửa hàng') }}</span>
     </a>
     @endif
-    <a href="javascript:void(0)" class="mobile-nav-item" data-bs-toggle="modal" data-bs-target="#appDownloadModal">
-        <i class="fa-solid fa-cloud-arrow-down" style="color: #ff5e00;"></i>
-        <span style="color: #ff5e00; font-weight: bold;">{{ __('Tải App') }}</span>
+    @if($menuBlog)
+    <a href="{{ route('blog.index') }}" class="mobile-nav-item {{ request()->routeIs('blog.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-newspaper" style="color: #ff5e00;"></i>
+        <span style="color: #ff5e00; font-weight: bold;">{{ __('Blog') }}</span>
     </a>
+    @endif
     @if($menuCart)
     <a href="{{ route('cart.index') }}" class="mobile-nav-item position-relative {{ request()->routeIs('cart.*') ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>
@@ -658,8 +660,8 @@
     }
     .mobile-live-online-float {
         position: fixed;
-        bottom: 245px;
-        right: 16px;
+        bottom: 122px;
+        right: 12px;
         z-index: 9999;
         padding: 4px 10px;
         border-radius: 20px;
@@ -669,6 +671,12 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
         pointer-events: auto;
         transition: all 0.35s ease;
+    }
+    @media (max-width: 576px) {
+        .mobile-live-online-float {
+            bottom: 118px;
+            right: 10px;
+        }
     }
     /* Chế độ mặc định (Thu gọn): Ẩn chữ "người đang xem", chỉ hiện Icon Mắt + Số */
     .live-online-interactive-pill .online-extra-text {

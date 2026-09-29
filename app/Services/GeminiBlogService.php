@@ -83,6 +83,7 @@ Bạn là một Chuyên gia Content Marketing & Copywriter hàng đầu. Nhiệm
 THÔNG TIN ĐẦU VÀO:
 - Tiêu đề bài viết: "{$title}"
 - Giọng văn: {$selectedTone}
+- Thông tin liên hệ hỗ trợ / Zalo / Hotline: 0772698113 (Website: DungThu.com)
 
 CẤU TRÚC BÀI VIẾT BẮT BUỘC:
 1. Đặt vấn đề & Nỗi đau khách hàng: Nhấn mạnh vấn đề người đọc đang gặp phải và vì sao họ cần giải pháp ngay.
@@ -90,6 +91,8 @@ CẤU TRÚC BÀI VIẾT BẮT BUỘC:
 3. Lý do khách hàng chọn chúng tôi: Nêu 3-5 ưu điểm cạnh tranh (Giá rẻ/Uy tín/Hỗ trợ 24/7/Bảo hành/Tốc độ).
 4. Bảng giá hoặc Gói ưu đãi thu hút: Gợi ý các gói dịch vụ/sản phẩm với mức giá hấp dẫn và ưu đãi đi kèm.
 5. Kêu gọi hành động (Call To Action - CTA): Lời chốt sales cực kỳ mạnh mẽ, thúc đẩy khách hàng liên hệ hoặc đặt mua ngay lập tức.
+   - BẮT BUỘC ghi rõ thông tin liên hệ: "Liên hệ Hotline / Zalo: 0772698113 hoặc nhấn 'Mua Ngay' trên website DungThu.com để nhận tài khoản chỉ sau 5 phút!".
+   - TUYỆT ĐỐI KHÔNG dùng bất kỳ placeholder nào như '[Số điện thoại]', '[Số điện thoại của bạn]', '[Hotline]', '[Zalo]' hay dấu ngoặc vuông chứa chữ. Phải viết trực tiếp số điện thoại/Zalo là: 0772698113.
 
 YÊU CẦU ĐỊNH DẠNG ĐẦU RA:
 Bạn PHẢI trả về ĐÚNG 1 ĐỐI TƯỢNG JSON thuần túy (không kèm thêm bất kỳ văn bản ngoài nào) với cấu trúc sau:
@@ -97,7 +100,7 @@ Bạn PHẢI trả về ĐÚNG 1 ĐỐI TƯỢNG JSON thuần túy (không kèm 
   "title": "Tiêu đề bài viết được tối ưu lại cho thu hút và chuẩn SEO (nếu cần)",
   "excerpt": "Mô tả ngắn hấp dẫn, tóm tắt bài viết trong 120 - 155 ký tự (TUYỆT ĐỐI KHÔNG vượt quá 160 ký tự) để hiển thị danh sách bài viết",
   "category": "Chọn 1 trong các giá trị sau phù hợp nhất: 'tech', 'lifestyle', 'business', 'other'",
-  "content": "Toàn bộ nội dung bài viết dạng HTML phong phú (dùng <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <blockquote>, <div class=\"alert alert-primary p-3 rounded mb-3\">...</div> cho phần Lợi ích hoặc Kêu gọi mua hàng)"
+  "content": "Toàn bộ nội dung bài viết dạng HTML phong phú (dùng <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <blockquote>, <div class=\"alert alert-primary p-3 rounded mb-3\">...</div> cho phần Lợi ích hoặc Kêu gọi mua hàng với Hotline/Zalo: 0772698113)"
 }
 PROMPT;
 
@@ -149,25 +152,46 @@ PROMPT;
 
             if (!is_array($parsed) || !isset($parsed['content'])) {
                 Log::warning("Gemini API raw response non-JSON fallback", ['rawText' => $rawText]);
+                $cleanContent = nl2br(e($rawText));
+                $cleanContent = preg_replace('/\[\s*(?:số\s*điện\s*thoại(?:\s*của\s*bạn)?|hotline(?:\s*của\s*bạn)?|zalo(?:\s*của\s*bạn)?|sđt(?:\s*của\s*bạn)?)\s*\]/iu', '0772698113', $cleanContent);
                 return [
                     'title' => $title,
                     'excerpt' => mb_substr(strip_tags($rawText), 0, 150),
                     'category' => 'business',
-                    'content' => nl2br(e($rawText)),
+                    'content' => $cleanContent,
                 ];
             }
 
-            // Đảm bảo excerpt <= 162 ký tự
+            // Đảm bảo excerpt <= 160 ký tự
             $excerpt = trim($parsed['excerpt'] ?? '');
             if (mb_strlen($excerpt) > 160) {
                 $excerpt = mb_substr($excerpt, 0, 157) . '...';
             }
 
+            // Tự động thay thế mọi placeholder số điện thoại nếu AI lỡ sinh ra
+            $finalContent = $parsed['content'];
+            $finalContent = preg_replace(
+                '/\[\s*(?:số\s*điện\s*thoại(?:\s*của\s*bạn)?|hotline(?:\s*của\s*bạn)?|zalo(?:\s*của\s*bạn)?|sđt(?:\s*của\s*bạn)?)\s*\]/iu',
+                '0772698113',
+                $finalContent
+            );
+            $finalContent = str_replace(
+                ['[Số điện thoại của bạn]', '[Số điện thoại]', '[Hotline]', '[Zalo]', '[SĐT của bạn]'],
+                '0772698113',
+                $finalContent
+            );
+
+            $excerpt = preg_replace(
+                '/\[\s*(?:số\s*điện\s*thoại(?:\s*của\s*bạn)?|hotline(?:\s*của\s*bạn)?|zalo(?:\s*của\s*bạn)?|sđt(?:\s*của\s*bạn)?)\s*\]/iu',
+                '0772698113',
+                $excerpt
+            );
+
             return [
                 'title' => $parsed['title'] ?? $title,
                 'excerpt' => $excerpt,
                 'category' => in_array($parsed['category'] ?? '', ['tech', 'lifestyle', 'business', 'other']) ? $parsed['category'] : 'business',
-                'content' => $parsed['content'],
+                'content' => $finalContent,
             ];
 
         } catch (\Exception $e) {

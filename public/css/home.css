@@ -587,7 +587,9 @@ body {
     color: var(--primary);
 }
 
-.blog-excerpt {
+.product-card .blog-excerpt,
+.blog-card .blog-excerpt,
+.blog-item .blog-excerpt {
     font-size: 0.9rem;
     color: #666;
     display: -webkit-box;

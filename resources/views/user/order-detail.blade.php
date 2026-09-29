@@ -513,9 +513,7 @@
                         <span class="small fw-bold text-dark d-block mb-1">
                             <i class="fa-solid fa-clipboard-list text-primary me-1"></i>{{ __('Hướng dẫn & Lưu ý:') }}
                         </span>
-                        <div class="bg-white border rounded p-2.5 text-secondary" style="white-space: pre-line; font-size: 0.85rem; line-height: 1.5;">
-                            {!! nl2br(e($order->delivery_note)) !!}
-                        </div>
+                        <div class="bg-white border rounded p-2.5 text-secondary" style="white-space: pre-line; font-size: 0.85rem; line-height: 1.5;">{{ trim($order->delivery_note) }}</div>
                     </div>
                 @endif
 
@@ -533,16 +531,14 @@
             </div>
         @endif
 
-        {{-- Admin Status Note --}}
-        @if($order->status_note)
+        {{-- Admin Status Note (chỉ hiện khi khác delivery_note) --}}
+        @if($order->status_note && trim($order->status_note) !== trim($order->delivery_note ?? ''))
             <div class="admin-note-box">
                 <div class="d-flex align-items-center gap-2 mb-1 text-dark fw-bold">
                     <i class="fa-solid fa-circle-exclamation text-warning fs-5"></i>
                     <span style="font-size: 0.9rem;">{{ __('Ghi chú từ Admin:') }}</span>
                 </div>
-                <div class="text-secondary small mt-1" style="white-space: pre-line; line-height: 1.45;">
-                    {{ $order->status_note }}
-                </div>
+                <div class="text-secondary small mt-1" style="white-space: pre-line; line-height: 1.45;">{{ trim($order->status_note) }}</div>
             </div>
         @endif
 

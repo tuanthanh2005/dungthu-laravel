@@ -137,6 +137,44 @@
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
+
+    .variant-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 #f8fafc;
+    }
+    .variant-table-container::-webkit-scrollbar {
+        height: 7px;
+    }
+    .variant-table-container::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+    .variant-table-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+    .variant-table-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+    .variant-table th {
+        position: relative;
+    }
+    .variant-col-resizer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 6px;
+        cursor: col-resize;
+        user-select: none;
+        height: 100%;
+        z-index: 2;
+    }
+    .variant-col-resizer:hover,
+    .variant-col-resizer.is-resizing {
+        background: rgba(99, 102, 241, 0.4);
+    }
 </style>
 @endpush
 
@@ -767,16 +805,17 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle mb-2">
+                <div class="table-responsive variant-table-container border rounded">
+                    <table class="table table-bordered align-middle mb-0 variant-table" style="min-width: 1080px;">
                         <thead class="table-light">
                             <tr class="text-center text-nowrap" style="font-size: 0.84rem;">
-                                <th style="min-width: 200px;">Tên gói / Phiên bản <span class="text-danger">*</span></th>
-                                <th style="min-width: 120px;">Giá bán (VNĐ) <span class="text-danger">*</span></th>
-                                <th style="min-width: 120px;">Giá gốc (VNĐ)</th>
-                                <th style="min-width: 75px;">Kho</th>
-                                <th style="min-width: 160px;">Thời hạn bảo hành</th>
-                                <th style="min-width: 250px;">Nội dung / Thông số kỹ thuật</th>
+                                <th style="min-width: 270px;">Tên gói / Phiên bản <span class="text-danger">*</span></th>
+                                <th style="width: 125px; min-width: 115px;">Giá bán (VNĐ) <span class="text-danger">*</span></th>
+                                <th style="width: 125px; min-width: 115px;">Giá gốc (VNĐ)</th>
+                                <th style="width: 75px; min-width: 70px;">Kho</th>
+                                <th style="width: 150px; min-width: 145px;">Thời hạn bảo hành</th>
+                                <th style="min-width: 320px;">Nội dung / Thông số kỹ thuật</th>
+                                <th style="width: 42px; min-width: 42px;" class="no-resize text-center"><i class="fas fa-trash-alt text-muted" title="Thao tác"></i></th>
                             </tr>
                         </thead>
                         <tbody id="variantRows">
@@ -788,27 +827,32 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                                             <input type="hidden" name="variant_ids[]" value="{{ $oldVariantIds[$vIdx] ?? '' }}">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control form-control-sm text-end" name="variant_prices[]" value="{{ $oldVariantPrices[$vIdx] ?? '' }}" placeholder="Giá bán" min="0" step="1000" required>
+                                            <input type="number" class="form-control form-control-sm text-end px-2" name="variant_prices[]" value="{{ $oldVariantPrices[$vIdx] ?? '' }}" placeholder="Giá bán" min="0" step="1000" required>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="{{ $oldVariantSalePrices[$vIdx] ?? '' }}" placeholder="Để trống nếu ko giảm" min="0" step="1000">
+                                            <input type="number" class="form-control form-control-sm text-end px-2" name="variant_sale_prices[]" value="{{ $oldVariantSalePrices[$vIdx] ?? '' }}" placeholder="Giá gốc" title="Để trống nếu không giảm giá" min="0" step="1000">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control form-control-sm text-center" name="variant_stocks[]" value="{{ $oldVariantStocks[$vIdx] ?? '10' }}" min="0">
+                                            <input type="number" class="form-control form-control-sm text-center px-1" name="variant_stocks[]" value="{{ $oldVariantStocks[$vIdx] ?? '10' }}" min="0">
                                         </td>
                                         <td>
                                             <div class="input-group input-group-sm">
-                                                <input type="number" class="form-control" name="variant_duration_values[]" value="{{ $oldVariantDurValues[$vIdx] ?? '' }}" placeholder="Số" min="1">
-                                                <select class="form-select" name="variant_duration_types[]">
+                                                <input type="number" class="form-control px-1 text-center" style="max-width: 48px;" name="variant_duration_values[]" value="{{ $oldVariantDurValues[$vIdx] ?? '' }}" placeholder="Số" min="1">
+                                                <select class="form-select px-1" style="min-width: 82px;" name="variant_duration_types[]">
                                                     <option value="" {{ ($oldVariantDurTypes[$vIdx] ?? '') == '' ? 'selected' : '' }}>Không</option>
                                                     <option value="days" {{ ($oldVariantDurTypes[$vIdx] ?? '') == 'days' ? 'selected' : '' }}>Ngày</option>
-                                                    <option value="months" {{ ($oldVariantDurTypes[$vIdx] ?? '') == 'months' ? 'selected' : '' }}>Tháng</option>
+                                                    <option value="months" {{ ($oldVariantDurTypes[$vIdx] ?? 'months') == 'months' ? 'selected' : '' }}>Tháng</option>
                                                     <option value="years" {{ ($oldVariantDurTypes[$vIdx] ?? '') == 'years' ? 'selected' : '' }}>Năm</option>
                                                 </select>
                                             </div>
                                         </td>
                                         <td>
                                             <textarea class="form-control form-control-sm" name="variant_specs[]" rows="2" placeholder="Nội dung / thông số kỹ thuật riêng của gói này...">{{ $oldVariantSpecs[$vIdx] ?? '' }}</textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-outline-danger btn-sm border-0 p-1" onclick="removeVariantRow(this)" title="Xóa gói này">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -820,18 +864,18 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                                             <input type="hidden" name="variant_ids[]" value="{{ $variant->id }}">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control form-control-sm text-end" name="variant_prices[]" value="{{ (int)$variant->price }}" placeholder="Giá bán" min="0" step="1000" required>
+                                            <input type="number" class="form-control form-control-sm text-end px-2" name="variant_prices[]" value="{{ (int)$variant->price }}" placeholder="Giá bán" min="0" step="1000" required>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="{{ $variant->sale_price ? (int)$variant->sale_price : '' }}" placeholder="Để trống nếu ko giảm" min="0" step="1000">
+                                            <input type="number" class="form-control form-control-sm text-end px-2" name="variant_sale_prices[]" value="{{ $variant->sale_price ? (int)$variant->sale_price : '' }}" placeholder="Giá gốc" title="Để trống nếu không giảm giá" min="0" step="1000">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control form-control-sm text-center" name="variant_stocks[]" value="{{ $variant->stock }}" min="0">
+                                            <input type="number" class="form-control form-control-sm text-center px-1" name="variant_stocks[]" value="{{ $variant->stock }}" min="0">
                                         </td>
                                         <td>
                                             <div class="input-group input-group-sm">
-                                                <input type="number" class="form-control" name="variant_duration_values[]" value="{{ $variant->duration_value }}" placeholder="Số" min="1">
-                                                <select class="form-select" name="variant_duration_types[]">
+                                                <input type="number" class="form-control px-1 text-center" style="max-width: 48px;" name="variant_duration_values[]" value="{{ $variant->duration_value }}" placeholder="Số" min="1">
+                                                <select class="form-select px-1" style="min-width: 82px;" name="variant_duration_types[]">
                                                     <option value="" {{ !$variant->duration_type ? 'selected' : '' }}>Không</option>
                                                     <option value="days" {{ $variant->duration_type == 'days' ? 'selected' : '' }}>Ngày</option>
                                                     <option value="months" {{ $variant->duration_type == 'months' ? 'selected' : '' }}>Tháng</option>
@@ -841,6 +885,11 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                                         </td>
                                         <td>
                                             <textarea class="form-control form-control-sm" name="variant_specs[]" rows="2" placeholder="Nội dung / thông số kỹ thuật riêng của gói này...">{{ $variant->specs }}</textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-outline-danger btn-sm border-0 p-1" onclick="removeVariantRow(this)" title="Xóa gói này">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -1253,18 +1302,18 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                 <input type="hidden" name="variant_ids[]" value="${data.id || ''}">
             </td>
             <td>
-                <input type="number" class="form-control form-control-sm text-end" name="variant_prices[]" value="${data.price || ''}" placeholder="Giá bán" min="0" step="1000" required>
+                <input type="number" class="form-control form-control-sm text-end px-2" name="variant_prices[]" value="${data.price || ''}" placeholder="Giá bán" min="0" step="1000" required>
             </td>
             <td>
-                <input type="number" class="form-control form-control-sm text-end" name="variant_sale_prices[]" value="${data.sale_price || ''}" placeholder="Để trống nếu ko giảm" min="0" step="1000">
+                <input type="number" class="form-control form-control-sm text-end px-2" name="variant_sale_prices[]" value="${data.sale_price || ''}" placeholder="Giá gốc" title="Để trống nếu không giảm giá" min="0" step="1000">
             </td>
             <td>
-                <input type="number" class="form-control form-control-sm text-center" name="variant_stocks[]" value="${data.stock !== undefined ? data.stock : '10'}" min="0">
+                <input type="number" class="form-control form-control-sm text-center px-1" name="variant_stocks[]" value="${data.stock !== undefined ? data.stock : '10'}" min="0">
             </td>
             <td>
                 <div class="input-group input-group-sm">
-                    <input type="number" class="form-control" name="variant_duration_values[]" value="${data.duration_value || ''}" placeholder="Số" min="1">
-                    <select class="form-select" name="variant_duration_types[]">
+                    <input type="number" class="form-control px-1 text-center" style="max-width: 48px;" name="variant_duration_values[]" value="${data.duration_value || ''}" placeholder="Số" min="1">
+                    <select class="form-select px-1" style="min-width: 82px;" name="variant_duration_types[]">
                         <option value="" ${!data.duration_type ? 'selected' : ''}>Không</option>
                         <option value="days" ${data.duration_type === 'days' ? 'selected' : ''}>Ngày</option>
                         <option value="months" ${data.duration_type === 'months' || !data.duration_type ? 'selected' : ''}>Tháng</option>
@@ -1275,9 +1324,64 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
             <td>
                 <textarea class="form-control form-control-sm" name="variant_specs[]" rows="2" placeholder="Nội dung / thông số kỹ thuật riêng của gói này...">${data.specs || ''}</textarea>
             </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-outline-danger btn-sm border-0 p-1" onclick="removeVariantRow(this)" title="Xóa gói này">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
         `;
         tbody.appendChild(tr);
+        initResizableVariantTable();
     }
+
+    function removeVariantRow(btn) {
+        const row = btn.closest('.variant-row');
+        if (row) {
+            row.remove();
+        }
+    }
+
+    function initResizableVariantTable() {
+        const table = document.querySelector('.variant-table');
+        if (!table) return;
+        const ths = table.querySelectorAll('thead th');
+        ths.forEach(th => {
+            if (th.classList.contains('no-resize') || th.querySelector('.variant-col-resizer')) return;
+            th.style.position = 'relative';
+            const resizer = document.createElement('div');
+            resizer.className = 'variant-col-resizer';
+            th.appendChild(resizer);
+
+            let startX, startWidth;
+
+            resizer.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                startX = e.pageX;
+                startWidth = th.offsetWidth;
+                resizer.classList.add('is-resizing');
+
+                function onMouseMove(e) {
+                    const newWidth = Math.max(65, startWidth + (e.pageX - startX));
+                    th.style.width = newWidth + 'px';
+                    th.style.minWidth = newWidth + 'px';
+                }
+
+                function onMouseUp() {
+                    resizer.classList.remove('is-resizing');
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initResizableVariantTable();
+    });
 
     function confirmDeleteCurrentProduct() {
         Swal.fire({

@@ -122,6 +122,25 @@
             color: #0b5ed7 !important;
             font-weight: 800;
         }
+        .product-notice-box {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 1.5px dashed #f59e0b;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .product-notice-box:hover {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #d97706;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18);
+        }
+        @keyframes noticeBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(3px); }
+        }
+        .animate-bounce {
+            animation: noticeBounce 1.4s ease-in-out infinite;
+        }
         .nav-tabs .nav-link {
             border: none;
             background: white;
@@ -287,13 +306,16 @@
         <div class="col-lg-8 col-md-7" data-aos="fade-left">
             @php
                 $hasVariants = $product->hasVariants();
-                $firstVariant = $hasVariants ? $product->activeVariants->first() : null;
+                $sortedVariants = $hasVariants ? $product->activeVariants->sortBy(function($v) {
+                    return (float) $v->effective_price;
+                })->values() : collect();
+                $firstVariant = $sortedVariants->firstWhere('stock', '>', 0) ?? $sortedVariants->first();
                 $displayPrice = $firstVariant ? $firstVariant->formatted_price : $product->formatted_price;
                 $displayOriginalPrice = $firstVariant ? ($firstVariant->is_on_sale ? $firstVariant->formatted_original_price : '') : ($product->is_on_sale ? $product->formatted_original_price : '');
                 $displayIsOnSale = $firstVariant ? $firstVariant->is_on_sale : $product->is_on_sale;
                 $displayDiscountPercent = $firstVariant ? $firstVariant->discount_percent : $product->discount_percent;
                 $displayStock = $firstVariant ? $firstVariant->stock : $product->stock;
-                $canOrder = $hasVariants ? ($product->activeVariants->sum('stock') > 0 || $firstVariant->stock > 0) : ($product->stock > 0);
+                $canOrder = $hasVariants ? ($sortedVariants->sum('stock') > 0 || ($firstVariant && $firstVariant->stock > 0)) : ($product->stock > 0);
             @endphp
 
             <div class="d-flex align-items-center justify-content-between mb-2">
@@ -345,16 +367,17 @@
                         <small class="text-muted" style="font-size: 0.72rem;">{{ __('Click để chọn gói') }}</small>
                     </div>
                     <div class="variant-options-grid" id="variantOptionsList">
-                        @foreach($product->activeVariants as $index => $variant)
+                        @foreach($sortedVariants as $index => $variant)
                             @php
                                 $isAvailable = $variant->stock > 0;
+                                $isSelected = $firstVariant && $firstVariant->id === $variant->id;
                             @endphp
-                            <label class="variant-option-card {{ $loop->first ? 'active' : '' }} {{ !$isAvailable ? 'disabled' : '' }}" 
+                            <label class="variant-option-card {{ $isSelected ? 'active' : '' }} {{ !$isAvailable ? 'disabled' : '' }}" 
                                    data-variant-id="{{ $variant->id }}">
                                 <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width: 0;">
                                     <input type="radio" name="variant_id" value="{{ $variant->id }}" 
                                            class="form-check-input mt-0 variant-radio" 
-                                           {{ $loop->first ? 'checked' : '' }}
+                                           {{ $isSelected ? 'checked' : '' }}
                                            {{ !$isAvailable ? 'disabled' : '' }}
                                            data-price="{{ $variant->formatted_price }}"
                                            data-original-price="{{ $variant->is_on_sale ? $variant->formatted_original_price : '' }}"
@@ -384,6 +407,24 @@
                     </div>
                 </div>
                 @endif
+
+                <!-- Product Info Notice -->
+                <div class="product-notice-box mt-3 p-2 px-3 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2" 
+                     onclick="scrollToProductDetails()" 
+                     title="{{ __('Nhấp để cuộn xuống xem thông tin chi tiết sản phẩm') }}">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-warning text-dark px-2 py-1 rounded-pill" style="font-size: 0.72rem; font-weight: 700;">
+                            <i class="fas fa-exclamation-triangle me-1"></i>{{ __('LƯU Ý') }}
+                        </span>
+                        <span style="font-size: 0.83rem; font-weight: 600; color: #92400e;">
+                            {{ __('Quý khách vui lòng kéo xuống đọc kỹ thông tin sản phẩm trước khi mua!') }}
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center fw-bold text-nowrap" style="font-size: 0.8rem; color: #b45309;">
+                        <span>{{ __('Xem chi tiết') }}</span>
+                        <i class="fas fa-arrow-down ms-1 animate-bounce"></i>
+                    </div>
+                </div>
 
                 <div class="d-flex gap-2 mt-3 flex-wrap align-items-center">
                     <button type="submit" id="btnAddToCart" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm flex-grow-1" style="font-size: 0.92rem;">
@@ -455,7 +496,7 @@
     </div>
     
     <!-- Tabs Section -->
-    <div class="row mt-5">
+    <div class="row mt-5" id="productSpecsSection">
         <div class="col-12">
             <ul class="nav nav-tabs nav-fill border-0" id="productTabs" role="tablist" data-aos="fade-up">
                 <li class="nav-item" role="presentation">
@@ -869,5 +910,17 @@
                 updateVariantUI(checkedRadio);
             }
         });
+
+        function scrollToProductDetails() {
+            const target = document.getElementById('productSpecsSection') 
+                        || document.getElementById('description')
+                        || document.querySelector('.nav-tabs')
+                        || document.querySelector('.card:has(#description)');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                window.scrollBy({ top: 400, behavior: 'smooth' });
+            }
+        }
     </script>
 @endpush

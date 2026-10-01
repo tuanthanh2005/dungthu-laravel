@@ -111,7 +111,11 @@ class Product extends Model
 
     public function activeVariants()
     {
-        return $this->hasMany(ProductVariant::class)->where('is_active', true)->orderBy('sort_order')->orderBy('id');
+        return $this->hasMany(ProductVariant::class)
+            ->where('is_active', true)
+            ->orderByRaw('CASE WHEN sale_price IS NOT NULL AND sale_price > 0 AND sale_price < price THEN sale_price ELSE price END ASC')
+            ->orderBy('price', 'asc')
+            ->orderBy('id', 'asc');
     }
 
     public function hasVariants(): bool

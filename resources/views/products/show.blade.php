@@ -122,17 +122,55 @@
             color: #0b5ed7 !important;
             font-weight: 800;
         }
-        .product-notice-box {
+        .product-notice-banner {
             background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            border: 1.5px dashed #f59e0b;
+            border: 1px solid #fde68a;
+            border-left: 4px solid #f59e0b;
+            border-radius: 12px;
+            padding: 10px 14px;
             cursor: pointer;
             transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(245, 158, 11, 0.08);
         }
-        .product-notice-box:hover {
+        .product-notice-banner:hover {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-color: #d97706;
+            border-color: #f59e0b;
+            border-left-color: #d97706;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18);
+        }
+        .notice-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .notice-badge {
+            background: #f59e0b;
+            color: #ffffff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .notice-action-btn {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: #b45309;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .notice-desc {
+            font-size: 0.81rem;
+            font-weight: 500;
+            color: #78350f;
+            line-height: 1.45;
+            margin: 0;
         }
         @keyframes noticeBounce {
             0%, 100% { transform: translateY(0); }
@@ -409,21 +447,22 @@
                 @endif
 
                 <!-- Product Info Notice -->
-                <div class="product-notice-box mt-3 p-2 px-3 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2" 
+                <div class="product-notice-banner mt-3" 
                      onclick="scrollToProductDetails()" 
+                     role="button"
+                     tabindex="0"
                      title="{{ __('Nhấp để cuộn xuống xem thông tin chi tiết sản phẩm') }}">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-warning text-dark px-2 py-1 rounded-pill" style="font-size: 0.72rem; font-weight: 700;">
+                    <div class="notice-header">
+                        <span class="notice-badge">
                             <i class="fas fa-exclamation-triangle me-1"></i>{{ __('LƯU Ý') }}
                         </span>
-                        <span style="font-size: 0.83rem; font-weight: 600; color: #92400e;">
-                            {{ __('Quý khách vui lòng kéo xuống đọc kỹ thông tin sản phẩm trước khi mua!') }}
+                        <span class="notice-action-btn">
+                            {{ __('Xem chi tiết') }} <i class="fas fa-arrow-down ms-1 animate-bounce"></i>
                         </span>
                     </div>
-                    <div class="d-flex align-items-center fw-bold text-nowrap" style="font-size: 0.8rem; color: #b45309;">
-                        <span>{{ __('Xem chi tiết') }}</span>
-                        <i class="fas fa-arrow-down ms-1 animate-bounce"></i>
-                    </div>
+                    <p class="notice-desc">
+                        {{ __('Vui lòng kéo xuống đọc kỹ thông tin sản phẩm trước khi mua!') }}
+                    </p>
                 </div>
 
                 <div class="d-flex gap-2 mt-3 flex-wrap align-items-center">

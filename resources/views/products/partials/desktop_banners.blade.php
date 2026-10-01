@@ -1,13 +1,13 @@
 <style>
     .desktop-banners-container {
-        margin-top: 25px;
+        margin-top: 18px;
     }
     .desktop-banner-card {
         background: #ffffff;
-        border-radius: 16px;
-        padding: 20px 10px;
+        border-radius: 12px;
+        padding: 12px 6px;
         text-align: center;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
         border: 1px solid rgba(0, 0, 0, 0.05);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         height: 100%;
@@ -17,22 +17,22 @@
         justify-content: center;
     }
     .desktop-banner-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         border-color: rgba(0, 104, 255, 0.2);
     }
     .banner-icon-circle {
-        width: 54px;
-        height: 54px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         transition: all 0.3s ease;
     }
     .desktop-banner-card:hover .banner-icon-circle {
-        transform: scale(1.1);
+        transform: scale(1.08);
     }
     /* Group Zalo Colors */
     .zalo-group-card .banner-icon-circle {
@@ -40,7 +40,7 @@
     }
     .zalo-group-card .banner-icon-circle i {
         color: #0068ff;
-        font-size: 22px;
+        font-size: 18px;
     }
     /* Telegram Colors */
     .telegram-card .banner-icon-circle {
@@ -48,7 +48,7 @@
     }
     .telegram-card .banner-icon-circle i {
         color: #0088cc;
-        font-size: 22px;
+        font-size: 18px;
     }
     /* Admin Zalo Colors */
     .zalo-admin-card .banner-icon-circle {
@@ -56,20 +56,20 @@
     }
     .zalo-admin-card .banner-icon-circle i {
         color: #07be9e;
-        font-size: 22px;
+        font-size: 18px;
     }
     .banner-title {
         font-weight: 700;
-        font-size: 14px;
+        font-size: 12px;
         color: #2d3748;
-        margin-bottom: 4px;
+        margin-bottom: 3px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
     }
     .banner-subtitle {
-        font-size: 12px;
+        font-size: 10.5px;
         color: #718096;
-        line-height: 1.4;
+        line-height: 1.3;
     }
 </style>
 

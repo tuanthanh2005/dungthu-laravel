@@ -1029,6 +1029,7 @@ class AdminController extends Controller
         $variantStocks = $request->input('variant_stocks', []);
         $variantDurationValues = $request->input('variant_duration_values', []);
         $variantDurationTypes = $request->input('variant_duration_types', []);
+        $variantSpecs = $request->input('variant_specs', []);
 
         $totalVariantStock = 0;
         if ($hasVariants && !empty($variantNames)) {
@@ -1040,6 +1041,7 @@ class AdminController extends Controller
                     $salePrice = !empty($variantSalePrices[$index]) ? (float) $variantSalePrices[$index] : null;
                     $durationValue = !empty($variantDurationValues[$index]) ? (int) $variantDurationValues[$index] : null;
                     $durationType = !empty($variantDurationTypes[$index]) ? $variantDurationTypes[$index] : null;
+                    $specContent = !empty($variantSpecs[$index]) ? trim($variantSpecs[$index]) : null;
 
                     ProductVariant::create([
                         'product_id' => $product->id,
@@ -1050,6 +1052,7 @@ class AdminController extends Controller
                         'stock' => $stock,
                         'duration_value' => $durationValue,
                         'duration_type' => $durationType,
+                        'specs' => $specContent,
                         'is_active' => true,
                         'sort_order' => $index,
                     ]);
@@ -1291,6 +1294,7 @@ class AdminController extends Controller
         $variantStocks = $request->input('variant_stocks', []);
         $variantDurationValues = $request->input('variant_duration_values', []);
         $variantDurationTypes = $request->input('variant_duration_types', []);
+        $variantSpecs = $request->input('variant_specs', []);
 
         if ($hasVariants && !empty($variantNames)) {
             $keptIds = [];
@@ -1304,6 +1308,7 @@ class AdminController extends Controller
                     $salePrice = !empty($variantSalePrices[$index]) ? (float) $variantSalePrices[$index] : null;
                     $durationValue = !empty($variantDurationValues[$index]) ? (int) $variantDurationValues[$index] : null;
                     $durationType = !empty($variantDurationTypes[$index]) ? $variantDurationTypes[$index] : null;
+                    $specContent = !empty($variantSpecs[$index]) ? trim($variantSpecs[$index]) : null;
 
                     $data = [
                         'name' => $name,
@@ -1313,6 +1318,7 @@ class AdminController extends Controller
                         'stock' => $stock,
                         'duration_value' => $durationValue,
                         'duration_type' => $durationType,
+                        'specs' => $specContent,
                         'is_active' => true,
                         'sort_order' => $index,
                     ];

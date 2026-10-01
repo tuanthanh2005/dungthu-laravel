@@ -15,21 +15,35 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Tạo admin account
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@dungthu.com',
-            'password' => bcrypt('admin123'),
-            'role' => 'admin',
-        ]);
+        // Tài khoản SieuSuperAdmin
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'sieusuperadmin',
+                'password' => bcrypt('123456'),
+                'role' => 'sieusuperadmin',
+            ]
+        );
+
+        // Tài khoản SuperAdmin 1
+        User::updateOrCreate(
+            ['email' => 'admin2@gmail.com'],
+            [
+                'name' => 'superadmin_1',
+                'password' => bcrypt('123456'),
+                'role' => 'superadmin_1',
+            ]
+        );
 
         // Tạo user thường
-        User::factory()->create([
-            'name' => 'User Test',
-            'email' => 'user@dungthu.com',
-            'password' => bcrypt('user123'),
-            'role' => 'user',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'user@dungthu.com'],
+            [
+                'name' => 'User Test',
+                'password' => bcrypt('user123'),
+                'role' => 'user',
+            ]
+        );
 
         $this->call([
             ProductSeeder::class,

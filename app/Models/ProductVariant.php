@@ -20,6 +20,7 @@ class ProductVariant extends Model
         'stock',
         'duration_value',
         'duration_type',
+        'specs',
         'is_active',
         'sort_order',
     ];

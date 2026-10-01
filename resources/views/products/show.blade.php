@@ -56,30 +56,41 @@
             font-size: 1.5rem;
             margin-right: 15px;
         }
-        /* Variant Option Selector */
+        /* Variant Option Selector - Clean 1-column Stack List */
+        .variant-options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 4px;
+        }
+        .variant-options-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .variant-options-grid::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
         .variant-option-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 18px;
+            padding: 9px 12px;
             background: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             user-select: none;
-        }
-        .variant-option-card:hover:not(.disabled) {
-            border-color: #0d6efd;
-            background: #f8fbff;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
+            gap: 10px;
+            min-height: 48px;
         }
         .variant-option-card.active {
             border-color: #0d6efd !important;
             background: #eff6ff !important;
-            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.15);
+            box-shadow: 0 3px 12px rgba(13, 110, 253, 0.15);
         }
         .variant-option-card.disabled {
             opacity: 0.55;
@@ -88,10 +99,24 @@
             border-color: #e9ecef;
         }
         .variant-radio {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: #0d6efd;
+            flex-shrink: 0;
+        }
+        .variant-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.35;
+            color: #1e293b;
+            word-break: break-word;
+        }
+        .variant-price-display {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0d6efd;
+            white-space: nowrap;
         }
         .variant-option-card.active .variant-price-display {
             color: #0b5ed7 !important;
@@ -144,7 +169,26 @@
             .container {
                 padding-left: 15px;
                 padding-right: 15px;
-                margin-top: 60px !important;
+            }
+            /* Variant Options on Mobile: Expands naturally without scroll constraint */
+            .variant-options-grid {
+                max-height: none !important;
+                overflow-y: visible !important;
+                padding-right: 0 !important;
+                gap: 10px !important;
+            }
+            .variant-option-card {
+                padding: 10px 12px !important;
+                min-height: 52px !important;
+                border-radius: 12px !important;
+                gap: 10px !important;
+            }
+            .variant-name {
+                font-size: 0.86rem !important;
+                line-height: 1.4 !important;
+            }
+            .variant-price-display {
+                font-size: 0.92rem !important;
             }
             .product-detail-image {
                 border-radius: 12px;
@@ -222,9 +266,9 @@
 @endpush
 
 @section('content')
-<div class="container py-2" style="margin-top: 50px;">
+<div class="container py-3">
     <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down">
+    <nav aria-label="breadcrumb" class="mb-3" data-aos="fade-down">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Trang chủ') }}</a></li>
             <li class="breadcrumb-item"><a href="{{ route('shop') }}">{{ __('Cửa hàng') }}</a></li>
@@ -233,18 +277,14 @@
     </nav>
 
     <div class="row">
-        <div class="col-lg-6 mb-4" data-aos="fade-right">
+        <div class="col-lg-4 col-md-5 mb-4" data-aos="fade-right">
             <img src="{{ $product->image ?? 'https://via.placeholder.com/600' }}" 
                  class="img-fluid product-detail-image w-100" 
                  alt="{{ $product->name }}">
             @include('products.partials.desktop_banners')
         </div>
         
-        <div class="col-lg-6" data-aos="fade-left">
-            <span class="badge bg-primary mb-2">{{ strtoupper($product->category) }}</span>
-            <h1 class="fw-bold mb-3">{{ $product->name }}</h1>
-            <p class="lead text-muted mb-4">{{ Str::limit($product->description, 150, '......') }}</p>
-            
+        <div class="col-lg-8 col-md-7" data-aos="fade-left">
             @php
                 $hasVariants = $product->hasVariants();
                 $firstVariant = $hasVariants ? $product->activeVariants->first() : null;
@@ -256,50 +296,62 @@
                 $canOrder = $hasVariants ? ($product->activeVariants->sum('stock') > 0 || $firstVariant->stock > 0) : ($product->stock > 0);
             @endphp
 
-            <div class="mb-4" id="mainPriceContainer">
-                <div class="d-flex align-items-end gap-3 flex-wrap">
-                    <h2 class="text-primary fw-bold mb-0" id="mainPriceDisplay">{{ $displayPrice }}</h2>
-                    <div class="d-flex align-items-center gap-2 mb-1" id="mainSaleContainer" style="{{ $displayIsOnSale ? '' : 'display: none !important;' }}">
-                        <span class="text-muted text-decoration-line-through" id="mainOriginalPriceDisplay">{{ $displayOriginalPrice }}</span>
-                        <span class="badge bg-danger" id="mainDiscountBadge">-{{ $displayDiscountPercent }}%</span>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 11px;">
+                    <i class="fas fa-tag me-1"></i>{{ strtoupper($product->category) }}
+                </span>
+                <div id="stockStatusContainer">
+                    <div class="d-flex align-items-center gap-1" id="stockAlertSuccess" style="{{ $displayStock > 0 ? '' : 'display: none !important;' }}">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1" style="font-size: 0.76rem;">
+                            <i class="fas fa-check-circle me-1"></i><span id="stockText">{{ __('Còn hàng') }} ({{ $displayStock }})</span>
+                        </span>
+                    </div>
+                    <div class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1" id="stockAlertDanger" style="{{ $displayStock <= 0 ? 'display: inline-block;' : 'display: none !important;' }}; font-size: 0.76rem;">
+                        <i class="fas fa-times-circle me-1"></i> {{ __('Hết hàng') }}
                     </div>
                 </div>
-                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>{{ __('Giá đã bao gồm VAT') }}</small>
             </div>
+
+            <h1 class="fw-bold {{ $hasVariants ? 'mb-3' : 'mb-2' }}" style="font-size: 1.35rem; line-height: 1.3;">{{ $product->name }}</h1>
             
-            <div id="stockStatusContainer" class="mb-3">
-                <div class="d-flex align-items-center flex-wrap gap-2" id="stockAlertSuccess" style="{{ $displayStock > 0 ? '' : 'display: none !important;' }}">
-                    <div class="alert alert-success d-inline-flex align-items-center mb-0 py-2 px-3 rounded-pill">
-                        <i class="fas fa-check-circle me-1"></i> 
-                        <span id="stockText">{{ __('Còn hàng') }} ({{ $displayStock }} {{ __('sản phẩm') }})</span>
+            @if(!$hasVariants)
+            <p class="text-muted mb-2" style="font-size: 0.86rem; line-height: 1.45;">{{ Str::limit($product->description, 130, '...') }}</p>
+
+            <!-- Compact Price Bar -->
+            <div class="mb-3 px-3 py-2 bg-light rounded-3 border" id="mainPriceContainer">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div class="d-flex align-items-baseline gap-2 flex-wrap">
+                        <h2 class="text-primary fw-bold mb-0" style="font-size: 1.55rem; line-height: 1;" id="mainPriceDisplay">{{ $displayPrice }}</h2>
+                        <div class="d-flex align-items-center gap-1" id="mainSaleContainer" style="{{ $displayIsOnSale ? '' : 'display: none !important;' }}">
+                            <span class="text-muted text-decoration-line-through small" id="mainOriginalPriceDisplay">{{ $displayOriginalPrice }}</span>
+                            <span class="badge bg-danger" style="font-size: 0.7rem;" id="mainDiscountBadge">-{{ $displayDiscountPercent }}%</span>
+                        </div>
                     </div>
-                    <small class="text-muted">{{ __('Gia hạn theo tháng 3/6/12 tháng: liên hệ admin hoặc box chat') }}</small>
-                </div>
-                <div class="alert alert-danger py-2 px-3 rounded-pill" id="stockAlertDanger" style="{{ $displayStock <= 0 ? 'display: inline-block;' : 'display: none !important;' }}">
-                    <i class="fas fa-times-circle me-1"></i> {{ __('Hết hàng') }}
+                    <small class="text-muted" style="font-size: 0.72rem;"><i class="fas fa-shield-alt text-success me-1"></i>{{ __('Đã gồm VAT & Bảo hành') }}</small>
                 </div>
             </div>
+            @endif
             
             @if($canOrder)
-            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4" id="addToCartForm">
+            <form action="{{ route('cart.add', $product->id) }}" method="POST" id="addToCartForm">
                 @csrf
 
                 @if($hasVariants)
-                <div class="variants-selector mb-4">
+                <div class="variants-selector mb-3">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <label class="fw-bold text-uppercase d-flex align-items-center gap-2 mb-0" style="font-size: 0.85rem; letter-spacing: 0.5px; color: #2d3748;">
+                        <label class="fw-bold text-uppercase d-flex align-items-center gap-1 mb-0" style="font-size: 0.78rem; letter-spacing: 0.5px; color: #334155;">
                             <i class="fas fa-layer-group text-primary"></i> {{ __('Chọn gói / Thời gian') }}
                         </label>
-                        <small class="text-muted">{{ __('Chọn gói phù hợp') }}</small>
+                        <small class="text-muted" style="font-size: 0.72rem;">{{ __('Click để chọn gói') }}</small>
                     </div>
-                    <div class="variant-options d-flex flex-column gap-2" id="variantOptionsList">
+                    <div class="variant-options-grid" id="variantOptionsList">
                         @foreach($product->activeVariants as $index => $variant)
                             @php
                                 $isAvailable = $variant->stock > 0;
                             @endphp
                             <label class="variant-option-card {{ $loop->first ? 'active' : '' }} {{ !$isAvailable ? 'disabled' : '' }}" 
                                    data-variant-id="{{ $variant->id }}">
-                                <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width: 0;">
                                     <input type="radio" name="variant_id" value="{{ $variant->id }}" 
                                            class="form-check-input mt-0 variant-radio" 
                                            {{ $loop->first ? 'checked' : '' }}
@@ -309,21 +361,22 @@
                                            data-is-on-sale="{{ $variant->is_on_sale ? '1' : '0' }}"
                                            data-discount-percent="{{ $variant->discount_percent }}"
                                            data-stock="{{ $variant->stock }}"
-                                           data-name="{{ $variant->name_localized }}">
-                                    <div>
-                                        <div class="fw-bold text-dark variant-name">{{ $variant->name_localized }}</div>
+                                           data-name="{{ $variant->name_localized }}"
+                                           data-specs="{{ $variant->specs }}">
+                                    <div class="flex-grow-1" style="min-width: 0;">
+                                        <div class="fw-bold variant-name" title="{{ $variant->name_localized }}">{{ $variant->name_localized }}</div>
                                         @if($variant->duration_text)
-                                            <small class="text-muted"><i class="far fa-clock me-1"></i>{{ $variant->duration_text }}</small>
+                                            <small class="text-muted d-block" style="font-size: 0.7rem; line-height: 1;"><i class="far fa-clock me-1"></i>{{ $variant->duration_text }}</small>
                                         @endif
                                     </div>
                                 </div>
-                                <div class="text-end">
+                                <div class="text-end flex-shrink-0 ms-2">
                                     <div class="fw-bold text-primary variant-price-display">{{ $variant->formatted_price }}</div>
                                     @if($variant->is_on_sale)
-                                        <small class="text-muted text-decoration-line-through d-block" style="font-size: 0.8rem;">{{ $variant->formatted_original_price }}</small>
+                                        <small class="text-muted text-decoration-line-through d-block" style="font-size: 0.7rem; line-height: 1;">{{ $variant->formatted_original_price }}</small>
                                     @endif
                                     @if(!$isAvailable)
-                                        <span class="badge bg-secondary" style="font-size: 0.7rem;">{{ __('Hết hàng') }}</span>
+                                        <span class="badge bg-secondary" style="font-size: 0.65rem;">{{ __('Hết') }}</span>
                                     @endif
                                 </div>
                             </label>
@@ -332,27 +385,27 @@
                 </div>
                 @endif
 
-                <div class="d-flex gap-3 mb-3 flex-wrap">
-                    <button type="submit" id="btnAddToCart" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
-                        <i class="fas fa-shopping-cart me-2"></i> {{ __('Thêm vào giỏ') }}
+                <div class="d-flex gap-2 mt-3 flex-wrap align-items-center">
+                    <button type="submit" id="btnAddToCart" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm flex-grow-1" style="font-size: 0.92rem;">
+                        <i class="fas fa-shopping-cart me-1"></i> {{ __('Thêm vào giỏ') }}
                     </button>
                     @if($product->delivery_type === 'digital')
-                    <button type="submit" id="btnBuyNow" formaction="{{ route('cart.buy-now', $product->id) }}" data-buy-now class="btn btn-warning btn-lg rounded-pill px-4 shadow">
-                        <i class="fas fa-bolt me-2"></i> {{ __('Mua ngay') }}
+                    <button type="submit" id="btnBuyNow" formaction="{{ route('cart.buy-now', $product->id) }}" data-buy-now class="btn btn-warning rounded-pill px-4 py-2 fw-bold shadow-sm text-dark flex-grow-1" style="font-size: 0.92rem;">
+                        <i class="fas fa-bolt me-1"></i> {{ __('Mua ngay') }}
                     </button>
                     @endif
-                    <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
-                        <i class="fas fa-arrow-left me-2"></i> {{ __('Tiếp tục mua') }}
+                    <a href="{{ route('shop') }}" class="btn btn-outline-secondary rounded-pill px-3 py-2 text-nowrap" style="font-size: 0.85rem;" title="{{ __('Tiếp tục mua sắm') }}">
+                        <i class="fas fa-arrow-left me-1"></i> {{ __('Tiếp tục') }}
                     </a>
                 </div>
             </form>
             @else
-            <div class="d-flex gap-3 mb-3 mt-4 flex-wrap">
-                <button type="button" class="btn btn-secondary btn-lg rounded-pill px-5" disabled>
-                    <i class="fas fa-ban me-2"></i> {{ __('Hết hàng') }}
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+                <button type="button" class="btn btn-secondary rounded-pill px-4 py-2 flex-grow-1" disabled style="font-size: 0.9rem;">
+                    <i class="fas fa-ban me-1"></i> {{ __('Hết hàng') }}
                 </button>
-                <a href="{{ route('shop') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
-                    <i class="fas fa-arrow-left me-2"></i> {{ __('Tiếp tục mua') }}
+                <a href="{{ route('shop') }}" class="btn btn-outline-secondary rounded-pill px-3 py-2" style="font-size: 0.85rem;">
+                    <i class="fas fa-arrow-left me-1"></i> {{ __('Tiếp tục mua') }}
                 </a>
             </div>
             @endif
@@ -497,13 +550,15 @@
                                     </div>
                                 </div>
 
-                                @if($product->specs)
+                                <div id="variantSpecContentContainer">
                                     @php
                                         $isText = $product->isTextSpecs();
                                         $textContent = $product->getSpecTextContent();
-                                        $hasTableSpecs = is_array($product->specs) && !$isText && count(array_filter($product->specs, function($v, $k) {
+                                        $specsData = $product->specs;
+                                        $hasTableSpecs = is_array($specsData) && !$isText && count(array_filter($specsData, function($v, $k) {
                                             return $k !== '_type' && !empty($v);
                                         }, ARRAY_FILTER_USE_BOTH)) > 0;
+                                        $fallbackContent = !empty(trim($textContent)) ? $textContent : $product->description;
                                     @endphp
 
                                     @if($isText && !empty(trim($textContent)))
@@ -512,7 +567,7 @@
                                         </div>
                                     @elseif($hasTableSpecs)
                                         <div class="row g-4 mt-2">
-                                            @foreach($product->specs as $key => $value)
+                                            @foreach($specsData as $key => $value)
                                                 @if($key !== '_type' && !empty($value))
                                                     <div class="col-lg-6">
                                                         <div class="p-3 bg-light rounded-3 mb-3">
@@ -523,8 +578,12 @@
                                                 @endif
                                             @endforeach
                                         </div>
+                                    @elseif(!empty(trim($fallbackContent)))
+                                        <div class="mt-4">
+                                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-line; line-height: 1.8; font-size: 0.95rem;">{!! nl2br(e($fallbackContent)) !!}</div>
+                                        </div>
                                     @endif
-                                @endif
+                                </div>
                             </div>
 
                             <div class="border-top pt-4 mt-4">
@@ -695,9 +754,36 @@
             const stockText = document.getElementById('stockText');
             const btnAddToCart = document.getElementById('btnAddToCart');
             const btnBuyNow = document.getElementById('btnBuyNow');
+            const specContainer = document.getElementById('variantSpecContentContainer');
+            const defaultSpecsHtml = specContainer ? specContainer.innerHTML : '';
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function updateSpecsUI(radio) {
+                if (!specContainer) return;
+                const variantSpec = radio && radio.dataset.specs ? radio.dataset.specs.trim() : '';
+                if (variantSpec) {
+                    specContainer.innerHTML = `
+                        <div class="mt-4">
+                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-line; line-height: 1.8; font-size: 0.95rem;">
+                                ${escapeHtml(variantSpec).replace(/\n/g, '<br>')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    specContainer.innerHTML = defaultSpecsHtml;
+                }
+            }
 
             function updateVariantUI(radio) {
                 if (!radio) return;
+
+                // Update technical specs for selected variant
+                updateSpecsUI(radio);
 
                 // Active class on cards
                 document.querySelectorAll('.variant-option-card').forEach(card => {

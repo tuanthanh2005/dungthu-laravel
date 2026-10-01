@@ -722,6 +722,7 @@
             $oldVariantStocks = old('variant_stocks', []);
             $oldVariantDurValues = old('variant_duration_values', []);
             $oldVariantDurTypes = old('variant_duration_types', []);
+            $oldVariantSpecs = old('variant_specs', []);
             $oldVariantIds = old('variant_ids', []);
         @endphp
         <div class="form-card">
@@ -770,12 +771,12 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                     <table class="table table-bordered align-middle mb-2">
                         <thead class="table-light">
                             <tr class="text-center text-nowrap" style="font-size: 0.84rem;">
-                                <th style="min-width: 220px;">Tên gói / Phiên bản <span class="text-danger">*</span></th>
-                                <th style="min-width: 130px;">Giá bán (VNĐ) <span class="text-danger">*</span></th>
-                                <th style="min-width: 130px;">Giá gốc (VNĐ)</th>
-                                <th style="min-width: 80px;">Kho</th>
-                                <th style="min-width: 170px;">Thời hạn bảo hành</th>
-                                <th style="width: 50px;">Xóa</th>
+                                <th style="min-width: 200px;">Tên gói / Phiên bản <span class="text-danger">*</span></th>
+                                <th style="min-width: 120px;">Giá bán (VNĐ) <span class="text-danger">*</span></th>
+                                <th style="min-width: 120px;">Giá gốc (VNĐ)</th>
+                                <th style="min-width: 75px;">Kho</th>
+                                <th style="min-width: 160px;">Thời hạn bảo hành</th>
+                                <th style="min-width: 250px;">Nội dung / Thông số kỹ thuật</th>
                             </tr>
                         </thead>
                         <tbody id="variantRows">
@@ -806,10 +807,8 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                                                 </select>
                                             </div>
                                         </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeVariantRow(this)">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                        <td>
+                                            <textarea class="form-control form-control-sm" name="variant_specs[]" rows="2" placeholder="Nội dung / thông số kỹ thuật riêng của gói này...">{{ $oldVariantSpecs[$vIdx] ?? '' }}</textarea>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -840,10 +839,8 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                                                 </select>
                                             </div>
                                         </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeVariantRow(this)">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                        <td>
+                                            <textarea class="form-control form-control-sm" name="variant_specs[]" rows="2" placeholder="Nội dung / thông số kỹ thuật riêng của gói này...">{{ $variant->specs }}</textarea>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -1275,23 +1272,11 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                     </select>
                 </div>
             </td>
-            <td class="text-center">
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeVariantRow(this)">
-                    <i class="fas fa-trash"></i>
-                </button>
+            <td>
+                <textarea class="form-control form-control-sm" name="variant_specs[]" rows="2" placeholder="Nội dung / thông số kỹ thuật riêng của gói này...">${data.specs || ''}</textarea>
             </td>
         `;
         tbody.appendChild(tr);
-    }
-
-    function removeVariantRow(btn) {
-        const rows = document.querySelectorAll('.variant-row');
-        if (rows.length > 1) {
-            btn.closest('.variant-row').remove();
-        } else {
-            const tr = btn.closest('.variant-row');
-            tr.querySelectorAll('input').forEach(i => i.value = '');
-        }
     }
 
     function confirmDeleteCurrentProduct() {

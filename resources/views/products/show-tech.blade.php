@@ -189,14 +189,19 @@
                 padding: 18px 16px;
             }
         }
+        .nav-tabs {
+            border-bottom: none !important;
+            border: none !important;
+        }
         .tech-tab.nav-link {
             border: none;
+            outline: none !important;
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             margin: 0 5px;
             border-radius: 15px;
             padding: 18px 35px;
             color: white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -222,12 +227,12 @@
         }
         #features-tab:hover {
             transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(6,214,160,0.5), 0 0 20px rgba(6,214,160,0.4);
+            box-shadow: 0 8px 20px rgba(6,214,160,0.4);
             border-color: rgba(255,255,255,0.7);
         }
         #features-tab.active {
-            box-shadow: 0 12px 35px rgba(6,214,160,0.6), 0 0 25px rgba(6,214,160,0.5);
-            border-color: rgba(255,255,255,0.8);
+            box-shadow: 0 8px 24px rgba(6,214,160,0.45);
+            border-color: rgba(255,255,255,0.85);
         }
         
         /* Tab Mô Tả - Vàng cam sáng */
@@ -237,12 +242,12 @@
         }
         #description-tab:hover {
             transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(255,165,2,0.5), 0 0 20px rgba(255,165,2,0.4);
+            box-shadow: 0 8px 20px rgba(255,165,2,0.4);
             border-color: rgba(255,255,255,0.7);
         }
         #description-tab.active {
-            box-shadow: 0 12px 35px rgba(255,165,2,0.6), 0 0 25px rgba(255,165,2,0.5);
-            border-color: rgba(255,255,255,0.8);
+            box-shadow: 0 8px 24px rgba(255,165,2,0.45);
+            border-color: rgba(255,255,255,0.85);
         }
         
         /* Tab Đánh Giá - Hồng tím sáng */
@@ -252,12 +257,12 @@
         }
         #reviews-tab:hover {
             transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(238,90,111,0.5), 0 0 20px rgba(238,90,111,0.4);
+            box-shadow: 0 8px 20px rgba(238,90,111,0.4);
             border-color: rgba(255,255,255,0.7);
         }
         #reviews-tab.active {
-            box-shadow: 0 12px 35px rgba(238,90,111,0.6), 0 0 25px rgba(238,90,111,0.5);
-            border-color: rgba(255,255,255,0.8);
+            box-shadow: 0 8px 24px rgba(238,90,111,0.45);
+            border-color: rgba(255,255,255,0.85);
         }
         
         .rating-input {
@@ -629,7 +634,7 @@
         <!-- Tabs Section -->
         <div class="row mt-5">
             <div class="col-12">
-                <ul class="nav nav-tabs nav-fill border-0 mb-4" id="productTabs" role="tablist" data-aos="fade-up">
+                <ul class="nav nav-tabs nav-fill border-0 mb-4" id="productTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link tech-tab active" id="features-tab" data-bs-toggle="tab" 
                                 data-bs-target="#features" type="button" role="tab">
@@ -655,7 +660,7 @@
 
                 <div class="tab-content" id="productTabsContent">
                     <!-- Features Tab -->
-                    <div class="tab-pane fade show active" id="features" role="tabpanel" data-aos="fade-up">
+                    <div class="tab-pane fade show active" id="features" role="tabpanel">
                         <div class="tech-card">
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-star text-warning me-2"></i>{{ __('Tính Năng Nổi Bật') }}
@@ -699,7 +704,7 @@
                     </div>
 
                     <!-- Description Tab -->
-                    <div class="tab-pane fade" id="description" role="tabpanel" data-aos="fade-up">
+                    <div class="tab-pane fade" id="description" role="tabpanel">
                         <div class="tech-card">
                             <h4 class="fw-bold mb-4">
                                 <i class="fas fa-align-left text-info me-2"></i>{{ __('Mô Tả Chi Tiết') }}

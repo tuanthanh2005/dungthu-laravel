@@ -1,5 +1,5 @@
 <!-- Reviews Tab -->
-<div class="tab-pane fade" id="reviews" role="tabpanel" data-aos="fade-up">
+<div class="tab-pane fade" id="reviews" role="tabpanel">
     <div class="card border-0 shadow-sm rounded-4" style="background: white;">
         <div class="card-body p-4">
             <h4 class="fw-bold mb-4">

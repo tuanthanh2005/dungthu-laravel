@@ -268,7 +268,7 @@
         <!-- Tabs Section -->
         <div class="row mt-5">
             <div class="col-12">
-                <ul class="nav nav-tabs nav-fill border-0 mb-4" id="productTabs" role="tablist" data-aos="fade-up">
+                <ul class="nav nav-tabs nav-fill border-0 mb-4" id="productTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fashion-tab active" id="features-tab" data-bs-toggle="tab" 
                                 data-bs-target="#features" type="button" role="tab">
@@ -291,7 +291,7 @@
 
                 <div class="tab-content" id="productTabsContent">
                     <!-- Features Tab -->
-                    <div class="tab-pane fade show active" id="features" role="tabpanel" data-aos="fade-up">
+                    <div class="tab-pane fade show active" id="features" role="tabpanel">
                         <div class="fashion-card">
                             <h4 class="fw-bold mb-4" style="color: #8b4513;">
                                 <i class="fas fa-star text-warning me-2"></i>{{ __('Đặc Điểm Nổi Bật') }}
@@ -338,7 +338,7 @@
                     </div>
 
                     <!-- Description Tab -->
-                    <div class="tab-pane fade" id="description" role="tabpanel" data-aos="fade-up">
+                    <div class="tab-pane fade" id="description" role="tabpanel">
                         <div class="fashion-card">
                             <h4 class="fw-bold mb-4" style="color: #8b4513;">
                                 <i class="fas fa-book text-danger me-2"></i>{{ __('Hướng Dẫn Sử Dụng & Bảo Quản') }}

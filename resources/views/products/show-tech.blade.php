@@ -545,7 +545,7 @@
                                 </span>
                             </div>
                             <p class="notice-desc">
-                                {{ __('Vui lòng kéo xuống đọc kỹ thông tin sản phẩm trước khi mua!') }}
+                                {{ __('Vui Lòng Kéo Xuống Đọc Kĩ Thông Tin Gói Bạn Đã Chọn Trước Khi Mua !!!') }}
                             </p>
                         </div>
 

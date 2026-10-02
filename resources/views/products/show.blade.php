@@ -643,7 +643,7 @@
 
                                     @if($isText && !empty(trim($textContent)))
                                         <div class="mt-4">
-                                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-line; line-height: 1.8; font-size: 0.95rem;">{!! nl2br(e($textContent)) !!}</div>
+                                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-wrap; word-break: break-word; line-height: 1.6; font-size: 0.95rem;">{{ $textContent }}</div>
                                         </div>
                                     @elseif($hasTableSpecs)
                                         <div class="row g-4 mt-2">
@@ -660,7 +660,7 @@
                                         </div>
                                     @elseif(!empty(trim($fallbackContent)))
                                         <div class="mt-4">
-                                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-line; line-height: 1.8; font-size: 0.95rem;">{!! nl2br(e($fallbackContent)) !!}</div>
+                                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-wrap; word-break: break-word; line-height: 1.6; font-size: 0.95rem;">{{ $fallbackContent }}</div>
                                         </div>
                                     @endif
                                 </div>
@@ -849,9 +849,7 @@
                 if (variantSpec) {
                     specContainer.innerHTML = `
                         <div class="mt-4">
-                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-line; line-height: 1.8; font-size: 0.95rem;">
-                                ${escapeHtml(variantSpec).replace(/\n/g, '<br>')}
-                            </div>
+                            <div class="p-3 bg-light rounded-3 text-dark border-start border-4 border-primary" style="white-space: pre-wrap; word-break: break-word; line-height: 1.6; font-size: 0.95rem;">${escapeHtml(variantSpec)}</div>
                         </div>
                     `;
                 } else {

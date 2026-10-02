@@ -597,9 +597,7 @@
 
                         @if($isText && !empty(trim($textContent)))
                             <div class="p-4 bg-light rounded-4 border-start border-4 border-info">
-                                <div class="text-dark" style="white-space: pre-line; line-height: 1.8; font-size: 0.98rem;">
-                                    {!! nl2br(e($textContent)) !!}
-                                </div>
+                                <div class="text-dark" style="white-space: pre-wrap; word-break: break-word; line-height: 1.6; font-size: 0.98rem;">{{ $textContent }}</div>
                             </div>
                         @elseif($hasTableSpecs)
                             <div class="row g-3">
@@ -616,9 +614,7 @@
                             </div>
                         @elseif(!empty(trim($fallbackContent)))
                             <div class="p-4 bg-light rounded-4 border-start border-4 border-info">
-                                <div class="text-dark" style="white-space: pre-line; line-height: 1.8; font-size: 0.98rem;">
-                                    {!! nl2br(e($fallbackContent)) !!}
-                                </div>
+                                <div class="text-dark" style="white-space: pre-wrap; word-break: break-word; line-height: 1.6; font-size: 0.98rem;">{{ $fallbackContent }}</div>
                             </div>
                         @else
                             <div class="alert alert-warning mb-0">
@@ -758,9 +754,7 @@
                 if (variantSpec) {
                     specContainer.innerHTML = `
                         <div class="p-4 bg-light rounded-4 border-start border-4 border-info">
-                            <div class="text-dark" style="white-space: pre-line; line-height: 1.8; font-size: 0.98rem;">
-                                ${escapeHtml(variantSpec).replace(/\n/g, '<br>')}
-                            </div>
+                            <div class="text-dark" style="white-space: pre-wrap; word-break: break-word; line-height: 1.6; font-size: 0.98rem;">${escapeHtml(variantSpec)}</div>
                         </div>
                     `;
                 } else {

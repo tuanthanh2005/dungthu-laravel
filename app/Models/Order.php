@@ -58,9 +58,26 @@ class Order extends Model
             }
 
             // When status changes to cancelled (or any status other than completed, if it was completed before)
-            if ($order->isDirty('status') && $order->status === 'cancelled') {
+            if ($order->isDirty('status') && $order->status === 'cancelled' && $order->getOriginal('status') !== 'cancelled') {
                 if ($order->getOriginal('status') === 'completed' && $order->user_id) {
                     $order->user()->decrement('spin_tickets');
+                }
+
+                // Hoàn lại kho hàng cho sản phẩm / biến thể
+                $order->loadMissing('orderItems');
+                foreach ($order->orderItems as $item) {
+                    if ($item->variant_id) {
+                        $variant = ProductVariant::find($item->variant_id);
+                        if ($variant) {
+                            $variant->increment('stock', $item->quantity);
+                        }
+                    }
+                    if ($item->product_id) {
+                        $product = Product::find($item->product_id);
+                        if ($product) {
+                            $product->increment('stock', $item->quantity);
+                        }
+                    }
                 }
             }
         });
@@ -68,6 +85,25 @@ class Order extends Model
         // When order is deleted
         static::deleted(function ($order) {
             CustomerDuration::where('order_id', $order->id)->delete();
+
+            // Nếu đơn chưa từng bị hủy (tức kho chưa được hoàn trước đó) thì hoàn lại kho
+            if ($order->status !== 'cancelled') {
+                $order->loadMissing('orderItems');
+                foreach ($order->orderItems as $item) {
+                    if ($item->variant_id) {
+                        $variant = ProductVariant::find($item->variant_id);
+                        if ($variant) {
+                            $variant->increment('stock', $item->quantity);
+                        }
+                    }
+                    if ($item->product_id) {
+                        $product = Product::find($item->product_id);
+                        if ($product) {
+                            $product->increment('stock', $item->quantity);
+                        }
+                    }
+                }
+            }
         });
     }
 

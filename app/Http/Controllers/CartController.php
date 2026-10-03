@@ -310,6 +310,22 @@ class CartController extends Controller
     {
         $cart = session()->get('cart');
         
+        if (empty($cart)) {
+            return redirect()->route('shop')->with('error', 'Giỏ hàng của bạn đang trống!');
+        }
+
+        // Chống spam đơn hàng ảo làm cạn kho: Giới hạn tối đa 3 đơn pending trong vòng 15 phút
+        if (auth()->check()) {
+            $pendingOrdersCount = Order::where('user_id', auth()->id())
+                ->where('status', 'pending')
+                ->where('created_at', '>=', now()->subMinutes(15))
+                ->count();
+
+            if ($pendingOrdersCount >= 3) {
+                return redirect()->route('user.orders')->with('error', 'Bạn đang có 3 đơn hàng đang chờ thanh toán. Vui lòng hoàn tất hoặc chờ đơn cũ hết hạn trước khi tạo đơn mới!');
+            }
+        }
+        
         // Kiểm tra loại đơn hàng
         $hasPhysical = false;
         foreach($cart as $id => $details) {
@@ -468,7 +484,7 @@ class CartController extends Controller
                 'status' => $orderStatus,
                 'coupon_code' => $coupon ? $coupon->code : null,
                 'discount_amount' => $discountAmount,
-                'order_code' => $request->order_code ?? session('checkout_order_code') ?? ('DT-' . strtoupper(\Illuminate\Support\Str::random(8))),
+                'order_code' => (session('checkout_order_code') ?: ($request->filled('order_code') && preg_match('/^DT-[A-Z0-9]{8}$/i', $request->order_code) ? strtoupper($request->order_code) : ('DT-' . strtoupper(\Illuminate\Support\Str::random(8))))),
             ]);
 
             foreach($cart as $id => $details) {

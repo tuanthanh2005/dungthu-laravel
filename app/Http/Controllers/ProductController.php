@@ -498,6 +498,18 @@ class ProductController extends Controller
 
     public function storeComment(Request $request, Product $product)
     {
+        $userId = auth()->id();
+
+        // 1. Kiểm tra quyền mua hàng
+        if (!$product->isPurchasedBy($userId)) {
+            return back()->with('error', 'Bạn chỉ có thể đánh giá sau khi đã mua sản phẩm này!');
+        }
+
+        // 2. Chặn 1 người spam đánh giá nhiều lần trên cùng 1 sản phẩm
+        if ($product->comments()->where('user_id', $userId)->exists()) {
+            return back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi! Cảm ơn bạn.');
+        }
+
         $request->validate([
             'comment' => 'required|string|max:1000',
             'rating' => 'required|integer|min:1|max:5',
@@ -510,7 +522,7 @@ class ProductController extends Controller
         ]);
 
         $product->comments()->create([
-            'user_id' => auth()->id(),
+            'user_id' => $userId,
             'comment' => $request->comment,
             'rating' => $request->rating,
         ]);

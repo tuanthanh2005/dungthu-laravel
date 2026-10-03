@@ -727,46 +727,59 @@
                             </div>
 
                             <!-- Comment Form (Only for logged in users) -->
+                            <!-- Comment Form (Only for logged in users who purchased) -->
                             @auth
-                            <div class="card bg-light border-0 mb-4 rounded-4">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-bold mb-3">
-                                        <i class="fas fa-edit text-primary me-2"></i>{{ __('Viết đánh giá của bạn') }}
-                                    </h5>
-                                    <form action="{{ route('product.comment', $product->id) }}" method="POST">
-                                        @csrf
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">{{ __('Đánh giá của bạn') }} <span class="text-danger">*</span></label>
-                                            <div class="rating-input mb-2">
-                                                <input type="radio" name="rating" value="5" id="star5" required>
-                                                <label for="star5" title="5 sao"><i class="fas fa-star"></i></label>
-                                                <input type="radio" name="rating" value="4" id="star4">
-                                                <label for="star4" title="4 sao"><i class="fas fa-star"></i></label>
-                                                <input type="radio" name="rating" value="3" id="star3">
-                                                <label for="star3" title="3 sao"><i class="fas fa-star"></i></label>
-                                                <input type="radio" name="rating" value="2" id="star2">
-                                                <label for="star2" title="2 sao"><i class="fas fa-star"></i></label>
-                                                <input type="radio" name="rating" value="1" id="star1">
-                                                <label for="star1" title="1 sao"><i class="fas fa-star"></i></label>
-                                            </div>
-                                            @error('rating')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">{{ __('Nhận xét') }} <span class="text-danger">*</span></label>
-                                            <textarea name="comment" class="form-control rounded-3" rows="4" 
-                                                      placeholder="{{ __('Chia sẻ trải nghiệm của bạn về sản phẩm...') }}" required>{{ old('comment') }}</textarea>
-                                            @error('comment')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <button type="submit" class="btn btn-primary rounded-pill px-4">
-                                            <i class="fas fa-paper-plane me-2"></i>{{ __('Gửi đánh giá') }}
-                                        </button>
-                                    </form>
+                            @if(!empty($hasPurchased))
+                                @if($product->comments()->where('user_id', auth()->id())->exists())
+                                <div class="alert alert-success rounded-4 mb-4">
+                                    <i class="fas fa-check-circle me-2"></i>{{ __('Bạn đã gửi đánh giá cho sản phẩm này rồi. Cảm ơn bạn!') }}
                                 </div>
-                            </div>
+                                @else
+                                <div class="card bg-light border-0 mb-4 rounded-4">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-3">
+                                            <i class="fas fa-edit text-primary me-2"></i>{{ __('Viết đánh giá của bạn') }}
+                                        </h5>
+                                        <form action="{{ route('product.comment', $product->id) }}" method="POST">
+                                            @csrf
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">{{ __('Đánh giá của bạn') }} <span class="text-danger">*</span></label>
+                                                <div class="rating-input mb-2">
+                                                    <input type="radio" name="rating" value="5" id="star5" required>
+                                                    <label for="star5" title="5 sao"><i class="fas fa-star"></i></label>
+                                                    <input type="radio" name="rating" value="4" id="star4">
+                                                    <label for="star4" title="4 sao"><i class="fas fa-star"></i></label>
+                                                    <input type="radio" name="rating" value="3" id="star3">
+                                                    <label for="star3" title="3 sao"><i class="fas fa-star"></i></label>
+                                                    <input type="radio" name="rating" value="2" id="star2">
+                                                    <label for="star2" title="2 sao"><i class="fas fa-star"></i></label>
+                                                    <input type="radio" name="rating" value="1" id="star1">
+                                                    <label for="star1" title="1 sao"><i class="fas fa-star"></i></label>
+                                                </div>
+                                                @error('rating')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">{{ __('Nhận xét') }} <span class="text-danger">*</span></label>
+                                                <textarea name="comment" class="form-control rounded-3" rows="4" 
+                                                          placeholder="{{ __('Chia sẻ trải nghiệm của bạn về sản phẩm...') }}" required>{{ old('comment') }}</textarea>
+                                                @error('comment')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                            <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                                <i class="fas fa-paper-plane me-2"></i>{{ __('Gửi đánh giá') }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endif
+                            @else
+                                <div class="alert alert-warning rounded-4 mb-4">
+                                    <i class="fas fa-shopping-bag me-2"></i>{{ __('Bạn chỉ có thể viết đánh giá sau khi đã mua sản phẩm này.') }}
+                                </div>
+                            @endif
                             @else
                             <div class="alert alert-info rounded-4 mb-4">
                                 <i class="fas fa-info-circle me-2"></i>

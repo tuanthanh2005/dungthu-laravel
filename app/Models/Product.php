@@ -404,7 +404,7 @@ class Product extends Model
         return $this->orderItems()
             ->whereHas('order', function($query) use ($userId) {
                 $query->where('user_id', $userId)
-                      ->where('status', 'completed');
+                      ->whereIn('status', ['completed', 'processing']);
             })
             ->exists();
     }

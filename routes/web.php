@@ -94,7 +94,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/tim-kiem/{keyword}', [ProductController::class, 'keyword'])->name('product.keyword');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
-Route::post('/product/{product}/comment', [ProductController::class, 'storeComment'])->name('product.comment')->middleware('auth');
+Route::post('/product/{product}/comment', [ProductController::class, 'storeComment'])->name('product.comment')->middleware(['auth', 'throttle:6,1']);
 Route::get('/product/{id}/download', [ProductController::class, 'download'])->name('product.download')->middleware('auth');
 
 // Buff Service routes
@@ -133,7 +133,7 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Community routes
 Route::get('/community', [CommunityPostController::class, 'index'])->name('community.index');
-Route::post('/community/{post:slug}/comments', [CommunityCommentController::class, 'store'])->name('community.comments.store');
+Route::post('/community/{post:slug}/comments', [CommunityCommentController::class, 'store'])->middleware('throttle:10,1')->name('community.comments.store');
 Route::middleware('auth')->group(function () {
     Route::get('/community/create', [CommunityPostController::class, 'create'])->name('community.create');
     Route::post('/community', [CommunityPostController::class, 'store'])->name('community.store');
@@ -156,7 +156,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Password Reset Routes
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->middleware('throttle:3,1')->name('password.email');
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
@@ -180,7 +180,7 @@ Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.r
 // Checkout routes (requires auth)
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout/place', [CartController::class, 'placeOrder'])->name('checkout.place');
+    Route::post('/checkout/place', [CartController::class, 'placeOrder'])->middleware('throttle:5,1')->name('checkout.place');
     
     // Mini Game routes
     Route::get('/minigame', [\App\Http\Controllers\MiniGameController::class, 'index'])->name('minigame.index');

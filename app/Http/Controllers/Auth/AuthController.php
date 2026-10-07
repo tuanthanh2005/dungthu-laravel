@@ -32,6 +32,8 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+            $request->session()->forget('guest_first_seen_at');
+            cookie()->queue(cookie()->forget('guest_first_seen_at'));
             
             if (auth()->user()->role === 'blog_editor') {
                 return redirect()->intended(route('admin.blogs'))->with('success', 'Chào mừng cộng tác viên Blog!');
@@ -106,6 +108,8 @@ class AuthController extends Controller
         }
 
         Auth::login($user);
+        $request->session()->forget('guest_first_seen_at');
+        cookie()->queue(cookie()->forget('guest_first_seen_at'));
 
         return redirect()->route('home')->with('success', 'Đăng ký thành công!');
     }
@@ -116,6 +120,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        cookie()->queue(cookie()->forget('guest_first_seen_at'));
 
         return redirect()->route('home')->with('success', 'Đăng xuất thành công!');
     }

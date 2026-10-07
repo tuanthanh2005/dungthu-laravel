@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
@@ -44,6 +45,8 @@ class ResetPasswordController extends Controller
         );
 
         if ($status === Password::PASSWORD_RESET) {
+            RateLimiter::clear('forgot_password_ip:' . $request->ip());
+            RateLimiter::clear('forgot_password_email:' . md5(Str::lower(trim((string) $request->email))));
             return redirect('/login')->with('status', 'Mật khẩu đã được cập nhật thành công. Vui lòng đăng nhập với mật khẩu mới!');
         }
 

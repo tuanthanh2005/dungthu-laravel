@@ -213,12 +213,12 @@
         <div class="login-left d-none d-md-flex">
             <div class="avatar-circle">
                 <i class="fas fa-user"></i>
-            </div>
+        </div>
         </div>
 
         <!-- Right Side -->
         <div class="login-right">
-            <h2 class="login-title">User Login</h2>
+            <h2 class="login-title">{{ __('Đăng Nhập') }}</h2>
 
             @if(session('info'))
                 <div class="alert alert-info border-0 rounded-3 mb-3 py-2 px-3 shadow-sm text-start" role="alert" style="font-size: 13px; line-height: 1.5; background-color: #e7f5ff; color: #1864ab;">
@@ -261,14 +261,14 @@
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" name="email" class="login-input" placeholder="Email Id" value="{{ old('email') }}" required>
+                        <input type="email" name="email" class="login-input" placeholder="{{ __('Email của bạn') }}" value="{{ old('email') }}" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="form-input-wrapper">
                         <i class="fas fa-lock"></i>
-                        <input type="password" name="password" class="login-input" placeholder="Password" required>
+                        <input type="password" name="password" class="login-input" placeholder="{{ __('Mật khẩu') }}" required>
                     </div>
                 </div>
 
@@ -276,32 +276,32 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
                         <label class="form-check-label text-muted small" for="remember" style="font-size: 11px;">
-                            Remember me
+                            {{ __('Ghi nhớ đăng nhập') }}
                         </label>
                     </div>
                 </div>
 
                 <button type="submit" class="login-btn">
-                    Login
+                    {{ __('Đăng Nhập') }}
                 </button>
 
                 <a href="{{ route('password.request') }}" class="forgot-link">
-                    Forgot Username / Password?
+                    {{ __('Quên mật khẩu?') }}
                 </a>
 
                 <div class="position-relative my-3">
                     <hr class="text-muted opacity-25">
-                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted" style="font-size: 10px;">OR</span>
+                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted" style="font-size: 10px;">{{ __('HOẶC') }}</span>
                 </div>
 
                 <a href="{{ url('/auth/google/redirect') }}" class="google-login-btn">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" alt="Google">
-                    Login with Google
+                    {{ __('Đăng nhập bằng Google') }}
                 </a>
             </form>
 
             <p class="register-text">
-                Don't have an account? <a href="{{ route('register') }}">Sign up now</a>
+                {{ __('Chưa có tài khoản?') }} <a href="{{ route('register') }}">{{ __('Đăng ký ngay') }}</a>
             </p>
         </div>
     </div>

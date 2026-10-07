@@ -138,37 +138,97 @@ class BlockBadBots
             }
         }
 
-        // Guests may browse freely, but after five minutes they must sign in
-        // before performing a state-changing action.  Do not redirect normal
-        // page views: doing that made the home page appear intermittently
-        // blank.  Do not use an IP/session-count limit here, because mobile
-        // networks and offices commonly share an IP.
-        if (!$isGoodBot && !Auth::check() && $request->hasSession()) {
+        // 4. Giới hạn 5 phút trải nghiệm miễn phí cho khách vãng lai:
+        // Khách vãng lai chỉ được sử dụng web miễn phí trong 5 phút.
+        // Sau 5 phút, bắt buộc khách hàng phải đăng nhập hoặc đăng ký tài khoản.
+        // Mọi thao tác truy cập các trang trên web đều sẽ luôn chuyển hướng về trang đăng nhập (/login).
+        // TUYỆT ĐỐI KHÔNG CHẶN:
+        // - Trang đăng nhập (/login, /cong-tac-vien/dang-nhap)
+        // - Trang đăng ký (/register, /cong-tac-vien/dang-ky)
+        // - Trang quên mật khẩu (/forgot-password)
+        // - Trang đặt lại mật khẩu (/reset-password, /reset-password/*, /password/*)
+        // - Các endpoint hạ tầng, assets tĩnh, webhooks, oauth...
+        $isUserLoggedIn = Auth::check() || Auth::guard('affiliate')->check();
+
+        if (!$isGoodBot && !$isUserLoggedIn && $request->hasSession()) {
+            if ($request->isMethod('OPTIONS')) {
+                return $next($request);
+            }
+
             $session = $request->session();
-            $firstSeen = (int) $session->get('guest_first_seen_at', 0);
+            $cookieFirstSeen = (int) $request->cookie('guest_first_seen_at', 0);
+            $sessionFirstSeen = (int) $session->get('guest_first_seen_at', 0);
+
+            $firstSeen = $sessionFirstSeen > 0 ? $sessionFirstSeen : $cookieFirstSeen;
 
             if ($firstSeen === 0) {
                 $firstSeen = time();
                 $session->put('guest_first_seen_at', $firstSeen);
+                cookie()->queue('guest_first_seen_at', (string) $firstSeen, 60 * 24 * 30);
+            } else {
+                if ($sessionFirstSeen === 0) {
+                    $session->put('guest_first_seen_at', $firstSeen);
+                }
+                if ($cookieFirstSeen === 0) {
+                    cookie()->queue('guest_first_seen_at', (string) $firstSeen, 60 * 24 * 30);
+                }
             }
 
-            $isSafeMethod = in_array($request->method(), ['GET', 'HEAD', 'OPTIONS'], true);
             $isAuthOrInfrastructureRequest = $request->is(
                 'login',
+                'login/*',
                 'register',
+                'register/*',
+                'logout',
                 'forgot-password',
+                'forgot-password/*',
                 'reset-password',
+                'reset-password/*',
+                'password/*',
                 'auth/*',
+                'test-callback',
+                'cong-tac-vien/dang-nhap',
+                'cong-tac-vien/dang-nhap/*',
+                'cong-tac-vien/dang-ky',
+                'cong-tac-vien/dang-ky/*',
+                'cong-tac-vien/dang-xuat',
+                'kenh-nguoi-ban/*',
+                'change-language/*',
                 'webhook/*',
+                'api/telegram/*',
                 'api/online-users/*',
-                'api/telegram/*'
+                'storage/*',
+                'build/*',
+                'css/*',
+                'js/*',
+                'images/*',
+                'fonts/*',
+                'favicon.ico',
+                'robots.txt',
+                'sitemap.xml',
+                'manifest.json',
+                'up'
+            ) || (
+                $request->route() && (
+                    $request->routeIs('login*') ||
+                    $request->routeIs('register*') ||
+                    $request->routeIs('password.*') ||
+                    $request->routeIs('affiliate.login*') ||
+                    $request->routeIs('affiliate.register*') ||
+                    $request->routeIs('logout') ||
+                    $request->routeIs('affiliate.logout')
+                )
             );
 
-            if (!$isSafeMethod && !$isAuthOrInfrastructureRequest && (time() - $firstSeen) >= 300) {
-                $message = 'Phiên trải nghiệm miễn phí đã hết. Vui lòng đăng nhập để tiếp tục thao tác.';
+            // Sau 5 phút (300 giây), luôn chuyển hướng về trang đăng nhập
+            if (!$isAuthOrInfrastructureRequest && (time() - $firstSeen) >= 300) {
+                $message = 'Phiên trải nghiệm miễn phí (5 phút) dành cho khách vãng lai đã hết. Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục sử dụng website.';
 
-                if ($request->expectsJson() || $request->is('api/*')) {
-                    return response()->json(['message' => $message], 401);
+                if ($request->expectsJson() || $request->is('api/*') || $request->ajax()) {
+                    return response()->json([
+                        'message' => $message,
+                        'redirect' => route('login'),
+                    ], 401);
                 }
 
                 return redirect()->route('login')->with('info', $message);

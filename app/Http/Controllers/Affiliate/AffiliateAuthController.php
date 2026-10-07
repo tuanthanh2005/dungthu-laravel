@@ -36,6 +36,8 @@ class AffiliateAuthController extends Controller
 
         if (Auth::guard('affiliate')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+            $request->session()->forget('guest_first_seen_at');
+            cookie()->queue(cookie()->forget('guest_first_seen_at'));
             return redirect()->route('affiliate.dashboard');
         }
 
@@ -135,6 +137,8 @@ class AffiliateAuthController extends Controller
         // Log the affiliate in automatically
         Auth::guard('affiliate')->login($affiliate);
         $request->session()->regenerate();
+        $request->session()->forget('guest_first_seen_at');
+        cookie()->queue(cookie()->forget('guest_first_seen_at'));
 
         return redirect()->route('affiliate.pending')->with('success', 'Đăng ký thành công! Vui lòng chờ admin duyệt hồ sơ của bạn.');
     }
@@ -144,6 +148,7 @@ class AffiliateAuthController extends Controller
         Auth::guard('affiliate')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        cookie()->queue(cookie()->forget('guest_first_seen_at'));
         return redirect()->route('affiliate.login')->with('success', 'Đã đăng xuất thành công.');
     }
 }

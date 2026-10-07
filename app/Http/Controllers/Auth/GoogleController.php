@@ -34,6 +34,8 @@ class GoogleController extends Controller
 
             if ($existingUser) {
                 Auth::login($existingUser);
+                session()->forget('guest_first_seen_at');
+                cookie()->queue(cookie()->forget('guest_first_seen_at'));
                 return redirect('/')->with('success', 'Đăng nhập bằng Google thành công!');
             }
 
@@ -53,6 +55,8 @@ class GoogleController extends Controller
             }
 
             Auth::login($newUser);
+            session()->forget('guest_first_seen_at');
+            cookie()->queue(cookie()->forget('guest_first_seen_at'));
             
             // Mark as newly registered user to allow checkout without verification
             session()->put('is_new_user', true);

@@ -56,7 +56,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- TechFeed Theme -->
-    <link rel="stylesheet" href="{{ asset('css/techfeed.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/techfeed.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/techfeed.css') }}?v={{ @filemtime(\App\Helpers\PathHelper::publicRootPath('css/techfeed.css')) ?: time() }}">
 
     <!-- Page-specific CSS -->
     @stack('styles')
@@ -358,8 +358,80 @@
             touch-action: manipulation;
         }
     </style>
-    
 
+    <!-- 5-Minute Guest Trial Realtime Timer -->
+    @guest
+        @if(!\Illuminate\Support\Facades\Auth::guard('affiliate')->check())
+            @php
+                $isAuthOrResetPage = request()->is(
+                    'login',
+                    'login/*',
+                    'register',
+                    'register/*',
+                    'forgot-password',
+                    'forgot-password/*',
+                    'reset-password',
+                    'reset-password/*',
+                    'password/*',
+                    'cong-tac-vien/dang-*',
+                    'kenh-nguoi-ban/dang-*'
+                ) || (request()->route() && (
+                    request()->routeIs('login*') ||
+                    request()->routeIs('register*') ||
+                    request()->routeIs('password.*') ||
+                    request()->routeIs('affiliate.login*') ||
+                    request()->routeIs('affiliate.register*')
+                ));
+
+                $guestFirstSeen = (int) (session('guest_first_seen_at') ?: request()->cookie('guest_first_seen_at', 0));
+                $guestRemainingSeconds = $guestFirstSeen > 0 ? max(0, 300 - (time() - $guestFirstSeen)) : 300;
+            @endphp
+
+            @if(!$isAuthOrResetPage)
+                <script>
+                    (function() {
+                        const remainingSeconds = {{ $guestRemainingSeconds }};
+                        let hasRedirected = false;
+
+                        function handleGuestTimeout() {
+                            if (hasRedirected) return;
+                            hasRedirected = true;
+
+                            const redirectUrl = @json(route('login'));
+                            const timeoutMsg = @json(__('Phiên trải nghiệm miễn phí (5 phút) dành cho khách vãng lai đã hết. Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục sử dụng website.'));
+
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: @json(__('Hết phiên trải nghiệm')),
+                                    text: timeoutMsg,
+                                    confirmButtonText: @json(__('Đăng nhập ngay')),
+                                    confirmButtonColor: '#ff5e00',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then(() => {
+                                    window.location.href = redirectUrl;
+                                });
+
+                                setTimeout(() => {
+                                    window.location.href = redirectUrl;
+                                }, 3500);
+                            } else {
+                                alert(timeoutMsg);
+                                window.location.href = redirectUrl;
+                            }
+                        }
+
+                        if (remainingSeconds <= 0) {
+                            handleGuestTimeout();
+                        } else {
+                            setTimeout(handleGuestTimeout, remainingSeconds * 1000);
+                        }
+                    })();
+                </script>
+            @endif
+        @endif
+    @endguest
 
 @stack('scripts')
 </body>

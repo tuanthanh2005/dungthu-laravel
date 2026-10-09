@@ -34,6 +34,21 @@ class GeminiBlogService
     }
 
     /**
+     * Danh sách model Gemini hỗ trợ cho giao diện chọn
+     */
+    public static function getAvailableModels(): array
+    {
+        return [
+            'gemini-2.0-flash'      => 'Gemini 2.0 Flash (Nhanh & Thông minh ⚡)',
+            'gemini-1.5-flash'      => 'Gemini 1.5 Flash (Tốc độ cao 🚀)',
+            'gemini-1.5-pro'        => 'Gemini 1.5 Pro (Sâu sắc & Chi tiết 💎)',
+            'gemini-2.0-flash-lite' => 'Gemini 2.0 Flash Lite (Tiết kiệm)',
+            'gemini-3.1-flash-lite' => 'Gemini 3.1 Flash-Lite',
+            'gemini-3.5-flash'      => 'Gemini 3.5 Flash',
+        ];
+    }
+
+    /**
      * Chuẩn hóa tên model Gemini
      */
     public static function formatModelName(string $model): string
@@ -296,6 +311,111 @@ PROMPT;
             return $parsed;
         } catch (\Exception $e) {
             Log::error("parseProductVariants Exception: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Tạo danh sách các gói thiết kế website bằng Gemini AI từ mô tả của admin
+     * Mỗi dòng có '-' ở đầu dòng tương ứng với 1 gói
+     */
+    public function generateWebDesignPackages(
+        string $promptText,
+        string $model = 'gemini-2.0-flash',
+        ?string $apiKey = null
+    ): array {
+        $key = self::getApiKey($apiKey);
+        if (empty($key)) {
+            throw new \Exception('Chưa cấu hình Gemini API Key! Vui lòng kiểm tra lại API Key.');
+        }
+
+        $formattedModel = self::formatModelName($model);
+
+        $prompt = <<<PROMPT
+Bạn là chuyên gia tư vấn giải pháp thiết kế website chuyên nghiệp và định giá dịch vụ web hàng đầu.
+Người dùng cung cấp danh sách mô tả các gói thiết kế website. MỖI DÒNG BẮT ĐẦU BẰNG DẤU GẠCH NỐI '-' (hoặc có chứa dấu '-') TƯƠNG ĐƯƠNG VỚI 1 GÓI CẦN TẠO.
+
+DANH SÁCH MÔ TẢ TỪ ADMIN:
+{$promptText}
+
+NHIỆM VỤ CỦA BẠN:
+1. Đọc và tách từng gói dựa trên từng dòng có dấu '-' của admin.
+2. Với mỗi gói, hãy tạo thông tin chi tiết đầy đủ, chuyên nghiệp và thực tế:
+   - "name": Tên gói rõ ràng, thu hút (Ví dụ: "Gói Landing Page", "Gói Bán Hàng Pro", "Gói Doanh Nghiệp VIP"...).
+   - "badge": Huy hiệu ngắn gọn từ 1-3 từ (Ví dụ: "Tiết kiệm", "Phổ biến", "Đề xuất", "Hot", "Nâng cao", "Cao cấp"...).
+   - "badge_color": Màu huy hiệu (chọn 1 trong: "primary", "success", "warning", "danger", "info", "dark").
+   - "price": Giá gói tính theo VNĐ dạng số nguyên (Ví dụ: nếu admin ghi 2tr5 hoặc 2.500.000 thì ghi là 2500000; nếu không ghi giá thì ước lượng mức giá VNĐ phù hợp từ 2.000.000đ đến 15.000.000đ).
+   - "features": Mảng từ 5 đến 8 tính năng/gạch đầu dòng chi tiết và thuyết phục (Ví dụ: số trang web, tên miền, hosting, tối ưu mobile, chuẩn SEO, thời gian bàn giao, bảo hành bảo trì...).
+
+YÊU CẦU ĐỊNH DẠNG ĐẦU RA:
+BẮT BUỘC trả về ĐÚNG MỘT MẢNG JSON thuần túy (không kèm markdown ngoài) theo cấu trúc:
+[
+  {
+    "name": "Tên gói",
+    "badge": "Huy hiệu",
+    "badge_color": "primary",
+    "price": 3000000,
+    "features": [
+      "Website 1-3 trang chuẩn mobile",
+      "Tích hợp form liên hệ & đặt hàng",
+      "Bao gồm tên miền và hosting 1 năm",
+      "Tối ưu tốc độ tải trang nhanh",
+      "Bàn giao chạy ngay sau 3-5 ngày"
+    ]
+  }
+]
+PROMPT;
+
+        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$formattedModel}:generateContent?key={$key}";
+
+        try {
+            $response = Http::timeout(60)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                ])
+                ->post($endpoint, [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $prompt]
+                            ]
+                        ]
+                    ],
+                    'generationConfig' => [
+                        'temperature' => 0.4,
+                        'responseMimeType' => 'application/json'
+                    ]
+                ]);
+
+            if ($response->failed()) {
+                $errorData = $response->json();
+                $errorMessage = $errorData['error']['message'] ?? $response->body();
+                Log::error("Gemini generateWebDesignPackages Error: " . $errorMessage);
+
+                if ($formattedModel !== 'gemini-1.5-flash' && str_contains(strtolower($errorMessage), 'not found')) {
+                    Log::info("Retrying with fallback model gemini-1.5-flash");
+                    return $this->generateWebDesignPackages($promptText, 'gemini-1.5-flash', $key);
+                }
+
+                throw new \Exception("Lỗi Gemini API: " . $errorMessage);
+            }
+
+            $responseData = $response->json();
+            $rawText = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $cleanJson = preg_replace('/^```(?:json)?\s*|\s*```$/i', '', trim($rawText));
+            $parsed = json_decode($cleanJson, true);
+
+            if (!is_array($parsed)) {
+                throw new \Exception("Không thể phân tích dữ liệu các gói từ phản hồi của AI.");
+            }
+
+            if (isset($parsed['packages']) && is_array($parsed['packages'])) {
+                $parsed = $parsed['packages'];
+            }
+
+            return $parsed;
+        } catch (\Exception $e) {
+            Log::error("generateWebDesignPackages Exception: " . $e->getMessage());
             throw $e;
         }
     }

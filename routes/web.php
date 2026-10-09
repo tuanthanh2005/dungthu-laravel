@@ -397,6 +397,8 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
         Route::put('/packages/{package}', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'updatePackage'])->name('admin.web-design.packages.update');
         Route::delete('/packages/{package}', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'destroyPackage'])->name('admin.web-design.packages.destroy');
         Route::post('/packages/{package}/toggle', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'toggleStatus'])->name('admin.web-design.packages.toggle');
+        Route::post('/ai-generate', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'aiGenerate'])->name('admin.web-design.ai-generate');
+        Route::post('/packages/bulk', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'bulkStore'])->name('admin.web-design.packages.bulk');
     });
 
     // Pre-orders Management

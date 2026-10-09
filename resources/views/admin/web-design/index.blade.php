@@ -13,10 +13,13 @@
             </h4>
             <p class="text-muted mb-0 small">Tùy chỉnh thông tin giới thiệu, chính sách và danh sách các gói dịch vụ</p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex flex-wrap gap-2">
             <a href="{{ route('web-design') }}" target="_blank" class="btn btn-outline-primary fw-semibold rounded-pill px-3">
                 <i class="fas fa-external-link-alt me-1"></i> Xem trang ngoài
             </a>
+            <button type="button" class="btn text-white fw-bold rounded-pill px-3 shadow-sm btn-ai-modal" data-bs-toggle="modal" data-bs-target="#aiCreatePackagesModal" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                <i class="fas fa-wand-magic-sparkles me-1.5"></i> Thêm Bằng AI
+            </button>
             <button type="button" class="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#createPackageModal">
                 <i class="fas fa-plus-circle me-1.5"></i> Thêm Gói Mới
             </button>
@@ -123,9 +126,14 @@
                 </h5>
                 <span class="text-muted small">Quy tắc hiển thị: 1 hàng 3 gói, thêm 4 gói sẽ xuống hàng, từ gói thứ 7 sẽ tự động phân trang (6 gói/trang).</span>
             </div>
-            <button type="button" class="btn btn-sm btn-primary fw-bold rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#createPackageModal">
-                <i class="fas fa-plus me-1"></i> Thêm Gói Mới
-            </button>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-sm text-white fw-bold rounded-pill px-3 shadow-xs" data-bs-toggle="modal" data-bs-target="#aiCreatePackagesModal" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                    <i class="fas fa-wand-magic-sparkles me-1"></i> Thêm Bằng AI
+                </button>
+                <button type="button" class="btn btn-sm btn-primary fw-bold rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#createPackageModal">
+                    <i class="fas fa-plus me-1"></i> Thêm Gói Mới
+                </button>
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -201,7 +209,7 @@
                         <tr>
                             <td colspan="7" class="text-center py-5 text-muted">
                                 <i class="fas fa-layer-group fs-2 mb-2 d-block opacity-50"></i>
-                                Chưa có gói thiết kế website nào. Hãy bấm "Thêm Gói Mới" để tạo gói đầu tiên!
+                                Chưa có gói thiết kế website nào. Hãy bấm "Thêm Gói Mới" hoặc "Thêm Bằng AI" để tạo gói!
                             </td>
                         </tr>
                         @endforelse
@@ -213,13 +221,119 @@
 
 </div>
 
-{{-- Modal Thêm Gói Mới --}}
+{{-- MODAL 1: THÊM BẰNG AI (GEMINI) --}}
+<div class="modal fade" id="aiCreatePackagesModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-0 text-white px-4 py-3 position-relative" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                <div>
+                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2 mb-1" style="font-size: 18px;">
+                        <i class="fas fa-wand-magic-sparkles"></i> Trợ Lý AI Tạo Gói Thiết Kế Website
+                    </h5>
+                    <p class="mb-0 opacity-75 small">Nhập mô tả tự do, mỗi dòng có dấu <code>-</code> ở đầu tương đương với 1 gói cần tạo</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4 bg-light-subtle">
+                {{-- Form nhập mô tả cho AI --}}
+                <div id="aiInputSection">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark d-flex align-items-center justify-content-between">
+                            <span>
+                                <i class="fas fa-list-ul text-primary me-1"></i> Mô tả các gói cần tạo:
+                            </span>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill small">
+                                1 hàng có dấu <code>-</code> = 1 gói
+                            </span>
+                        </label>
+                        <textarea class="form-control rounded-3 p-3 font-monospace" id="aiPromptInput" rows="7" 
+                                  placeholder="- Gói Landing Page giá 1.5tr cho chạy ads bán khoá học, tối ưu chuyển đổi&#10;- Gói Bán Hàng Nhanh giá 3.5tr có giỏ hàng, đặt hàng nhanh, chuẩn mobile&#10;- Gói Doanh Nghiệp VIP giá 7.9tr chuẩn SEO chuyên sâu, bảo hành 1 năm, hosting VIP" 
+                                  style="font-size: 13.5px; line-height: 1.6;"></textarea>
+                        <div class="form-text text-muted mt-2 small">
+                            <i class="fas fa-info-circle text-info me-1"></i> <strong>Quy tắc:</strong> Mỗi hàng bắt đầu bằng dấu <code>-</code> tương đương với 1 gói. AI sẽ tự động phân tích tên gói, huy hiệu, giá tiền VNĐ và viết đầy đủ các tính năng chi tiết, hấp dẫn nhất.
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary small mb-1">
+                                <i class="fas fa-microchip text-primary me-1"></i> Mô hình AI (Model)
+                            </label>
+                            <select class="form-select form-select-sm rounded-pill" id="aiModelSelect">
+                                @foreach($availableModels ?? [] as $modelKey => $modelLabel)
+                                    <option value="{{ $modelKey }}" {{ ($defaultModel ?? 'gemini-2.0-flash') === $modelKey ? 'selected' : '' }}>
+                                        {{ $modelLabel }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 pt-md-3">
+                            <div class="form-check form-switch fs-6">
+                                <input class="form-check-input" type="checkbox" id="aiAutoSaveSwitch" checked>
+                                <label class="form-check-label fw-semibold ms-1 small" for="aiAutoSaveSwitch">
+                                    Tự động lưu vào hệ thống ngay sau khi tạo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Thông báo lỗi nếu có --}}
+                    <div class="alert alert-danger d-none border-0 shadow-xs mb-3" id="aiErrorAlert" role="alert">
+                        <i class="fas fa-exclamation-triangle me-1"></i> <span id="aiErrorMessage"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 pt-2">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn text-white fw-bold rounded-pill px-4 shadow-sm" id="btnSubmitAiGenerate" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                            <i class="fas fa-bolt me-1.5"></i> Bắt Đầu Tạo Bằng AI
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Trạng thái đang tải (Loading Spinner) --}}
+                <div class="text-center py-5 d-none" id="aiLoadingSection">
+                    <div class="spinner-border text-primary mb-3" style="width: 3.5rem; height: 3.5rem;" role="status">
+                        <span class="visually-hidden">Đang xử lý...</span>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Trợ lý AI đang suy nghĩ và viết các gói...</h5>
+                    <p class="text-muted small mb-0">Hệ thống đang phân tích yêu cầu, định giá và sinh tính năng. Vui lòng đợi trong giây lát!</p>
+                </div>
+
+                {{-- Vùng xem trước kết quả (Nếu không chọn auto-save) --}}
+                <div class="d-none" id="aiPreviewSection">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                        <h6 class="fw-bold text-success mb-0 d-flex align-items-center gap-1.5">
+                            <i class="fas fa-check-circle"></i> AI đã tạo thành công danh sách gói sau:
+                        </h6>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1" id="aiPackageCountBadge">0 gói</span>
+                    </div>
+
+                    <div class="row g-3" id="aiPreviewCardsContainer" style="max-height: 400px; overflow-y: auto;">
+                        {{-- Cards will be injected by JavaScript --}}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 mt-3 border-top">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-3 btn-sm" id="btnAiBackToInput">
+                            <i class="fas fa-arrow-left me-1"></i> Viết lại mô tả
+                        </button>
+                        <button type="button" class="btn btn-success fw-bold rounded-pill px-4 shadow-sm" id="btnAiSaveAllPreview">
+                            <i class="fas fa-save me-1.5"></i> Lưu Tất Cả Gói Này Vào Hệ Thống
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL 2: THÊM GÓI THỦ CÔNG --}}
 <div class="modal fade" id="createPackageModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-4">
             <div class="modal-header border-0 pb-0 pt-4 px-4">
                 <h5 class="modal-title fw-bold">
-                    <i class="fas fa-plus-circle text-primary me-2"></i> Thêm Gói Thiết Kế Website Mới
+                    <i class="fas fa-plus-circle text-primary me-2"></i> Thêm Gói Thiết Kế Website Thủ Công
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -284,7 +398,7 @@
     </div>
 </div>
 
-{{-- Modals Chỉnh Sửa Từng Gói --}}
+{{-- MODALS 3: CHỈNH SỬA TỪNG GÓI --}}
 @foreach($packages as $pkg)
 <div class="modal fade" id="editPackageModal_{{ $pkg->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -359,5 +473,200 @@
     </div>
 </div>
 @endforeach
+
+{{-- SCRIPT XỬ LÝ AI TẠO GÓI --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btnSubmit = document.getElementById('btnSubmitAiGenerate');
+    const inputSection = document.getElementById('aiInputSection');
+    const loadingSection = document.getElementById('aiLoadingSection');
+    const previewSection = document.getElementById('aiPreviewSection');
+    const errorAlert = document.getElementById('aiErrorAlert');
+    const errorMessage = document.getElementById('aiErrorMessage');
+    const promptInput = document.getElementById('aiPromptInput');
+    const modelSelect = document.getElementById('aiModelSelect');
+    const autoSaveSwitch = document.getElementById('aiAutoSaveSwitch');
+    const cardsContainer = document.getElementById('aiPreviewCardsContainer');
+    const packageCountBadge = document.getElementById('aiPackageCountBadge');
+    const btnBack = document.getElementById('btnAiBackToInput');
+    const btnSaveAll = document.getElementById('btnAiSaveAllPreview');
+
+    let currentGeneratedPackages = [];
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    function showError(msg) {
+        errorMessage.textContent = msg;
+        errorAlert.classList.remove('d-none');
+    }
+
+    function hideError() {
+        errorAlert.classList.add('d-none');
+        errorMessage.textContent = '';
+    }
+
+    if (btnSubmit) {
+        btnSubmit.addEventListener('click', function () {
+            hideError();
+            const promptText = promptInput.value.trim();
+
+            if (!promptText) {
+                showError('Vui lòng nhập mô tả các gói cần tạo!');
+                promptInput.focus();
+                return;
+            }
+
+            if (!promptText.includes('-')) {
+                showError('Vui lòng thêm dấu "-" ở đầu mỗi dòng tương ứng với 1 gói (ví dụ: - Gói cơ bản giá 2tr).');
+                promptInput.focus();
+                return;
+            }
+
+            // Chuyển sang màn hình loading
+            inputSection.classList.add('d-none');
+            previewSection.classList.add('d-none');
+            loadingSection.classList.remove('d-none');
+
+            fetch('{{ route("admin.web-design.ai-generate") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken || ''
+                },
+                body: JSON.stringify({
+                    prompt: promptText,
+                    model: modelSelect.value,
+                    auto_save: autoSaveSwitch.checked
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
+            .then(({ ok, data }) => {
+                loadingSection.classList.add('d-none');
+
+                if (!ok || !data.success) {
+                    inputSection.classList.remove('d-none');
+                    showError(data.message || 'Có lỗi xảy ra trong quá trình gọi AI.');
+                    return;
+                }
+
+                if (data.saved) {
+                    // Đã tự động lưu thành công
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: data.message || 'Đã tạo và lưu các gói vào hệ thống!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        alert(data.message);
+                        window.location.reload();
+                    }
+                } else {
+                    // Hiển thị preview
+                    currentGeneratedPackages = data.packages || [];
+                    renderPreview(currentGeneratedPackages);
+                }
+            })
+            .catch(err => {
+                loadingSection.classList.add('d-none');
+                inputSection.classList.remove('d-none');
+                showError('Không thể kết nối đến máy chủ. Vui lòng thử lại!');
+                console.error(err);
+            });
+        });
+    }
+
+    function renderPreview(packages) {
+        cardsContainer.innerHTML = '';
+        packageCountBadge.textContent = `${packages.length} gói`;
+
+        packages.forEach((pkg, idx) => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+
+            const featuresList = (pkg.features || []).map(f => `<li>${f}</li>`).join('');
+            const priceFormatted = new Intl.NumberFormat('vi-VN').format(pkg.price || 0) + 'đ';
+
+            col.innerHTML = `
+                <div class="p-3 bg-white border rounded-3 shadow-xs h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold mb-0 text-dark">${pkg.name || 'Gói Website'}</h6>
+                        ${pkg.badge ? `<span class="badge bg-${pkg.badge_color || 'primary'} rounded-pill">${pkg.badge}</span>` : ''}
+                    </div>
+                    <div class="fw-bold text-primary fs-5 mb-2">${priceFormatted}</div>
+                    <ul class="text-muted small ps-3 mb-0" style="font-size: 12.5px;">
+                        ${featuresList}
+                    </ul>
+                </div>
+            `;
+            cardsContainer.appendChild(col);
+        });
+
+        inputSection.classList.add('d-none');
+        loadingSection.classList.add('d-none');
+        previewSection.classList.remove('d-none');
+    }
+
+    if (btnBack) {
+        btnBack.addEventListener('click', function () {
+            previewSection.classList.add('d-none');
+            inputSection.classList.remove('d-none');
+        });
+    }
+
+    if (btnSaveAll) {
+        btnSaveAll.addEventListener('click', function () {
+            if (!currentGeneratedPackages.length) return;
+
+            btnSaveAll.disabled = true;
+            btnSaveAll.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...';
+
+            fetch('{{ route("admin.web-design.packages.bulk") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken || ''
+                },
+                body: JSON.stringify({
+                    packages: currentGeneratedPackages
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: data.message || 'Đã lưu các gói vào hệ thống!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        alert(data.message);
+                        window.location.reload();
+                    }
+                } else {
+                    btnSaveAll.disabled = false;
+                    btnSaveAll.innerHTML = '<i class="fas fa-save me-1.5"></i> Lưu Tất Cả Gói Này Vào Hệ Thống';
+                    alert(data.message || 'Có lỗi khi lưu các gói.');
+                }
+            })
+            .catch(err => {
+                btnSaveAll.disabled = false;
+                btnSaveAll.innerHTML = '<i class="fas fa-save me-1.5"></i> Lưu Tất Cả Gói Này Vào Hệ Thống';
+                alert('Có lỗi xảy ra khi lưu.');
+            });
+        });
+    }
+});
+</script>
 
 @endsection

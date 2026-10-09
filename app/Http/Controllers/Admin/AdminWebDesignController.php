@@ -25,7 +25,10 @@ class AdminWebDesignController extends Controller
             'btn_text'       => SiteSetting::getValue('web_design_btn_text', 'Nhận tư vấn'),
         ];
 
-        return view('admin.web-design.index', compact('packages', 'settings'));
+        $availableModels = \App\Services\GeminiBlogService::getAvailableModels();
+        $defaultModel = SiteSetting::getValue('gemini_default_model', 'gemini-2.0-flash');
+
+        return view('admin.web-design.index', compact('packages', 'settings', 'availableModels', 'defaultModel'));
     }
 
     /**
@@ -148,5 +151,102 @@ class AdminWebDesignController extends Controller
         }
 
         return $features;
+    }
+
+    /**
+     * AI sinh danh sách gói thiết kế website từ mô tả của admin
+     */
+    public function aiGenerate(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string|min:3',
+            'model'  => 'nullable|string',
+            'api_key' => 'nullable|string',
+        ]);
+
+        try {
+            $geminiService = app(\App\Services\GeminiBlogService::class);
+            $promptText = $request->input('prompt');
+            $model = $request->input('model', 'gemini-2.0-flash');
+            $apiKey = $request->input('api_key');
+            $autoSave = $request->boolean('auto_save', true);
+
+            $packagesData = $geminiService->generateWebDesignPackages($promptText, $model, $apiKey);
+
+            if (empty($packagesData)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy gói nào từ mô tả. Hãy chắc chắn có các dòng bắt đầu bằng dấu "-".'
+                ], 422);
+            }
+
+            if ($autoSave) {
+                $maxOrder = WebDesignPackage::max('sort_order') ?? 0;
+                $savedCount = 0;
+                foreach ($packagesData as $pkg) {
+                    $maxOrder++;
+                    WebDesignPackage::create([
+                        'name'        => $pkg['name'] ?? 'Gói Thiết Kế Website',
+                        'badge'       => $pkg['badge'] ?? null,
+                        'badge_color' => $pkg['badge_color'] ?? 'primary',
+                        'price'       => (int) ($pkg['price'] ?? 0),
+                        'features'    => is_array($pkg['features'] ?? null) ? $pkg['features'] : [],
+                        'sort_order'  => $maxOrder,
+                        'is_active'   => true,
+                    ]);
+                    $savedCount++;
+                }
+
+                return response()->json([
+                    'success'  => true,
+                    'message'  => "Đã dùng AI tạo và lưu thành công {$savedCount} gói vào hệ thống!",
+                    'saved'    => true,
+                    'packages' => $packagesData
+                ]);
+            }
+
+            return response()->json([
+                'success'  => true,
+                'saved'    => false,
+                'packages' => $packagesData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Lưu danh sách các gói đã tạo từ preview vào database
+     */
+    public function bulkStore(Request $request)
+    {
+        $packages = $request->input('packages', []);
+        if (empty($packages) || !is_array($packages)) {
+            return response()->json(['success' => false, 'message' => 'Danh sách gói trống.'], 422);
+        }
+
+        $maxOrder = WebDesignPackage::max('sort_order') ?? 0;
+        $savedCount = 0;
+        foreach ($packages as $pkg) {
+            $maxOrder++;
+            WebDesignPackage::create([
+                'name'        => $pkg['name'] ?? 'Gói Thiết Kế Website',
+                'badge'       => $pkg['badge'] ?? null,
+                'badge_color' => $pkg['badge_color'] ?? 'primary',
+                'price'       => (int) ($pkg['price'] ?? 0),
+                'features'    => is_array($pkg['features'] ?? null) ? $pkg['features'] : [],
+                'sort_order'  => $maxOrder,
+                'is_active'   => true,
+            ]);
+            $savedCount++;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Đã lưu thành công {$savedCount} gói vào hệ thống!"
+        ]);
     }
 }

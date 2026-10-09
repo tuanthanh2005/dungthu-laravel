@@ -43,6 +43,16 @@
             'color'   => '#00bcd4',
             'target'  => '_self',
         ],
+        [
+            'key'     => 'webdesign',
+            'enabled' => $menuWebdesign,
+            'url'     => route('web-design'),
+            'label'   => __('Thiết kế Website'),
+            'icon'    => 'fa-solid fa-code',
+            'active'  => request()->routeIs('web-design'),
+            'color'   => null,
+            'target'  => '_self',
+        ],
 
         [
             'key'     => 'card_exchange',
@@ -125,11 +135,6 @@
             <a href="javascript:void(0)" class="nav-text-link text-nowrap" data-bs-toggle="modal" data-bs-target="#quickContactModal">
                 <i class="fa-solid fa-headset me-1"></i>{{ __('Liên hệ') }}
             </a>
-            @if($menuWebdesign)
-            <a href="{{ route('web-design') }}" class="btn btn-sm text-white fw-bold rounded-pill px-3 ms-1 me-1 shadow-sm d-inline-flex align-items-center gap-1.5 text-nowrap btn-webdesign-cta {{ request()->routeIs('web-design') ? 'active-cta' : '' }}" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); font-size: 13px; flex-shrink: 0;">
-                <i class="fa-solid fa-code"></i> {{ __('Thiết kế Website') }}
-            </a>
-            @endif
         </div>
 
         {{-- Compact menu for small laptops/tablets --}}

@@ -278,6 +278,23 @@
                         </div>
                     </div>
 
+                    {{-- Ô nhập mã xác nhận 8 số --}}
+                    <div class="mb-3 p-2.5 rounded-3 border bg-white shadow-xs">
+                        <label class="form-label fw-bold text-dark small mb-1 d-flex align-items-center justify-content-between">
+                            <span>
+                                <i class="fas fa-shield-alt text-primary me-1"></i> Mã xác nhận Admin (8 số) <span class="text-danger">*</span>
+                            </span>
+                            <span class="text-muted small" style="font-size: 11px;">Mặc định: 12112004</span>
+                        </label>
+                        <input type="password" 
+                               id="aiAdminPinInput" 
+                               class="form-control form-control-sm rounded-pill px-3 font-monospace" 
+                               placeholder="Nhập 8 số xác nhận" 
+                               value="12112004" 
+                               maxlength="8" 
+                               autocomplete="off">
+                    </div>
+
                     {{-- Thông báo lỗi nếu có --}}
                     <div class="alert alert-danger d-none border-0 shadow-xs mb-3" id="aiErrorAlert" role="alert">
                         <i class="fas fa-exclamation-triangle me-1"></i> <span id="aiErrorMessage"></span>
@@ -486,6 +503,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const promptInput = document.getElementById('aiPromptInput');
     const modelSelect = document.getElementById('aiModelSelect');
     const autoSaveSwitch = document.getElementById('aiAutoSaveSwitch');
+    const adminPinInput = document.getElementById('aiAdminPinInput');
     const cardsContainer = document.getElementById('aiPreviewCardsContainer');
     const packageCountBadge = document.getElementById('aiPackageCountBadge');
     const btnBack = document.getElementById('btnAiBackToInput');
@@ -508,6 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
         btnSubmit.addEventListener('click', function () {
             hideError();
             const promptText = promptInput.value.trim();
+            const pinVal = adminPinInput ? adminPinInput.value.trim() : '';
 
             if (!promptText) {
                 showError('Vui lòng nhập mô tả các gói cần tạo!');
@@ -518,6 +537,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!promptText.includes('-')) {
                 showError('Vui lòng thêm dấu "-" ở đầu mỗi dòng tương ứng với 1 gói (ví dụ: - Gói cơ bản giá 2tr).');
                 promptInput.focus();
+                return;
+            }
+
+            if (!/^\d{8}$/.test(pinVal)) {
+                showError('Vui lòng nhập mã xác nhận đúng 8 số (Mặc định: 12112004).');
+                if (adminPinInput) adminPinInput.focus();
                 return;
             }
 
@@ -536,7 +561,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify({
                     prompt: promptText,
                     model: modelSelect.value,
-                    auto_save: autoSaveSwitch.checked
+                    auto_save: autoSaveSwitch.checked,
+                    admin_pin: pinVal
                 })
             })
             .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
@@ -625,6 +651,8 @@ document.addEventListener('DOMContentLoaded', function () {
             btnSaveAll.disabled = true;
             btnSaveAll.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...';
 
+            const pinVal = adminPinInput ? adminPinInput.value.trim() : '12112004';
+
             fetch('{{ route("admin.web-design.packages.bulk") }}', {
                 method: 'POST',
                 headers: {
@@ -633,7 +661,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     'X-CSRF-TOKEN': csrfToken || ''
                 },
                 body: JSON.stringify({
-                    packages: currentGeneratedPackages
+                    packages: currentGeneratedPackages,
+                    admin_pin: pinVal
                 })
             })
             .then(res => res.json())

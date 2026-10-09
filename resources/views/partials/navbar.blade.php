@@ -45,16 +45,6 @@
         ],
 
         [
-            'key'     => 'webdesign',
-            'enabled' => $menuWebdesign,
-            'url'     => route('web-design'),
-            'label'   => __('Thiết kế Web'),
-            'icon'    => 'fa-solid fa-code',
-            'active'  => request()->routeIs('web-design'),
-            'color'   => null,
-            'target'  => '_self',
-        ],
-        [
             'key'     => 'card_exchange',
             'enabled' => $menuCardExchange,
             'url'     => route('card-exchange.index'),
@@ -135,9 +125,11 @@
             <a href="javascript:void(0)" class="nav-text-link text-nowrap" data-bs-toggle="modal" data-bs-target="#quickContactModal">
                 <i class="fa-solid fa-headset me-1"></i>{{ __('Liên hệ') }}
             </a>
-            <a href="javascript:void(0)" class="btn btn-sm text-white fw-bold rounded-pill px-3 ms-1 me-1 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap" data-bs-toggle="modal" data-bs-target="#appDownloadModal" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); font-size: 13px; flex-shrink: 0;">
-                <i class="fa-solid fa-cloud-arrow-down"></i> {{ __('Tải App') }}
+            @if($menuWebdesign)
+            <a href="{{ route('web-design') }}" class="btn btn-sm text-white fw-bold rounded-pill px-3 ms-1 me-1 shadow-sm d-inline-flex align-items-center gap-1.5 text-nowrap btn-webdesign-cta {{ request()->routeIs('web-design') ? 'active-cta' : '' }}" style="background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%); font-size: 13px; flex-shrink: 0;">
+                <i class="fa-solid fa-code"></i> {{ __('Thiết kế Website') }}
             </a>
+            @endif
         </div>
 
         {{-- Compact menu for small laptops/tablets --}}
@@ -223,114 +215,309 @@
             {{-- User Menu --}}
             @auth
                 <div class="dropdown">
-                    <button class="user-avatar-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="user-avatar-btn" data-bs-toggle="dropdown" aria-expanded="false" id="userMenuDropdownBtn" aria-label="{{ __('Menu người dùng') }}">
                         <span class="user-initial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-techfeed">
-                        <li class="px-3 py-2 border-bottom">
-                            <div class="fw-bold text-sm">{{ Auth::user()->name }}</div>
-                            <div class="text-muted" style="font-size:0.78rem;">{{ Auth::user()->email }}</div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-techfeed user-menu-dropdown p-0" aria-labelledby="userMenuDropdownBtn">
+                        {{-- 1. Profile Header --}}
+                        <li class="user-dropdown-header px-3 py-2.5 border-bottom bg-light-subtle">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="user-avatar-mini">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <div class="user-info-text overflow-hidden">
+                                    <div class="fw-bold text-dark text-truncate" style="font-size: 13.5px;">{{ Auth::user()->name }}</div>
+                                    <div class="text-muted text-truncate" style="font-size: 11.5px;">{{ Auth::user()->email }}</div>
+                                </div>
+                            </div>
+                            @php
+                                $isAdmin = in_array(Auth::user()->role, ['superadmin_1', 'sieusuperadmin', 'blog_editor'], true);
+                                $isAffiliate = Auth::guard('affiliate')->check();
+                            @endphp
+                            <div class="mt-2 d-flex gap-1 align-items-center">
+                                @if($isAdmin)
+                                    <span class="badge rounded-pill" style="background: #fee2e2; color: #dc2626; font-size: 10px; font-weight: 700;">
+                                        <i class="fa-solid fa-shield-halved me-1"></i>Admin
+                                    </span>
+                                @elseif($isAffiliate)
+                                    <span class="badge rounded-pill" style="background: #dbeafe; color: #2563eb; font-size: 10px; font-weight: 700;">
+                                        <i class="fa-solid fa-handshake me-1"></i>CTV
+                                    </span>
+                                @else
+                                    <span class="badge rounded-pill" style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 700;">
+                                        <i class="fa-regular fa-user me-1"></i>Thành viên
+                                    </span>
+                                @endif
+                            </div>
                         </li>
-                        @if(in_array(Auth::user()->role, ['superadmin_1', 'sieusuperadmin', 'blog_editor'], true))
-                            <li><a class="dropdown-item" href="/admin"><i class="fas fa-tachometer-alt me-2 text-primary"></i>{{ __('Dashboard Admin') }}</a></li>
+
+                        {{-- 2. Tài khoản cá nhân (Ưu tiên khách thấy ngay lập tức) --}}
+                        <li class="dropdown-section-title px-3 pt-2 pb-1 text-uppercase text-muted" style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px;">
+                            {{ __('Tài khoản của bạn') }}
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('user.account') }}">
+                                <i class="fa-solid fa-circle-user me-2 text-primary"></i>
+                                <span>{{ __('Thông tin tài khoản') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('user.orders') }}">
+                                <i class="fa-solid fa-box-open me-2 text-primary"></i>
+                                <span>{{ __('Đơn hàng đã mua') }}</span>
+                            </a>
+                        </li>
+                        @if($menuMinigame)
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('minigame.index') }}">
+                                <span><i class="fa-solid fa-gamepad me-2 text-danger"></i>{{ __('Vòng xoay may mắn') }}</span>
+                                <span class="badge rounded-pill bg-danger-subtle text-danger" style="font-size: 9.5px;">Hot</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        <li><hr class="dropdown-divider my-1"></li>
+
+                        {{-- 3. NÚT TẢI APP & DỊCH VỤ TIỆN ÍCH --}}
+                        <li class="dropdown-section-title px-3 pt-1 pb-1 text-uppercase text-muted" style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px;">
+                            {{ __('Ứng dụng & Dịch vụ') }}
+                        </li>
+                        {{-- Nút Tải App đưa vào dropdown theo yêu cầu --}}
+                        <li>
+                            <a class="dropdown-item dropdown-item-app py-2 my-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal">
+                                <div class="d-flex align-items-center justify-content-between w-100">
+                                    <span class="d-flex align-items-center fw-bold" style="color: #ff5e00;">
+                                        <i class="fa-solid fa-cloud-arrow-down me-2" style="font-size: 14px;"></i>
+                                        {{ __('Tải App Dùng Thử') }}
+                                    </span>
+                                    <span class="badge rounded-pill text-white" style="background: linear-gradient(135deg, #ff5e00, #ff8e43); font-size: 9.5px; font-weight: 700; padding: 2px 7px;">
+                                        FREE
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+
+                        @if($menuWebdesign)
+                        <li class="d-xl-none">
+                            <a class="dropdown-item" href="{{ route('web-design') }}">
+                                <i class="fa-solid fa-code me-2 text-primary"></i>
+                                <span>{{ __('Thiết kế Website') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        @if($menuVpn)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('vpn.index') }}">
+                                <i class="fa-solid fa-network-wired me-2 text-info"></i>
+                                <span>{{ __('Dịch vụ VPN') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        @if($menuCardExchange)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('card-exchange.index') }}">
+                                <i class="fa-solid fa-credit-card me-2 text-warning"></i>
+                                <span>{{ __('Đổi thẻ cào') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        {{-- CTV --}}
+                        @if($isAffiliate)
+                            <li>
+                                <a class="dropdown-item" href="{{ route('affiliate.dashboard') }}">
+                                    <i class="fa-solid fa-handshake me-2 text-success"></i>
+                                    <span>{{ __('Dashboard CTV') }}</span>
+                                </a>
+                            </li>
+                        @else
+                            <li>
+                                <a class="dropdown-item" href="{{ route('affiliate.login') }}">
+                                    <i class="fa-solid fa-handshake me-2 text-success"></i>
+                                    <span>{{ __('Kiếm tiền CTV') }}</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- 4. Quản trị Admin (Gọn gàng, chỉ hiện với Admin) --}}
+                        @if($isAdmin)
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li class="dropdown-section-title px-3 pt-1 pb-1 text-uppercase text-danger" style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px;">
+                                <i class="fa-solid fa-shield-halved me-1"></i>{{ __('Quản trị hệ thống') }}
+                            </li>
+                            <li>
+                                <a class="dropdown-item fw-semibold text-danger" href="/admin">
+                                    <i class="fas fa-tachometer-alt me-2"></i>{{ __('Dashboard Admin') }}
+                                </a>
+                            </li>
                             @if(in_array(Auth::user()->role, ['superadmin_1', 'sieusuperadmin'], true))
-                                <li><a class="dropdown-item" href="{{ route('admin.menu-settings') }}"><i class="fas fa-sliders-h me-2 text-warning"></i>{{ __('Quản lý Menu') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('admin.proxies') }}"><i class="fas fa-network-wired me-2 text-info"></i>{{ __('Quản lý Proxy') }}</a></li>
-                                
-                                {{-- Collapsible Quản lý Buff --}}
                                 <li>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#adminBuffCollapse" role="button" aria-expanded="false" aria-controls="adminBuffCollapse" onclick="event.stopPropagation();">
-                                        <span><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Quản lý Buff') }}</span>
-                                        <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
+                                    <a class="dropdown-item" href="{{ route('admin.menu-settings') }}">
+                                        <i class="fas fa-sliders-h me-2 text-warning"></i>{{ __('Quản lý Menu') }}
                                     </a>
-                                    <div class="collapse px-2" id="adminBuffCollapse" onclick="event.stopPropagation();">
-                                        <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
-                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.dashboard') }}" style="font-size: 0.85rem;"><i class="fas fa-chart-line me-2" style="color:#8b5cf6;"></i>{{ __('Buff Dashboard') }}</a></li>
-                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.orders.index') }}" style="font-size: 0.85rem;"><i class="fas fa-list-alt me-2" style="color:#ec4899;"></i>{{ __('Đơn Buff') }}</a></li>
-                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.services.index') }}" style="font-size: 0.85rem;"><i class="fas fa-cogs me-2" style="color:#06b6d4;"></i>{{ __('Dịch vụ Buff') }}</a></li>
-                                            <li><a class="dropdown-item py-1" href="{{ route('admin.buff.servers.index') }}" style="font-size: 0.85rem;"><i class="fas fa-server me-2" style="color:#10b981;"></i>{{ __('Máy chủ Buff') }}</a></li>
-                                        </ul>
-                                    </div>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.proxies') }}">
+                                        <i class="fas fa-network-wired me-2 text-info"></i>{{ __('Quản lý Proxy') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.buff.dashboard') }}">
+                                        <i class="fas fa-chart-line me-2" style="color: #8b5cf6;"></i>{{ __('Quản lý Buff') }}
+                                    </a>
                                 </li>
                             @endif
-                            <li><hr class="dropdown-divider"></li>
                         @endif
-                        <li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-house me-2 text-primary"></i>{{ __('Trang chủ') }}</a></li>
-                        <li><a class="dropdown-item" href="{{ route('shop') }}"><i class="fa-solid fa-store me-2 text-primary"></i>{{ __('Cửa hàng') }}</a></li>
-                        <li><a class="dropdown-item fw-bold" href="{{ route('vpn.index') }}" style="color: #00bcd4;"><i class="fa-solid fa-network-wired me-2"></i>{{ __('VPN') }}</a></li>
-                        <li><a class="dropdown-item" href="{{ route('blog.index') }}"><i class="fa-solid fa-newspaper me-2 text-primary"></i>{{ __('Blog') }}</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        
-                        {{-- Collapsible Dịch vụ & Tiện ích --}}
+
+                        <li><hr class="dropdown-divider my-1"></li>
+
+                        {{-- 5. Hỗ trợ & Cài đặt --}}
                         <li>
-                            <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#quickLinksCollapse" role="button" aria-expanded="false" aria-controls="quickLinksCollapse" onclick="event.stopPropagation();">
-                                <span><i class="fas fa-link me-2 text-primary"></i>{{ __('Dịch vụ & Tiện ích') }}</span>
-                                <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal">
+                                <i class="fa-solid fa-headset me-2 text-primary"></i>
+                                <span>{{ __('Hỗ trợ & Liên hệ') }}</span>
                             </a>
-                            <div class="collapse px-2" id="quickLinksCollapse" onclick="event.stopPropagation();">
-                                <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
-                                    @if(Auth::guard('affiliate')->check())
-                                        <li><a class="dropdown-item py-1 fw-bold text-primary" href="{{ route('affiliate.dashboard') }}" style="font-size: 0.85rem;"><i class="fas fa-handshake me-2"></i>{{ __('Dashboard CTV') }}</a></li>
-                                    @else
-                                        <li><a class="dropdown-item py-1" href="{{ route('affiliate.login') }}" style="font-size: 0.85rem;"><i class="fas fa-handshake me-2"></i>{{ __('Đăng ký CTV') }}</a></li>
-                                    @endif
-                                    <li><a class="dropdown-item py-1" href="{{ route('web-design') }}" style="font-size: 0.85rem;"><i class="fa-solid fa-code me-2 text-primary"></i>{{ __('Thiết Kế Website') }}</a></li>
-                                    <li><a class="dropdown-item py-1" href="{{ route('card-exchange.index') }}" style="font-size: 0.85rem;"><i class="fas fa-exchange-alt me-2 text-warning"></i>{{ __('Đổi thẻ cào') }}</a></li>
-                                    <li><a class="dropdown-item py-1 fw-bold" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank" style="color: #0068ff; font-size: 0.85rem;"><i class="fas fa-users me-2"></i>{{ __('Nhóm Zalo') }}</a></li>
-                                    <li><a class="dropdown-item py-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal" style="font-size: 0.85rem;"><i class="fa-solid fa-headset me-2 text-primary"></i>{{ __('Liên hệ') }}</a></li>
-                                </ul>
+                        </li>
+                        @if($menuZaloGroup)
+                        <li>
+                            <a class="dropdown-item" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank">
+                                <i class="fa-solid fa-users me-2 text-primary"></i>
+                                <span style="color: #0068ff;">{{ __('Nhóm Zalo hỗ trợ') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        {{-- Switcher ngôn ngữ trên Mobile --}}
+                        <li class="d-lg-none px-3 py-1.5 my-1">
+                            <div class="d-flex align-items-center justify-content-between p-1 bg-light rounded-pill border" style="font-size: 11px;">
+                                <a href="{{ route('change-language', 'vi') }}" class="btn btn-sm rounded-pill flex-fill text-center py-1 {{ app()->getLocale() === 'vi' ? 'bg-white shadow-xs fw-bold text-primary' : 'text-muted' }}" style="font-size: 11px;">
+                                    <img src="https://flagcdn.com/w40/vn.png" width="14" alt="VN" class="me-1 rounded-1">Tiếng Việt
+                                </a>
+                                <a href="{{ route('change-language', 'en') }}" class="btn btn-sm rounded-pill flex-fill text-center py-1 {{ app()->getLocale() === 'en' ? 'bg-white shadow-xs fw-bold text-primary' : 'text-muted' }}" style="font-size: 11px;">
+                                    <img src="https://flagcdn.com/w40/us.png" width="14" alt="US" class="me-1 rounded-1">English
+                                </a>
                             </div>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
-                        
-                        {{-- Language Selector Collapsible in User Dropdown (Mobile Only) --}}
-                        <li class="d-lg-none">
-                            <a class="dropdown-item d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileLangCollapse" role="button" aria-expanded="false" aria-controls="mobileLangCollapse" onclick="event.stopPropagation();">
-                                <span>
-                                    @if(app()->getLocale() === 'en')
-                                        <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" class="me-2" style="border-radius: 2px;">
-                                    @else
-                                        <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" class="me-2" style="border-radius: 2px;">
-                                    @endif
-                                    {{ __('Ngôn ngữ') }}
-                                </span>
-                                <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem;"></i>
-                            </a>
-                            <div class="collapse px-2" id="mobileLangCollapse" onclick="event.stopPropagation();">
-                                <ul class="list-unstyled ps-3 bg-light rounded py-1 my-1">
-                                    <li>
-                                        <a class="dropdown-item py-1 d-flex align-items-center gap-2 {{ app()->getLocale() === 'vi' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'vi') }}" style="font-size: 0.85rem;">
-                                            <img src="https://flagcdn.com/w40/vn.png" width="18" alt="VN" style="border-radius: 2px;">
-                                            {{ __('Tiếng Việt') }}
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item py-1 d-flex align-items-center gap-2 {{ app()->getLocale() === 'en' ? 'active fw-bold' : '' }}" href="{{ route('change-language', 'en') }}" style="font-size: 0.85rem;">
-                                            <img src="https://flagcdn.com/w40/us.png" width="18" alt="US" style="border-radius: 2px;">
-                                            English
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="d-lg-none"><hr class="dropdown-divider"></li>
-                        
-                        <li><a class="dropdown-item" href="{{ route('minigame.index') }}"><i class="fas fa-gamepad me-2 text-danger"></i>{{ __('Vòng xoay may mắn') }}</a></li>
-                        <li><a class="dropdown-item" href="{{ route('user.account') }}"><i class="fas fa-user me-2"></i>{{ __('Tài khoản') }}</a></li>
-                        <li><a class="dropdown-item" href="{{ route('user.orders') }}"><i class="fas fa-box me-2"></i>{{ __('Đơn hàng') }}</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST">
+
+                        <li><hr class="dropdown-divider my-1"></li>
+
+                        {{-- 6. Đăng xuất --}}
+                        <li class="pb-1">
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
                                 @csrf
-                                <button type="submit" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i>{{ __('Đăng xuất') }}</button>
+                                <button type="submit" class="dropdown-item text-danger fw-semibold">
+                                    <i class="fas fa-sign-out-alt me-2"></i>{{ __('Đăng xuất') }}
+                                </button>
                             </form>
                         </li>
                     </ul>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="nav-icon-btn d-flex align-items-center justify-content-center text-decoration-none" title="{{ __('Đăng nhập') }}">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                </a>
+                {{-- Guest Dropdown Menu --}}
+                <div class="dropdown">
+                    <button class="nav-icon-btn d-flex align-items-center justify-content-center" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('Tài khoản & Tiện ích') }}" style="border-radius: 50%;" aria-label="{{ __('Menu tài khoản') }}">
+                        <i class="fa-solid fa-circle-user" style="font-size: 1.25rem; color: #ff5e00;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-techfeed user-menu-dropdown p-0">
+                        {{-- Welcome Header --}}
+                        <li class="px-3 py-3 border-bottom text-center" style="background: linear-gradient(135deg, rgba(255, 94, 0, 0.05) 0%, rgba(255, 142, 67, 0.1) 100%);">
+                            <div class="fw-bold text-dark mb-1" style="font-size: 13.5px;">{{ __('Chào mừng đến với DungThu!') }}</div>
+                            <div class="text-muted mb-2" style="font-size: 11.5px;">{{ __('Đăng nhập để nhận ưu đãi & lưu đơn') }}</div>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <a href="{{ route('login') }}" class="btn btn-sm text-white fw-bold px-3 rounded-pill" style="background: linear-gradient(135deg, #ff5e00, #ff8e43); font-size: 12px;">
+                                    <i class="fa-solid fa-right-to-bracket me-1"></i>{{ __('Đăng nhập') }}
+                                </a>
+                                @if(Route::has('register'))
+                                <a href="{{ route('register') }}" class="btn btn-sm btn-outline-secondary fw-semibold px-3 rounded-pill" style="font-size: 12px;">
+                                    {{ __('Đăng ký') }}
+                                </a>
+                                @endif
+                            </div>
+                        </li>
+
+                        {{-- Tải App Nổi Bật Cho Guest --}}
+                        <li class="pt-2">
+                            <a class="dropdown-item dropdown-item-app py-2 my-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#appDownloadModal">
+                                <div class="d-flex align-items-center justify-content-between w-100">
+                                    <span class="d-flex align-items-center fw-bold" style="color: #ff5e00;">
+                                        <i class="fa-solid fa-cloud-arrow-down me-2" style="font-size: 14px;"></i>
+                                        {{ __('Tải App Dùng Thử') }}
+                                    </span>
+                                    <span class="badge rounded-pill text-white" style="background: linear-gradient(135deg, #ff5e00, #ff8e43); font-size: 9.5px; font-weight: 700; padding: 2px 7px;">
+                                        FREE
+                                    </span>
+                                </div>
+                            </a>
+                        </li>
+
+                        @if($menuWebdesign)
+                        <li class="d-xl-none">
+                            <a class="dropdown-item" href="{{ route('web-design') }}">
+                                <i class="fa-solid fa-code me-2 text-primary"></i>
+                                <span>{{ __('Thiết kế Website') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        @if($menuVpn)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('vpn.index') }}">
+                                <i class="fa-solid fa-network-wired me-2 text-info"></i>
+                                <span>{{ __('Dịch vụ VPN') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        @if($menuCardExchange)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('card-exchange.index') }}">
+                                <i class="fa-solid fa-credit-card me-2 text-warning"></i>
+                                <span>{{ __('Đổi thẻ cào') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        @if($menuMinigame)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('minigame.index') }}">
+                                <i class="fa-solid fa-gamepad me-2 text-danger"></i>
+                                <span>{{ __('Vòng xoay may mắn') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        <li><hr class="dropdown-divider my-1"></li>
+
+                        <li>
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quickContactModal">
+                                <i class="fa-solid fa-headset me-2 text-primary"></i>
+                                <span>{{ __('Hỗ trợ & Liên hệ') }}</span>
+                            </a>
+                        </li>
+                        @if($menuZaloGroup)
+                        <li>
+                            <a class="dropdown-item" href="{{ \App\Models\SiteSetting::getValue('zalo_group_link', 'https://zalo.me/g/ptarfhnomeuotiyk7cot') }}" target="_blank">
+                                <i class="fa-solid fa-users me-2 text-primary"></i>
+                                <span style="color: #0068ff;">{{ __('Nhóm Zalo hỗ trợ') }}</span>
+                            </a>
+                        </li>
+                        @endif
+
+                        {{-- Mobile Language Switcher --}}
+                        <li class="d-lg-none px-3 py-1.5 my-1">
+                            <div class="d-flex align-items-center justify-content-between p-1 bg-light rounded-pill border" style="font-size: 11px;">
+                                <a href="{{ route('change-language', 'vi') }}" class="btn btn-sm rounded-pill flex-fill text-center py-1 {{ app()->getLocale() === 'vi' ? 'bg-white shadow-xs fw-bold text-primary' : 'text-muted' }}" style="font-size: 11px;">
+                                    <img src="https://flagcdn.com/w40/vn.png" width="14" alt="VN" class="me-1 rounded-1">Tiếng Việt
+                                </a>
+                                <a href="{{ route('change-language', 'en') }}" class="btn btn-sm rounded-pill flex-fill text-center py-1 {{ app()->getLocale() === 'en' ? 'bg-white shadow-xs fw-bold text-primary' : 'text-muted' }}" style="font-size: 11px;">
+                                    <img src="https://flagcdn.com/w40/us.png" width="14" alt="US" class="me-1 rounded-1">English
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             @endauth
         </div>
     </div>
@@ -480,9 +667,9 @@
         max-height: calc(100vh - 75px) !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
-        min-width: 220px !important;
-        max-width: 270px !important;
-        padding: 6px 0;
+        min-width: 250px !important;
+        max-width: 285px !important;
+        padding: 4px 0 !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
         border: 1px solid rgba(0, 0, 0, 0.08) !important;
         border-radius: 14px !important;
@@ -532,15 +719,15 @@
     .shadow-techfeed .dropdown-item {
         display: flex !important;
         align-items: center !important;
-        padding: 8px 14px !important;
-        font-size: 13.5px !important;
+        padding: 7px 12px !important;
+        font-size: 13px !important;
         color: #1f2937 !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         transition: background-color 0.15s ease, color 0.15s ease !important;
         border-radius: 8px !important;
-        margin: 2px 6px !important;
+        margin: 1.5px 6px !important;
         width: calc(100% - 12px) !important;
         box-sizing: border-box !important;
     }
@@ -563,12 +750,57 @@
         font-weight: 700;
     }
 
+    /* Dropdown Section Titles & Avatars */
+    .dropdown-section-title {
+        font-size: 10px !important;
+        letter-spacing: 0.5px !important;
+        font-weight: 700 !important;
+        color: #94a3b8 !important;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .user-avatar-mini {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff5e00 0%, #ff8e43 100%);
+        color: #fff;
+        font-weight: 700;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .dropdown-item-app {
+        border-radius: 8px !important;
+        transition: transform 0.15s ease, background 0.15s ease !important;
+    }
+
+    .dropdown-item-app:hover {
+        background: linear-gradient(135deg, rgba(255, 94, 0, 0.14) 0%, rgba(255, 142, 67, 0.18) 100%) !important;
+        transform: translateX(2px);
+    }
+
+    .btn-webdesign-cta {
+        transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    }
+
+    .btn-webdesign-cta:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 94, 0, 0.35) !important;
+        color: #ffffff !important;
+    }
+
     @media (max-width: 576px) {
-        .shadow-techfeed.dropdown-menu {
+        .shadow-techfeed.dropdown-menu,
+        .user-menu-dropdown {
             right: 6px !important;
             left: auto !important;
-            max-width: calc(100vw - 20px) !important;
-            width: 250px !important;
+            max-width: calc(100vw - 16px) !important;
+            width: 275px !important;
         }
     }
 

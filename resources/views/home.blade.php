@@ -2089,7 +2089,12 @@
                         </div>
                         <div class="combo-product-grid">
                             @foreach($featuredProducts->take(6) as $fp)
-                            <a href="{{ route('product.show', $fp->slug) }}" class="combo-prod-card {{ $fp->stock <= 0 ? 'out-of-stock' : '' }}">
+                            @php
+                                $fpHasVariants = $fp->hasVariants();
+                                $fpInStock = $fp->isInStock();
+                                $fpStock = $fp->available_stock;
+                            @endphp
+                            <a href="{{ route('product.show', $fp->slug) }}" class="combo-prod-card {{ !$fpInStock ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
                                     <img src="{{ $fp->image_url }}" loading="lazy" decoding="async"
                                          onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';"
@@ -2102,7 +2107,7 @@
                                 <div class="card-body">
                                     <div class="prod-name">{{ $fp->name }}</div>
                                     <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        <span>{{ __('Còn:') }} <span class="{{ $fp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $fp->stock }}</span></span>
+                                        <span>{{ __('Còn:') }} <span class="{{ !$fpInStock ? 'text-danger' : 'text-success' }}">{{ $fpStock }}</span></span>
                                         <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($fp->sold_count) }}</span></span>
                                     </div>
                                     <div class="prod-price-row">
@@ -2111,18 +2116,14 @@
                                             <span class="prod-price-old"><small style="text-decoration:none; color:#9ca3af;">Gốc:</small> {{ $fp->formatted_original_price }}</span>
                                         @endif
                                     </div>
-                                    @if($fp->stock > 0)
-                                    <form action="{{ route('cart.add', $fp->id) }}" method="POST"
-                                          onclick="event.preventDefault(); this.submit();">
-                                        @csrf
-                                        <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
-                                        </button>
-                                    </form>
-                                    @else
+                                    @if(!$fpInStock)
                                     <button type="button" class="add-cart-btn text-muted" style="cursor: not-allowed; opacity: 0.6; background: #e5e7eb; pointer-events: none;" disabled>
                                         <i class="fa-solid fa-ban"></i> {{ __('Hết hàng') }}
                                     </button>
+                                    @else
+                                    <span class="add-cart-btn" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">
+                                        <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
+                                    </span>
                                     @endif
                                 </div>
                             </a>
@@ -2139,7 +2140,12 @@
                         </div>
                         <div class="combo-product-grid">
                             @foreach($highlightProducts->take(6) as $hp)
-                            <a href="{{ route('product.show', $hp->slug) }}" class="combo-prod-card {{ $hp->stock <= 0 ? 'out-of-stock' : '' }}">
+                            @php
+                                $hpHasVariants = $hp->hasVariants();
+                                $hpInStock = $hp->isInStock();
+                                $hpStock = $hp->available_stock;
+                            @endphp
+                            <a href="{{ route('product.show', $hp->slug) }}" class="combo-prod-card {{ !$hpInStock ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
                                     <img src="{{ $hp->image_url }}" loading="lazy" decoding="async"
                                          onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';"
@@ -2152,7 +2158,7 @@
                                 <div class="card-body">
                                     <div class="prod-name">{{ $hp->name }}</div>
                                     <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        <span>{{ __('Còn:') }} <span class="{{ $hp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $hp->stock }}</span></span>
+                                        <span>{{ __('Còn:') }} <span class="{{ !$hpInStock ? 'text-danger' : 'text-success' }}">{{ $hpStock }}</span></span>
                                         <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($hp->sold_count) }}</span></span>
                                     </div>
                                     <div class="prod-price-row">
@@ -2161,18 +2167,14 @@
                                             <span class="prod-price-old"><small style="text-decoration:none; color:#9ca3af;">Gốc:</small> {{ $hp->formatted_original_price }}</span>
                                         @endif
                                     </div>
-                                    @if($hp->stock > 0)
-                                    <form action="{{ route('cart.add', $hp->id) }}" method="POST"
-                                          onclick="event.preventDefault(); this.submit();">
-                                        @csrf
-                                        <button type="submit" class="add-cart-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
-                                        </button>
-                                    </form>
-                                    @else
+                                    @if(!$hpInStock)
                                     <button type="button" class="add-cart-btn text-muted" style="cursor: not-allowed; opacity: 0.6; background: #e5e7eb; pointer-events: none;" disabled>
                                         <i class="fa-solid fa-ban"></i> {{ __('Hết hàng') }}
                                     </button>
+                                    @else
+                                    <span class="add-cart-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
+                                        <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
+                                    </span>
                                     @endif
                                 </div>
                             </a>
@@ -2189,7 +2191,12 @@
                         </div>
                         <div class="combo-product-grid">
                             @foreach($latestProducts->take(12) as $cp)
-                            <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card {{ $cp->stock <= 0 ? 'out-of-stock' : '' }}">
+                            @php
+                                $cpHasVariants = $cp->hasVariants();
+                                $cpInStock = $cp->isInStock();
+                                $cpStock = $cp->available_stock;
+                            @endphp
+                            <a href="{{ route('product.show', $cp->slug) }}" class="combo-prod-card {{ !$cpInStock ? 'out-of-stock' : '' }}">
                                 <div class="img-wrap">
                                     <img src="{{ $cp->image_url }}" loading="lazy" decoding="async"
                                          onerror="this.onerror=null;this.src='{{ asset('images/dungthu.png') }}';"
@@ -2201,7 +2208,7 @@
                                 <div class="card-body">
                                     <div class="prod-name">{{ $cp->name }}</div>
                                     <div class="d-flex justify-content-between align-items-center" style="font-size: 0.72rem; color: #6b7280; font-weight: 600; margin-bottom: 4px;">
-                                        <span>{{ __('Còn:') }} <span class="{{ $cp->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $cp->stock }}</span></span>
+                                        <span>{{ __('Còn:') }} <span class="{{ !$cpInStock ? 'text-danger' : 'text-success' }}">{{ $cpStock }}</span></span>
                                         <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($cp->sold_count) }}</span></span>
                                     </div>
                                     <div class="prod-price-row">
@@ -2210,18 +2217,14 @@
                                             <span class="prod-price-old"><small style="text-decoration:none; color:#9ca3af;">Gốc:</small> {{ $cp->formatted_original_price }}</span>
                                         @endif
                                     </div>
-                                    @if($cp->stock > 0)
-                                    <form action="{{ route('cart.add', $cp->id) }}" method="POST"
-                                          onclick="event.preventDefault(); this.submit();">
-                                        @csrf
-                                        <button type="submit" class="add-cart-btn">
-                                            <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
-                                        </button>
-                                    </form>
-                                    @else
+                                    @if(!$cpInStock)
                                     <button type="button" class="add-cart-btn text-muted" style="cursor: not-allowed; opacity: 0.6; background: #e5e7eb; pointer-events: none;" disabled>
                                         <i class="fa-solid fa-ban"></i> {{ __('Hết hàng') }}
                                     </button>
+                                    @else
+                                    <span class="add-cart-btn">
+                                        <i class="fa-solid fa-cart-plus"></i> {{ __('Thêm vào giỏ') }}
+                                    </span>
                                     @endif
                                 </div>
                             </a>
@@ -2352,7 +2355,7 @@
                                         <div class="name">{{ $prod->name }}</div>
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="price">{{ $prod->formatted_price }}</div>
-                                            @if($prod->stock <= 0)
+                                            @if(!$prod->isInStock())
                                                 <span class="text-danger fw-bold" style="font-size: 0.7rem;">{{ __('Hết hàng') }}</span>
                                             @endif
                                         </div>

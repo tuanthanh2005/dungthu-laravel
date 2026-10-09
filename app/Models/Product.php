@@ -82,12 +82,16 @@ class Product extends Model
         \Illuminate\Support\Facades\Cache::forget('home.categories');
         \Illuminate\Support\Facades\Cache::forget('home.featured_products');
         \Illuminate\Support\Facades\Cache::forget('home.featured_products.v2');
+        \Illuminate\Support\Facades\Cache::forget('home.featured_products.v3');
         \Illuminate\Support\Facades\Cache::forget('home.highlight_products');
         \Illuminate\Support\Facades\Cache::forget('home.highlight_products.v2');
+        \Illuminate\Support\Facades\Cache::forget('home.highlight_products.v3');
         \Illuminate\Support\Facades\Cache::forget('home.latest_products');
         \Illuminate\Support\Facades\Cache::forget('home.latest_products.v2');
+        \Illuminate\Support\Facades\Cache::forget('home.latest_products.v3');
         \Illuminate\Support\Facades\Cache::forget('home.sale_products');
         \Illuminate\Support\Facades\Cache::forget('home.sale_products.v2');
+        \Illuminate\Support\Facades\Cache::forget('home.sale_products.v3');
         \Illuminate\Support\Facades\Cache::forget('home.banner_products');
         \Illuminate\Support\Facades\Cache::forget('home.banner_products.' . date('YmdH'));
     }
@@ -368,10 +372,24 @@ class Product extends Model
         return asset('images/products/' . basename($trimmed));
     }
 
-    // Check còn hàng
-    public function isInStock()
+    // Tồn kho thực tế (hỗ trợ sản phẩm có biến thể/gói dịch vụ)
+    public function getAvailableStockAttribute(): int
     {
-        return $this->stock > 0;
+        if ($this->hasVariants()) {
+            return (int) ($this->relationLoaded('activeVariants')
+                ? $this->activeVariants->sum('stock')
+                : $this->activeVariants()->sum('stock'));
+        }
+        return (int) ($this->attributes['stock'] ?? 0);
+    }
+
+    // Check còn hàng
+    public function isInStock(): bool
+    {
+        if ($this->hasVariants()) {
+            return (bool) ($this->available_stock > 0);
+        }
+        return (int) ($this->stock ?? 0) > 0;
     }
 
     // Số lượng đã bán (Thực tế từ DB + Số ảo fake_sold hoặc tự động sinh số ngẫu nhiên theo ID)

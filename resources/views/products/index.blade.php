@@ -6,7 +6,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ filemtime(\App\Helpers\PathHelper::publicRootPath('css/category-filter.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/category-filter.css') }}?v={{ @filemtime(\App\Helpers\PathHelper::publicRootPath('css/category-filter.css')) ?: time() }}">
     <style>
         /* Shop Hero Section */
         .shop-hero {
@@ -394,6 +394,7 @@
             transition: all 0.3s;
             cursor: pointer;
             font-size: 1.1rem;
+            text-decoration: none;
         }
         .btn-add-cart:hover {
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
@@ -831,13 +832,18 @@
     @if($items->count() > 0)
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4 product-grid">
         @foreach($items as $product)
+        @php
+            $pHasVariants = $product->hasVariants();
+            $pInStock = $product->isInStock();
+            $pStock = $product->available_stock;
+        @endphp
         <div class="col" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 8) * 50 }}">
-            <div class="product-card-modern {{ $product->stock <= 0 ? 'out-of-stock' : '' }}">
+            <div class="product-card-modern {{ !$pInStock ? 'out-of-stock' : '' }}">
                 <a href="{{ route('product.show', $product->slug) }}" class="text-decoration-none d-block position-relative">
                     <div class="product-image-wrapper">
                         <div class="product-badges">
                             <span class="badge-category">{{ strtoupper($product->category) }}</span>
-                            @if($product->stock <= 0)
+                            @if(!$pInStock)
                                 <span class="badge bg-danger text-white px-2 py-1" style="font-size: 0.7rem; border-radius: 30px;">{{ __('HẾT HÀNG') }}</span>
                             @elseif($product->is_on_sale)
                                 <span class="badge-sale">-{{ $product->discount_percent }}%</span>
@@ -867,7 +873,7 @@
                     @endif
                     
                     <div class="stock-display d-flex justify-content-between align-items-center mb-2" style="font-size: 0.75rem; color: #636e72; font-weight: 600;">
-                        <span>{{ __('Còn:') }} <span class="{{ $product->stock <= 0 ? 'text-danger' : 'text-success' }}">{{ $product->stock }}</span></span>
+                        <span>{{ __('Còn:') }} <span class="{{ !$pInStock ? 'text-danger' : 'text-success' }}">{{ $pStock }}</span></span>
                         <span>{{ __('Đã Bán:') }} <span class="text-secondary">{{ number_format($product->sold_count) }}</span></span>
                     </div>
                     
@@ -878,17 +884,14 @@
                                 <span class="price-old"><small style="text-decoration:none; color:#b2bec3;">Gốc:</small> {{ $product->formatted_original_price }}</span>
                             @endif
                         </div>
-                        @if($product->stock > 0)
-                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="m-0 p-0">
-                            @csrf
-                            <button type="submit" class="btn-add-cart" title="{{ __('Thêm vào giỏ') }}">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </form>
-                        @else
+                        @if(!$pInStock)
                         <button type="button" class="btn-add-cart text-muted" style="cursor: not-allowed; opacity: 0.5;" title="{{ __('Hết hàng') }}" disabled>
                             <i class="fas fa-ban"></i>
                         </button>
+                        @else
+                        <a href="{{ route('product.show', $product->slug) }}" class="btn-add-cart d-inline-flex align-items-center justify-content-center text-decoration-none" title="{{ __('Thêm vào giỏ') }}">
+                            <i class="fas fa-cart-plus"></i>
+                        </a>
                         @endif
                     </div>
                 </div>

@@ -36,6 +36,33 @@ class ProductVariant extends Model
         'sort_order' => 'integer',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($variant) {
+            Product::clearHomeCache();
+            if ($variant->product_id) {
+                $product = Product::find($variant->product_id);
+                if ($product) {
+                    $totalStock = (int) $product->activeVariants()->sum('stock');
+                    $product->updateQuietly(['stock' => $totalStock]);
+                }
+            }
+        });
+
+        static::deleted(function ($variant) {
+            Product::clearHomeCache();
+            if ($variant->product_id) {
+                $product = Product::find($variant->product_id);
+                if ($product) {
+                    $totalStock = (int) $product->activeVariants()->sum('stock');
+                    $product->updateQuietly(['stock' => $totalStock]);
+                }
+            }
+        });
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -18,6 +18,58 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
+        $adjusted = false;
+        $messages = [];
+
+        foreach ($cart as $id => $details) {
+            $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+            $variantId = $details['variant_id'] ?? null;
+            $product = Product::find($productId);
+
+            if (!$product) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm không tồn tại đã được xóa khỏi giỏ hàng.";
+                continue;
+            }
+
+            if ($product->hasVariants() && !$variantId) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm '{$product->name}' có nhiều gói dịch vụ, vui lòng vào trang chi tiết để chọn gói phù hợp.";
+                continue;
+            }
+
+            if ($variantId) {
+                $variant = ProductVariant::find($variantId);
+                if (!$variant || !$variant->is_active) {
+                    unset($cart[$id]);
+                    $adjusted = true;
+                    $messages[] = "Gói dịch vụ không còn khả dụng và đã được xóa khỏi giỏ hàng.";
+                    continue;
+                }
+                if ($variant->stock <= 0) {
+                    unset($cart[$id]);
+                    $adjusted = true;
+                    $messages[] = "Gói dịch vụ '{$variant->name}' đã hết hàng và được xóa khỏi giỏ hàng.";
+                    continue;
+                }
+            } elseif ($product->stock <= 0) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm '{$product->name}' đã hết hàng và được xóa khỏi giỏ hàng.";
+                continue;
+            }
+        }
+
+        if ($adjusted) {
+            session()->put('cart', $cart);
+            $this->syncAbandonedCart($cart);
+            if (!empty($messages)) {
+                session()->flash('error', implode(' ', $messages));
+            }
+        }
+
         return view('cart.index', compact('cart'));
     }
 
@@ -32,6 +84,9 @@ class CartController extends Controller
             if ($variant->stock <= 0) {
                 return redirect()->back()->with('error', 'Gói dịch vụ "' . $variant->name . '" hiện đã hết hàng!');
             }
+        } elseif ($product->hasVariants()) {
+            return redirect()->route('product.show', $product->slug)
+                ->with('error', 'Sản phẩm có nhiều gói dịch vụ, vui lòng vào trang chi tiết để chọn gói phù hợp!');
         } elseif ($product->stock <= 0) {
             return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
         }
@@ -77,6 +132,9 @@ class CartController extends Controller
             if ($variant->stock <= 0) {
                 return redirect()->back()->with('error', 'Gói dịch vụ "' . $variant->name . '" hiện đã hết hàng!');
             }
+        } elseif ($product->hasVariants()) {
+            return redirect()->route('product.show', $product->slug)
+                ->with('error', 'Sản phẩm có nhiều gói dịch vụ, vui lòng vào trang chi tiết để chọn gói phù hợp!');
         } elseif ($product->stock <= 0) {
             return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
         }
@@ -215,6 +273,11 @@ class CartController extends Controller
                 }
                 $currentStock = $variant->stock;
                 $itemName = $product->name . ' (' . $variant->name . ')';
+            } elseif ($product->hasVariants()) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm '{$product->name}' yêu cầu chọn gói dịch vụ cụ thể và đã được xóa khỏi giỏ hàng.";
+                continue;
             }
 
             if ($currentStock <= 0) {
@@ -405,6 +468,9 @@ class CartController extends Controller
                 }
                 $currentStock = $variant->stock;
                 $itemName = $product->name . ' (' . $variant->name . ')';
+            } elseif ($product->hasVariants()) {
+                $outOfStockMessages[] = "Sản phẩm '{$product->name}' yêu cầu chọn gói dịch vụ cụ thể trước khi thanh toán.";
+                continue;
             }
 
             if ($currentStock < $details['quantity']) {

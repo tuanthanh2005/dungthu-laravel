@@ -311,7 +311,7 @@ class ProductController extends Controller
         $keywordLinks = self::seoKeywords();
         
         // Xử lý products
-        $query = Product::query()->active()->withSoldCount();
+        $query = Product::query()->active()->withSoldCount()->with(['activeVariants']);
         
         // Filter theo category_id nếu có
         if ($currentCategoryId != 'all') {
@@ -352,7 +352,7 @@ class ProductController extends Controller
             ->get();
         $keywordLinks = self::seoKeywords();
 
-        $query = Product::query()->active()->withSoldCount();
+        $query = Product::query()->active()->withSoldCount()->with(['activeVariants']);
         $this->applyKeywordSearch($query, $aliases);
 
         $items = $query->latest()->paginate(18)->withQueryString();

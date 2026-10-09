@@ -1059,9 +1059,7 @@ class AdminController extends Controller
                     $totalVariantStock += $stock;
                 }
             }
-            if ($totalVariantStock > 0) {
-                $product->update(['stock' => $totalVariantStock]);
-            }
+            $product->update(['stock' => $totalVariantStock]);
         }
 
         // Submit to Google Indexing
@@ -1334,9 +1332,7 @@ class AdminController extends Controller
                 }
             }
             ProductVariant::where('product_id', $product->id)->whereNotIn('id', $keptIds)->delete();
-            if ($totalVariantStock > 0) {
-                $product->update(['stock' => $totalVariantStock]);
-            }
+            $product->update(['stock' => $totalVariantStock]);
         } else {
             ProductVariant::where('product_id', $product->id)->delete();
         }

@@ -364,6 +364,11 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="dropdown-item" href="{{ route('admin.web-design.index') }}">
+                                        <i class="fas fa-palette me-2 text-success"></i>{{ __('Quản lý Web Design') }}
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="{{ route('admin.proxies') }}">
                                         <i class="fas fa-network-wired me-2 text-info"></i>{{ __('Quản lý Proxy') }}
                                     </a>

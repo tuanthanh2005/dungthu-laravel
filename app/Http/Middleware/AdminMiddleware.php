@@ -57,6 +57,7 @@ class AdminMiddleware
                 'admin.suspicious-ips*',
                 'admin.coupons*',
                 'admin.menu-settings*',
+                'admin.web-design*',
                 'admin.google-indexing.submit-all',
                 'admin.telegram*',
             ];

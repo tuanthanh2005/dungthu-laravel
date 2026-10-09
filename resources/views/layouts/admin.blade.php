@@ -264,6 +264,11 @@
             <span class="nav-icon"><i class="fas fa-sliders-h"></i></span>
             <span class="nav-text">Menu Settings</span>
         </a>
+        <a href="{{ route('admin.web-design.index') }}"
+           class="sidebar-nav-item {{ request()->routeIs('admin.web-design*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-palette"></i></span>
+            <span class="nav-text">Thiết kế Website</span>
+        </a>
         @endif
 
         @if(auth()->user()->role === 'superadmin_1')

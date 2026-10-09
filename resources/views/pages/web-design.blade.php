@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Thiết kế website giá rẻ'))
+@section('title', $heroTitle ?? __('Thiết kế website giá rẻ'))
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -9,46 +9,74 @@
         background: #fff;
         border: 1px solid rgba(0,0,0,0.06);
         border-radius: 16px;
-        padding: 16px;
+        padding: 20px;
         height: 100%;
-        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .web-design-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0,0,0,0.1);
     }
     .web-design-card .price {
         font-weight: 800;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         color: #1d4ed8;
     }
     .web-design-card ul {
         padding-left: 18px;
-        margin: 10px 0 0;
+        margin: 12px 0 0;
+        flex-grow: 1;
     }
     .web-design-card li {
-        margin-bottom: 6px;
+        margin-bottom: 7px;
+        line-height: 1.45;
+    }
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 3px;
+        color: #1d4ed8;
+        font-weight: 600;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #ff5e00;
+        border-color: #ff5e00;
+        color: #fff;
     }
 </style>
 @endpush
 
 @section('content')
 <div class="container py-2" style="margin-top: 50px;">
+    {{-- Hero Section --}}
     <div class="row mb-4" data-aos="fade-down">
         <div class="col-12 text-center">
-            <h1 class="fw-bold mb-3">{{ __('Thiết kế website giá rẻ') }}</h1>
-            <p class="text-muted">{{ __('Trao đổi nhanh, chốt trong 1-2 tiếng. Thiết kế chuẩn SEO, tối ưu mobile, bàn giao nhanh.') }}</p>
+            <h1 class="fw-bold mb-3">{{ $heroTitle }}</h1>
+            @if(!empty($heroSubtitle))
+                <p class="text-muted fs-6 mb-0">{{ $heroSubtitle }}</p>
+            @endif
         </div>
     </div>
 
+    {{-- Service Intro Card --}}
     <div class="row mb-4" data-aos="fade-up">
         <div class="col-12">
             <div class="card shadow-sm border-0" style="border-radius: 16px;">
                 <div class="card-body p-4">
-                    <div class="d-flex flex-wrap justify-content-between align-items-end">
-                        <div>
-                            <span class="text-primary fw-bold text-uppercase ls-1">{{ __('Dịch vụ') }}</span>
-                            <h3 class="fw-bold section-title mb-2">{{ __('Thiết kế website giá rẻ') }}</h3>
-                            <p class="text-muted mb-0">{{ __('Chỉ nhận: website bán hàng, website blog, website tin tức. Vui lòng liên hệ qua Zalo hoặc Facebook. Thời gian thiết kế 3-14 ngày tùy độ phức tạp. Tên domain và hosting shop sẽ đứng hộ để bảo trì nâng cấp.') }}</p>
+                    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+                        <div class="flex-grow-1">
+                            @if(!empty($serviceTag))
+                                <span class="text-primary fw-bold text-uppercase ls-1" style="font-size: 13px;">{{ $serviceTag }}</span>
+                            @endif
+                            <h3 class="fw-bold section-title mb-2 mt-1">{{ $serviceTitle }}</h3>
+                            @if(!empty($serviceDesc))
+                                <p class="text-muted mb-0" style="line-height: 1.6;">{{ $serviceDesc }}</p>
+                            @endif
                         </div>
-                        <a href="#" class="btn btn-primary rounded-pill px-4 mt-3 mt-md-0" data-bs-toggle="modal" data-bs-target="#contactModal">
-                            {{ __('Nhận tư vấn') }}
+                        <a href="javascript:void(0)" class="btn btn-primary rounded-pill px-4 py-2 fw-bold text-nowrap" data-bs-toggle="modal" data-bs-target="#quickContactModal">
+                            <i class="fa-solid fa-headset me-1"></i> {{ $btnText ?: __('Nhận tư vấn') }}
                         </a>
                     </div>
                 </div>
@@ -56,68 +84,67 @@
         </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-3 g-md-4" data-aos="fade-up">
-        <div class="col">
-            <div class="web-design-card">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="fw-bold mb-0">{{ __('Gói Starter') }}</h6>
-                    <span class="badge bg-primary">{{ __('Phổ biến') }}</span>
+    {{-- Packages Grid: 1 hàng 3 gói, thêm gói thứ 4 sẽ tự động xuống hàng, phân trang 6 gói/trang --}}
+    <div class="row row-cols-1 row-cols-md-3 g-3 g-md-4 mb-4" data-aos="fade-up">
+        @forelse($packages as $package)
+            <div class="col">
+                <div class="web-design-card">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold mb-0 text-dark fs-5">{{ $package->name }}</h6>
+                        @if($package->badge)
+                            <span class="badge bg-{{ $package->badge_color ?? 'primary' }} rounded-pill px-2.5 py-1">
+                                {{ $package->badge }}
+                            </span>
+                        @endif
+                    </div>
+                    
+                    <div class="price mb-2">
+                        @if(app()->getLocale() === 'en')
+                            ${{ number_format($package->price / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) }}
+                        @else
+                            {{ number_format($package->price, 0, ',', '.') }}đ
+                        @endif
+                    </div>
+
+                    @php
+                        $features = is_array($package->features) ? $package->features : [];
+                    @endphp
+
+                    @if(!empty($features))
+                        <ul class="text-muted small">
+                            @foreach($features as $feature)
+                                <li>{{ $feature }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    <div class="mt-3 pt-3 border-top text-center">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-outline-primary rounded-pill w-100 fw-bold py-1.5" data-bs-toggle="modal" data-bs-target="#quickContactModal">
+                            {{ __('Đăng ký gói này') }}
+                        </a>
+                    </div>
                 </div>
-                <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(3000000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : '3.000.000đ' }}</div>
-                <ul class="text-muted small">
-                    <li>{{ __('Website 1-3 trang (Trang chủ, Giới thiệu, Liên hệ)') }}</li>
-                    <li>{{ __('Thêm 1 trang sản phẩm') }}</li>
-                    <li>{{ __('Giao diện chuẩn mobile, hiển thị đẹp trên điện thoại') }}</li>
-                    <li>{{ __('Bao gồm tên miền + hosting 1 năm') }}</li>
-                    <li>{{ __('Phù hợp lưu lượng nhỏ; nếu vào đông sẽ tư vấn nâng cấp') }}</li>
-                    <li>{{ __('Tốc độ tải nhanh, tối ưu hình ảnh cơ bản') }}</li>
-                    <li>{{ __('Hỗ trợ chỉnh sửa nhỏ trong 7 ngày') }}</li>
-                    <li>{{ __('Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web') }}</li>
-                </ul>
             </div>
-        </div>
-        <div class="col">
-            <div class="web-design-card">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="fw-bold mb-0">{{ __('Gói Business') }}</h6>
-                    <span class="badge bg-success">{{ __('Đề xuất') }}</span>
-                </div>
-                <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(4800000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : '4.800.000đ' }}</div>
-                <ul class="text-muted small">
-                    <li>{{ __('Website 5-7 trang (sản phẩm/dịch vụ, bảng giá, FAQ...)') }}</li>
-                    <li>{{ __('Form liên hệ + bản đồ Google Maps') }}</li>
-                    <li>{{ __('Bao gồm tên miền + hosting 1 năm') }}</li>
-                    <li>Phù hợp lưu lượng vừa; nếu vào đông sẽ tư vấn nâng cấp</li>
-                    <li>{{ __('Chuẩn SEO cơ bản (title, meta, sitemap)') }}</li>
-                    <li>{{ __('Hỗ trợ chỉnh sửa nội dung trong 30 ngày') }}</li>
-                    <li>{{ __('Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web') }}</li>
-                </ul>
+        @empty
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">{{ __('Hiện chưa có gói dịch vụ nào được công khai.') }}</p>
             </div>
-        </div>
-        <div class="col">
-            <div class="web-design-card">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="fw-bold mb-0">{{ __('Gói Pro') }}</h6>
-                    <span class="badge bg-warning text-dark">{{ __('Nâng cao') }}</span>
-                </div>
-                <div class="price">{{ app()->getLocale() === 'en' ? '$' . number_format(6700000 / \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000), 2) : '6.700.000đ' }}</div>
-                <ul class="text-muted small">
-                    <li>{{ __('Website 10+ trang, cấu trúc rõ ràng') }}</li>
-                    <li>{{ __('Blog + quản trị nội dung (đăng bài, danh mục)') }}</li>
-                    <li>{{ __('Bao gồm tên miền + hosting 1 năm') }}</li>
-                    <li>{{ __('Phù hợp lưu lượng lớn; nếu vào đông sẽ tư vấn nâng cấp') }}</li>
-                    <li>{{ __('Tracking & báo cáo (Google Analytics)') }}</li>
-                    <li>{{ __('Hỗ trợ bảo trì cơ bản 60 ngày') }}</li>
-                    <li>{{ __('Bàn giao là chạy ngay, khách chỉ cần chờ thời gian giao web') }}</li>
-                </ul>
-            </div>
-        </div>
+        @endforelse
     </div>
+
+    {{-- Phân trang (Từ gói thứ 7 trở đi sẽ hiển thị phân trang) --}}
+    @if($packages->hasPages())
+        <div class="d-flex justify-content-center mt-4 mb-3">
+            {{ $packages->links('pagination::bootstrap-5') }}
+        </div>
+    @endif
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    AOS.init({ duration: 800, once: true });
+    if (typeof AOS !== 'undefined') {
+        AOS.init({ duration: 800, once: true });
+    }
 </script>
 @endpush

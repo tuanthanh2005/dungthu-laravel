@@ -38,7 +38,7 @@ Route::get('/change-language/{locale}', function ($locale) {
 })->name('change-language');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::view('/thiet-ke-website', 'pages.web-design')->name('web-design');
+Route::get('/thiet-ke-website', [\App\Http\Controllers\WebDesignController::class, 'index'])->name('web-design');
 Route::view('/chinh-sach', 'pages.privacy')->name('policy');
 
 // App Download Route (Android APK, iOS, Desktop EXE)
@@ -388,6 +388,16 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // Menu Settings Management
     Route::get('/menu-settings', [AdminController::class, 'menuSettings'])->name('admin.menu-settings');
     Route::put('/menu-settings', [AdminController::class, 'updateMenuSettings'])->name('admin.menu-settings.update');
+
+    // Web Design Management (Cài đặt trang & Quản lý các gói)
+    Route::prefix('web-design')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'index'])->name('admin.web-design.index');
+        Route::put('/settings', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'updateSettings'])->name('admin.web-design.update-settings');
+        Route::post('/packages', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'storePackage'])->name('admin.web-design.packages.store');
+        Route::put('/packages/{package}', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'updatePackage'])->name('admin.web-design.packages.update');
+        Route::delete('/packages/{package}', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'destroyPackage'])->name('admin.web-design.packages.destroy');
+        Route::post('/packages/{package}/toggle', [\App\Http\Controllers\Admin\AdminWebDesignController::class, 'toggleStatus'])->name('admin.web-design.packages.toggle');
+    });
 
     // Pre-orders Management
     Route::get('/preorders', [AdminController::class, 'preorders'])->name('admin.preorders');

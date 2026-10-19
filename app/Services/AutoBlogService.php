@@ -650,22 +650,20 @@ PROMPT;
             @mkdir($rootPath, 0755, true);
         }
 
-        // CẤP 1 (ƯU TIÊN TUYỆT ĐỐI): Dùng chính ảnh / logo banner chuẩn của sản phẩm
-        // (Y hệt các mẫu Grok, Canva, Adobe, Cursor, Microsoft 365, IntelliJ trong ảnh mẫu)
+        // CẤP 1 (ƯU TIÊN TUYỆT ĐỐI): Tự động thiết kế ảnh banner mới cho bài viết:
+        // Lấy chính xác LOGO CỦA SẢN PHẨM đặt ở giữa, trang trí hiệu ứng quầng sáng (ambient glow), viền nền và huy hiệu
+        // (Mỗi lần viết bài tự động tạo 1 ảnh mới toanh, đổi màu nền theo chu kỳ để không trùng Google Index, đẹp y như tấm Zoom Pro)
         if (!empty($product->image)) {
-            $rawBytes = $this->getProductImageRawBytes($product);
-            if (!empty($rawBytes)) {
-                $ext = pathinfo(parse_url($product->image, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION) ?: 'jpg';
-                $cleanFileName = 'auto_p' . $product->id . '_c' . $cycle . '_' . time() . '_' . Str::random(6) . '.' . $ext;
-                $cleanRelativePath = '/' . $dir . '/' . $cleanFileName;
-
-                $this->saveImageToBothLocations($rawBytes, $cleanFileName, $dir);
-                Log::info("[AutoBlog] Sử dụng ảnh logo sản phẩm chuẩn cho SP #{$product->id} (Cycle #{$cycle})");
-                return $cleanRelativePath;
+            try {
+                $imageBytes = $this->compositeProductBanner($product, $angle, $runCount);
+                if (!empty($imageBytes)) {
+                    $this->saveImageToBothLocations($imageBytes, $fileName, $dir);
+                    Log::info("[AutoBlog] Tự động thiết kế banner logo chuẩn đẹp thành công cho SP #{$product->id} (Cycle #{$cycle})");
+                    return $relativePath;
+                }
+            } catch (\Throwable $e) {
+                Log::warning("[AutoBlog] Ghép ảnh logo sản phẩm lỗi: " . $e->getMessage());
             }
-
-            // Nếu không đọc được bytes (ví dụ CDN ngoài), dùng trực tiếp URL ảnh sản phẩm
-            return $product->image;
         }
 
         // CẤP 2: Nếu sản phẩm chưa có ảnh, vẽ banner gradient thương hiệu DungThu.com 1200x800 sang xịn mịn

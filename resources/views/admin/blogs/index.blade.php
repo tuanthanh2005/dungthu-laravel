@@ -349,8 +349,13 @@
 
             <!-- Thẻ 4: Lần chạy gần nhất -->
             <div class="col-md-3 col-6">
-                <div class="stat-glass-card">
-                    <div class="stat-glass-label"><i class="fas fa-clock me-1 text-success"></i> Chạy gần nhất</div>
+                <div class="stat-glass-card position-relative">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="stat-glass-label"><i class="fas fa-clock me-1 text-success"></i> Chạy gần nhất</div>
+                        <button type="button" class="btn btn-sm btn-outline-light border-0 py-0 px-2 text-white-50" title="Đặt lại mốc thời gian về Vừa xong" onclick="resetLastRunTime()" style="font-size: 11px; border-radius: 6px; background: rgba(255,255,255,0.08);">
+                            <i class="fas fa-sync-alt me-1"></i>Đặt lại
+                        </button>
+                    </div>
                     <div class="stat-glass-val text-white" id="statLastRunAt">
                         {{ $autoStatus['last_run_at'] ? $autoStatus['last_run_at']->diffForHumans() : 'Chưa chạy' }}
                     </div>
@@ -931,7 +936,39 @@
         });
     }
 
-    // 7. Live Polling & Tự động chạy khi quá hạn 15 phút
+    // 7. Đặt lại mốc thời gian chạy gần nhất về Vừa xong
+    function resetLastRunTime() {
+        const el = document.getElementById('statLastRunAt');
+        const origText = el ? el.innerText : '';
+        if (el) el.innerText = 'Đang đặt lại...';
+
+        fetch('{{ route("admin.blogs.auto.settings") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ reset_last_run: 1 })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                if (el) el.innerText = 'Vừa xong';
+                const statusPill = document.getElementById('autoBotStatusPill');
+                const statusText = document.getElementById('autoBotStatusText');
+                if (statusText) statusText.innerText = 'ĐANG CHẠY TỰ ĐỘNG (15P / BÀI)';
+                if (statusPill) statusPill.className = 'status-pill active';
+            } else {
+                if (el) el.innerText = origText;
+            }
+        })
+        .catch(() => {
+            if (el) el.innerText = 'Vừa xong';
+        });
+    }
+
+    // 8. Live Polling cập nhật trạng thái tiến độ bài viết
     let isAutoTriggering = false;
     let currentBlogTotal = {{ (int) $autoStatus['total_generated'] }};
 
@@ -978,43 +1015,13 @@
                     return;
                 }
             }
-
-            // TỰ ĐỘNG KÍCH HOẠT NẾU ĐÃ LỐ 15 PHÚT (is_due = true)
-            if (d.is_enabled && d.is_due && !isAutoTriggering) {
-                isAutoTriggering = true;
-                const statusPill = document.getElementById('autoBotStatusPill');
-                const statusText = document.getElementById('autoBotStatusText');
-                if (statusText) statusText.innerText = '⚡ ĐANG TỰ ĐỘNG VIẾT BÀI THEO CHU KỲ (15P)...';
-                if (statusPill) statusPill.className = 'status-pill active bg-warning text-dark';
-
-                fetch('{{ route("admin.blogs.auto.run") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(r => r.json())
-                .then(result => {
-                    isAutoTriggering = false;
-                    if (result.success) {
-                        currentBlogTotal++;
-                        setTimeout(() => location.reload(), 1200);
-                    }
-                })
-                .catch(() => {
-                    isAutoTriggering = false;
-                });
-            }
         })
         .catch(() => {});
     }
 
-    // Tự động kiểm tra ngay sau khi load 2.5s, sau đó lặp lại mỗi 25s
+    // Tự động kiểm tra ngay sau khi load 2.5s, sau đó lặp lại mỗi 30s
     setTimeout(pollAutoBlogStatus, 2500);
-    setInterval(pollAutoBlogStatus, 25000);
+    setInterval(pollAutoBlogStatus, 30000);
 </script>
 @endpush
 @endsection

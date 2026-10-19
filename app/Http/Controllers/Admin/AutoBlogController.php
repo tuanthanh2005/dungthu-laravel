@@ -105,6 +105,10 @@ class AutoBlogController extends Controller
             SiteSetting::setValue('auto_blog_last_product_id', max(0, $resetId));
         }
 
+        if ($request->has('reset_last_run') || $request->input('reset_last_run') == 1) {
+            SiteSetting::setValue('auto_blog_last_run_at', now()->toIso8601String());
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Đã lưu cấu hình Auto Blog thành công!',

@@ -605,6 +605,7 @@ PROMPT;
             ];
 
         } catch (\Exception $e) {
+            SiteSetting::setValue('auto_blog_last_run_at', now()->toIso8601String());
             Log::error("[AutoBlog] Lỗi khi tạo bài tự động: " . $e->getMessage());
             throw $e;
         }

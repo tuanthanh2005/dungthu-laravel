@@ -441,14 +441,10 @@
                     <div class="col-md-4">
                         <label class="form-label text-white small fw-bold">Model Gemini:</label>
                         <select id="selectAutoBlogModel" class="form-select form-select-sm" onchange="saveAutoBlogModel(this.value)">
-                            <option value="gemini-3.5-flash" {{ ($autoStatus['model'] ?? '') == 'gemini-3.5-flash' ? 'selected' : '' }}>Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)</option>
-                            <option value="gemini-3.1-flash-lite" {{ ($autoStatus['model'] ?? '') == 'gemini-3.1-flash-lite' ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Mới nhất & Tốc độ cao 🚀)</option>
-                            <option value="gemini-2.0-flash" {{ ($autoStatus['model'] ?? '') == 'gemini-2.0-flash' ? 'selected' : '' }}>Gemini 2.0 Flash (Nhanh & Thông minh ⚡)</option>
-                            <option value="gemini-1.5-pro" {{ ($autoStatus['model'] ?? '') == 'gemini-1.5-pro' ? 'selected' : '' }}>Gemini 1.5 Pro (Sâu sắc & Chi tiết 💎)</option>
-                            <option value="gemini-1.5-flash" {{ ($autoStatus['model'] ?? '') == 'gemini-1.5-flash' ? 'selected' : '' }}>Gemini 1.5 Flash (Tốc độ cao 🚀)</option>
-                            <option value="gemini-2.0-flash-lite" {{ ($autoStatus['model'] ?? '') == 'gemini-2.0-flash-lite' ? 'selected' : '' }}>Gemini 2.0 Flash Lite</option>
+                            <option value="gemini-3.1-flash-lite" {{ in_array(($autoStatus['model'] ?? ''), ['gemini-3.1-flash-lite', 'gemini-3.1', '3.1'], true) ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Khuyên dùng - Siêu nhanh & Không nghẽn 🚀)</option>
+                            <option value="gemini-3.5-flash" {{ in_array(($autoStatus['model'] ?? ''), ['gemini-3.5-flash', 'gemini-3.5', '3.5'], true) ? 'selected' : '' }}>Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)</option>
                         </select>
-                        <small class="text-white-50">Tự động fallback sang 2.0/1.5 nếu model bận.</small>
+                        <small class="text-white-50">Tự động chuyển đổi giữa 3.1 và 3.5 nếu model bận.</small>
                     </div>
 
                     <!-- Reset Con Trỏ SP -->

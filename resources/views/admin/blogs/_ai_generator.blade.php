@@ -66,12 +66,8 @@
                 <i class="fas fa-microchip me-1 text-primary"></i>Chọn Model Gemini
             </label>
             <select id="ai_model_select" class="form-select border-2">
-                <option value="gemini-3.5-flash" {{ $defaultModel == 'gemini-3.5-flash' ? 'selected' : '' }}>Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)</option>
-                <option value="gemini-3.1-flash-lite" {{ $defaultModel == 'gemini-3.1-flash-lite' ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Mới nhất & Tốc độ cao 🚀)</option>
-                <option value="gemini-2.0-flash" {{ $defaultModel == 'gemini-2.0-flash' ? 'selected' : '' }}>Gemini 2.0 Flash (Nhanh & Thông minh ⚡)</option>
-                <option value="gemini-1.5-pro" {{ $defaultModel == 'gemini-1.5-pro' ? 'selected' : '' }}>Gemini 1.5 Pro (Sâu sắc & Chi tiết 💎)</option>
-                <option value="gemini-1.5-flash" {{ $defaultModel == 'gemini-1.5-flash' ? 'selected' : '' }}>Gemini 1.5 Flash (Tốc độ cao 🚀)</option>
-                <option value="gemini-2.0-flash-lite" {{ $defaultModel == 'gemini-2.0-flash-lite' ? 'selected' : '' }}>Gemini 2.0 Flash Lite</option>
+                <option value="gemini-3.1-flash-lite" {{ in_array($defaultModel, ['gemini-3.1-flash-lite', 'gemini-3.1', '3.1'], true) ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Khuyên dùng - Siêu nhanh & Ổn định 🚀)</option>
+                <option value="gemini-3.5-flash" {{ in_array($defaultModel, ['gemini-3.5-flash', 'gemini-3.5', '3.5'], true) ? 'selected' : '' }}>Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)</option>
             </select>
         </div>
 

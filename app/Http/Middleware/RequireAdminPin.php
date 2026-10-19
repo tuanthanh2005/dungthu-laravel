@@ -10,8 +10,13 @@ class RequireAdminPin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Bỏ qua nếu đã xác thực Gate bảo mật
+        // Bỏ qua nếu đã xác thực Gate bảo mật hoặc thuộc khu vực Blog
         if (session('admin_unlocked') === true) {
+            return $next($request);
+        }
+
+        $routeName = $request->route() ? $request->route()->getName() : null;
+        if ($routeName && (\Illuminate\Support\Str::is('admin.blogs*', $routeName) || \Illuminate\Support\Str::is('admin.blog-topics*', $routeName))) {
             return $next($request);
         }
 

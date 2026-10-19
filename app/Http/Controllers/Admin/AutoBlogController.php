@@ -19,15 +19,6 @@ class AutoBlogController extends Controller
      */
     public function runNow(Request $request, AutoBlogService $service): JsonResponse
     {
-        // Kiểm tra mã PIN nếu có truyền
-        if ($request->filled('admin_pin')) {
-            $pin = (string) $request->input('admin_pin');
-            $expected = (string) config('admin.action_pin', '12112004');
-            if ($pin === $expected) {
-                session(['admin_unlocked' => true]);
-            }
-        }
-
         $productId = $request->input('product_id') ? (int) $request->input('product_id') : null;
         $tone = $request->input('tone') ?: null;
         $model = $request->input('model') ?: null;

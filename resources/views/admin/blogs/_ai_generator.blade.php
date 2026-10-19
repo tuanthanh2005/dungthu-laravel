@@ -152,46 +152,7 @@
 </style>
 
 <script>
-function promptAdminPin(callback) {
-    if (typeof Swal !== 'undefined') {
-        const activeModal = document.querySelector('.modal.show');
-        Swal.fire({
-            title: 'Xác nhận thao tác Admin',
-            text: 'Vui lòng nhập mã PIN 8 số để xác thực:',
-            input: 'password',
-            inputAttributes: { maxlength: 8, pattern: '[0-9]{8}', inputmode: 'numeric' },
-            showCancelButton: true,
-            confirmButtonText: 'Xác nhận',
-            cancelButtonText: 'Hủy',
-            confirmButtonColor: '#7c3aed',
-            target: activeModal || 'body',
-            didOpen: () => {
-                const swalInput = Swal.getInput();
-                if (swalInput) {
-                    setTimeout(() => swalInput.focus(), 100);
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed && result.value) {
-                const pin = result.value.trim();
-                if (!/^\d{8}$/.test(pin)) {
-                    Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Mã PIN phải đúng 8 số.', target: activeModal || 'body' });
-                    return;
-                }
-                callback(pin);
-            }
-        });
-    } else {
-        const pin = prompt('Vui lòng nhập mã PIN 8 số để xác thực:');
-        if (pin && /^\d{8}$/.test(pin.trim())) {
-            callback(pin.trim());
-        } else if (pin) {
-            alert('Mã PIN phải đúng 8 số.');
-        }
-    }
-}
-
-function triggerBlogAIGeneration(adminPin = null) {
+function triggerBlogAIGeneration() {
     const titleInput = document.getElementById('title');
     const titleValue = titleInput ? titleInput.value.trim() : '';
 
@@ -227,9 +188,6 @@ function triggerBlogAIGeneration(adminPin = null) {
         model: model,
         tone: tone
     };
-    if (adminPin) {
-        payload.admin_pin = adminPin;
-    }
 
     fetch('{{ route("admin.blogs.generate_ai") }}', {
         method: 'POST',
@@ -293,19 +251,11 @@ function triggerBlogAIGeneration(adminPin = null) {
         clearInterval(stepInterval);
         progress.classList.add('d-none');
         btn.disabled = false;
-
-        if (err.message && (err.message.includes('8 số') || err.message.includes('xác nhận') || err.message.includes('PIN'))) {
-            promptAdminPin((pin) => {
-                triggerBlogAIGeneration(pin);
-            });
-            return;
-        }
-
         alert('❌ Lỗi: ' + err.message);
     });
 }
 
-function saveQuickGeminiKey(adminPin = null) {
+function saveQuickGeminiKey() {
     const keyInput = document.getElementById('quick_gemini_api_key');
     const key = keyInput ? keyInput.value.trim() : '';
 
@@ -315,9 +265,6 @@ function saveQuickGeminiKey(adminPin = null) {
     }
 
     const payload = { api_key: key };
-    if (adminPin) {
-        payload.admin_pin = adminPin;
-    }
 
     fetch('{{ route("admin.blogs.save_gemini_key") }}', {
         method: 'POST',
@@ -353,12 +300,6 @@ function saveQuickGeminiKey(adminPin = null) {
         }
     })
     .catch(err => {
-        if (err.message && (err.message.includes('8 số') || err.message.includes('xác nhận') || err.message.includes('PIN'))) {
-            promptAdminPin((pin) => {
-                saveQuickGeminiKey(pin);
-            });
-            return;
-        }
         alert('❌ Lỗi lưu key: ' + err.message);
     });
 }

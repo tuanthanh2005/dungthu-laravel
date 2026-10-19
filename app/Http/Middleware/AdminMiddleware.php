@@ -108,21 +108,24 @@ class AdminMiddleware
             }
         }
 
-        // 2. Bỏ qua nhập mã PIN nếu đã mở khóa Gate bảo mật hoặc gọi API AI trợ lý
+        // 2. Bỏ qua nhập mã PIN nếu đã mở khóa Gate bảo mật
         if (session('admin_unlocked') === true) {
             return $next($request);
         }
 
+        // MIỄN TRỪ HOÀN TOÀN MÃ PIN CHO TẤT CẢ ROUTE BLOG & CHỦ ĐỀ BLOG (Thêm/Sửa/Xóa/AI/Auto)
+        if ($routeName && (\Illuminate\Support\Str::is('admin.blogs*', $routeName) || \Illuminate\Support\Str::is('admin.blog-topics*', $routeName))) {
+            return $next($request);
+        }
+
         $exemptPinRoutes = [
-            'admin.blogs.generate_ai',
-            'admin.blogs.save_gemini_key',
             'admin.products.parse-variants-ai',
         ];
         if ($routeName && in_array($routeName, $exemptPinRoutes, true)) {
             return $next($request);
         }
 
-        // Cho phép các route dọn dẹp nhật ký (log cleanup) thực hiện xóa
+        // Cho phép các route dọn dẹp nhật ký (log cleanup) và quản lý nội dung thực hiện xóa
         $allowedCleanupRoutes = [
             'admin.online-users.clear-history',
             'admin.suspicious-ips.clear',
@@ -130,6 +133,8 @@ class AdminMiddleware
             'admin.suspicious-ips.destroy',
             'admin.online-users.kick',
             'admin.products.delete',
+            'admin.blogs.delete',
+            'admin.blog-topics.delete',
         ];
 
         // Block DELETE requests temporarily for security except allowed cleanup routes

@@ -454,40 +454,20 @@ Bạn PHẢI trả về ĐÚNG 1 ĐỐI TƯỢNG JSON thuần túy (không kèm 
 }
 PROMPT;
 
-        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$key}";
-
         try {
-            $response = Http::timeout(75)
-                ->withHeaders(['Content-Type' => 'application/json'])
-                ->post($endpoint, [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt],
-                            ],
-                        ],
-                    ],
-                    'generationConfig' => [
-                        'temperature' => 0.75,
-                        'responseMimeType' => 'application/json',
-                    ],
-                ]);
+            $callResult = GeminiBlogService::callWithFallback(
+                $prompt,
+                $model,
+                $key,
+                [
+                    'temperature'      => 0.75,
+                    'responseMimeType' => 'application/json',
+                ],
+                75
+            );
 
-            if ($response->failed()) {
-                $errorData = $response->json();
-                $errorMessage = $errorData['error']['message'] ?? $response->body();
-                Log::error("[AutoBlog] Gemini API Error: " . $errorMessage);
-
-                if ($model !== 'gemini-1.5-flash' && str_contains(strtolower($errorMessage), 'not found')) {
-                    Log::info("[AutoBlog] Fallback sang gemini-1.5-flash");
-                    return $this->writePostForProduct($product, $forcedAngle, 'gemini-1.5-flash', $key);
-                }
-
-                throw new \Exception("Lỗi Gemini API ({$response->status()}): " . $errorMessage);
-            }
-
-            $responseData = $response->json();
-            $rawText = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? null;
+            $rawText = $callResult['text'];
+            $usedModel = $callResult['model_used'] ?? $model;
 
             if (empty($rawText)) {
                 throw new \Exception("Gemini API không trả về nội dung bài viết.");
@@ -595,9 +575,15 @@ PROMPT;
 
             Log::info("[AutoBlog] Tạo bài viết tự động thành công cho SP #{$product->id} - {$product->name} -> Blog #{$blog->id} ('{$blog->title}')");
 
+            $successMsg = "Đã viết bài tự động thành công cho sản phẩm #{$product->id} - {$product->name}!";
+            if (!empty($usedModel) && $usedModel !== $model) {
+                $successMsg .= " (Tự động chuyển sang model dự phòng: {$usedModel})";
+            }
+
             return [
                 'success'         => true,
-                'message'         => "Đã viết bài tự động thành công cho sản phẩm #{$product->id} - {$product->name}!",
+                'message'         => $successMsg,
+                'model_used'      => $usedModel ?? $model,
                 'blog'            => [
                     'id'           => $blog->id,
                     'title'        => $blog->title,

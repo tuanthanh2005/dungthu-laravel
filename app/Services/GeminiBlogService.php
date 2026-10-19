@@ -58,6 +58,7 @@ class GeminiBlogService
         $map = [
             'gemini 3.5 flash'      => 'gemini-3.5-flash',
             'gemini 3.1 flash-lite' => 'gemini-3.1-flash-lite',
+            'gemini 2.5 flash'      => 'gemini-2.5-flash',
             'gemini 2.0 flash'      => 'gemini-2.0-flash',
             'gemini 2.0 flash-lite' => 'gemini-2.0-flash-lite',
             'gemini 1.5 flash'      => 'gemini-1.5-flash',
@@ -65,6 +66,137 @@ class GeminiBlogService
         ];
 
         return $map[$model] ?? $model;
+    }
+
+    /**
+     * Gọi Gemini API với cơ chế tự động thử lại (retry) và chuyển đổi model dự phòng (fallback)
+     * khi gặp lỗi 503 (High Demand / quá tải), 429 (Rate limit) hoặc model không khả dụng.
+     */
+    public static function callWithFallback(
+        string $prompt,
+        string $initialModel = 'gemini-3.5-flash',
+        ?string $apiKey = null,
+        array $generationConfig = [],
+        int $timeout = 75
+    ): array {
+        $key = self::getApiKey($apiKey);
+        if (empty($key)) {
+            throw new \Exception('Chưa cấu hình Gemini API Key! Vui lòng nhập API Key tại phần Cài đặt.');
+        }
+
+        $formattedInitial = self::formatModelName($initialModel);
+
+        $fallbackPool = [
+            $formattedInitial,
+            'gemini-2.0-flash',
+            'gemini-1.5-flash',
+            'gemini-2.0-flash-lite',
+            'gemini-3.5-flash',
+            'gemini-1.5-pro',
+        ];
+        $modelsToTry = array_values(array_unique(array_filter($fallbackPool)));
+
+        $defaultConfig = [
+            'temperature'      => 0.7,
+            'responseMimeType' => 'application/json',
+        ];
+        $config = array_merge($defaultConfig, $generationConfig);
+
+        $lastError = null;
+        $lastStatus = 500;
+
+        foreach ($modelsToTry as $currentModel) {
+            $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$currentModel}:generateContent?key={$key}";
+
+            // Tối đa 2 lần thử cho mỗi model nếu gặp 503/429 tạm thời
+            for ($attempt = 1; $attempt <= 2; $attempt++) {
+                try {
+                    $response = Http::timeout($timeout)
+                        ->withHeaders(['Content-Type' => 'application/json'])
+                        ->post($endpoint, [
+                            'contents' => [
+                                [
+                                    'parts' => [
+                                        ['text' => $prompt],
+                                    ],
+                                ],
+                            ],
+                            'generationConfig' => $config,
+                        ]);
+
+                    if ($response->successful()) {
+                        $responseData = $response->json();
+                        $rawText = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+                        if (!empty($rawText)) {
+                            if ($currentModel !== $formattedInitial) {
+                                Log::info("[GeminiAPI] Đã tự động fallback thành công sang model: {$currentModel} (model ban đầu: {$formattedInitial})");
+                            }
+                            return [
+                                'text'       => $rawText,
+                                'model_used' => $currentModel,
+                                'response'   => $responseData,
+                            ];
+                        }
+
+                        $finishReason = $responseData['candidates'][0]['finishReason'] ?? null;
+                        $lastError = "Gemini API trả về nội dung rỗng" . ($finishReason ? " (Lý do: {$finishReason})" : ".");
+                        Log::warning("[GeminiAPI] Model {$currentModel} trả về rỗng: {$lastError}");
+                        break;
+                    }
+
+                    $errorData = $response->json();
+                    $lastError = $errorData['error']['message'] ?? $response->body();
+                    $lastStatus = $response->status();
+
+                    Log::warning("[GeminiAPI] Model {$currentModel} thất bại (Lần {$attempt}/2, Status {$lastStatus}): {$lastError}");
+
+                    $isNotFound = ($lastStatus === 404) || str_contains(strtolower($lastError), 'not found');
+                    if ($isNotFound) {
+                        break;
+                    }
+
+                    $isTemporaryError = in_array($lastStatus, [429, 500, 502, 503, 504], true)
+                        || str_contains(strtolower($lastError), 'high demand')
+                        || str_contains(strtolower($lastError), 'spikes in demand')
+                        || str_contains(strtolower($lastError), 'temporarily')
+                        || str_contains(strtolower($lastError), 'resource_exhausted')
+                        || str_contains(strtolower($lastError), 'quota')
+                        || str_contains(strtolower($lastError), 'rate limit')
+                        || str_contains(strtolower($lastError), 'unavailable')
+                        || str_contains(strtolower($lastError), 'overloaded');
+
+                    if ($isTemporaryError && $attempt === 1) {
+                        usleep(1500000); // Đợi 1.5 giây rồi thử lại 1 lần
+                        continue;
+                    }
+
+                    break;
+
+                } catch (\Throwable $e) {
+                    $lastError = $e->getMessage();
+                    Log::warning("[GeminiAPI] Exception khi gọi {$currentModel} (Lần {$attempt}/2): {$lastError}");
+                    if ($attempt === 1) {
+                        usleep(1500000);
+                        continue;
+                    }
+                    break;
+                }
+            }
+        }
+
+        $friendlyMsg = "Lỗi Gemini API ({$lastStatus}): ";
+        if (str_contains(strtolower($lastError), 'high demand') || str_contains(strtolower($lastError), 'unavailable') || $lastStatus === 503) {
+            $friendlyMsg .= "Hệ thống AI của Google đang bị quá tải đột biến tại thời điểm này. Hệ thống đã tự động thử các model dự phòng nhưng chưa thành công. Vui lòng thử lại sau 1-2 phút.";
+        } elseif (str_contains(strtolower($lastError), 'api key') || $lastStatus === 400) {
+            $friendlyMsg .= "API Key Gemini không hợp lệ hoặc đã hết hạn. Vui lòng cập nhật API Key mới tại phần Cài đặt.";
+        } elseif ($lastStatus === 429) {
+            $friendlyMsg .= "Đã chạm giới hạn hạn mức (Rate limit/Quota) của API Key. Vui lòng thử lại sau ít phút hoặc dùng API Key khác.";
+        } else {
+            $friendlyMsg .= $lastError;
+        }
+
+        throw new \Exception($friendlyMsg);
     }
 
     /**
@@ -119,43 +251,19 @@ Bạn PHẢI trả về ĐÚNG 1 ĐỐI TƯỢNG JSON thuần túy (không kèm 
 }
 PROMPT;
 
-        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$formattedModel}:generateContent?key={$key}";
-
         try {
-            $response = Http::timeout(60)
-                ->withHeaders([
-                    'Content-Type' => 'application/json',
-                ])
-                ->post($endpoint, [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt]
-                            ]
-                        ]
-                    ],
-                    'generationConfig' => [
-                        'temperature' => 0.7,
-                        'responseMimeType' => 'application/json'
-                    ]
-                ]);
+            $callResult = self::callWithFallback(
+                $prompt,
+                $formattedModel,
+                $key,
+                [
+                    'temperature'      => 0.7,
+                    'responseMimeType' => 'application/json',
+                ],
+                75
+            );
 
-            if ($response->failed()) {
-                $errorData = $response->json();
-                $errorMessage = $errorData['error']['message'] ?? $response->body();
-                Log::error("Gemini API Error: " . $errorMessage);
-
-                // Nếu model truyền vào không tồn tại, thử fallback sang gemini-1.5-flash
-                if ($formattedModel !== 'gemini-1.5-flash' && str_contains(strtolower($errorMessage), 'not found')) {
-                    Log::info("Retrying Gemini API with fallback model gemini-1.5-flash");
-                    return $this->generateBlogPost($title, 'gemini-1.5-flash', $key, $tone);
-                }
-
-                throw new \Exception("Lỗi từ Gemini API ({$response->status()}): " . $errorMessage);
-            }
-
-            $responseData = $response->json();
-            $rawText = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? null;
+            $rawText = $callResult['text'];
 
             if (empty($rawText)) {
                 throw new \Exception("Gemini API không trả về nội dung hợp lệ.");
@@ -269,34 +377,19 @@ Trả về DUY NHẤT 1 mảng JSON thuần túy (không kèm giải thích mark
 ]
 PROMPT;
 
-        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$formattedModel}:generateContent?key={$key}";
-
         try {
-            $response = Http::timeout(45)
-                ->withHeaders(['Content-Type' => 'application/json'])
-                ->post($endpoint, [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt]
-                            ]
-                        ]
-                    ],
-                    'generationConfig' => [
-                        'temperature' => 0.2,
-                        'responseMimeType' => 'application/json'
-                    ]
-                ]);
+            $callResult = self::callWithFallback(
+                $prompt,
+                'gemini-2.0-flash',
+                $key,
+                [
+                    'temperature'      => 0.2,
+                    'responseMimeType' => 'application/json',
+                ],
+                45
+            );
 
-            if ($response->failed()) {
-                $errorData = $response->json();
-                $errorMessage = $errorData['error']['message'] ?? $response->body();
-                Log::error("Gemini parseProductVariants Error: " . $errorMessage);
-                throw new \Exception("Lỗi Gemini API: " . $errorMessage);
-            }
-
-            $responseData = $response->json();
-            $rawText = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $rawText = $callResult['text'] ?? '';
             $cleanJson = preg_replace('/^```(?:json)?\s*|\s*```$/i', '', trim($rawText));
             $parsed = json_decode($cleanJson, true);
 
@@ -366,42 +459,19 @@ BẮT BUỘC trả về ĐÚNG MỘT MẢNG JSON thuần túy (không kèm markd
 ]
 PROMPT;
 
-        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$formattedModel}:generateContent?key={$key}";
-
         try {
-            $response = Http::timeout(60)
-                ->withHeaders([
-                    'Content-Type' => 'application/json',
-                ])
-                ->post($endpoint, [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt]
-                            ]
-                        ]
-                    ],
-                    'generationConfig' => [
-                        'temperature' => 0.4,
-                        'responseMimeType' => 'application/json'
-                    ]
-                ]);
+            $callResult = self::callWithFallback(
+                $prompt,
+                $formattedModel,
+                $key,
+                [
+                    'temperature'      => 0.4,
+                    'responseMimeType' => 'application/json',
+                ],
+                60
+            );
 
-            if ($response->failed()) {
-                $errorData = $response->json();
-                $errorMessage = $errorData['error']['message'] ?? $response->body();
-                Log::error("Gemini generateWebDesignPackages Error: " . $errorMessage);
-
-                if ($formattedModel !== 'gemini-1.5-flash' && str_contains(strtolower($errorMessage), 'not found')) {
-                    Log::info("Retrying with fallback model gemini-1.5-flash");
-                    return $this->generateWebDesignPackages($promptText, 'gemini-1.5-flash', $key);
-                }
-
-                throw new \Exception("Lỗi Gemini API: " . $errorMessage);
-            }
-
-            $responseData = $response->json();
-            $rawText = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $rawText = $callResult['text'] ?? '';
             $cleanJson = preg_replace('/^```(?:json)?\s*|\s*```$/i', '', trim($rawText));
             $parsed = json_decode($cleanJson, true);
 

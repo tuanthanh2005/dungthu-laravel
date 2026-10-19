@@ -838,6 +838,85 @@
             alert('Đã sao chép URL Cron vào Clipboard!\nBạn có thể dán vào UptimeRobot, EasyCron hoặc Cron-Job.org để ping mỗi 15 phút.');
         });
     }
+
+    // 7. Live Polling & Tự động chạy khi quá hạn 15 phút
+    let isAutoTriggering = false;
+    let currentBlogTotal = {{ (int) $autoStatus['total_generated'] }};
+
+    function pollAutoBlogStatus() {
+        if (isAutoTriggering) return;
+
+        fetch('{{ route("admin.blogs.auto.status") }}', {
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (!res.success || !res.data) return;
+            const d = res.data;
+
+            // Cập nhật thẻ chạy gần nhất
+            const lastRunEl = document.getElementById('statLastRunAt');
+            if (lastRunEl && d.last_run_human) {
+                lastRunEl.innerText = d.last_run_human;
+            }
+
+            // Cập nhật sản phẩm tiếp theo
+            if (d.next_product) {
+                const nextNameEl = document.getElementById('statNextProductName');
+                const nextPriceEl = document.getElementById('statNextProductPrice');
+                if (nextNameEl) nextNameEl.innerText = d.next_product.name;
+                if (nextPriceEl) nextPriceEl.innerText = d.next_product.price;
+            }
+
+            // Cập nhật tổng số bài đã tạo
+            if (d.total_generated !== undefined) {
+                const totalEl = document.getElementById('statTotalGenerated');
+                if (totalEl) totalEl.innerHTML = `Đã tạo: <strong>${d.total_generated}</strong> bài`;
+
+                // Nếu backend vừa tạo xong bài mới
+                if (d.total_generated > currentBlogTotal) {
+                    currentBlogTotal = d.total_generated;
+                    setTimeout(() => location.reload(), 1500);
+                    return;
+                }
+            }
+
+            // TỰ ĐỘNG KÍCH HOẠT NẾU ĐÃ LỐ 15 PHÚT (is_due = true)
+            if (d.is_enabled && d.is_due && !isAutoTriggering) {
+                isAutoTriggering = true;
+                const statusPill = document.getElementById('autoBotStatusPill');
+                const statusText = document.getElementById('autoBotStatusText');
+                if (statusText) statusText.innerText = '⚡ ĐANG TỰ ĐỘNG VIẾT BÀI THEO CHU KỲ (15P)...';
+                if (statusPill) statusPill.className = 'status-pill active bg-warning text-dark';
+
+                fetch('{{ route("admin.blogs.auto.run") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(r => r.json())
+                .then(result => {
+                    isAutoTriggering = false;
+                    if (result.success) {
+                        currentBlogTotal++;
+                        setTimeout(() => location.reload(), 1200);
+                    }
+                })
+                .catch(() => {
+                    isAutoTriggering = false;
+                });
+            }
+        })
+        .catch(() => {});
+    }
+
+    // Tự động kiểm tra ngay sau khi load 2.5s, sau đó lặp lại mỗi 25s
+    setTimeout(pollAutoBlogStatus, 2500);
+    setInterval(pollAutoBlogStatus, 25000);
 </script>
 @endpush
 @endsection

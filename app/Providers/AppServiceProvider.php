@@ -56,6 +56,42 @@ class AppServiceProvider extends ServiceProvider
             } catch (\Throwable $e) {
                 // Ignore any exception to guarantee page load is never affected
             }
+
+            // Fallback tự động 100% cho Auto Blog AI: Tự động chạy sau mỗi 15 phút khi có bất kỳ lượt truy cập web nào (cho Hosting không có cron daemon)
+            try {
+                $autoBlogEnabled = (bool) \App\Models\SiteSetting::getValue('auto_blog_enabled', '1');
+                if ($autoBlogEnabled) {
+                    $lastRunAt = \App\Models\SiteSetting::getValue('auto_blog_last_run_at');
+                    $interval = (int) \App\Models\SiteSetting::getValue('auto_blog_interval_minutes', '15');
+                    $isOverdue = false;
+
+                    if (empty($lastRunAt)) {
+                        $isOverdue = true;
+                    } else {
+                        $diffMinutes = \Carbon\Carbon::parse($lastRunAt)->diffInMinutes(now());
+                        if ($diffMinutes >= $interval) {
+                            $isOverdue = true;
+                        }
+                    }
+
+                    if ($isOverdue) {
+                        // Khóa Cache 6 phút để tránh các request đồng thời kích hoạt trùng nhau
+                        $lockKey = 'auto_blog_web_execution_lock';
+                        if (!\Illuminate\Support\Facades\Cache::has($lockKey)) {
+                            \Illuminate\Support\Facades\Cache::put($lockKey, true, now()->addMinutes(6));
+                            dispatch(function () {
+                                try {
+                                    \Illuminate\Support\Facades\Artisan::call('blog:auto-write');
+                                } catch (\Throwable $e) {
+                                    \Illuminate\Support\Facades\Log::error('[AutoBlog WebFallback] Lỗi: ' . $e->getMessage());
+                                }
+                            })->afterResponse();
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Đảm bảo không bao giờ ảnh hưởng tới tốc độ tải trang của người dùng
+            }
         }
     }
 }

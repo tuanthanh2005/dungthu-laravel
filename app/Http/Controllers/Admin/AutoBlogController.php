@@ -116,28 +116,36 @@ class AutoBlogController extends Controller
     {
         $status = $service->getQueueStatus();
 
+        $lastRun = $status['last_run_at'];
+        $minutesSinceLast = $lastRun ? Carbon::parse($lastRun)->diffInMinutes(now()) : 9999;
+        $interval = (int) SiteSetting::getValue('auto_blog_interval_minutes', '15');
+        $isDue = ($status['is_enabled'] && ($lastRun === null || $minutesSinceLast >= $interval));
+
         return response()->json([
             'success' => true,
             'data'    => [
-                'is_enabled'       => $status['is_enabled'],
-                'interval_minutes' => $status['interval_minutes'],
-                'total_products'   => $status['total_products'],
-                'current_position' => $status['current_position'],
-                'total_generated'  => $status['total_generated'],
-                'cycle_count'      => $status['cycle_count'],
-                'has_api_key'      => $status['has_api_key'],
-                'masked_key'       => $status['masked_key'],
-                'model'            => $status['model'],
-                'last_product'     => $status['last_product'] ? [
+                'is_enabled'             => $status['is_enabled'],
+                'interval_minutes'       => $status['interval_minutes'],
+                'total_products'         => $status['total_products'],
+                'current_position'       => $status['current_position'],
+                'total_generated'        => $status['total_generated'],
+                'cycle_count'            => $status['cycle_count'],
+                'has_api_key'            => $status['has_api_key'],
+                'masked_key'             => $status['masked_key'],
+                'model'                  => $status['model'],
+                'is_due'                 => $isDue,
+                'minutes_since_last_run' => $minutesSinceLast,
+                'last_run_human'         => $lastRun ? Carbon::parse($lastRun)->diffForHumans() : 'Chưa chạy',
+                'last_product'           => $status['last_product'] ? [
                     'id'   => $status['last_product']->id,
                     'name' => $status['last_product']->name,
                 ] : null,
-                'next_product'     => $status['next_product'] ? [
+                'next_product'           => $status['next_product'] ? [
                     'id'    => $status['next_product']->id,
                     'name'  => $status['next_product']->name,
                     'price' => number_format($status['next_product']->price, 0, ',', '.') . 'đ',
                 ] : null,
-                'last_run_at'      => $status['last_run_at'] ? $status['last_run_at']->format('d/m/Y H:i:s') : null,
+                'last_run_at'            => $status['last_run_at'] ? Carbon::parse($status['last_run_at'])->format('d/m/Y H:i:s') : null,
             ],
         ]);
     }

@@ -181,27 +181,27 @@ CÁC YÊU CẦU SEO & NỘI DUNG BẮT BUỘC:
    - Dùng các thẻ cấu trúc chuẩn SEO: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <blockquote>.
    - Thân bài phải phân tích sâu sắc, lôi cuốn, cung cấp giá trị thực tế cho người đọc, nêu bật bài toán kinh tế (tiết kiệm chi phí khi mua tại DungThu.com).
    - BẮT BUỘC chèn 1 KHUNG SẢN PHẨM NỔI BẬT với liên kết trực tiếp mua hàng (dùng đúng URL: {$productUrl}):
-     <div class="my-4 p-4 rounded-4 text-center border shadow-sm" style="background: linear-gradient(135deg, #f0f7ff 0%, #e6f0fa 100%); border-color: #bee3f8 !important;">
-         <span class="badge bg-danger px-3 py-2 rounded-pill text-uppercase mb-2"><i class="fas fa-fire me-1"></i> Ưu Đãi Giá Rẻ Hôm Nay</span>
-         <h3 class="fw-bold text-dark mt-2 mb-2">{$product->name}</h3>
-         <p class="text-muted mb-3">Mức giá ưu đãi chỉ: <strong class="text-danger fs-4">{$priceFormatted}</strong> (Tiết kiệm tối đa - Bảo hành 1 đổi 1 uy tín)</p>
-         <a href="{$productUrl}" class="btn btn-primary btn-lg rounded-pill px-4 fw-bold shadow-sm" target="_blank">
-             <i class="fas fa-shopping-cart me-2"></i> Xem Chi Tiết & Mua {$product->name} Giá Rẻ
-         </a>
-     </div>
-   - BẮT BUỘC chèn 1 KHUNG LIÊN HỆ & BẢO HÀNH CHỐT ĐƠN ở cuối bài:
-     <div class="alert alert-primary p-4 rounded-4 mt-4 shadow-sm border-0" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white;">
-         <h4 class="fw-bold text-white mb-2"><i class="fas fa-headset me-2"></i> Đặt Mua Nhanh & Hỗ Trợ Kỹ Thuật 24/7</h4>
-         <p class="mb-3 text-white-50">Nhận sản phẩm / tài khoản chỉ sau 5 phút! Cam kết bảo hành 1 đổi 1 uy tín suốt thời gian sử dụng.</p>
-         <div class="d-flex flex-wrap gap-2">
-             <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-warning rounded-pill px-4 fw-bold text-dark">
-                 <i class="fas fa-comments me-1"></i> Nhắn Zalo: 0772698113
-             </a>
-             <a href="{$productUrl}" class="btn btn-light rounded-pill px-4 fw-bold text-primary">
-                 <i class="fas fa-shopping-bag me-1"></i> Mua Ngay Trên Website
-             </a>
-         </div>
-     </div>
+<div class="my-4 p-4 rounded-4 text-center border shadow-sm product-highlight-box" style="background: linear-gradient(135deg, #f0f7ff 0%, #e6f0fa 100%); border-color: #bee3f8 !important;">
+          <span class="badge bg-danger px-3 py-2 rounded-pill text-uppercase mb-2"><i class="fas fa-fire me-1"></i> Ưu Đãi Giá Rẻ Hôm Nay</span>
+          <h3 class="fw-bold text-dark mt-2 mb-2">{$product->name}</h3>
+          <p class="text-muted mb-3">Mức giá ưu đãi chỉ: <strong class="text-danger fs-4">{$priceFormatted}</strong> (Tiết kiệm tối đa - Bảo hành 1 đổi 1 uy tín)</p>
+          <a href="{$productUrl}" class="btn btn-warning btn-lg px-4 py-3 fw-bold shadow-sm product-cta-btn" style="border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; color: #111;" target="_blank">
+              <i class="fas fa-shopping-cart"></i> Xem Chi Tiết & Đặt Mua Ngay
+          </a>
+      </div>
+    - BẮT BUỘC chèn 1 KHUNG LIÊN HỆ & BẢO HÀNH CHỐT ĐƠN ở cuối bài:
+      <div class="alert alert-primary p-4 rounded-4 mt-4 shadow-sm border-0 blog-contact-box" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white;">
+          <h4 class="fw-bold text-white mb-2"><i class="fas fa-headset me-2"></i> Đặt Mua Nhanh & Hỗ Trợ Kỹ Thuật 24/7</h4>
+          <p class="mb-3 text-white-50">Nhận sản phẩm / tài khoản chỉ sau 5 phút! Cam kết bảo hành 1 đổi 1 uy tín suốt thời gian sử dụng.</p>
+          <div class="d-flex flex-wrap gap-2">
+              <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-warning px-4 py-2 fw-bold text-dark" style="border-radius: 10px;">
+                  <i class="fas fa-comments me-1"></i> Nhắn Zalo: 0772698113
+              </a>
+              <a href="{$productUrl}" class="btn btn-light px-4 py-2 fw-bold text-primary" style="border-radius: 10px;">
+                  <i class="fas fa-shopping-bag me-1"></i> Mua Ngay Trên Website
+              </a>
+          </div>
+      </div>
    - TUYỆT ĐỐI KHÔNG dùng bất kỳ placeholder nào như '[Số điện thoại]', '[Hotline]', '[Zalo]', '[Link sản phẩm]'. Mọi số điện thoại PHẢI là 0772698113, mọi link PHẢI là {$productUrl}.
 
 YÊU CẦU ĐỊNH DẠNG ĐẦU RA:
@@ -289,16 +289,7 @@ PROMPT;
             // Tự động tạo ảnh phù hợp cho bài viết
             $imageRelativePath = $this->generateAndSaveBlogImage($product, $parsed, $key);
 
-            // Chèn ảnh bìa vào đầu nội dung bài viết nếu chưa có thẻ img
-            if ($imageRelativePath && !str_contains($finalContent, '<img')) {
-                $fullImgUrl = asset($imageRelativePath);
-                $heroHtml = <<<HTML
-<div class="blog-hero-banner text-center mb-4">
-    <img src="{$fullImgUrl}" alt="{$finalTitle}" class="img-fluid rounded-4 shadow-sm" style="max-height: 480px; width: 100%; object-fit: cover;">
-</div>
-HTML;
-                $finalContent = $heroHtml . "\n" . $finalContent;
-            }
+            // KHÔNG chèn thẻ img vào $finalContent vì view blogs/show.blade.php đã tự động render $blog->image ở banner chính (tránh lỗi x2 hình)
 
             // Tạo slug duy nhất
             $baseSlug = Str::slug($finalTitle);
@@ -324,7 +315,7 @@ HTML;
                 'auto_tone'         => $angle['key'],
                 'is_featured'       => ($runCount % 3 === 0),
                 'user_id'           => self::getAdminUserId(),
-                'views'             => rand(20, 85),
+                'views'             => 0,
                 'is_published'      => true,
                 'published_at'      => now(),
             ]);
@@ -476,9 +467,29 @@ HTML;
 
         // Nếu là URL tuyệt đối
         if (preg_match('/^https?:\/\//i', $imageUrl)) {
-            $fetch = Http::timeout(6)->get($imageUrl);
-            if ($fetch->successful()) {
-                $rawSource = $fetch->body();
+            $parsedUrl = parse_url($imageUrl);
+            $host = $parsedUrl['host'] ?? '';
+            $path = ltrim($parsedUrl['path'] ?? '', '/');
+
+            // Nếu trỏ về localhost / 127.0.0.1, đọc trực tiếp file cục bộ
+            if (in_array($host, ['localhost', '127.0.0.1']) || empty($host)) {
+                $localPath = PathHelper::publicRootPath($path);
+                if (is_file($localPath)) {
+                    $rawSource = @file_get_contents($localPath);
+                } elseif (is_file(public_path($path))) {
+                    $rawSource = @file_get_contents(public_path($path));
+                }
+            }
+
+            if (empty($rawSource)) {
+                try {
+                    $fetch = Http::timeout(6)->get($imageUrl);
+                    if ($fetch->successful()) {
+                        $rawSource = $fetch->body();
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning("[AutoBlog] Không thể tải ảnh qua URL: {$imageUrl} ({$e->getMessage()})");
+                }
             }
         } else {
             // Là file cục bộ

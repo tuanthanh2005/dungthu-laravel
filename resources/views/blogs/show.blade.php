@@ -286,6 +286,218 @@
             margin: 2rem 0;
         }
         
+        
+        /* An cac banner anh hero bi chen lap lai trong noi dung bai viet (chong x2 hinh) */
+        .blog-hero-banner {
+            display: none !important;
+        }
+
+        /* Khung san pham noi bat & CTA mua hang chuyen nghiep */
+        .product-highlight-box {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f0fa 100%);
+            border: 1px solid #bee3f8 !important;
+            border-radius: 20px !important;
+            padding: 30px 24px;
+            margin: 36px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(66, 153, 225, 0.12);
+        }
+
+        .product-highlight-box h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1a202c;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-highlight-box p {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 22px;
+            text-align: center !important;
+        }
+
+        /* Nut keu goi hanh dong CTA */
+        .product-cta-btn,
+        .blog-content-area a.product-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #ff5722 0%, #f44336 100%) !important;
+            color: #ffffff !important;
+            font-size: 16.5px;
+            font-weight: 800;
+            padding: 14px 30px;
+            border-radius: 14px !important;
+            border: none !important;
+            text-decoration: none !important;
+            box-shadow: 0 8px 22px rgba(244, 67, 54, 0.35);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            line-height: 1.35;
+        }
+
+        .product-cta-btn:hover,
+        .blog-content-area a.product-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(244, 67, 54, 0.5);
+            color: #ffffff !important;
+        }
+
+        /* Khung lien he & bao hanh */
+        .blog-contact-box {
+            border-radius: 18px !important;
+            padding: 26px 24px !important;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2) !important;
+        }
+
+        /* Toi uu toan dien giao dien Mobile */
+        @media (max-width: 768px) {
+            .blog-detail-wrapper {
+                padding: 12px 0 36px;
+            }
+            .blog-detail-card {
+                padding: 20px 14px !important;
+                border-radius: 16px !important;
+                margin-top: 15px !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            }
+            .blog-title {
+                font-size: 23px !important;
+                line-height: 1.32 !important;
+                margin-bottom: 14px !important;
+                text-align: left !important;
+            }
+            .blog-meta {
+                justify-content: flex-start !important;
+                gap: 12px !important;
+                padding: 8px 0 14px !important;
+                margin-bottom: 18px !important;
+            }
+            .blog-meta-item {
+                font-size: 13px !important;
+            }
+            .blog-header-image-wrapper {
+                height: 220px !important;
+                border-radius: 14px !important;
+                margin-bottom: 20px !important;
+            }
+            .blog-excerpt {
+                padding: 14px 14px !important;
+                font-size: 14.5px !important;
+                line-height: 1.6 !important;
+                margin-bottom: 22px !important;
+                text-align: left !important;
+                border-radius: 12px !important;
+            }
+            .blog-content-area {
+                font-size: 16px !important;
+                line-height: 1.8 !important;
+            }
+            .blog-content-area p {
+                text-align: left !important;
+                margin-bottom: 1.2rem !important;
+                word-break: break-word;
+            }
+            .blog-content-area h2 {
+                font-size: 20px !important;
+                margin-top: 1.8rem !important;
+                margin-bottom: 0.8rem !important;
+                text-align: left !important;
+            }
+            .blog-content-area h3 {
+                font-size: 18px !important;
+                margin-top: 1.5rem !important;
+                margin-bottom: 0.7rem !important;
+                text-align: left !important;
+            }
+            .blog-content-area ul, .blog-content-area ol {
+                padding-left: 1.25rem !important;
+                margin-bottom: 1.2rem !important;
+            }
+            .blog-content-area li {
+                margin-bottom: 0.45rem !important;
+                line-height: 1.65 !important;
+            }
+
+            /* Responsive khung san pham noi bat tren Mobile */
+            .product-highlight-box,
+            .blog-content-area div[class*="rounded-4"] {
+                padding: 18px 14px !important;
+                margin: 20px 0 !important;
+                border-radius: 14px !important;
+            }
+            .product-highlight-box h3,
+            .blog-content-area div[class*="rounded-4"] h3 {
+                font-size: 17.5px !important;
+                line-height: 1.35 !important;
+                margin-bottom: 8px !important;
+            }
+            .product-highlight-box p,
+            .blog-content-area div[class*="rounded-4"] p {
+                font-size: 13.5px !important;
+                line-height: 1.5 !important;
+                margin-bottom: 14px !important;
+                text-align: center !important;
+            }
+
+            /* FIX LOI MEO NUT: Tren mobile, nut CTA va MOI nut trong blog thanh khoi chu nhat bo goc 12px, KHONG bi meo thanh qua trung/hinh tron */
+            .blog-content-area .btn,
+            .blog-content-area a.btn,
+            .blog-content-area .product-cta-btn,
+            .blog-content-area a[class*="btn"],
+            .product-highlight-box .btn,
+            .product-highlight-box a {
+                display: flex !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 12px !important; /* Ghi de triet de rounded-pill */
+                padding: 13px 14px !important;
+                font-size: 15px !important;
+                font-weight: 700 !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+                text-align: center !important;
+                justify-content: center !important;
+                align-items: center !important;
+                line-height: 1.35 !important;
+                box-sizing: border-box !important;
+                margin: 6px 0 !important;
+            }
+
+            /* Khung lien he & bao hanh cuoi bai tren Mobile */
+            .blog-contact-box,
+            .blog-content-area .alert {
+                padding: 18px 14px !important;
+                border-radius: 14px !important;
+                margin-top: 22px !important;
+            }
+            .blog-contact-box h4,
+            .blog-content-area .alert h4 {
+                font-size: 16.5px !important;
+                line-height: 1.35 !important;
+            }
+            .blog-contact-box p,
+            .blog-content-area .alert p {
+                font-size: 13.5px !important;
+                line-height: 1.5 !important;
+                margin-bottom: 12px !important;
+            }
+            .blog-contact-box .d-flex,
+            .blog-content-area .alert .d-flex {
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 8px !important;
+            }
+            .blog-contact-box .d-flex .btn,
+            .blog-content-area .alert .d-flex .btn {
+                width: 100% !important;
+                margin: 0 !important;
+            }
+        }
+
         .share-section {
             background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
             border-radius: 20px;

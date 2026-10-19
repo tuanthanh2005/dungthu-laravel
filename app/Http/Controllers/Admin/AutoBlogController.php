@@ -54,9 +54,12 @@ class AutoBlogController extends Controller
                     'total_generated'  => $status['total_generated'],
                     'cycle_count'      => $status['cycle_count'],
                     'next_product'     => $status['next_product'] ? [
-                        'id'    => $status['next_product']->id,
-                        'name'  => $status['next_product']->name,
-                        'price' => number_format($status['next_product']->price, 0, ',', '.') . 'đ',
+                        'id'             => $status['next_product']->id,
+                        'name'           => $status['next_product']->name,
+                        'price'          => $status['next_product_price_formatted'] ?? (number_format($status['next_product']->price, 0, ',', '.') . 'đ'),
+                        'original_price' => $status['next_product_original_price_formatted'] ?? null,
+                        'has_sale'       => $status['next_product_is_on_sale'] ?? false,
+                        'save_percent'   => $status['next_product_save_percent'] ?? 0,
                     ] : null,
                 ],
             ]);
@@ -141,9 +144,12 @@ class AutoBlogController extends Controller
                     'name' => $status['last_product']->name,
                 ] : null,
                 'next_product'           => $status['next_product'] ? [
-                    'id'    => $status['next_product']->id,
-                    'name'  => $status['next_product']->name,
-                    'price' => number_format($status['next_product']->price, 0, ',', '.') . 'đ',
+                    'id'             => $status['next_product']->id,
+                    'name'           => $status['next_product']->name,
+                    'price'          => $status['next_product_price_formatted'] ?? (number_format($status['next_product']->price, 0, ',', '.') . 'đ'),
+                    'original_price' => $status['next_product_original_price_formatted'] ?? null,
+                    'has_sale'       => $status['next_product_is_on_sale'] ?? false,
+                    'save_percent'   => $status['next_product_save_percent'] ?? 0,
                 ] : null,
                 'last_run_at'            => $status['last_run_at'] ? Carbon::parse($status['last_run_at'])->format('d/m/Y H:i:s') : null,
             ],
@@ -209,6 +215,27 @@ class AutoBlogController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Cập nhật làm mới lại khung giá ưu đãi chuẩn cho toàn bộ bài viết blog tự động đã tạo
+     */
+    public function refreshPrices(AutoBlogService $service): JsonResponse
+    {
+        try {
+            $count = $service->refreshExistingBlogPriceBoxes();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Đã đồng bộ và làm mới mức giá ưu đãi thành công cho {$count} bài viết blog!",
+                'count'   => $count,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi làm mới giá bài viết: ' . $e->getMessage(),
             ], 500);
         }
     }

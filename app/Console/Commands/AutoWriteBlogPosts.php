@@ -61,7 +61,12 @@ class AutoWriteBlogPosts extends Command
             return Command::FAILURE;
         }
 
-        $this->info("📦 Sản phẩm mục tiêu: #{$product->id} - {$product->name} (Giá: " . number_format($product->price) . "đ)");
+        $priceDetails = AutoBlogService::resolveProductPriceDetails($product);
+        $priceInfoText = $priceDetails['discount_formatted'];
+        if ($priceDetails['has_sale'] && !empty($priceDetails['original_formatted'])) {
+            $priceInfoText .= " (Giá gốc: {$priceDetails['original_formatted']} - Giảm {$priceDetails['save_percent']}%)";
+        }
+        $this->info("📦 Sản phẩm mục tiêu: #{$product->id} - {$product->name} [{$priceInfoText}]");
 
         // 3. Thực hiện tạo bài viết
         try {

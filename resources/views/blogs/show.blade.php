@@ -318,6 +318,28 @@
             text-align: center !important;
         }
 
+        .product-highlight-box strong.text-danger {
+            font-size: 26px !important;
+            font-weight: 850 !important;
+            color: #dc2626 !important;
+            line-height: 1.2 !important;
+        }
+
+        .product-highlight-box del {
+            font-size: 15px !important;
+            color: #64748b !important;
+            text-decoration: line-through !important;
+        }
+
+        .product-highlight-box .badge.bg-danger {
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            padding: 4px 10px !important;
+            border-radius: 999px !important;
+            background-color: #ef4444 !important;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3) !important;
+        }
+
         /* Nut keu goi hanh dong CTA */
         .product-cta-btn,
         .blog-content-area a.product-cta-btn {
@@ -441,6 +463,16 @@
                 line-height: 1.5 !important;
                 margin-bottom: 14px !important;
                 text-align: center !important;
+            }
+            .product-highlight-box strong.text-danger {
+                font-size: 20px !important;
+            }
+            .product-highlight-box del {
+                font-size: 13px !important;
+            }
+            .product-highlight-box .badge.bg-danger {
+                font-size: 10.5px !important;
+                padding: 3px 8px !important;
             }
 
             /* FIX LOI MEO NUT: Tren mobile, nut CTA va MOI nut trong blog thanh khoi chu nhat bo goc 12px, KHONG bi meo thanh qua trung/hinh tron */

@@ -334,7 +334,15 @@
                         {{ $nextProduct ? Str::limit($nextProduct->name, 22) : 'Chưa có SP' }}
                     </div>
                     <small class="text-white-50" id="statNextProductPrice">
-                        {{ $nextProduct ? number_format($nextProduct->price, 0, ',', '.') . 'đ' : '--' }}
+                        @if($nextProduct)
+                            <strong class="text-warning">{{ $autoStatus['next_product_price_formatted'] ?? (number_format($nextProduct->effective_price, 0, ',', '.') . 'đ') }}</strong>
+                            @if(!empty($autoStatus['next_product_original_price_formatted']) && !empty($autoStatus['next_product_is_on_sale']))
+                                <del class="text-white-50 ms-1" style="font-size: 11px;">{{ $autoStatus['next_product_original_price_formatted'] }}</del>
+                                <span class="badge bg-danger text-white rounded-pill ms-1 px-1 py-0" style="font-size: 9px;">-{{ $autoStatus['next_product_save_percent'] }}%</span>
+                            @endif
+                        @else
+                            --
+                        @endif
                     </small>
                 </div>
             </div>
@@ -454,6 +462,17 @@
                         </div>
                         <small class="text-white-50">Nhập 0 để bắt đầu lại từ SP #1.</small>
                     </div>
+                </div>
+
+                <!-- Đồng Bộ Khung Giá Cho Toàn Bộ Bài Viết Đã Tạo -->
+                <div class="mt-3 pt-3 border-top border-white border-opacity-10 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div>
+                        <span class="text-white fw-bold small"><i class="fas fa-tags text-warning me-1"></i> Đồng bộ mức giá ưu đãi (giá giảm) cho bài viết:</span>
+                        <small class="text-white-50 d-block">Quét và cập nhật lại khung giá ưu đãi chuẩn xác cho toàn bộ bài viết blog đã tạo trước đây.</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-bold" onclick="refreshAutoBlogPrices()" id="btnRefreshPrices">
+                        <i class="fas fa-sync-alt me-1"></i> Cập Nhật Giá Giảm Cho Các Bài Đã Viết
+                    </button>
                 </div>
 
                 <!-- Webhook Cron URL -->
@@ -839,6 +858,40 @@
         });
     }
 
+    // 6.2. Đồng bộ giá giảm cho toàn bộ bài viết đã tạo
+    function refreshAutoBlogPrices() {
+        const btn = document.getElementById('btnRefreshPrices');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang đồng bộ...';
+        }
+
+        fetch('{{ route("admin.blogs.auto.refresh_prices") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i> Cập Nhật Giá Giảm Cho Các Bài Đã Viết';
+            }
+            alert(res.message || 'Đã đồng bộ giá bài viết thành công!');
+            location.reload();
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i> Cập Nhật Giá Giảm Cho Các Bài Đã Viết';
+            }
+            alert('Lỗi khi đồng bộ giá bài viết: ' + err.message);
+        });
+    }
+
     // 7. Live Polling & Tự động chạy khi quá hạn 15 phút
     let isAutoTriggering = false;
     let currentBlogTotal = {{ (int) $autoStatus['total_generated'] }};
@@ -865,7 +918,13 @@
                 const nextNameEl = document.getElementById('statNextProductName');
                 const nextPriceEl = document.getElementById('statNextProductPrice');
                 if (nextNameEl) nextNameEl.innerText = d.next_product.name;
-                if (nextPriceEl) nextPriceEl.innerText = d.next_product.price;
+                if (nextPriceEl) {
+                    if (d.next_product.has_sale && d.next_product.original_price) {
+                        nextPriceEl.innerHTML = `<strong class="text-warning">${d.next_product.price}</strong> <del class="text-white-50 ms-1" style="font-size: 11px;">${d.next_product.original_price}</del> <span class="badge bg-danger text-white rounded-pill ms-1 px-1 py-0" style="font-size: 9px;">-${d.next_product.save_percent}%</span>`;
+                    } else {
+                        nextPriceEl.innerHTML = `<strong class="text-warning">${d.next_product.price}</strong>`;
+                    }
+                }
             }
 
             // Cập nhật tổng số bài đã tạo

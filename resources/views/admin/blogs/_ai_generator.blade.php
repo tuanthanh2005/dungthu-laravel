@@ -15,7 +15,7 @@
         <div class="d-flex align-items-center gap-2">
             @php
                 $hasApiKey = !empty(\App\Services\GeminiBlogService::getApiKey());
-                $defaultModel = \App\Models\SiteSetting::getValue('gemini_default_model', 'gemini-2.0-flash');
+                $defaultModel = \App\Models\SiteSetting::getValue('gemini_default_model', 'gemini-3.5-flash');
             @endphp
             
             <span id="aiKeyStatusBadge">
@@ -66,12 +66,12 @@
                 <i class="fas fa-microchip me-1 text-primary"></i>Chọn Model Gemini
             </label>
             <select id="ai_model_select" class="form-select border-2">
-                <option value="gemini-2.0-flash" {{ $defaultModel == 'gemini-2.0-flash' ? 'selected' : '' }}>Gemini 2.0 Flash (Nhanh & Mới nhất - Nhanh ⚡)</option>
-                <option value="gemini-1.5-flash" {{ $defaultModel == 'gemini-1.5-flash' ? 'selected' : '' }}>Gemini 1.5 Flash (Tốc độ cao 🚀)</option>
+                <option value="gemini-3.5-flash" {{ $defaultModel == 'gemini-3.5-flash' ? 'selected' : '' }}>Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)</option>
+                <option value="gemini-3.1-flash-lite" {{ $defaultModel == 'gemini-3.1-flash-lite' ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Mới nhất & Tốc độ cao 🚀)</option>
+                <option value="gemini-2.0-flash" {{ $defaultModel == 'gemini-2.0-flash' ? 'selected' : '' }}>Gemini 2.0 Flash (Nhanh & Thông minh ⚡)</option>
                 <option value="gemini-1.5-pro" {{ $defaultModel == 'gemini-1.5-pro' ? 'selected' : '' }}>Gemini 1.5 Pro (Sâu sắc & Chi tiết 💎)</option>
+                <option value="gemini-1.5-flash" {{ $defaultModel == 'gemini-1.5-flash' ? 'selected' : '' }}>Gemini 1.5 Flash (Tốc độ cao 🚀)</option>
                 <option value="gemini-2.0-flash-lite" {{ $defaultModel == 'gemini-2.0-flash-lite' ? 'selected' : '' }}>Gemini 2.0 Flash Lite</option>
-                <option value="gemini-3.1-flash-lite" {{ $defaultModel == 'gemini-3.1-flash-lite' ? 'selected' : '' }}>Gemini 3.1 Flash-Lite</option>
-                <option value="gemini-3.5-flash" {{ $defaultModel == 'gemini-3.5-flash' ? 'selected' : '' }}>Gemini 3.5 Flash</option>
             </select>
         </div>
 

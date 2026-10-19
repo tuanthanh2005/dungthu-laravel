@@ -39,12 +39,12 @@ class GeminiBlogService
     public static function getAvailableModels(): array
     {
         return [
+            'gemini-3.5-flash'      => 'Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)',
+            'gemini-3.1-flash-lite' => 'Gemini 3.1 Flash-Lite (Mới nhất & Tốc độ cao 🚀)',
             'gemini-2.0-flash'      => 'Gemini 2.0 Flash (Nhanh & Thông minh ⚡)',
-            'gemini-1.5-flash'      => 'Gemini 1.5 Flash (Tốc độ cao 🚀)',
             'gemini-1.5-pro'        => 'Gemini 1.5 Pro (Sâu sắc & Chi tiết 💎)',
+            'gemini-1.5-flash'      => 'Gemini 1.5 Flash (Tốc độ cao 🚀)',
             'gemini-2.0-flash-lite' => 'Gemini 2.0 Flash Lite (Tiết kiệm)',
-            'gemini-3.1-flash-lite' => 'Gemini 3.1 Flash-Lite',
-            'gemini-3.5-flash'      => 'Gemini 3.5 Flash',
         ];
     }
 
@@ -56,8 +56,8 @@ class GeminiBlogService
         $model = strtolower(trim($model));
         
         $map = [
-            'gemini 3.1 flash-lite' => 'gemini-3.1-flash-lite',
             'gemini 3.5 flash'      => 'gemini-3.5-flash',
+            'gemini 3.1 flash-lite' => 'gemini-3.1-flash-lite',
             'gemini 2.0 flash'      => 'gemini-2.0-flash',
             'gemini 2.0 flash-lite' => 'gemini-2.0-flash-lite',
             'gemini 1.5 flash'      => 'gemini-1.5-flash',
@@ -72,7 +72,7 @@ class GeminiBlogService
      */
     public function generateBlogPost(
         string $title,
-        string $model = 'gemini-2.0-flash',
+        string $model = 'gemini-3.5-flash',
         ?string $apiKey = null,
         ?string $tone = 'sales'
     ): array {

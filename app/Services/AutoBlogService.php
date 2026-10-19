@@ -135,7 +135,7 @@ class AutoBlogService
             throw new \Exception('Chưa cấu hình Gemini API Key! Vui lòng nhập API Key tại phần Cài đặt Auto Blog.');
         }
 
-        $model = $forcedModel ?: SiteSetting::getValue('auto_blog_model', 'gemini-2.0-flash');
+        $model = $forcedModel ?: SiteSetting::getValue('auto_blog_model', SiteSetting::getValue('gemini_default_model', 'gemini-3.5-flash'));
         $model = GeminiBlogService::formatModelName($model);
 
         $runCount = (int) SiteSetting::getValue('auto_blog_total_generated', 0);
@@ -603,7 +603,7 @@ HTML;
         $cycle = (int) SiteSetting::getValue('auto_blog_cycle_count', 0);
         $totalGenerated = (int) SiteSetting::getValue('auto_blog_total_generated', 0);
         $lastRunAt = SiteSetting::getValue('auto_blog_last_run_at');
-        $model = SiteSetting::getValue('auto_blog_model', 'gemini-2.0-flash');
+        $model = SiteSetting::getValue('auto_blog_model', SiteSetting::getValue('gemini_default_model', 'gemini-3.5-flash'));
 
         $totalProducts = Product::where('is_active', true)->count();
         $lastProduct = $lastId > 0 ? Product::find($lastId) : null;

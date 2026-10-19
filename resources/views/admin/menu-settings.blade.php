@@ -661,15 +661,15 @@
                                 <i class="fas fa-microchip me-1"></i> Model Gemini Mặc Định
                             </label>
                             @php
-                                $currentModel = \App\Models\SiteSetting::getValue('gemini_default_model', 'gemini-2.0-flash');
+                                $currentModel = \App\Models\SiteSetting::getValue('gemini_default_model', 'gemini-3.5-flash');
                             @endphp
                             <select name="gemini_default_model" class="form-select border-2">
-                                <option value="gemini-2.0-flash" {{ $currentModel == 'gemini-2.0-flash' ? 'selected' : '' }}>Gemini 2.0 Flash (Nhanh & Mới nhất - Khuyên dùng)</option>
+                                <option value="gemini-3.5-flash" {{ $currentModel == 'gemini-3.5-flash' ? 'selected' : '' }}>Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)</option>
+                                <option value="gemini-3.1-flash-lite" {{ $currentModel == 'gemini-3.1-flash-lite' ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Mới nhất & Tốc độ cao 🚀)</option>
+                                <option value="gemini-2.0-flash" {{ $currentModel == 'gemini-2.0-flash' ? 'selected' : '' }}>Gemini 2.0 Flash (Nhanh & Thông minh ⚡)</option>
+                                <option value="gemini-1.5-pro" {{ $currentModel == 'gemini-1.5-pro' ? 'selected' : '' }}>Gemini 1.5 Pro (Sâu sắc & Chi tiết 💎)</option>
                                 <option value="gemini-1.5-flash" {{ $currentModel == 'gemini-1.5-flash' ? 'selected' : '' }}>Gemini 1.5 Flash (Tốc độ cao)</option>
-                                <option value="gemini-1.5-pro" {{ $currentModel == 'gemini-1.5-pro' ? 'selected' : '' }}>Gemini 1.5 Pro (Sâu sắc & Chi tiết)</option>
                                 <option value="gemini-2.0-flash-lite" {{ $currentModel == 'gemini-2.0-flash-lite' ? 'selected' : '' }}>Gemini 2.0 Flash Lite</option>
-                                <option value="gemini-3.1-flash-lite" {{ $currentModel == 'gemini-3.1-flash-lite' ? 'selected' : '' }}>Gemini 3.1 Flash-Lite</option>
-                                <option value="gemini-3.5-flash" {{ $currentModel == 'gemini-3.5-flash' ? 'selected' : '' }}>Gemini 3.5 Flash</option>
                             </select>
                             <div class="form-text mt-2 text-muted">
                                 Dòng Model mặc định khi nhấn nút viết bài tự động bằng AI.

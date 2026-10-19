@@ -1765,9 +1765,17 @@ class AdminController extends Controller
             $query->where('category', $request->category);
         }
 
-        $blogs = $query->latest()->paginate(10);
+        // Lọc bài viết tự động
+        if ($request->has('auto') && $request->auto == '1') {
+            $query->where('is_auto_generated', true);
+        }
+
+        $blogs = $query->with('product')->latest('id')->paginate(10);
         
-        return view('admin.blogs.index', compact('blogs'));
+        $autoBlogStatus = app(\App\Services\AutoBlogService::class)->getQueueStatus();
+        $autoBlogsCount = Blog::where('is_auto_generated', true)->count();
+
+        return view('admin.blogs.index', compact('blogs', 'autoBlogStatus', 'autoBlogsCount'));
     }
 
     public function createBlog()

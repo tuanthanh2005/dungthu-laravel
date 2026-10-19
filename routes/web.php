@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\AdminBuffController;
 use App\Http\Controllers\Admin\GoogleIndexingController;
 use App\Http\Controllers\Admin\AdminAffiliateController;
 use App\Http\Controllers\Admin\CustomerDurationController;
+use App\Http\Controllers\Admin\AutoBlogController;
 use App\Http\Controllers\Affiliate\AffiliateAuthController;
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\WebhookController;
@@ -130,6 +131,9 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/category/{category}', [BlogController::class, 'category'])->name('blog.category');
 Route::get('/blog/chu-de/{topic}', [BlogController::class, 'topic'])->name('blog.topic');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+
+// Webhook Cron Auto Blog (Dành cho Cron Server / UptimeRobot / cPanel)
+Route::match(['get', 'post'], '/cron/auto-blog', [\App\Http\Controllers\Admin\AutoBlogController::class, 'handleWebCron'])->name('cron.auto-blog');
 
 // Community routes
 Route::get('/community', [CommunityPostController::class, 'index'])->name('community.index');
@@ -323,6 +327,11 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/blogs/{blog}/edit', [AdminController::class, 'editBlog'])->name('admin.blogs.edit');
     Route::put('/blogs/{blog}', [AdminController::class, 'updateBlog'])->name('admin.blogs.update');
     Route::delete('/blogs/{blog}', [AdminController::class, 'deleteBlog'])->name('admin.blogs.delete');
+    
+    // Auto Blog AI System (Cơ chế tự động viết bài theo sản phẩm)
+    Route::post('/blogs/auto/run', [AutoBlogController::class, 'runNow'])->name('admin.blogs.auto.run');
+    Route::post('/blogs/auto/settings', [AutoBlogController::class, 'updateSettings'])->name('admin.blogs.auto.settings');
+    Route::get('/blogs/auto/status', [AutoBlogController::class, 'status'])->name('admin.blogs.auto.status');
     Route::match(['get', 'post'], '/google-indexing/blogs/submit-all', [GoogleIndexingController::class, 'submitAllBlogs'])->name('admin.google-indexing.submit-all');
     Route::match(['get', 'post'], '/google-indexing/products/submit-all', [GoogleIndexingController::class, 'submitAllProducts'])->name('admin.google-indexing.submit-all-products');
     Route::post('/google-indexing/categories/submit-all', [GoogleIndexingController::class, 'submitAllCategories'])->name('admin.google-indexing.submit-all-categories');

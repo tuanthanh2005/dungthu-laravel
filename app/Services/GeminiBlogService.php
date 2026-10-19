@@ -34,13 +34,14 @@ class GeminiBlogService
     }
 
     /**
-     * Danh sách model Gemini hỗ trợ cho giao diện chọn (chỉ dùng các model 3.1 và 3.5 mới nhất)
+     * Danh sách model Gemini hỗ trợ cho giao diện chọn
      */
     public static function getAvailableModels(): array
     {
         return [
-            'gemini-3.1-flash-lite' => 'Gemini 3.1 Flash-Lite (Khuyên dùng - Siêu nhanh, không bị nghẽn 🚀)',
-            'gemini-3.5-flash'      => 'Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)',
+            'gemini-3.8-flash'      => 'Gemini 3.8 Flash (Mới nhất 2026 - Siêu thông minh & Chuẩn SEO 👑)',
+            'gemini-3.1-flash-lite' => 'Gemini 3.1 Flash-Lite (Tốc độ cao 🚀)',
+            'gemini-3.5-flash'      => 'Gemini 3.5 Flash',
         ];
     }
 
@@ -52,6 +53,11 @@ class GeminiBlogService
         $model = strtolower(trim($model));
         
         $map = [
+            'gemini 3.8 flash'      => 'gemini-3.8-flash',
+            'gemini-3.8-flash'      => 'gemini-3.8-flash',
+            'gemini 3.8'            => 'gemini-3.8-flash',
+            'gemini-3.8'            => 'gemini-3.8-flash',
+            '3.8'                   => 'gemini-3.8-flash',
             'gemini 3.1 flash-lite' => 'gemini-3.1-flash-lite',
             'gemini 3.1'            => 'gemini-3.1-flash-lite',
             'gemini-3.1'            => 'gemini-3.1-flash-lite',
@@ -60,18 +66,20 @@ class GeminiBlogService
             'gemini 3.5'            => 'gemini-3.5-flash',
             'gemini-3.5'            => 'gemini-3.5-flash',
             '3.5'                   => 'gemini-3.5-flash',
+            'gemini 2.5 flash'      => 'gemini-2.5-flash',
+            'gemini 2.0 flash'      => 'gemini-2.0-flash',
         ];
 
-        return $map[$model] ?? ($model ?: 'gemini-3.1-flash-lite');
+        return $map[$model] ?? ($model ?: 'gemini-3.8-flash');
     }
 
     /**
-     * Gọi Gemini API với cơ chế tự động chuyển đổi giữa model 3.1 và 3.5
+     * Gọi Gemini API với cơ chế tự động chuyển đổi giữa các model thế hệ mới
      * khi gặp lỗi 503 (High Demand / quá tải), 429 hoặc model bận.
      */
     public static function callWithFallback(
         string $prompt,
-        string $initialModel = 'gemini-3.1-flash-lite',
+        string $initialModel = 'gemini-3.8-flash',
         ?string $apiKey = null,
         array $generationConfig = [],
         int $timeout = 75
@@ -83,13 +91,16 @@ class GeminiBlogService
 
         $formattedInitial = self::formatModelName($initialModel);
 
-        // Chỉ dùng model 3.1 và 3.5 mới nhất theo yêu cầu, tránh hoàn toàn các model cũ bị 404
-        if ($formattedInitial === 'gemini-3.5-flash') {
-            $fallbackPool = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
-        } else {
-            $fallbackPool = ['gemini-3.1-flash-lite', 'gemini-3.5-flash'];
-        }
-        $modelsToTry = array_values(array_unique(array_filter($fallbackPool)));
+        // Chuỗi ưu tiên model thế hệ mới: 3.8 Flash -> 3.1 Flash-Lite -> 2.5 Flash -> 2.0 Flash -> 3.5 Flash
+        $fallbackPool = array_values(array_unique(array_filter([
+            $formattedInitial,
+            'gemini-3.8-flash',
+            'gemini-3.1-flash-lite',
+            'gemini-2.5-flash',
+            'gemini-2.0-flash',
+            'gemini-3.5-flash',
+        ])));
+        $modelsToTry = $fallbackPool;
 
         $defaultConfig = [
             'temperature'      => 0.7,

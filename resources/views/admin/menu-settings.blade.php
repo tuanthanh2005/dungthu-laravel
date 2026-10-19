@@ -664,8 +664,9 @@
                                 $currentModel = \App\Models\SiteSetting::getValue('gemini_default_model', 'gemini-3.1-flash-lite');
                             @endphp
                             <select name="gemini_default_model" class="form-select border-2">
-                                <option value="gemini-3.1-flash-lite" {{ in_array($currentModel, ['gemini-3.1-flash-lite', 'gemini-3.1', '3.1'], true) ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Khuyên dùng - Siêu nhanh & Không nghẽn 🚀)</option>
-                                <option value="gemini-3.5-flash" {{ in_array($currentModel, ['gemini-3.5-flash', 'gemini-3.5', '3.5'], true) ? 'selected' : '' }}>Gemini 3.5 Flash (Mạnh nhất & Siêu thông minh 👑)</option>
+                                <option value="gemini-3.8-flash" {{ in_array($currentModel, ['gemini-3.8-flash', 'gemini-3.8', '3.8'], true) ? 'selected' : '' }}>Gemini 3.8 Flash (Mới nhất 2026 - Siêu thông minh 👑)</option>
+                                <option value="gemini-3.1-flash-lite" {{ in_array($currentModel, ['gemini-3.1-flash-lite', 'gemini-3.1', '3.1'], true) ? 'selected' : '' }}>Gemini 3.1 Flash-Lite (Tốc độ cao 🚀)</option>
+                                <option value="gemini-3.5-flash" {{ in_array($currentModel, ['gemini-3.5-flash', 'gemini-3.5', '3.5'], true) ? 'selected' : '' }}>Gemini 3.5 Flash</option>
                             </select>
                             <div class="form-text mt-2 text-muted">
                                 Dòng Model mặc định khi nhấn nút viết bài tự động bằng AI.

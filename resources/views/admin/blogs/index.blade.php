@@ -464,15 +464,20 @@
                     </div>
                 </div>
 
-                <!-- Đồng Bộ Khung Giá Cho Toàn Bộ Bài Viết Đã Tạo -->
+                <!-- Đồng Bộ Khung Giá & Ảnh Cho Toàn Bộ Bài Viết Đã Tạo -->
                 <div class="mt-3 pt-3 border-top border-white border-opacity-10 d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div>
-                        <span class="text-white fw-bold small"><i class="fas fa-tags text-warning me-1"></i> Đồng bộ mức giá ưu đãi (giá giảm) cho bài viết:</span>
-                        <small class="text-white-50 d-block">Quét và cập nhật lại khung giá ưu đãi chuẩn xác cho toàn bộ bài viết blog đã tạo trước đây.</small>
+                        <span class="text-white fw-bold small"><i class="fas fa-tags text-warning me-1"></i> Đồng bộ giá giảm & Banner logo chuẩn đẹp:</span>
+                        <small class="text-white-50 d-block">Cập nhật lại giá ưu đãi và thay toàn bộ ảnh bài viết bằng banner logo thương hiệu sang xịn mịn (như tấm Zoom Pro / ExpressVPN).</small>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-bold" onclick="refreshAutoBlogPrices()" id="btnRefreshPrices">
-                        <i class="fas fa-sync-alt me-1"></i> Cập Nhật Giá Giảm Cho Các Bài Đã Viết
-                    </button>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-bold" onclick="refreshAutoBlogPrices()" id="btnRefreshPrices">
+                            <i class="fas fa-sync-alt me-1"></i> Cập Nhật Lại Giá Giảm
+                        </button>
+                        <button type="button" class="btn btn-sm btn-warning rounded-pill px-3 fw-bold text-dark shadow-sm" onclick="refreshAutoBlogImages()" id="btnRefreshImages">
+                            <i class="fas fa-image me-1"></i> Tạo Lại Banner Logo Đẹp Cho Tất Cả Bài
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Webhook Cron URL -->
@@ -889,6 +894,44 @@
                 btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i> Cập Nhật Giá Giảm Cho Các Bài Đã Viết';
             }
             alert('Lỗi khi đồng bộ giá bài viết: ' + err.message);
+        });
+    }
+
+    // 6.3. Tạo lại toàn bộ ảnh banner logo chuẩn đẹp cho bài viết
+    function refreshAutoBlogImages() {
+        if (!confirm('Bạn có chắc muốn tạo lại toàn bộ ảnh banner logo thương hiệu (như mẫu Zoom Pro / ExpressVPN) cho tất cả bài viết không?')) {
+            return;
+        }
+
+        const btn = document.getElementById('btnRefreshImages');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang tạo lại banner...';
+        }
+
+        fetch('{{ route("admin.blogs.auto.refresh_images") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-image me-1"></i> Tạo Lại Banner Logo Đẹp Cho Tất Cả Bài';
+            }
+            alert(res.message || 'Đã tạo lại banner logo cho bài viết thành công!');
+            location.reload();
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-image me-1"></i> Tạo Lại Banner Logo Đẹp Cho Tất Cả Bài';
+            }
+            alert('Lỗi khi tạo lại ảnh: ' + err.message);
         });
     }
 

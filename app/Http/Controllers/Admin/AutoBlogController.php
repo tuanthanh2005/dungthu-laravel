@@ -239,4 +239,25 @@ class AutoBlogController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Cập nhật làm mới lại toàn bộ ảnh banner logo chuẩn đẹp cho bài viết blog tự động
+     */
+    public function refreshImages(AutoBlogService $service): JsonResponse
+    {
+        try {
+            $count = $service->refreshExistingBlogImages();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Đã tạo lại banner logo thương hiệu chuẩn đẹp thành công cho {$count} bài viết blog!",
+                'count'   => $count,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi làm mới ảnh bài viết: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

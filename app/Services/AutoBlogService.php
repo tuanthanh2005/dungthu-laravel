@@ -305,6 +305,34 @@ HTML;
     }
 
     /**
+     * Quét và tạo lại ảnh banner logo chuẩn đẹp cho toàn bộ bài viết blog tự động,
+     * loại bỏ hoàn toàn các ảnh cũ bị lỗi hoặc dị dạng ma ám.
+     */
+    public function refreshExistingBlogImages(): int
+    {
+        $blogs = Blog::whereNotNull('product_id')->get();
+        $updatedCount = 0;
+
+        foreach ($blogs as $blog) {
+            $product = $blog->product;
+            if (!$product) {
+                continue;
+            }
+
+            $angles = self::getAngles();
+            $angle = $angles[$blog->auto_tone ?? 'deal_san_sale'] ?? array_values($angles)[0];
+            $newImage = $this->generateAndSaveBlogImage($product, ['title' => $blog->title], null, $angle, $blog->id);
+
+            if ($newImage) {
+                $blog->updateQuietly(['image' => $newImage]);
+                $updatedCount++;
+            }
+        }
+
+        return $updatedCount;
+    }
+
+    /**
      * Xác định phong cách bài viết dựa trên tổng số lần chạy + số chu kỳ loop,
      * đảm bảo mỗi bài có góc nhìn khác nhau, không bị trùng lặp nội dung.
      */
@@ -622,46 +650,25 @@ PROMPT;
             @mkdir($rootPath, 0755, true);
         }
 
-        // CẤP 1: Thử tạo ảnh AI bằng Google Imagen 3 API với Gemini Key
-        $key = GeminiBlogService::getApiKey($apiKey);
-        if (!empty($key)) {
-            try {
-                $imageBytes = $this->callGoogleImagen($product, $blogData, $key, $angle);
-                if (!empty($imageBytes)) {
-                    $this->saveImageToBothLocations($imageBytes, $fileName, $dir);
-                    Log::info("[AutoBlog] Tạo ảnh bài viết AI thành công qua Google Imagen 3 cho SP #{$product->id} (Cycle #{$cycle})");
-                    return $relativePath;
-                }
-            } catch (\Throwable $e) {
-                Log::info("[AutoBlog] Google Imagen bỏ qua ({$e->getMessage()}), chuyển sang cấp Pollinations AI...");
+        // CẤP 1 (ƯU TIÊN TUYỆT ĐỐI): Dùng chính ảnh / logo banner chuẩn của sản phẩm
+        // (Y hệt các mẫu Grok, Canva, Adobe, Cursor, Microsoft 365, IntelliJ trong ảnh mẫu)
+        if (!empty($product->image)) {
+            $rawBytes = $this->getProductImageRawBytes($product);
+            if (!empty($rawBytes)) {
+                $ext = pathinfo(parse_url($product->image, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION) ?: 'jpg';
+                $cleanFileName = 'auto_p' . $product->id . '_c' . $cycle . '_' . time() . '_' . Str::random(6) . '.' . $ext;
+                $cleanRelativePath = '/' . $dir . '/' . $cleanFileName;
+
+                $this->saveImageToBothLocations($rawBytes, $cleanFileName, $dir);
+                Log::info("[AutoBlog] Sử dụng ảnh logo sản phẩm chuẩn cho SP #{$product->id} (Cycle #{$cycle})");
+                return $cleanRelativePath;
             }
+
+            // Nếu không đọc được bytes (ví dụ CDN ngoài), dùng trực tiếp URL ảnh sản phẩm
+            return $product->image;
         }
 
-        // CẤP 2: Tạo ảnh AI độc nhất 100% bằng Pollinations AI (Miễn phí 100%, không cần key, tạo ảnh AI bằng Flux/SD)
-        try {
-            $imageBytes = $this->callPollinationsAi($product, $blogData, $angle);
-            if (!empty($imageBytes)) {
-                $this->saveImageToBothLocations($imageBytes, $fileName, $dir);
-                Log::info("[AutoBlog] Tạo ảnh bài viết AI thành công qua Pollinations AI cho SP #{$product->id} (Cycle #{$cycle})");
-                return $relativePath;
-            }
-        } catch (\Throwable $e) {
-            Log::info("[AutoBlog] Pollinations AI bỏ qua ({$e->getMessage()}), chuyển sang cấp ghép banner đa sắc thái...");
-        }
-
-        // CẤP 3: Ghép ảnh sản phẩm có sẵn với 8 bộ màu nền đa sắc thái, ambient glow và badge độc quyền
-        try {
-            $imageBytes = $this->compositeProductBanner($product, $angle, $runCount);
-            if (!empty($imageBytes)) {
-                $this->saveImageToBothLocations($imageBytes, $fileName, $dir);
-                Log::info("[AutoBlog] Ghép ảnh banner độc quyền thành công cho SP #{$product->id} (Cycle #{$cycle})");
-                return $relativePath;
-            }
-        } catch (\Throwable $e) {
-            Log::warning("[AutoBlog] Ghép ảnh sản phẩm lỗi: " . $e->getMessage() . ", chuyển sang vẽ banner gradient...");
-        }
-
-        // CẤP 4: Vẽ banner gradient thương hiệu DungThu.com 1200x800 đa dạng màu sắc
+        // CẤP 2: Nếu sản phẩm chưa có ảnh, vẽ banner gradient thương hiệu DungThu.com 1200x800 sang xịn mịn
         try {
             $imageBytes = $this->createBrandGradientBanner($product, $angle, $runCount);
             if (!empty($imageBytes)) {
@@ -673,6 +680,55 @@ PROMPT;
         }
 
         return null;
+    }
+
+    /**
+     * Tải dữ liệu nhị phân (bytes) của ảnh sản phẩm gốc
+     */
+    private function getProductImageRawBytes(Product $product): ?string
+    {
+        if (empty($product->image)) {
+            return null;
+        }
+
+        $imageUrl = $product->image;
+        $rawSource = null;
+
+        if (preg_match('/^https?:\/\//i', $imageUrl)) {
+            $parsedUrl = parse_url($imageUrl);
+            $host = $parsedUrl['host'] ?? '';
+            $path = ltrim($parsedUrl['path'] ?? '', '/');
+
+            if (in_array($host, ['localhost', '127.0.0.1']) || empty($host)) {
+                $localPath = PathHelper::publicRootPath($path);
+                if (is_file($localPath)) {
+                    $rawSource = @file_get_contents($localPath);
+                } elseif (is_file(public_path($path))) {
+                    $rawSource = @file_get_contents(public_path($path));
+                }
+            }
+
+            if (empty($rawSource)) {
+                try {
+                    $fetch = Http::timeout(6)->get($imageUrl);
+                    if ($fetch->successful()) {
+                        $rawSource = $fetch->body();
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning("[AutoBlog] Không thể tải ảnh qua URL: {$imageUrl} ({$e->getMessage()})");
+                }
+            }
+        } else {
+            $cleanPath = ltrim($imageUrl, '/');
+            $localPath = PathHelper::publicRootPath($cleanPath);
+            if (is_file($localPath)) {
+                $rawSource = @file_get_contents($localPath);
+            } elseif (is_file(public_path($cleanPath))) {
+                $rawSource = @file_get_contents(public_path($cleanPath));
+            }
+        }
+
+        return $rawSource;
     }
 
     /**

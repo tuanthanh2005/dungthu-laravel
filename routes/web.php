@@ -70,6 +70,7 @@ Route::get('/download/app/{platform}', function ($platform) {
 Route::post('/guest-chat', [GuestChatController::class, 'send'])->middleware('throttle:15,1')->name('guest-chat.send');
 
 // Chatbot AI routes
+Route::view('/testbot', 'testbot')->name('testbot');
 Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
 Route::post('/api/chatbot/send', [ChatbotController::class, 'sendMessage'])->middleware('throttle:15,1')->name('chatbot.send');
 Route::post('/api/chatbot/session', [ChatbotController::class, 'createSession'])->name('chatbot.session.create');

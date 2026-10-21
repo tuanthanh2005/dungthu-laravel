@@ -49,9 +49,11 @@ class AppServiceProvider extends ServiceProvider
                 $cacheKey = 'daily_expiring_check_ran_' . date('Y-m-d');
                 if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
                     \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->endOfDay());
-                    dispatch(function () {
-                        \Illuminate\Support\Facades\Artisan::call('durations:check-expiring');
-                    })->afterResponse();
+                    app()->terminating(function () {
+                        try {
+                            \Illuminate\Support\Facades\Artisan::call('durations:check-expiring');
+                        } catch (\Throwable $e) {}
+                    });
                 }
             } catch (\Throwable $e) {
                 // Ignore any exception to guarantee page load is never affected
@@ -79,13 +81,18 @@ class AppServiceProvider extends ServiceProvider
                         $lockKey = 'auto_blog_web_execution_lock';
                         if (!\Illuminate\Support\Facades\Cache::has($lockKey)) {
                             \Illuminate\Support\Facades\Cache::put($lockKey, true, now()->addMinutes(6));
-                            dispatch(function () {
+                            app()->terminating(function () {
+                                @ignore_user_abort(true);
+                                @set_time_limit(180);
+                                if (!headers_sent()) {
+                                    @header('X-LiteSpeed-No-Abort: 1');
+                                }
                                 try {
                                     \Illuminate\Support\Facades\Artisan::call('blog:auto-write');
                                 } catch (\Throwable $e) {
                                     \Illuminate\Support\Facades\Log::error('[AutoBlog WebFallback] Lỗi: ' . $e->getMessage());
                                 }
-                            })->afterResponse();
+                            });
                         }
                     }
                 }

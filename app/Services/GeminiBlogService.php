@@ -46,6 +46,54 @@ class GeminiBlogService
     }
 
     /**
+     * Kiểm tra định dạng Google Gemini API Key có hợp lệ không (Bắt đầu bằng AIzaSy và chỉ chứa ký tự an toàn)
+     */
+    public static function isValidKeyFormat(?string $key): bool
+    {
+        if (empty($key)) {
+            return false;
+        }
+        $key = trim($key);
+        // Google Gemini API Key chuẩn luôn bắt đầu bằng AIzaSy và có độ dài ~39 ký tự
+        return (bool) preg_match('/^AIzaSy[A-Za-z0-9_\-]{30,}$/', $key);
+    }
+
+    /**
+     * Kiểm tra trực tiếp API Key bằng cách gửi request test nhẹ tới Google API
+     */
+    public static function testApiKey(?string $apiKey = null): array
+    {
+        $key = self::getApiKey($apiKey);
+        if (empty($key)) {
+            return [
+                'success' => false,
+                'message' => 'Chưa nhập API Key.',
+            ];
+        }
+
+        if (!self::isValidKeyFormat($key)) {
+            return [
+                'success' => false,
+                'message' => 'API Key không đúng định dạng của Google (API Key chuẩn luôn bắt đầu bằng "AIzaSy..."). Vui lòng tắt Unikey / bộ gõ tiếng Việt khi dán key!',
+            ];
+        }
+
+        try {
+            $result = self::callWithFallback('Ping. Trả về đúng JSON: {"status":"ok"}', 'gemini-2.0-flash', $key, [], 15);
+            return [
+                'success' => true,
+                'message' => "Kết nối Gemini API thành công (Model: {$result['model_used']})!",
+                'model_used' => $result['model_used'],
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Chuẩn hóa tên model Gemini
      */
     public static function formatModelName(string $model): string
@@ -62,15 +110,21 @@ class GeminiBlogService
             'gemini 3.1'            => 'gemini-3.1-flash-lite',
             'gemini-3.1'            => 'gemini-3.1-flash-lite',
             '3.1'                   => 'gemini-3.1-flash-lite',
+            'gemini 2.5 flash'      => 'gemini-2.5-flash',
+            'gemini-2.5-flash'      => 'gemini-2.5-flash',
+            'gemini 2.0 flash'      => 'gemini-2.0-flash',
+            'gemini-2.0-flash'      => 'gemini-2.0-flash',
+            'gemini 1.5 flash'      => 'gemini-1.5-flash',
+            'gemini-1.5-flash'      => 'gemini-1.5-flash',
+            'gemini 1.5 pro'        => 'gemini-1.5-pro',
+            'gemini-1.5-pro'        => 'gemini-1.5-pro',
             'gemini 3.5 flash'      => 'gemini-3.5-flash',
             'gemini 3.5'            => 'gemini-3.5-flash',
             'gemini-3.5'            => 'gemini-3.5-flash',
             '3.5'                   => 'gemini-3.5-flash',
-            'gemini 2.5 flash'      => 'gemini-2.5-flash',
-            'gemini 2.0 flash'      => 'gemini-2.0-flash',
         ];
 
-        return $map[$model] ?? ($model ?: 'gemini-3.8-flash');
+        return $map[$model] ?? ($model ?: 'gemini-2.0-flash');
     }
 
     /**
@@ -79,7 +133,7 @@ class GeminiBlogService
      */
     public static function callWithFallback(
         string $prompt,
-        string $initialModel = 'gemini-3.8-flash',
+        string $initialModel = 'gemini-2.0-flash',
         ?string $apiKey = null,
         array $generationConfig = [],
         int $timeout = 75
@@ -91,13 +145,15 @@ class GeminiBlogService
 
         $formattedInitial = self::formatModelName($initialModel);
 
-        // Chuỗi ưu tiên model thế hệ mới: 3.8 Flash -> 3.1 Flash-Lite -> 2.5 Flash -> 2.0 Flash -> 3.5 Flash
+        // Chuỗi ưu tiên model: model chỉ định -> 2.0 Flash -> 1.5 Flash -> 2.5 Flash -> 3.8 Flash -> 3.1 Flash-Lite -> 1.5 Pro
         $fallbackPool = array_values(array_unique(array_filter([
             $formattedInitial,
+            'gemini-2.0-flash',
+            'gemini-1.5-flash',
+            'gemini-2.5-flash',
             'gemini-3.8-flash',
             'gemini-3.1-flash-lite',
-            'gemini-2.5-flash',
-            'gemini-2.0-flash',
+            'gemini-1.5-pro',
             'gemini-3.5-flash',
         ])));
         $modelsToTry = $fallbackPool;

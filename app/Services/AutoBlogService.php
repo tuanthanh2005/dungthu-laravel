@@ -569,6 +569,7 @@ PROMPT;
             SiteSetting::setValue('auto_blog_last_run_at', now()->toIso8601String());
             SiteSetting::setValue('auto_blog_total_generated', $runCount + 1);
             SiteSetting::setValue('auto_blog_last_blog_id', $blog->id);
+            SiteSetting::setValue('auto_blog_last_error', null);
 
             // Xóa cache blog để người dùng thấy bài mới ngay
             Cache::forget('blog_topics_list');
@@ -609,6 +610,7 @@ PROMPT;
 
         } catch (\Exception $e) {
             SiteSetting::setValue('auto_blog_last_run_at', now()->toIso8601String());
+            SiteSetting::setValue('auto_blog_last_error', $e->getMessage());
             Log::error("[AutoBlog] Lỗi khi tạo bài tự động: " . $e->getMessage());
             throw $e;
         }
@@ -1080,6 +1082,7 @@ PROMPT;
 
         $apiKey = GeminiBlogService::getApiKey();
         $hasKey = !empty($apiKey);
+        $isValidKeyFormat = GeminiBlogService::isValidKeyFormat($apiKey);
         $maskedKey = $hasKey ? (substr($apiKey, 0, 6) . '...' . substr($apiKey, -4)) : null;
 
         // Vị trí hiện tại trong chu kỳ
@@ -1108,7 +1111,9 @@ PROMPT;
             'total_generated'  => $totalGenerated,
             'last_run_at'      => $lastRunAt ? Carbon::parse($lastRunAt) : null,
             'has_api_key'      => $hasKey,
+            'is_valid_key_format' => $isValidKeyFormat,
             'masked_key'       => $maskedKey,
+            'last_error'       => SiteSetting::getValue('auto_blog_last_error'),
             'model'            => $model,
             'recent_blogs'     => $recentBlogs,
         ];

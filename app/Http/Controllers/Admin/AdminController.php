@@ -1885,7 +1885,16 @@ class AdminController extends Controller
             'api_key' => 'required|string',
         ]);
 
-        SiteSetting::setValue('gemini_api_key', trim($request->input('api_key')));
+        $key = trim($request->input('api_key'));
+        if (!GeminiBlogService::isValidKeyFormat($key)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'API Key không hợp lệ! Google Gemini API Key chuẩn phải bắt đầu bằng "AIzaSy..." (độ dài khoảng 39 ký tự). Vui lòng tắt Unikey / bộ gõ tiếng Việt khi sao chép và dán!',
+            ], 422);
+        }
+
+        SiteSetting::setValue('gemini_api_key', $key);
+        SiteSetting::setValue('auto_blog_last_error', null);
         if ($request->filled('default_model')) {
             SiteSetting::setValue('gemini_default_model', trim($request->input('default_model')));
         }

@@ -97,7 +97,15 @@ class AutoBlogController extends Controller
         }
 
         if ($request->filled('api_key')) {
-            SiteSetting::setValue('gemini_api_key', trim($request->input('api_key')));
+            $keyInput = trim($request->input('api_key'));
+            if (!GeminiBlogService::isValidKeyFormat($keyInput)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'API Key không hợp lệ! Google Gemini API Key chuẩn phải bắt đầu bằng "AIzaSy..." (độ dài khoảng 39 ký tự). Vui lòng tắt Unikey / bộ gõ tiếng Việt khi sao chép và dán!',
+                ], 422);
+            }
+            SiteSetting::setValue('gemini_api_key', $keyInput);
+            SiteSetting::setValue('auto_blog_last_error', null);
         }
 
         if ($request->has('reset_product_id')) {
@@ -114,6 +122,17 @@ class AutoBlogController extends Controller
             'message' => 'Đã lưu cấu hình Auto Blog thành công!',
             'status'  => $service->getQueueStatus(),
         ]);
+    }
+
+    /**
+     * Kiểm tra trực tiếp API Key bằng cách gửi request test nhẹ tới Google API
+     */
+    public function testKey(Request $request): JsonResponse
+    {
+        $apiKey = $request->input('api_key') ?: null;
+        $result = GeminiBlogService::testApiKey($apiKey);
+
+        return response()->json($result, $result['success'] ? 200 : 422);
     }
 
     /**
@@ -138,7 +157,9 @@ class AutoBlogController extends Controller
                 'total_generated'        => $status['total_generated'],
                 'cycle_count'            => $status['cycle_count'],
                 'has_api_key'            => $status['has_api_key'],
+                'is_valid_key_format'    => $status['is_valid_key_format'] ?? false,
                 'masked_key'             => $status['masked_key'],
+                'last_error'             => $status['last_error'] ?? null,
                 'model'                  => $status['model'],
                 'is_due'                 => $isDue,
                 'minutes_since_last_run' => $minutesSinceLast,
@@ -166,6 +187,12 @@ class AutoBlogController extends Controller
      */
     public function handleWebCron(Request $request, AutoBlogService $service): JsonResponse
     {
+        @ignore_user_abort(true);
+        @set_time_limit(180);
+        if (!headers_sent()) {
+            @header('X-LiteSpeed-No-Abort: 1');
+        }
+
         $cronSecret = SiteSetting::getValue('auto_blog_cron_token');
         if (empty($cronSecret)) {
             $cronSecret = 'dungthu_auto_' . substr(md5(config('app.key')), 0, 12);

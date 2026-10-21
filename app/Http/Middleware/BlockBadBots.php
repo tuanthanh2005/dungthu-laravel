@@ -20,8 +20,8 @@ class BlockBadBots
             return $next($request);
         }
 
-        // Bỏ qua hoàn toàn kiểm tra bot/ua đối với các đường dẫn Webhook (Telegram, SePay...)
-        if ($request->is('api/telegram/*') || $request->is('webhook/*')) {
+        // Bỏ qua hoàn toàn kiểm tra bot/ua đối với các đường dẫn Webhook (Telegram, SePay, Cron...)
+        if ($request->is('api/telegram/*') || $request->is('webhook/*') || $request->is('cron/*')) {
             return $next($request);
         }
 

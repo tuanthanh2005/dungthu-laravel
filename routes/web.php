@@ -335,6 +335,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/blogs/auto/status', [AutoBlogController::class, 'status'])->name('admin.blogs.auto.status');
     Route::post('/blogs/auto/refresh-prices', [AutoBlogController::class, 'refreshPrices'])->name('admin.blogs.auto.refresh_prices');
     Route::post('/blogs/auto/refresh-images', [AutoBlogController::class, 'refreshImages'])->name('admin.blogs.auto.refresh_images');
+    Route::post('/blogs/auto/test-key', [AutoBlogController::class, 'testKey'])->name('admin.blogs.auto.test_key');
     Route::match(['get', 'post'], '/google-indexing/blogs/submit-all', [GoogleIndexingController::class, 'submitAllBlogs'])->name('admin.google-indexing.submit-all');
     Route::match(['get', 'post'], '/google-indexing/products/submit-all', [GoogleIndexingController::class, 'submitAllProducts'])->name('admin.google-indexing.submit-all-products');
     Route::post('/google-indexing/categories/submit-all', [GoogleIndexingController::class, 'submitAllCategories'])->name('admin.google-indexing.submit-all-categories');

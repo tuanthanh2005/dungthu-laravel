@@ -377,9 +377,13 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                @if($autoStatus['has_api_key'])
+                @if($autoStatus['has_api_key'] && ($autoStatus['is_valid_key_format'] ?? false))
                     <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-2 rounded-pill">
                         <i class="fas fa-check-circle me-1"></i>Gemini Key: {{ $autoStatus['masked_key'] }}
+                    </span>
+                @elseif($autoStatus['has_api_key'] && !($autoStatus['is_valid_key_format'] ?? false))
+                    <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-3 py-2 rounded-pill" title="Key không đúng định dạng của Google (bắt đầu bằng AIzaSy...). Vui lòng cập nhật lại!">
+                        <i class="fas fa-exclamation-triangle me-1"></i>Key Sai Định Dạng ({{ $autoStatus['masked_key'] }})
                     </span>
                 @else
                     <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-3 py-2 rounded-pill">
@@ -388,6 +392,28 @@
                 @endif
             </div>
         </div>
+
+        {{-- Cảnh báo lỗi lần chạy gần nhất hoặc lỗi định dạng Key --}}
+        @if(!empty($autoStatus['last_error']) || ($autoStatus['has_api_key'] && !($autoStatus['is_valid_key_format'] ?? false)))
+            <div class="alert alert-danger bg-danger bg-opacity-20 border-danger border-opacity-40 text-white mt-3 mb-0 p-3 rounded-3" role="alert">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div>
+                        <i class="fas fa-exclamation-triangle text-warning me-2 fs-5"></i>
+                        <strong>Cảnh báo Auto Blog bị dừng/lỗi:</strong>
+                        <span class="ms-1">
+                            @if($autoStatus['has_api_key'] && !($autoStatus['is_valid_key_format'] ?? false))
+                                API Key hiện tại (<code>{{ $autoStatus['masked_key'] }}</code>) không đúng định dạng Google Gemini (bị dính gõ tiếng Việt Unikey). Key chuẩn phải bắt đầu bằng <code>AIzaSy...</code>.
+                            @else
+                                {{ $autoStatus['last_error'] }}
+                            @endif
+                        </span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-light fw-bold px-3 rounded-pill" data-bs-toggle="collapse" data-bs-target="#autoBlogSettingsCollapse">
+                        <i class="fas fa-key me-1"></i> Cập Nhật Key Ngay
+                    </button>
+                </div>
+            </div>
+        @endif
 
         <!-- Box Loading real-time khi bấm Viết bài -->
         <div id="autoBlogProgressBox" class="d-none mt-3 p-3 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.08); border: 1px dashed rgba(255,255,255,0.25);">
@@ -435,11 +461,15 @@
                             <input type="password" id="inputAutoGeminiKey" class="form-control" 
                                    placeholder="AIzaSy..." 
                                    value="{{ \App\Models\SiteSetting::getValue('gemini_api_key', '') }}">
+                            <button class="btn btn-outline-info fw-bold px-2" type="button" onclick="testAutoBlogKey()" id="btnTestAutoKey" title="Kiểm tra kết nối key với Google">
+                                <i class="fas fa-vial me-1"></i> Test
+                            </button>
                             <button class="btn btn-warning fw-bold px-3" type="button" onclick="saveAutoBlogKey()">
-                                <i class="fas fa-save me-1"></i> Lưu Key
+                                <i class="fas fa-save me-1"></i> Lưu
                             </button>
                         </div>
-                        <small class="text-white-50">Dùng chung cho cả trợ lý viết tay và tự động.</small>
+                        <div id="testKeyResultBox" class="d-none mt-2 small"></div>
+                        <small class="text-white-50 d-block mt-1">Key Google bắt đầu bằng <code>AIzaSy...</code>. Tắt Unikey khi dán. Lấy key miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-warning text-decoration-underline">Google AI Studio <i class="fas fa-external-link-alt small"></i></a>.</small>
                     </div>
 
                     <!-- Model -->
@@ -670,16 +700,27 @@
 <script>
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
-    // 1. Kích hoạt viết bài ngay lập tức
-    function triggerAutoBlogRunNow() {
+    // 1. Kích hoạt viết bài ngay lập tức (hoặc tự động gọi khi đến hạn 15p)
+    function triggerAutoBlogRunNow(isAuto = false) {
+        if (isAutoTriggering) return;
+        isAutoTriggering = true;
+
         const btn = document.getElementById('btnTriggerAutoBlog');
         const progressBox = document.getElementById('autoBlogProgressBox');
+        const progressText = document.getElementById('autoBlogProgressText');
         const successAlert = document.getElementById('autoBlogSuccessAlert');
 
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> ĐANG VIẾT BÀI & TẠO ẢNH...';
-        progressBox.classList.remove('d-none');
-        successAlert.classList.add('d-none');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = isAuto
+                ? '<span class="spinner-border spinner-border-sm me-2"></span> [TỰ ĐỘNG 15P] ĐANG VIẾT BÀI CHO SP TIẾP THEO...'
+                : '<span class="spinner-border spinner-border-sm me-2"></span> ĐANG VIẾT BÀI & TẠO ẢNH...';
+        }
+        if (progressBox) progressBox.classList.remove('d-none');
+        if (progressText && isAuto) {
+            progressText.innerText = '🤖 [Chu kỳ 15 phút] AI Gemini đang tự động viết bài chuẩn SEO & thiết kế banner cho sản phẩm tiếp theo...';
+        }
+        if (successAlert) successAlert.classList.add('d-none');
 
         fetch('{{ route("admin.blogs.auto.run") }}', {
             method: 'POST',
@@ -692,49 +733,75 @@
         })
         .then(res => res.json())
         .then(res => {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-bolt"></i> <span>⚡ VIẾT NGAY 1 BÀI CHO SẢN PHẨM TIẾP THEO</span>';
-            progressBox.classList.add('d-none');
+            isAutoTriggering = false;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> <span>⚡ VIẾT NGAY 1 BÀI CHO SẢN PHẨM TIẾP THEO</span>';
+            }
+            if (progressBox) progressBox.classList.add('d-none');
 
             if (res.success) {
                 // Hiển thị thông tin bài viết vừa tạo
-                successAlert.classList.remove('d-none');
-                document.getElementById('newBlogTitleText').innerText = res.data.blog.title;
-                document.getElementById('newBlogExcerptText').innerText = res.data.blog.excerpt;
-                document.getElementById('btnViewNewBlog').href = res.data.blog.url;
-                document.getElementById('btnEditNewBlog').href = res.data.blog.edit_url;
+                if (successAlert) {
+                    successAlert.classList.remove('d-none');
+                    document.getElementById('newBlogTitleText').innerText = res.data.blog.title;
+                    document.getElementById('newBlogExcerptText').innerText = res.data.blog.excerpt;
+                    document.getElementById('btnViewNewBlog').href = res.data.blog.url;
+                    document.getElementById('btnEditNewBlog').href = res.data.blog.edit_url;
 
-                if (res.data.blog.image) {
-                    document.getElementById('newBlogImagePreview').innerHTML = `<img src="${res.data.blog.image}" class="w-100 h-100" style="object-fit: cover;">`;
+                    if (res.data.blog.image) {
+                        document.getElementById('newBlogImagePreview').innerHTML = `<img src="${res.data.blog.image}" class="w-100 h-100" style="object-fit: cover;">`;
+                    }
+                    successAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
 
                 // Cập nhật lại các thẻ thông tin hàng đợi
                 if (res.queue) {
-                    document.getElementById('statQueuePosition').innerHTML = `SP #${res.queue.current_position} <span class="fs-6 text-white-50">/ ${res.queue.total_products}</span>`;
-                    document.getElementById('statTotalGenerated').innerHTML = `Đã tạo: <strong>${res.queue.total_generated}</strong> bài`;
-                    document.getElementById('statCycleCount').innerText = `Vòng #${res.queue.cycle_count + 1}`;
+                    const qPos = document.getElementById('statQueuePosition');
+                    const qTot = document.getElementById('statTotalGenerated');
+                    const qCyc = document.getElementById('statCycleCount');
+                    const qBar = document.getElementById('statProgressBar');
+                    const qLrn = document.getElementById('statLastRunAt');
+
+                    if (qPos) qPos.innerHTML = `SP #${res.queue.current_position} <span class="fs-6 text-white-50">/ ${res.queue.total_products}</span>`;
+                    if (qTot) qTot.innerHTML = `Đã tạo: <strong>${res.queue.total_generated}</strong> bài`;
+                    if (qCyc) qCyc.innerText = `Vòng #${res.queue.cycle_count + 1}`;
                     
-                    const percent = Math.min(100, Math.round((res.queue.current_position / res.queue.total_products) * 100));
-                    document.getElementById('statProgressBar').style.width = percent + '%';
+                    if (qBar) {
+                        const percent = Math.min(100, Math.round((res.queue.current_position / res.queue.total_products) * 100));
+                        qBar.style.width = percent + '%';
+                    }
 
                     if (res.queue.next_product) {
-                        document.getElementById('statNextProductName').innerText = res.queue.next_product.name;
-                        document.getElementById('statNextProductPrice').innerText = res.queue.next_product.price;
+                        const nName = document.getElementById('statNextProductName');
+                        const nPrice = document.getElementById('statNextProductPrice');
+                        if (nName) nName.innerText = res.queue.next_product.name;
+                        if (nPrice) nPrice.innerText = res.queue.next_product.price;
                     }
-                    document.getElementById('statLastRunAt').innerText = 'Vừa xong';
+                    if (qLrn) qLrn.innerText = 'Vừa xong';
                 }
 
-                // Cuộn nhẹ tới kết quả
-                successAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                if (isAuto) {
+                    setTimeout(() => location.reload(), 2500);
+                }
             } else {
-                alert('Lỗi: ' + (res.message || 'Không thể tạo bài viết'));
+                if (!isAuto) {
+                    alert('Lỗi: ' + (res.message || 'Không thể tạo bài viết'));
+                } else {
+                    console.error('[AutoBlog Auto-Trigger Error]', res.message);
+                }
             }
         })
         .catch(err => {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-bolt"></i> <span>⚡ VIẾT NGAY 1 BÀI CHO SẢN PHẨM TIẾP THEO</span>';
-            progressBox.classList.add('d-none');
-            alert('Lỗi kết nối máy chủ: ' + err.message);
+            isAutoTriggering = false;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> <span>⚡ VIẾT NGAY 1 BÀI CHO SẢN PHẨM TIẾP THEO</span>';
+            }
+            if (progressBox) progressBox.classList.add('d-none');
+            if (!isAuto) {
+                alert('Lỗi kết nối máy chủ: ' + err.message);
+            }
         });
     }
 
@@ -784,7 +851,53 @@
         });
     }
 
-    // 3. Lưu Gemini API Key
+    // 3. Test Gemini API Key
+    function testAutoBlogKey() {
+        const key = document.getElementById('inputAutoGeminiKey').value.trim();
+        const resBox = document.getElementById('testKeyResultBox');
+        const btn = document.getElementById('btnTestAutoKey');
+
+        if (!key) {
+            alert('Vui lòng nhập API Key để kiểm tra!');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang test...';
+        resBox.className = 'mt-2 small text-info';
+        resBox.innerText = 'Đang gửi kiểm tra kết nối với Google Gemini API...';
+        resBox.classList.remove('d-none');
+
+        fetch('{{ route("admin.blogs.auto.test_key") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ api_key: key })
+        })
+        .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
+        .then(({ ok, data }) => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-vial me-1"></i> Test';
+            if (ok && data.success) {
+                resBox.className = 'mt-2 small text-success fw-bold';
+                resBox.innerHTML = '<i class="fas fa-check-circle me-1"></i> ' + data.message;
+            } else {
+                resBox.className = 'mt-2 small text-danger fw-bold';
+                resBox.innerHTML = '<i class="fas fa-times-circle me-1"></i> ' + (data.message || 'Key không hợp lệ');
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-vial me-1"></i> Test';
+            resBox.className = 'mt-2 small text-danger fw-bold';
+            resBox.innerHTML = '<i class="fas fa-times-circle me-1"></i> Lỗi kết nối: ' + err.message;
+        });
+    }
+
+    // 4. Lưu Gemini API Key
     function saveAutoBlogKey() {
         const key = document.getElementById('inputAutoGeminiKey').value.trim();
         if (!key) {
@@ -983,6 +1096,13 @@
         .then(res => {
             if (!res.success || !res.data) return;
             const d = res.data;
+
+            // Tự động kích hoạt viết bài ngay lập tức khi đã đến chu kỳ 15 phút (cho admin đang mở tab)
+            if (d.is_enabled && d.is_due && !isAutoTriggering) {
+                console.log('[AutoBlog] Đã đủ 15 phút giãn cách. Tự động viết bài cho sản phẩm tiếp theo...');
+                triggerAutoBlogRunNow(true);
+                return;
+            }
 
             // Cập nhật thẻ chạy gần nhất
             const lastRunEl = document.getElementById('statLastRunAt');

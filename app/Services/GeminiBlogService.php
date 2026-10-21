@@ -46,16 +46,11 @@ class GeminiBlogService
     }
 
     /**
-     * Kiểm tra định dạng Google Gemini API Key có hợp lệ không (Bắt đầu bằng AIzaSy và chỉ chứa ký tự an toàn)
+     * Kiểm tra định dạng API Key có ký tự cơ bản không
      */
     public static function isValidKeyFormat(?string $key): bool
     {
-        if (empty($key)) {
-            return false;
-        }
-        $key = trim($key);
-        // Google Gemini API Key chuẩn luôn bắt đầu bằng AIzaSy và có độ dài ~39 ký tự
-        return (bool) preg_match('/^AIzaSy[A-Za-z0-9_\-]{30,}$/', $key);
+        return !empty($key) && strlen(trim($key)) >= 6;
     }
 
     /**
@@ -68,13 +63,6 @@ class GeminiBlogService
             return [
                 'success' => false,
                 'message' => 'Chưa nhập API Key.',
-            ];
-        }
-
-        if (!self::isValidKeyFormat($key)) {
-            return [
-                'success' => false,
-                'message' => 'API Key không đúng định dạng của Google (API Key chuẩn luôn bắt đầu bằng "AIzaSy..."). Vui lòng tắt Unikey / bộ gõ tiếng Việt khi dán key!',
             ];
         }
 

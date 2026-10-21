@@ -377,13 +377,9 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                @if($autoStatus['has_api_key'] && ($autoStatus['is_valid_key_format'] ?? false))
+                @if($autoStatus['has_api_key'])
                     <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-2 rounded-pill">
                         <i class="fas fa-check-circle me-1"></i>Gemini Key: {{ $autoStatus['masked_key'] }}
-                    </span>
-                @elseif($autoStatus['has_api_key'] && !($autoStatus['is_valid_key_format'] ?? false))
-                    <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-3 py-2 rounded-pill" title="Key không đúng định dạng của Google (bắt đầu bằng AIzaSy...). Vui lòng cập nhật lại!">
-                        <i class="fas fa-exclamation-triangle me-1"></i>Key Sai Định Dạng ({{ $autoStatus['masked_key'] }})
                     </span>
                 @else
                     <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-3 py-2 rounded-pill">
@@ -393,23 +389,17 @@
             </div>
         </div>
 
-        {{-- Cảnh báo lỗi lần chạy gần nhất hoặc lỗi định dạng Key --}}
-        @if(!empty($autoStatus['last_error']) || ($autoStatus['has_api_key'] && !($autoStatus['is_valid_key_format'] ?? false)))
+        {{-- Cảnh báo lỗi lần chạy gần nhất nếu có --}}
+        @if(!empty($autoStatus['last_error']))
             <div class="alert alert-danger bg-danger bg-opacity-20 border-danger border-opacity-40 text-white mt-3 mb-0 p-3 rounded-3" role="alert">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div>
                         <i class="fas fa-exclamation-triangle text-warning me-2 fs-5"></i>
                         <strong>Cảnh báo Auto Blog bị dừng/lỗi:</strong>
-                        <span class="ms-1">
-                            @if($autoStatus['has_api_key'] && !($autoStatus['is_valid_key_format'] ?? false))
-                                API Key hiện tại (<code>{{ $autoStatus['masked_key'] }}</code>) không đúng định dạng Google Gemini (bị dính gõ tiếng Việt Unikey). Key chuẩn phải bắt đầu bằng <code>AIzaSy...</code>.
-                            @else
-                                {{ $autoStatus['last_error'] }}
-                            @endif
-                        </span>
+                        <span class="ms-1">{{ $autoStatus['last_error'] }}</span>
                     </div>
                     <button type="button" class="btn btn-sm btn-light fw-bold px-3 rounded-pill" data-bs-toggle="collapse" data-bs-target="#autoBlogSettingsCollapse">
-                        <i class="fas fa-key me-1"></i> Cập Nhật Key Ngay
+                        <i class="fas fa-cog me-1"></i> Kiểm Tra Cài Đặt
                     </button>
                 </div>
             </div>

@@ -15,7 +15,7 @@ class BlockBadBots
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $ip = $request->ip();
+        $ip = (string) ($request->header('cf-connecting-ip') ?: $request->ip());
         if (!$ip) {
             return $next($request);
         }
@@ -26,9 +26,9 @@ class BlockBadBots
         }
 
         // 1. Kiểm tra IP đã bị ban chưa (Trong Cache hoặc CSDL)
-        $isBanned = Cache::has('banned_ip_' . $ip);
+        $isBanned = !$this->isCloudflareOrLocalIp($ip) && Cache::has('banned_ip_' . $ip);
 
-        if (!$isBanned) {
+        if (!$isBanned && !$this->isCloudflareOrLocalIp($ip)) {
             $isBanned = Cache::remember('db_banned_ip_' . $ip, 120, function () use ($ip) {
                 return \App\Models\BannedIp::where('ip_address', $ip)
                     ->where(function ($q) {
@@ -105,32 +105,34 @@ class BlockBadBots
             $queryString = !empty($request->all()) ? http_build_query($request->all()) : '';
             foreach ($maliciousPatterns as $pattern) {
                 if (preg_match($pattern, $uri) || ($queryString !== '' && preg_match($pattern, $queryString))) {
-                    // Khóa IP tự động trong 24 giờ (86,400 giây)
-                    Cache::put('banned_ip_' . $ip, true, now()->addHours(24));
-                    
-                    // Tự động lưu nhật ký báo đỏ vào CSDL
-                    try {
-                        \App\Models\SuspiciousIpLog::updateOrCreate(
-                            ['ip_address' => $ip],
-                            [
-                                'reason' => 'Tấn công / rà quét lỗ hổng SQL Injection hoặc XSS',
-                                'url' => substr($request->fullUrl(), 0, 500),
-                                'user_agent' => substr($userAgent, 0, 500),
-                                'status' => 'auto_banned_24h',
-                                'banned_until' => now()->addHours(24),
-                            ]
-                        );
-                    } catch (\Throwable $e) {}
+                    if (!$this->isCloudflareOrLocalIp($ip)) {
+                        // Khóa IP tự động trong 24 giờ (86,400 giây)
+                        Cache::put('banned_ip_' . $ip, true, now()->addHours(24));
+                        
+                        // Tự động lưu nhật ký báo đỏ vào CSDL
+                        try {
+                            \App\Models\SuspiciousIpLog::updateOrCreate(
+                                ['ip_address' => $ip],
+                                [
+                                    'reason' => 'Tấn công / rà quét lỗ hổng SQL Injection hoặc XSS',
+                                    'url' => substr($request->fullUrl(), 0, 500),
+                                    'user_agent' => substr($userAgent, 0, 500),
+                                    'status' => 'auto_banned_24h',
+                                    'banned_until' => now()->addHours(24),
+                                ]
+                            );
+                        } catch (\Throwable $e) {}
 
-                    // Gửi thông báo Telegram về IP đáng nghi ngờ (Throttle 1 giờ / 1 IP)
-                    if (!Cache::has('telegram_notified_ip_' . $ip)) {
-                        Cache::put('telegram_notified_ip_' . $ip, true, now()->addHour());
-                        \App\Helpers\TelegramHelper::sendSuspiciousIpNotification(
-                            $ip,
-                            'Phát hiện tấn công / rà quét lỗ hổng SQL Injection hoặc XSS (Hệ thống đã tự động khóa IP 24h)',
-                            $userAgent,
-                            $request->fullUrl()
-                        );
+                        // Gửi thông báo Telegram về IP đáng nghi ngờ (Throttle 1 giờ / 1 IP)
+                        if (!Cache::has('telegram_notified_ip_' . $ip)) {
+                            Cache::put('telegram_notified_ip_' . $ip, true, now()->addHour());
+                            \App\Helpers\TelegramHelper::sendSuspiciousIpNotification(
+                                $ip,
+                                'Phát hiện tấn công / rà quét lỗ hổng SQL Injection hoặc XSS (Hệ thống đã tự động khóa IP 24h)',
+                                $userAgent,
+                                $request->fullUrl()
+                            );
+                        }
                     }
 
                     return response('<h1>403 Access Denied</h1><p>Hành vi tấn công hoặc quét lỗ hổng đã bị phát hiện. Địa chỉ IP của bạn bị khóa 24 giờ.</p>', 403);
@@ -236,5 +238,50 @@ class BlockBadBots
         }
 
         return $next($request);
+    }
+
+    /**
+     * Check if an IP address belongs to localhost or Cloudflare proxy IP ranges
+     */
+    private function isCloudflareOrLocalIp(string $ip): bool
+    {
+        if (in_array($ip, ['127.0.0.1', '::1', 'localhost'], true)) {
+            return true;
+        }
+
+        $cfRanges = [
+            '173.245.48.0/20',
+            '103.21.244.0/22',
+            '103.22.200.0/22',
+            '103.31.4.0/22',
+            '141.101.64.0/18',
+            '108.162.192.0/18',
+            '190.93.240.0/20',
+            '188.114.96.0/20',
+            '197.234.240.0/22',
+            '198.41.128.0/17',
+            '162.158.0.0/15',
+            '104.16.0.0/13',
+            '104.24.0.0/14',
+            '172.64.0.0/13',
+            '131.0.72.0/22',
+        ];
+
+        $ipLong = ip2long($ip);
+        if ($ipLong === false) {
+            return false;
+        }
+
+        foreach ($cfRanges as $range) {
+            [$subnet, $bits] = explode('/', $range);
+            $subnetLong = ip2long($subnet);
+            $mask = -1 << (32 - (int) $bits);
+            $subnetLong &= $mask;
+            if (($ipLong & $mask) === $subnetLong) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

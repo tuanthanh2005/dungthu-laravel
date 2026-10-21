@@ -51,7 +51,7 @@ class TrackOnlineUsers
             }
 
             $userId = Auth::id();
-            $ipAddress = $request->ip();
+            $ipAddress = (string) ($request->header('cf-connecting-ip') ?: $request->ip());
             $userAgent = substr((string) $request->userAgent(), 0, 500);
             $deviceType = $this->detectDevice($userAgent);
 

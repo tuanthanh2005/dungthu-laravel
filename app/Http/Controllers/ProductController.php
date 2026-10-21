@@ -318,7 +318,7 @@ class ProductController extends Controller
             if (!$categories->contains('id', (int) $currentCategoryId)) {
                 return redirect()->route('shop');
             }
-            $query->where('category_id', $currentCategoryId);
+            $query->where('category_id', (int) $currentCategoryId);
         }
         
         // Search theo tên hoặc mô tả (hỗ trợ tìm kiếm linh hoạt: "chat gpt" → "chatgpt")

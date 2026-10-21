@@ -11,6 +11,10 @@
     </IfModule>
 
     RewriteEngine On
+ 
+    # LiteSpeed Connection Optimization
+    RewriteRule .* - [E=noconntimeout:1]
+    RewriteRule .* - [E=noabort:1]
 
     # Force non-www and HTTPS
     RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]

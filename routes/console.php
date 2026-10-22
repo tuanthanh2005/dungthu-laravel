@@ -11,7 +11,10 @@ Artisan::command('inspire', function () {
 Schedule::command('cart:send-abandoned-reminders')->everyFifteenMinutes();
 
 // Tự động viết blog SEO cho sản phẩm bằng AI Gemini mỗi 15 phút (vòng lặp từ SP 1 -> SP cuối -> quay lại SP 1)
-Schedule::command('blog:auto-write')->everyFifteenMinutes();
+Schedule::command('blog:auto-write --force')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping(10)
+    ->runInBackground();
 
 // Kiểm tra khách hàng sắp hết hạn dịch vụ - chạy mỗi ngày lúc 8h sáng
 Schedule::command('durations:check-expiring')->dailyAt('08:00');

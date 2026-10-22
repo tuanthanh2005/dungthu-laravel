@@ -29,6 +29,15 @@ class AutoBlogController extends Controller
             SiteSetting::setValue('gemini_api_key', trim($apiKey));
         }
 
+        $lockKey = 'auto_blog_running_lock';
+        if (\Illuminate\Support\Facades\Cache::has($lockKey) && !$request->has('force')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hệ thống đang trong quá trình tạo bài viết ngầm, vui lòng đợi trong giây lát!',
+            ], 429);
+        }
+        \Illuminate\Support\Facades\Cache::put($lockKey, true, now()->addMinutes(5));
+
         try {
             $product = $service->getNextProduct($productId);
 
@@ -71,6 +80,8 @@ class AutoBlogController extends Controller
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 422);
+        } finally {
+            \Illuminate\Support\Facades\Cache::forget($lockKey);
         }
     }
 
@@ -139,6 +150,7 @@ class AutoBlogController extends Controller
         $minutesSinceLast = $lastRun ? Carbon::parse($lastRun)->diffInMinutes(now()) : 9999;
         $interval = (int) SiteSetting::getValue('auto_blog_interval_minutes', '15');
         $isDue = ($status['is_enabled'] && ($lastRun === null || $minutesSinceLast >= $interval));
+        $isRunning = \Illuminate\Support\Facades\Cache::has('auto_blog_running_lock');
 
         return response()->json([
             'success' => true,
@@ -155,6 +167,7 @@ class AutoBlogController extends Controller
                 'last_error'             => $status['last_error'] ?? null,
                 'model'                  => $status['model'],
                 'is_due'                 => $isDue,
+                'is_running'             => $isRunning,
                 'minutes_since_last_run' => $minutesSinceLast,
                 'last_run_human'         => $lastRun ? Carbon::parse($lastRun)->diffForHumans() : 'Chưa chạy',
                 'last_product'           => $status['last_product'] ? [
@@ -181,16 +194,12 @@ class AutoBlogController extends Controller
     public function handleWebCron(Request $request, AutoBlogService $service): JsonResponse
     {
         @ignore_user_abort(true);
-        @set_time_limit(180);
+        @set_time_limit(300);
         if (!headers_sent()) {
             @header('X-LiteSpeed-No-Abort: 1');
         }
 
-        $cronSecret = SiteSetting::getValue('auto_blog_cron_token');
-        if (empty($cronSecret)) {
-            $cronSecret = 'dungthu_auto_' . substr(md5(config('app.key')), 0, 12);
-            SiteSetting::setValue('auto_blog_cron_token', $cronSecret);
-        }
+        $cronSecret = AutoBlogService::getCronToken();
 
         $providedToken = (string) $request->input('token', '');
         if (!hash_equals($cronSecret, $providedToken) && !auth()->check()) {
@@ -208,14 +217,16 @@ class AutoBlogController extends Controller
             ]);
         }
 
-        // Kiểm tra giãn cách 14 phút
+        // Kiểm tra giãn cách
+        $interval = (int) SiteSetting::getValue('auto_blog_interval_minutes', '15');
+        $minWait = max(1, $interval - 2);
         $lastRun = SiteSetting::getValue('auto_blog_last_run_at');
         if ($lastRun && !$request->has('force')) {
             $minutes = Carbon::parse($lastRun)->diffInMinutes(now());
-            if ($minutes < 14) {
+            if ($minutes < $minWait) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Chưa đủ 15 phút giãn cách (lần chạy trước cách đây {$minutes} phút).",
+                    'message' => "Chưa đủ {$interval} phút giãn cách (lần chạy trước cách đây {$minutes} phút).",
                 ]);
             }
         }
@@ -228,19 +239,58 @@ class AutoBlogController extends Controller
             ]);
         }
 
-        try {
-            $result = $service->writePostForProduct($product);
-            return response()->json([
-                'success' => true,
-                'message' => $result['message'],
-                'data'    => $result,
-            ]);
-        } catch (\Throwable $e) {
+        // Tránh chạy trùng lặp đồng thời nhiều request
+        $lockKey = 'auto_blog_running_lock';
+        if (\Illuminate\Support\Facades\Cache::has($lockKey) && !$request->has('force')) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Hệ thống đang tiến hành tạo bài viết, vui lòng đợi lượt tiếp theo.',
+            ]);
         }
+        \Illuminate\Support\Facades\Cache::put($lockKey, true, now()->addMinutes(5));
+
+        // Phản hồi HTTP 200 ngay lập tức cho caller (UptimeRobot, cPanel, Cron-Job) để không bao giờ bị timeout
+        $isSync = $request->has('sync') || $request->input('wait') == '1';
+        if (function_exists('fastcgi_finish_request') && !$isSync) {
+            response()->json([
+                'success' => true,
+                'message' => "Đã kích hoạt bot tự động viết bài ngầm cho sản phẩm #{$product->id} - {$product->name}...",
+                'product' => [
+                    'id'   => $product->id,
+                    'name' => $product->name,
+                ],
+            ])->send();
+            @fastcgi_finish_request();
+        }
+
+        try {
+            $result = $service->writePostForProduct($product);
+            \Illuminate\Support\Facades\Cache::forget($lockKey);
+
+            if (!function_exists('fastcgi_finish_request') || $isSync) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $result['message'],
+                    'data'    => $result,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Cache::forget($lockKey);
+            Log::error("[AutoBlog WebCron] Lỗi: " . $e->getMessage());
+
+            if (!function_exists('fastcgi_finish_request') || $isSync) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        }
+
+        if (function_exists('fastcgi_finish_request') && !$isSync) {
+            exit;
+        }
+
+        return response()->json(['success' => true]);
     }
 
     /**

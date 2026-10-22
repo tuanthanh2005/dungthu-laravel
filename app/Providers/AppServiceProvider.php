@@ -77,18 +77,21 @@ class AppServiceProvider extends ServiceProvider
                     }
 
                     if ($isOverdue) {
-                        // Khóa Cache 6 phút để tránh các request đồng thời kích hoạt trùng nhau
+                        // Khóa Cache 5 phút để tránh các request đồng thời kích hoạt trùng nhau
                         $lockKey = 'auto_blog_web_execution_lock';
                         if (!\Illuminate\Support\Facades\Cache::has($lockKey)) {
-                            \Illuminate\Support\Facades\Cache::put($lockKey, true, now()->addMinutes(6));
+                            \Illuminate\Support\Facades\Cache::put($lockKey, true, now()->addMinutes(5));
                             app()->terminating(function () {
+                                if (function_exists('fastcgi_finish_request')) {
+                                    @fastcgi_finish_request();
+                                }
                                 @ignore_user_abort(true);
-                                @set_time_limit(180);
+                                @set_time_limit(300);
                                 if (!headers_sent()) {
                                     @header('X-LiteSpeed-No-Abort: 1');
                                 }
                                 try {
-                                    \Illuminate\Support\Facades\Artisan::call('blog:auto-write');
+                                    \Illuminate\Support\Facades\Artisan::call('blog:auto-write', ['--force' => true]);
                                 } catch (\Throwable $e) {
                                     \Illuminate\Support\Facades\Log::error('[AutoBlog WebFallback] Lỗi: ' . $e->getMessage());
                                 }

@@ -18,6 +18,19 @@ use Intervention\Image\ImageManager;
 class AutoBlogService
 {
     /**
+     * Lấy token bảo mật webhook cron, tự động sinh và lưu nếu chưa có
+     */
+    public static function getCronToken(): string
+    {
+        $token = SiteSetting::getValue('auto_blog_cron_token');
+        if (empty($token)) {
+            $token = 'dungthu_auto_' . substr(md5(config('app.key', 'dungthu_secret_default')), 0, 12);
+            SiteSetting::setValue('auto_blog_cron_token', $token);
+        }
+        return $token;
+    }
+
+    /**
      * Danh sách 6 phong cách / góc tiếp cận bài viết đa dạng, tránh trùng lặp nội dung
      * và tối ưu tìm kiếm Google từ khóa sản phẩm giá rẻ.
      */

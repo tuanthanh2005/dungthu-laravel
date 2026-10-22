@@ -260,7 +260,7 @@
         $totalProducts = max(1, $autoStatus['total_products']);
         $currentPos = $autoStatus['current_position'];
         $progressPercent = min(100, round(($currentPos / $totalProducts) * 100));
-        $cronToken = \App\Models\SiteSetting::getValue('auto_blog_cron_token') ?: 'dungthu_auto_' . substr(md5(config('app.key')), 0, 12);
+        $cronToken = \App\Services\AutoBlogService::getCronToken();
         $webCronUrl = url('/cron/auto-blog?token=' . $cronToken);
     @endphp
 
@@ -502,19 +502,59 @@
                     </div>
                 </div>
 
-                <!-- Webhook Cron URL -->
-                <div class="mt-3 pt-3 border-top border-white border-opacity-10">
-                    <label class="form-label text-white small fw-bold">
-                        <i class="fas fa-network-wired text-info me-1"></i> URL Webhook Cron (Dành cho cPanel / UptimeRobot / Cron-Job.org gọi mỗi 15 phút):
-                    </label>
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control bg-dark text-white border-secondary font-monospace" id="inputWebCronUrl" value="{{ $webCronUrl }}" readonly>
-                        <button class="btn btn-outline-info" type="button" onclick="copyWebCronUrl()">
-                            <i class="fas fa-copy me-1"></i> Copy URL
-                        </button>
+                <!-- Cấu hình Chạy ngầm 24/7 Không Cần Treo Máy -->
+                <div class="mt-4 pt-3 border-top border-white border-opacity-10">
+                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                        <span class="text-white fw-bold small">
+                            <i class="fas fa-server text-success me-1"></i> Tự Động Chạy 24/7 (Admin Không Cần Treo Máy / Không Cần Mở Trình Duyệt):
+                        </span>
+                        <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-2 py-1 small">
+                            <i class="fas fa-check-circle me-1"></i>Đã bật Web Traffic Fallback tự kích hoạt
+                        </span>
                     </div>
-                    <small class="text-white-50 d-block mt-1">
-                        Cấu hình UptimeRobot hoặc EasyCron ping URL này mỗi 15 phút để đảm bảo server luôn chạy đúng giờ kể cả khi không có terminal SSH daemon.
+
+                    <div class="row g-3">
+                        <!-- Cách 1: Hostinger Cron Jobs -->
+                        <div class="col-12 col-lg-7">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <strong class="text-warning small">
+                                        <i class="fas fa-bolt text-warning me-1"></i> Cách 1 (Khuyên dùng nhất trên Hostinger hPanel):
+                                    </strong>
+                                    <span class="badge bg-warning text-dark px-2 py-0 fw-bold" style="font-size: 10px;">Chu kỳ: */15 * * * *</span>
+                                </div>
+                                <small class="text-white-50 d-block mb-2">
+                                    Vào <strong>Hostinger hPanel</strong> &rarr; <strong>Nâng cao (Advanced)</strong> &rarr; <strong>Cron Jobs</strong> &rarr; Chọn <strong>Mỗi 15 phút</strong> và dán lệnh sau:
+                                </small>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control bg-dark text-white border-secondary font-monospace" id="inputHostingerCronCmd" value="curl -s &quot;{{ $webCronUrl }}&quot; > /dev/null 2>&1" readonly>
+                                    <button class="btn btn-warning fw-bold text-dark" type="button" onclick="copyHostingerCronCmd()">
+                                        <i class="fas fa-copy me-1"></i> Copy Lệnh Cron
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cách 2: Cron-Job.org / UptimeRobot -->
+                        <div class="col-12 col-lg-5">
+                            <div class="p-3 rounded-3 h-100" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <strong class="text-info small d-block mb-1">
+                                    <i class="fas fa-globe text-info me-1"></i> Cách 2 (Dùng Cron-Job.org / UptimeRobot):
+                                </strong>
+                                <small class="text-white-50 d-block mb-2">
+                                    Tạo cron ping URL này mỗi 15 phút (miễn phí, không cần đăng nhập hosting):
+                                </small>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control bg-dark text-white border-secondary font-monospace" id="inputWebCronUrl" value="{{ $webCronUrl }}" readonly>
+                                    <button class="btn btn-outline-info" type="button" onclick="copyWebCronUrl()">
+                                        <i class="fas fa-copy me-1"></i> Copy URL
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-white-50 d-block mt-2">
+                        <i class="fas fa-shield-alt text-success me-1"></i> <strong>Cơ chế tự động 3 lớp:</strong> Website đã tích hợp sẵn tính năng tự động kích hoạt ngầm khi có lượt khách truy cập lướt xem web sau mỗi 15 phút (không làm chậm tốc độ tải trang). Khi cấu hình thêm Hostinger Cron Job ở trên, hệ thống sẽ đảm bảo 100% đúng giờ kể cả lúc nửa đêm không có khách ghé thăm!
                     </small>
                 </div>
             </div>
@@ -959,12 +999,20 @@
         });
     }
 
-    // 6. Copy URL Webhook Cron
+    // 6. Copy URL Webhook Cron & Hostinger Cron Command
     function copyWebCronUrl() {
         const input = document.getElementById('inputWebCronUrl');
         input.select();
         navigator.clipboard.writeText(input.value).then(() => {
             alert('Đã sao chép URL Cron vào Clipboard!\nBạn có thể dán vào UptimeRobot, EasyCron hoặc Cron-Job.org để ping mỗi 15 phút.');
+        });
+    }
+
+    function copyHostingerCronCmd() {
+        const input = document.getElementById('inputHostingerCronCmd');
+        input.select();
+        navigator.clipboard.writeText(input.value).then(() => {
+            alert('Đã sao chép lệnh Hostinger Cron vào Clipboard!\nBạn chỉ cần vào Hostinger hPanel -> Advanced -> Cron Jobs, chọn mỗi 15 phút và dán vào là xong.');
         });
     }
 
@@ -1087,11 +1135,18 @@
             if (!res.success || !res.data) return;
             const d = res.data;
 
-            // Tự động kích hoạt viết bài ngay lập tức khi đã đến chu kỳ 15 phút (cho admin đang mở tab)
-            if (d.is_enabled && d.is_due && !isAutoTriggering) {
-                console.log('[AutoBlog] Đã đủ 15 phút giãn cách. Tự động viết bài cho sản phẩm tiếp theo...');
-                triggerAutoBlogRunNow(true);
-                return;
+            // Nếu đã đủ 15 phút giãn cách và bot chưa chạy: Gửi tín hiệu ngầm tới webhook để backend xử lý, KHÔNG chặn trình duyệt của admin
+            if (d.is_enabled && d.is_due && !d.is_running && !isAutoTriggering) {
+                console.log('[AutoBlog] Đã đủ 15 phút giãn cách. Gửi ping ngầm tới webhook...');
+                fetch('{{ $webCronUrl }}', { method: 'GET', keepalive: true }).catch(() => {});
+            }
+
+            // Hiển thị trạng thái nếu bot đang viết ngầm
+            const autoBotStatusText = document.getElementById('autoBotStatusText');
+            if (d.is_running) {
+                if (autoBotStatusText) autoBotStatusText.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> ĐANG TỰ VIẾT BÀI NGẦM...';
+            } else if (d.is_enabled) {
+                if (autoBotStatusText) autoBotStatusText.innerText = 'ĐANG CHẠY TỰ ĐỘNG (15P / BÀI)';
             }
 
             // Cập nhật thẻ chạy gần nhất

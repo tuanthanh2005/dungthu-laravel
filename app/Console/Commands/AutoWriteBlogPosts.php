@@ -43,12 +43,14 @@ class AutoWriteBlogPosts extends Command
                 return Command::SUCCESS;
             }
 
-            // Kiểm tra thời gian lần chạy cuối (giãn cách tối thiểu ~14 phút để tránh chạy trùng)
+            // Kiểm tra thời gian lần chạy cuối (giãn cách tối thiểu để tránh chạy trùng)
+            $interval = (int) SiteSetting::getValue('auto_blog_interval_minutes', '15');
+            $minWait = max(1, $interval - 2); // 13 phút đối với chu kỳ 15 phút
             $lastRun = SiteSetting::getValue('auto_blog_last_run_at');
             if ($lastRun) {
                 $minutesSinceLastRun = Carbon::parse($lastRun)->diffInMinutes(now());
-                if ($minutesSinceLastRun < 14) {
-                    $this->comment("⏳ Lần chạy gần nhất cách đây {$minutesSinceLastRun} phút. Chu kỳ là 15 phút/lần. Bỏ qua lượt này (dùng --force để ép chạy ngay).");
+                if ($minutesSinceLastRun < $minWait) {
+                    $this->comment("⏳ Lần chạy gần nhất cách đây {$minutesSinceLastRun} phút. Chu kỳ là {$interval} phút/lần. Bỏ qua lượt này (dùng --force để ép chạy ngay).");
                     return Command::SUCCESS;
                 }
             }
@@ -67,6 +69,14 @@ class AutoWriteBlogPosts extends Command
             $priceInfoText .= " (Giá gốc: {$priceDetails['original_formatted']} - Giảm {$priceDetails['save_percent']}%)";
         }
         $this->info("📦 Sản phẩm mục tiêu: #{$product->id} - {$product->name} [{$priceInfoText}]");
+
+        // Tránh chạy trùng lặp đồng thời với tác vụ khác
+        $lockKey = 'auto_blog_running_lock';
+        if (\Illuminate\Support\Facades\Cache::has($lockKey) && !$isForced) {
+            $this->warn('⚠️  Đang có một tác vụ khác tạo bài viết. Bỏ qua để tránh trùng lặp.');
+            return Command::SUCCESS;
+        }
+        \Illuminate\Support\Facades\Cache::put($lockKey, true, now()->addMinutes(5));
 
         // 3. Thực hiện tạo bài viết
         try {
@@ -102,6 +112,8 @@ class AutoWriteBlogPosts extends Command
                 'trace' => $e->getTraceAsString(),
             ]);
             return Command::FAILURE;
+        } finally {
+            \Illuminate\Support\Facades\Cache::forget($lockKey);
         }
     }
 }

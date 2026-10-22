@@ -350,6 +350,75 @@
             margin-bottom: 12px;
         }
     }
+
+    /* Nút & Modal Đánh giá */
+    .btn-warning-gold {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        border: none;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        transition: all 0.25s ease;
+    }
+    .btn-warning-gold:hover {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
+        color: #ffffff !important;
+    }
+    .review-modal .modal-content {
+        border-radius: 20px;
+        border: none;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    .review-modal .modal-header {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        border: none;
+        padding: 18px 24px;
+    }
+    .review-modal .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+    .star-rating-select {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        gap: 12px;
+    }
+    .star-rating-select input {
+        display: none;
+    }
+    .star-rating-select label {
+        font-size: 32px;
+        color: #cbd5e1;
+        cursor: pointer;
+        transition: transform 0.15s ease, color 0.15s ease;
+        margin: 0;
+        padding: 0 4px;
+        line-height: 1;
+    }
+    .star-rating-select label:hover,
+    .star-rating-select label:hover ~ label,
+    .star-rating-select input:checked ~ label {
+        color: #f59e0b;
+        text-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+    }
+    .star-rating-select label:hover {
+        transform: scale(1.25);
+    }
+    .rating-hint-text {
+        font-size: 0.9rem;
+        font-weight: 600;
+        min-height: 22px;
+        color: #d97706;
+    }
+    .reviewed-card {
+        background: #fffbeb;
+        border: 1px solid #fef3c7;
+        border-radius: 16px;
+        padding: 16px;
+    }
 </style>
 @endpush
 
@@ -617,6 +686,26 @@
                                             {{ $order->currency === 'USD' ? '$' . number_format($itemTotal, 2) : number_format($itemTotal, 0, ',', '.') . 'đ' }}
                                         </span>
                                     </div>
+
+                                    @if($order->status !== 'cancelled' && $order->status !== 'pending' && $item->product)
+                                        @php
+                                            $itemComment = $item->product->comments->where('user_id', auth()->id())->first();
+                                        @endphp
+                                        <div class="mt-2 pt-2 border-top d-flex justify-content-between align-items-center">
+                                            @if($itemComment)
+                                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1">
+                                                    <i class="fas fa-star me-1"></i>{{ __('Đã đánh giá') }} ({{ $itemComment->rating }}★)
+                                                </span>
+                                                <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 text-muted" data-bs-toggle="modal" data-bs-target="#reviewModal_{{ $order->id }}">
+                                                    {{ __('Xem nhận xét') }}
+                                                </button>
+                                            @else
+                                                <button type="button" class="btn btn-sm btn-warning-gold rounded-pill px-3 py-1 fw-bold" data-bs-toggle="modal" data-bs-target="#reviewModal_{{ $order->id }}">
+                                                    <i class="fas fa-star me-1"></i>{{ __('Đánh giá') }}
+                                                </button>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
@@ -856,6 +945,115 @@
 
     </div>
 </div>
+
+@if($order->status !== 'cancelled' && $order->status !== 'pending')
+    @php
+        $validItems = $order->orderItems->filter(fn($i) => !empty($i->product));
+    @endphp
+    @if($validItems->isNotEmpty())
+        <!-- Review Modal for Order #{{ $order->id }} -->
+        <div class="modal fade review-modal" id="reviewModal_{{ $order->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="modal-title fw-bold mb-0">
+                                <i class="fas fa-star text-warning me-2"></i>{{ __('Đánh giá sản phẩm') }}
+                            </h5>
+                            <small class="text-white-50">{{ __('Đơn hàng') }} #{{ $order->id }} @if($order->order_code)({{ $order->order_code }})@endif</small>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        @foreach($validItems as $index => $item)
+                            @php
+                                $product = $item->product;
+                                $userComment = $product->comments->where('user_id', auth()->id())->first();
+                            @endphp
+
+                            <div class="product-review-block {{ !$loop->first ? 'pt-4 mt-4 border-top' : '' }}" id="product_review_block_{{ $order->id }}_{{ $product->id }}">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    @if($product->image)
+                                        <img src="{{ $product->image }}" alt="{{ $product->name }}" class="rounded-3 border" style="width: 55px; height: 55px; object-fit: cover;">
+                                    @else
+                                        <div class="rounded-3 border bg-light d-flex align-items-center justify-content-center text-muted" style="width: 55px; height: 55px;">
+                                            <i class="fas fa-box"></i>
+                                        </div>
+                                    @endif
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold mb-1 text-dark">{{ $product->name }}</h6>
+                                        <div class="small text-muted">
+                                            @if($item->variant_name)
+                                                <span class="badge bg-light text-secondary border me-1">{{ $item->variant_name }}</span>
+                                            @endif
+                                            <span>{{ __('Số lượng:') }} x{{ $item->quantity }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if($userComment)
+                                    <div class="reviewed-card">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <span class="badge bg-success text-white px-2.5 py-1 rounded-pill me-2">
+                                                    <i class="fas fa-check-circle me-1"></i>{{ __('Đã đánh giá') }}
+                                                </span>
+                                                @for($s = 1; $s <= 5; $s++)
+                                                    <i class="fas fa-star {{ $s <= $userComment->rating ? 'text-warning' : 'text-muted opacity-25' }}"></i>
+                                                @endfor
+                                                <span class="fw-bold text-dark ms-1">({{ $userComment->rating }}/5)</span>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="far fa-clock me-1"></i>{{ $userComment->created_at->format('d/m/Y H:i') }}
+                                            </small>
+                                        </div>
+                                        <div class="p-2.5 bg-white rounded-3 border text-secondary fst-italic">
+                                            "{{ $userComment->comment }}"
+                                        </div>
+                                    </div>
+                                @else
+                                    <form action="{{ route('product.comment', $product->id) }}" method="POST" class="ajax-review-form" data-order-id="{{ $order->id }}" data-product-id="{{ $product->id }}">
+                                        @csrf
+                                        <div class="text-center py-2 px-3 mb-3 bg-light rounded-3">
+                                            <label class="form-label fw-bold text-dark small mb-1 d-block">{{ __('Mức độ hài lòng của bạn:') }}</label>
+                                            <div class="star-rating-select my-1">
+                                                <input type="radio" name="rating" value="5" id="star_{{ $order->id }}_{{ $product->id }}_5" checked required>
+                                                <label for="star_{{ $order->id }}_{{ $product->id }}_5" data-hint="⭐⭐⭐⭐⭐ {{ __('Tuyệt vời') }}" title="5 sao"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" value="4" id="star_{{ $order->id }}_{{ $product->id }}_4">
+                                                <label for="star_{{ $order->id }}_{{ $product->id }}_4" data-hint="⭐⭐⭐⭐ {{ __('Hài lòng') }}" title="4 sao"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" value="3" id="star_{{ $order->id }}_{{ $product->id }}_3">
+                                                <label for="star_{{ $order->id }}_{{ $product->id }}_3" data-hint="⭐⭐⭐ {{ __('Bình thường') }}" title="3 sao"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" value="2" id="star_{{ $order->id }}_{{ $product->id }}_2">
+                                                <label for="star_{{ $order->id }}_{{ $product->id }}_2" data-hint="⭐⭐ {{ __('Không hài lòng') }}" title="2 sao"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" value="1" id="star_{{ $order->id }}_{{ $product->id }}_1">
+                                                <label for="star_{{ $order->id }}_{{ $product->id }}_1" data-hint="⭐ {{ __('Rất tệ') }}" title="1 sao"><i class="fas fa-star"></i></label>
+                                            </div>
+                                            <div class="rating-hint-text">⭐⭐⭐⭐⭐ {{ __('Tuyệt vời') }}</div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold text-dark small mb-1">
+                                                {{ __('Nhận xét về sản phẩm') }} <span class="text-danger">*</span>
+                                            </label>
+                                            <textarea name="comment" class="form-control rounded-3" rows="3" 
+                                                      placeholder="{{ __('Chia sẻ trải nghiệm của bạn về chất lượng dịch vụ, sản phẩm...') }}" required maxlength="1000"></textarea>
+                                        </div>
+
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-warning-gold rounded-pill px-4 fw-bold submit-review-btn">
+                                                <i class="fas fa-paper-plane me-2"></i>{{ __('Gửi đánh giá') }}
+                                            </button>
+                                        </div>
+                                    </form>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+@endif
 @endsection
 
 @push('scripts')
@@ -899,6 +1097,104 @@
                         this.innerHTML = originalHtml;
                     }, 1800);
                 }
+            });
+        });
+
+        // Star rating hint interactions
+        document.querySelectorAll('.star-rating-select').forEach(function(box) {
+            const hint = box.parentElement.querySelector('.rating-hint-text');
+            const labels = box.querySelectorAll('label');
+            const inputs = box.querySelectorAll('input[type="radio"]');
+
+            labels.forEach(function(lbl) {
+                lbl.addEventListener('mouseenter', function() {
+                    if (hint) hint.textContent = lbl.getAttribute('data-hint') || '';
+                });
+            });
+
+            box.addEventListener('mouseleave', function() {
+                const checked = box.querySelector('input[type="radio"]:checked');
+                if (checked && hint) {
+                    const checkedLbl = box.querySelector('label[for="' + checked.id + '"]');
+                    if (checkedLbl) hint.textContent = checkedLbl.getAttribute('data-hint') || '';
+                }
+            });
+
+            inputs.forEach(function(input) {
+                input.addEventListener('change', function() {
+                    const checkedLbl = box.querySelector('label[for="' + input.id + '"]');
+                    if (checkedLbl && hint) hint.textContent = checkedLbl.getAttribute('data-hint') || '';
+                });
+            });
+        });
+
+        // AJAX Review Submission
+        document.querySelectorAll('.ajax-review-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const submitBtn = form.querySelector('.submit-review-btn');
+                const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
+                }
+
+                const formData = new FormData(form);
+                const action = form.getAttribute('action');
+                const orderId = form.getAttribute('data-order-id');
+                const productId = form.getAttribute('data-product-id');
+
+                fetch(action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(function(res) {
+                    return res.json().then(function(data) {
+                        return { status: res.status, ok: res.ok, data: data };
+                    }).catch(function() {
+                        return { status: res.status, ok: res.ok, data: {} };
+                    });
+                })
+                .then(function(res) {
+                    if (res.ok && res.data.success) {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Đánh giá thành công!',
+                                text: res.data.message || 'Cảm ơn bạn đã đánh giá sản phẩm!',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else if (typeof Toast !== 'undefined') {
+                            Toast.fire({ icon: 'success', title: res.data.message });
+                        } else {
+                            alert(res.data.message || 'Cảm ơn bạn đã đánh giá sản phẩm!');
+                        }
+
+                        // Reload after 1.5s to reflect all badges cleanly
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1200);
+                    } else {
+                        const errMsg = res.data.message || 'Có lỗi xảy ra, vui lòng thử lại!';
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({ icon: 'error', title: 'Thông báo', text: errMsg });
+                        } else {
+                            alert(errMsg);
+                        }
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalHtml;
+                        }
+                    }
+                })
+                .catch(function(err) {
+                    form.submit();
+                });
             });
         });
     });

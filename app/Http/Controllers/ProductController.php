@@ -502,11 +502,17 @@ class ProductController extends Controller
 
         // 1. Kiểm tra quyền mua hàng
         if (!$product->isPurchasedBy($userId)) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Bạn chỉ có thể đánh giá sau khi đã mua sản phẩm này!'], 403);
+            }
             return back()->with('error', 'Bạn chỉ có thể đánh giá sau khi đã mua sản phẩm này!');
         }
 
         // 2. Chặn 1 người spam đánh giá nhiều lần trên cùng 1 sản phẩm
         if ($product->comments()->where('user_id', $userId)->exists()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Bạn đã đánh giá sản phẩm này rồi! Cảm ơn bạn.'], 400);
+            }
             return back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi! Cảm ơn bạn.');
         }
 
@@ -521,11 +527,23 @@ class ProductController extends Controller
             'rating.max' => 'Số sao tối đa là 5',
         ]);
 
-        $product->comments()->create([
+        $comment = $product->comments()->create([
             'user_id' => $userId,
             'comment' => $request->comment,
             'rating' => $request->rating,
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cảm ơn bạn đã đánh giá sản phẩm!',
+                'data' => [
+                    'rating' => (int) $comment->rating,
+                    'comment' => $comment->comment,
+                    'created_at' => $comment->created_at->format('d/m/Y H:i'),
+                ]
+            ]);
+        }
 
         return back()->with('success', 'Cảm ơn bạn đã đánh giá sản phẩm!');
     }

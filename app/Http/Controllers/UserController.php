@@ -74,12 +74,16 @@ class UserController extends Controller
     // Danh sách đơn hàng
     public function orders()
     {
-        $orders = Order::where('user_id', Auth::id())
-            ->with('orderItems.product')
+        $userId = Auth::id();
+
+        $orders = Order::where('user_id', $userId)
+            ->with(['orderItems.product.comments' => function($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }])
             ->latest()
             ->paginate(10);
 
-        $cardExchanges = CardExchange::where('user_id', Auth::id())
+        $cardExchanges = CardExchange::where('user_id', $userId)
             ->latest()
             ->paginate(10);
 
@@ -94,7 +98,11 @@ class UserController extends Controller
             abort(403, 'Bạn không có quyền xem đơn hàng này');
         }
 
-        $order->load('orderItems.product');
+        $userId = Auth::id();
+        $order->load(['orderItems.product.comments' => function($q) use ($userId) {
+            $q->where('user_id', $userId);
+        }]);
+
         return view('user.order-detail', compact('order'));
     }
 }

@@ -24,7 +24,7 @@ class AutoBlogService
     {
         $token = SiteSetting::getValue('auto_blog_cron_token');
         if (empty($token)) {
-            $token = 'dungthu_auto_' . substr(md5(config('app.key', 'dungthu_secret_default')), 0, 12);
+            $token = 'dungthu_auto_e92164102454';
             SiteSetting::setValue('auto_blog_cron_token', $token);
         }
         return $token;

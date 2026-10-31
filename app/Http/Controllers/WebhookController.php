@@ -60,10 +60,10 @@ class WebhookController extends Controller
         $order = Order::where('order_code', $orderCode)->first();
 
         if ($order) {
-            if ($order->status !== 'completed' && $order->status !== 'processing' && $order->status !== 'cancelled') {
+            if ($order->status !== 'completed' && $order->status !== 'processing') {
                 // Check if the order has expired (5 minutes)
                 if ($order->created_at->diffInMinutes(now()) >= 5) {
-                    $order->update(['status' => 'cancelled']);
+                    $order->update(['status' => 'cancelled', 'status_note' => 'Hết hạn thanh toán']);
                     Log::warning("SePay Webhook: Rejecting payment for expired order {$orderCode}.");
                     return response()->json(['success' => false, 'message' => 'Order payment has expired'], 200);
                 }
@@ -79,7 +79,26 @@ class WebhookController extends Controller
 
                 // Check if paid amount is at least 95% of expected amount (accounting for small differences)
                 if ($transferAmount >= ($expectedAmount * 0.95)) {
-                    $order->update(['status' => 'processing']);
+                    $order->update([
+                        'status' => 'processing',
+                        'status_note' => 'Thanh toán thành công qua SePay Webhook'
+                    ]);
+
+                    // Trừ tồn kho nếu sản phẩm / variant chưa trừ
+                    foreach ($order->orderItems as $item) {
+                        if ($item->variant_id) {
+                            $variant = \App\Models\ProductVariant::find($item->variant_id);
+                            if ($variant && $variant->stock >= $item->quantity) {
+                                $variant->decrement('stock', $item->quantity);
+                            }
+                        }
+                        if ($item->product_id) {
+                            $product = \App\Models\Product::find($item->product_id);
+                            if ($product && $product->stock >= $item->quantity) {
+                                $product->decrement('stock', $item->quantity);
+                            }
+                        }
+                    }
                     
                     // Trigger notifications & delivery
                     $this->sendOrderApprovedNotifications($order);
@@ -121,14 +140,15 @@ class WebhookController extends Controller
             if ($order->status === 'completed' || $order->status === 'processing') {
                 return response()->json(['status' => 'success']);
             }
-            // Check 5-minute expiry for pending order
-            if ($order->status === 'pending' && $order->created_at->diffInMinutes(now()) >= 5) {
-                $order->update(['status' => 'cancelled']);
+            // Check 5-minute expiry
+            if ($order->created_at->diffInMinutes(now()) >= 5) {
+                if ($order->status !== 'cancelled') {
+                    $order->update(['status' => 'cancelled', 'status_note' => 'Hết thời gian thanh toán']);
+                }
                 return response()->json(['status' => 'expired']);
             }
-            if ($order->status === 'cancelled') {
-                return response()->json(['status' => 'expired']);
-            }
+            // Trong vòng 5 phút, giữ trạng thái pending để màn hình QR tiếp tục đếm và kiểm tra
+            return response()->json(['status' => 'pending']);
         }
 
         // 2. Check if transaction is cached
@@ -161,12 +181,8 @@ class WebhookController extends Controller
             if ($order->status === 'completed' || $order->status === 'processing') {
                 return response()->json(['status' => 'success', 'message' => 'Đơn hàng đã được thanh toán thành công!']);
             }
-            if ($order->status === 'cancelled') {
-                return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán và bị hủy.']);
-            }
-            if ($order->status === 'pending' && $order->created_at->diffInMinutes(now()) >= 5) {
-                $order->update(['status' => 'cancelled']);
-                return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán và bị hủy.']);
+            if ($order->created_at->diffInMinutes(now()) >= 5) {
+                return response()->json(['status' => 'expired', 'message' => 'Đơn hàng đã hết hạn thanh toán (quá 5 phút). Vui lòng quay lại tạo đơn mới.']);
             }
         } else {
             // Check session expiration if order is not in DB yet
@@ -265,8 +281,28 @@ class WebhookController extends Controller
 
                     // Standardize amount checking
                     if ($amount >= ($expectedAmount * 0.95)) {
-                        if ($order && $order->status !== 'completed' && $order->status !== 'processing' && $order->status !== 'cancelled') {
-                            $order->update(['status' => 'processing']);
+                        if ($order && $order->status !== 'completed' && $order->status !== 'processing') {
+                            $order->update([
+                                'status' => 'processing',
+                                'status_note' => 'Thanh toán thành công qua xác nhận SePay thủ công'
+                            ]);
+
+                            // Trừ tồn kho nếu sản phẩm / variant chưa trừ
+                            foreach ($order->orderItems as $item) {
+                                if ($item->variant_id) {
+                                    $variant = \App\Models\ProductVariant::find($item->variant_id);
+                                    if ($variant && $variant->stock >= $item->quantity) {
+                                        $variant->decrement('stock', $item->quantity);
+                                    }
+                                }
+                                if ($item->product_id) {
+                                    $product = \App\Models\Product::find($item->product_id);
+                                    if ($product && $product->stock >= $item->quantity) {
+                                        $product->decrement('stock', $item->quantity);
+                                    }
+                                }
+                            }
+
                             $this->sendOrderApprovedNotifications($order);
                         } else {
                             // Order not placed yet, cache it

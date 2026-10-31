@@ -540,47 +540,122 @@ class CartController extends Controller
             }
             $finalTotal = max(0, $totalAmount - $discountAmount);
 
-            $order = Order::create([
-                'user_id' => auth()->id(),
+            $orderCodeVal = (session('checkout_order_code') ?: ($request->filled('order_code') && preg_match('/^DT-[A-Z0-9]{8}$/i', $request->order_code) ? strtoupper($request->order_code) : ('DT-' . strtoupper(\Illuminate\Support\Str::random(8)))));
+
+            $formData = [
                 'customer_name' => $request->customer_name,
                 'customer_email' => $request->customer_email,
                 'customer_phone' => $request->customer_phone,
-                'customer_address' => $customerAddress,
-                'total_amount' => $finalTotal,
-                'currency' => $currency,
-                'status' => $orderStatus,
+                'customer_address' => $request->customer_address,
+                'upgrade_email_or_note' => $request->upgrade_email_or_note,
+                'customer_zalo' => $request->customer_zalo,
+                'customer_facebook' => $request->customer_facebook,
+                'use_boxchat' => $request->boolean('use_boxchat'),
+                'payment_method' => $request->payment_method ?? 'vietqr',
                 'coupon_code' => $coupon ? $coupon->code : null,
                 'discount_amount' => $discountAmount,
-                'order_code' => (session('checkout_order_code') ?: ($request->filled('order_code') && preg_match('/^DT-[A-Z0-9]{8}$/i', $request->order_code) ? strtoupper($request->order_code) : ('DT-' . strtoupper(\Illuminate\Support\Str::random(8))))),
-            ]);
+                'ip' => $request->ip(),
+            ];
 
-            foreach($cart as $id => $details) {
-                $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
-                $variantId = $details['variant_id'] ?? null;
-                $variantName = $details['variant_name'] ?? null;
-                $price = (float) $details['price'];
+            $order = Order::where('order_code', $orderCodeVal)->first();
 
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $productId,
-                    'variant_id' => $variantId,
-                    'variant_name' => $variantName,
-                    'quantity' => $details['quantity'],
-                    'price' => $price,
+            if ($order) {
+                $order->update([
+                    'user_id' => auth()->id(),
+                    'customer_name' => $request->customer_name,
+                    'customer_email' => $request->customer_email,
+                    'customer_phone' => $request->customer_phone,
+                    'customer_address' => $customerAddress,
+                    'form_data' => $formData,
+                    'total_amount' => $finalTotal,
+                    'currency' => $currency,
+                    'status' => $orderStatus,
+                    'status_note' => $orderStatus === 'processing' ? 'Thanh toán thành công' : 'Đang chờ xử lý',
+                    'coupon_code' => $coupon ? $coupon->code : null,
+                    'discount_amount' => $discountAmount,
                 ]);
 
-                // Trừ tồn kho variant nếu có
-                if ($variantId) {
-                    $variant = ProductVariant::find($variantId);
-                    if ($variant && $variant->stock >= $details['quantity']) {
-                        $variant->decrement('stock', $details['quantity']);
+                // Đảm bảo các sản phẩm trong đơn hàng
+                if ($order->orderItems()->count() === 0) {
+                    foreach($cart as $id => $details) {
+                        $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+                        $variantId = $details['variant_id'] ?? null;
+                        $variantName = $details['variant_name'] ?? null;
+                        $price = (float) $details['price'];
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'product_id' => $productId,
+                            'variant_id' => $variantId,
+                            'variant_name' => $variantName,
+                            'quantity' => $details['quantity'],
+                            'price' => $price,
+                        ]);
                     }
                 }
 
-                // Trừ tồn kho nếu sản phẩm còn hàng sẵn
-                $product = Product::find($productId);
-                if ($product && $product->stock >= $details['quantity']) {
-                    $product->decrement('stock', $details['quantity']);
+                // Trừ tồn kho variant nếu có
+                foreach($cart as $id => $details) {
+                    $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+                    $variantId = $details['variant_id'] ?? null;
+
+                    if ($variantId) {
+                        $variant = ProductVariant::find($variantId);
+                        if ($variant && $variant->stock >= $details['quantity']) {
+                            $variant->decrement('stock', $details['quantity']);
+                        }
+                    }
+
+                    // Trừ tồn kho nếu sản phẩm còn hàng sẵn
+                    $product = Product::find($productId);
+                    if ($product && $product->stock >= $details['quantity']) {
+                        $product->decrement('stock', $details['quantity']);
+                    }
+                }
+            } else {
+                $order = Order::create([
+                    'user_id' => auth()->id(),
+                    'customer_name' => $request->customer_name,
+                    'customer_email' => $request->customer_email,
+                    'customer_phone' => $request->customer_phone,
+                    'customer_address' => $customerAddress,
+                    'form_data' => $formData,
+                    'total_amount' => $finalTotal,
+                    'currency' => $currency,
+                    'status' => $orderStatus,
+                    'coupon_code' => $coupon ? $coupon->code : null,
+                    'discount_amount' => $discountAmount,
+                    'order_code' => $orderCodeVal,
+                ]);
+
+                foreach($cart as $id => $details) {
+                    $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+                    $variantId = $details['variant_id'] ?? null;
+                    $variantName = $details['variant_name'] ?? null;
+                    $price = (float) $details['price'];
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $productId,
+                        'variant_id' => $variantId,
+                        'variant_name' => $variantName,
+                        'quantity' => $details['quantity'],
+                        'price' => $price,
+                    ]);
+
+                    // Trừ tồn kho variant nếu có
+                    if ($variantId) {
+                        $variant = ProductVariant::find($variantId);
+                        if ($variant && $variant->stock >= $details['quantity']) {
+                            $variant->decrement('stock', $details['quantity']);
+                        }
+                    }
+
+                    // Trừ tồn kho nếu sản phẩm còn hàng sẵn
+                    $product = Product::find($productId);
+                    if ($product && $product->stock >= $details['quantity']) {
+                        $product->decrement('stock', $details['quantity']);
+                    }
                 }
             }
 
@@ -742,6 +817,96 @@ class CartController extends Controller
             \Log::info('Pre-checkout admin email sent to tranthanhtuanfix@gmail.com for ' . $orderCode);
         } catch (\Exception $e) {
             \Log::error('Error sending pre-checkout admin email: ' . $e->getMessage());
+        }
+
+        // 3. Ghi nhận đơn hàng ở trạng thái 'cancelled' (Chưa thanh toán) vào DB
+        // Để khi khách hàng out ra không mua thì trong lịch sử đơn hàng của khách và quản lý admin sẽ hiển thị trạng thái đã hủy
+        try {
+            $customerAddress = $request->customer_address ?? ($isEn ? 'Digital product - no shipping required' : 'Sản phẩm số - không cần giao hàng');
+            if ($request->filled('customer_zalo')) {
+                $customerAddress .= "\nZalo: " . $request->customer_zalo;
+            }
+            if ($request->filled('customer_facebook')) {
+                $customerAddress .= "\nFacebook: " . $request->customer_facebook;
+            }
+            if ($request->filled('upgrade_email_or_note')) {
+                $customerAddress .= "\n" . ($isEn ? 'Upgrade Email/Note: ' : 'Email cần nâng cấp/Ghi chú: ') . $request->upgrade_email_or_note;
+            }
+            if ($request->boolean('use_boxchat')) {
+                $customerAddress .= "\n" . ($isEn ? 'Boxchat: Yes (Contact via Boxchat)' : 'Liên hệ: Có (Khách tự liên hệ qua Boxchat)');
+            }
+            if ($request->filled('payment_method')) {
+                $customerAddress .= "\n" . ($isEn ? 'Payment Method: ' : 'Phương thức thanh toán: ') . $request->payment_method;
+            }
+
+            $formData = [
+                'customer_name' => $request->customer_name,
+                'customer_email' => $request->customer_email,
+                'customer_phone' => $request->customer_phone,
+                'customer_address' => $request->customer_address,
+                'upgrade_email_or_note' => $request->upgrade_email_or_note,
+                'customer_zalo' => $request->customer_zalo,
+                'customer_facebook' => $request->customer_facebook,
+                'use_boxchat' => $request->boolean('use_boxchat'),
+                'payment_method' => $request->payment_method ?? 'vietqr',
+                'coupon_code' => $couponCode,
+                'discount_amount' => $discountAmount,
+                'ip' => $request->ip(),
+            ];
+
+            $order = Order::where('order_code', $orderCode)->first();
+            if ($order) {
+                if ($order->status !== 'completed' && $order->status !== 'processing') {
+                    $order->update([
+                        'user_id' => auth()->id(),
+                        'customer_name' => $request->customer_name,
+                        'customer_email' => $request->customer_email,
+                        'customer_phone' => $request->customer_phone,
+                        'customer_address' => $customerAddress,
+                        'form_data' => $formData,
+                        'total_amount' => $finalTotal,
+                        'currency' => $isEn ? 'USD' : 'VND',
+                        'status' => 'cancelled',
+                        'status_note' => 'Chưa thanh toán (Khách dừng tại màn hình QR)',
+                        'coupon_code' => $couponCode,
+                        'discount_amount' => $discountAmount,
+                    ]);
+                }
+            } else {
+                $order = Order::create([
+                    'user_id' => auth()->id(),
+                    'customer_name' => $request->customer_name,
+                    'customer_email' => $request->customer_email,
+                    'customer_phone' => $request->customer_phone,
+                    'customer_address' => $customerAddress,
+                    'form_data' => $formData,
+                    'total_amount' => $finalTotal,
+                    'currency' => $isEn ? 'USD' : 'VND',
+                    'status' => 'cancelled',
+                    'status_note' => 'Chưa thanh toán (Khách dừng tại màn hình QR)',
+                    'coupon_code' => $couponCode,
+                    'discount_amount' => $discountAmount,
+                    'order_code' => $orderCode,
+                ]);
+
+                foreach ($cart as $id => $details) {
+                    $productId = $details['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
+                    $variantId = $details['variant_id'] ?? null;
+                    $variantName = $details['variant_name'] ?? null;
+                    $price = (float) $details['price'];
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $productId,
+                        'variant_id' => $variantId,
+                        'variant_name' => $variantName,
+                        'quantity' => $details['quantity'],
+                        'price' => $price,
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error recording pre-checkout unpaid order in preNotify: ' . $e->getMessage());
         }
 
         return response()->json([

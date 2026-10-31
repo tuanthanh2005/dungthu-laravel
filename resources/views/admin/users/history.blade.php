@@ -222,6 +222,9 @@
                             <div>
                                 <div class="order-id">
                                     <i class="fas fa-file-invoice me-2 text-primary"></i>Đơn hàng #{{ $order->id }}
+                                    @if($order->order_code)
+                                        <span class="text-primary font-monospace ms-1 fs-6">({{ $order->order_code }})</span>
+                                    @endif
                                 </div>
                                 <div class="order-date">
                                     <i class="fas fa-clock me-1"></i>{{ $order->created_at->format('d/m/Y H:i:s') }}
@@ -239,6 +242,80 @@
                             </div>
                         </div>
 
+                        <!-- Full Customer Form Input Information -->
+                        <div class="p-3 mb-3 rounded-3" style="background: white; border: 1.5px solid #cbd5e1; border-left: 5px solid #667eea;">
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom flex-wrap gap-2">
+                                <span class="fw-bold text-primary small text-uppercase">
+                                    <i class="fas fa-id-card me-1"></i> Thông Tin Khách Hàng Nhập (Form Chi Tiết)
+                                </span>
+                                @if($order->status === 'cancelled')
+                                    <span class="badge bg-danger text-white"><i class="fas fa-times-circle me-1"></i>Đơn Chưa Thanh Toán / Đã Hủy</span>
+                                @else
+                                    <span class="badge bg-success text-white"><i class="fas fa-check-circle me-1"></i>Đơn Đã Ghi Nhận</span>
+                                @endif
+                            </div>
+                            <div class="row g-2 small">
+                                <div class="col-md-4">
+                                    <span class="text-muted d-block">👤 Họ và tên:</span>
+                                    <strong class="text-dark">{{ $order->customer_name }}</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted d-block">📞 Số điện thoại:</span>
+                                    <strong class="text-dark">{{ $order->customer_phone }}</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted d-block">✉️ Email nhận mã:</span>
+                                    <strong class="text-dark">{{ $order->customer_email }}</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="text-muted d-block">📝 Email cần nâng cấp / Ghi chú:</span>
+                                    <strong class="{{ $order->upgrade_note ? 'text-danger bg-warning-subtle px-1 rounded' : 'text-muted' }}">
+                                        {{ $order->upgrade_note ?: 'Không có' }}
+                                    </strong>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="text-muted d-block">💬 Số Zalo:</span>
+                                    @if($order->zalo)
+                                        <a href="https://zalo.me/{{ $order->zalo }}" target="_blank" class="text-primary text-decoration-none fw-bold">
+                                            <i class="fas fa-comment-dots me-1"></i>{{ $order->zalo }}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Không có</span>
+                                    @endif
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="text-muted d-block">🌐 Link Facebook:</span>
+                                    @if($order->facebook)
+                                        <a href="{{ str_starts_with($order->facebook, 'http') ? $order->facebook : 'https://' . $order->facebook }}" target="_blank" class="text-primary text-decoration-none fw-bold">
+                                            <i class="fab fa-facebook me-1"></i>Xem Facebook
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Không có</span>
+                                    @endif
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted d-block">💭 Liên hệ Boxchat:</span>
+                                    <span class="badge {{ $order->use_boxchat ? 'bg-info text-white' : 'bg-light text-muted border' }}">
+                                        {{ $order->use_boxchat ? 'Có (Khách tự liên hệ qua Boxchat)' : 'Không' }}
+                                    </span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted d-block">💳 Phương thức thanh toán:</span>
+                                    <span class="badge bg-secondary text-white">{{ $order->payment_method_name }}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted d-block">ℹ️ Trạng thái & Ghi chú:</span>
+                                    <span class="text-dark fw-bold">{{ $order->status_note ?: $order->status_label }}</span>
+                                </div>
+                                @if($order->raw_address)
+                                    <div class="col-12 mt-1 pt-1 border-top">
+                                        <span class="text-muted d-block">📍 Địa chỉ nhận hàng:</span>
+                                        <span class="text-dark">{{ $order->raw_address }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
                         <!-- Products -->
                         <div class="product-list">
                             @foreach($order->orderItems as $item)
@@ -250,7 +327,10 @@
                                     @endif
                                     <div class="flex-grow-1">
                                         <div class="fw-bold">{{ $item->product->name ?? 'Sản phẩm không tồn tại' }}</div>
-                                        <small class="text-muted">Số lượng: {{ $item->quantity }} x {{ number_format($item->price, 0, ',', '.') }}đ</small>
+                                        @if($item->variant_name)
+                                            <span class="badge bg-light text-primary border" style="font-size: 0.75rem;">{{ $item->variant_name }}</span>
+                                        @endif
+                                        <small class="text-muted d-block mt-1">Số lượng: {{ $item->quantity }} x {{ number_format($item->price, 0, ',', '.') }}đ</small>
                                     </div>
                                     <div class="text-end">
                                         <div class="fw-bold text-primary">{{ number_format($item->price * $item->quantity, 0, ',', '.') }}đ</div>
@@ -259,25 +339,30 @@
                             @endforeach
                         </div>
 
-                        <!-- Total -->
-                        <div class="order-total">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>Tổng tiền:</span>
-                                <span class="fs-4 fw-bold">{{ number_format($order->total_amount, 0, ',', '.') }}đ</span>
+                        <!-- Total & Action Link -->
+                        <div class="order-total d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-light rounded-pill px-3 fw-bold text-primary">
+                                    <i class="fas fa-external-link-alt me-1"></i>Trang quản lý đơn hàng #{{ $order->id }}
+                                </a>
+                                @if($order->coupon_code)
+                                    <span class="badge bg-success-subtle text-success border border-success ms-2">Mã giảm giá: {{ $order->coupon_code }} (-{{ $order->formatted_discount }})</span>
+                                @endif
+                            </div>
+                            <div class="text-end">
+                                <span class="d-block small opacity-75">Tổng thanh toán:</span>
+                                <span class="fs-4 fw-bold">{{ $order->formatted_total }}</span>
                             </div>
                         </div>
 
-                        <!-- Customer Info -->
-                        <div class="mt-3 p-3" style="background: white; border-radius: 10px; border: 1px solid #e2e8f0;">
-                            <small class="text-muted">
-                                <i class="fas fa-user me-2"></i>{{ $order->customer_name }} | 
-                                <i class="fas fa-envelope me-2"></i>{{ $order->customer_email }} | 
-                                <i class="fas fa-phone me-2"></i>{{ $order->customer_phone }}
-                                @if($order->customer_address && $order->customer_address !== 'Sản phẩm số - không cần giao hàng')
-                                    <br><i class="fas fa-map-marker-alt me-2"></i>{{ $order->customer_address }}
-                                @endif
-                            </small>
-                        </div>
+                        @if($order->delivery_account || $order->delivery_key || $order->delivery_note)
+                            <div class="mt-3 p-3" style="background: white; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                <strong class="text-success d-block mb-1"><i class="fas fa-key me-1"></i>Thông tin tài khoản đã bàn giao:</strong>
+                                @if($order->delivery_account)<div>Tài khoản: <code>{{ $order->delivery_account }}</code></div>@endif
+                                @if($order->delivery_key)<div>Key/Mã: <code>{{ $order->delivery_key }}</code></div>@endif
+                                @if($order->delivery_note)<div>Ghi chú: {{ $order->delivery_note }}</div>@endif
+                            </div>
+                        @endif
                     </div>
                 @endforeach
 

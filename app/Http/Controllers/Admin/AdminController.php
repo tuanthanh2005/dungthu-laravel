@@ -354,6 +354,88 @@ class AdminController extends Controller
         return view('admin.users.history', compact('user', 'orders'));
     }
 
+    /**
+     * Lấy toàn bộ lịch sử đơn hàng chi tiết của người dùng bao gồm form nhập
+     */
+    public function userOrdersDetail($id)
+    {
+        $user = User::withCount('orders')
+            ->withSum('orders', 'total_amount')
+            ->findOrFail($id);
+
+        $orders = Order::where('user_id', $id)
+            ->with('orderItems.product')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone ?? 'Chưa cập nhật',
+                'orders_count' => $user->orders_count,
+                'total_spent_formatted' => number_format($user->orders_sum_total_amount ?? 0, 0, ',', '.') . 'đ',
+                'created_at' => $user->created_at->format('d/m/Y H:i'),
+            ],
+            'orders' => $orders->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'order_code' => $order->order_code ?? ('DT-' . str_pad($order->id, 8, '0', STR_PAD_LEFT)),
+                    'status' => $order->status,
+                    'status_label' => $order->status_label,
+                    'status_color' => $order->status_color,
+                    'status_note' => $order->status_note,
+                    'order_type' => $order->order_type,
+                    'order_type_label' => $order->order_type == 'qr' ? '🎫 QR Deal' : ($order->order_type == 'document' ? '📄 Tài liệu' : ($order->order_type == 'shipping' ? '🚚 Giao hàng' : '💾 Digital')),
+                    'created_at' => $order->created_at->format('d/m/Y H:i:s'),
+                    'total_amount' => (float) $order->total_amount,
+                    'formatted_total' => $order->formatted_total,
+                    'currency' => $order->currency ?? 'VND',
+                    'coupon_code' => $order->coupon_code,
+                    'discount_amount' => (float) ($order->discount_amount ?? 0),
+                    'formatted_discount' => $order->formatted_discount,
+                    
+                    // Form input details
+                    'customer_name' => $order->customer_name,
+                    'customer_email' => $order->customer_email,
+                    'customer_phone' => $order->customer_phone,
+                    'customer_address' => $order->customer_address,
+                    'upgrade_note' => $order->upgrade_note,
+                    'zalo' => $order->zalo,
+                    'facebook' => $order->facebook,
+                    'use_boxchat' => $order->use_boxchat,
+                    'raw_address' => $order->raw_address,
+                    'payment_method' => $order->payment_method_name,
+                    
+                    // Delivery details
+                    'delivery_account' => $order->delivery_account,
+                    'delivery_key' => $order->delivery_key,
+                    'delivery_note' => $order->delivery_note,
+                    
+                    // Admin view URL
+                    'admin_url' => route('admin.orders.show', $order->id),
+
+                    // Items
+                    'items' => $order->orderItems->map(function ($item) use ($order) {
+                        return [
+                            'id' => $item->id,
+                            'product_name' => $item->product ? $item->product->name : ($item->name ?? 'Sản phẩm'),
+                            'product_image' => $item->product && $item->product->image ? $item->product->image : null,
+                            'variant_name' => $item->variant_name,
+                            'quantity' => $item->quantity,
+                            'price' => (float) $item->price,
+                            'formatted_price' => $order->currency === 'USD' ? ('$' . number_format($item->price, 2)) : (number_format($item->price, 0, ',', '.') . 'đ'),
+                            'line_total' => (float) ($item->price * $item->quantity),
+                            'formatted_line_total' => $order->currency === 'USD' ? ('$' . number_format($item->price * $item->quantity, 2)) : (number_format($item->price * $item->quantity, 0, ',', '.') . 'đ'),
+                        ];
+                    }),
+                ];
+            }),
+        ]);
+    }
+
     public function updateUserRole(Request $request, User $user)
     {
         $request->validate([

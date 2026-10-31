@@ -249,6 +249,7 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     // User Management
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/users/{user}/history', [AdminController::class, 'userHistory'])->name('admin.users.history');
+    Route::get('/users/{user}/orders-detail', [AdminController::class, 'userOrdersDetail'])->name('admin.users.orders-detail');
     Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
     Route::post('/users/{user}/award-tickets', [AdminController::class, 'awardTickets'])->name('admin.users.award-tickets');
     Route::post('/coupons/generate', [AdminController::class, 'generateCoupon'])->name('admin.coupons.generate');

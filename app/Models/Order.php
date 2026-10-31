@@ -23,11 +23,13 @@ class Order extends Model
         'delivery_account',
         'delivery_key',
         'delivery_note',
+        'form_data',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
         'discount_amount' => 'decimal:2',
+        'form_data' => 'array',
     ];
 
     /**
@@ -242,6 +244,81 @@ class Order extends Model
                   ->whereNotIn('category', ['tiktok', 'ebooks']);
             }
         });
+    }
+
+    // Form data accessors
+    public function getUpgradeNoteAttribute()
+    {
+        if (!empty($this->form_data['upgrade_email_or_note'])) {
+            return $this->form_data['upgrade_email_or_note'];
+        }
+        if ($this->customer_address && preg_match('/(?:Email cần nâng cấp\/Ghi chú|Upgrade Email\/Note):\s*(.+)/iu', $this->customer_address, $m)) {
+            return trim($m[1]);
+        }
+        return null;
+    }
+
+    public function getZaloAttribute()
+    {
+        if (!empty($this->form_data['customer_zalo'])) {
+            return $this->form_data['customer_zalo'];
+        }
+        if ($this->customer_address && preg_match('/Zalo:\s*(.+)/i', $this->customer_address, $m)) {
+            return trim($m[1]);
+        }
+        return null;
+    }
+
+    public function getFacebookAttribute()
+    {
+        if (!empty($this->form_data['customer_facebook'])) {
+            return $this->form_data['customer_facebook'];
+        }
+        if ($this->customer_address && preg_match('/Facebook:\s*(.+)/i', $this->customer_address, $m)) {
+            return trim($m[1]);
+        }
+        return null;
+    }
+
+    public function getUseBoxchatAttribute()
+    {
+        if (isset($this->form_data['use_boxchat'])) {
+            return (bool) $this->form_data['use_boxchat'];
+        }
+        if ($this->customer_address && (stripos($this->customer_address, 'Boxchat') !== false || stripos($this->customer_address, 'Tự liên hệ qua Boxchat') !== false)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getRawAddressAttribute()
+    {
+        if (!empty($this->form_data['customer_address'])) {
+            return $this->form_data['customer_address'];
+        }
+        if ($this->customer_address) {
+            $lines = explode("\n", $this->customer_address);
+            $first = trim($lines[0]);
+            if (!empty($first) && stripos($first, 'Sản phẩm số') === false && stripos($first, 'Digital product') === false) {
+                return $first;
+            }
+        }
+        return null;
+    }
+
+    public function getPaymentMethodNameAttribute()
+    {
+        if (!empty($this->form_data['payment_method'])) {
+            $pm = strtolower($this->form_data['payment_method']);
+            if ($pm === 'crypto') return 'Ví Crypto';
+            if ($pm === 'binance_uid') return 'Binance UID';
+            if ($pm === 'paypal') return 'PayPal';
+            return 'VietQR Chuyển khoản';
+        }
+        if ($this->customer_address && preg_match('/(?:Phương thức thanh toán|Payment Method):\s*(.+)/iu', $this->customer_address, $m)) {
+            return trim($m[1]);
+        }
+        return 'VietQR Chuyển khoản';
     }
 
     /**

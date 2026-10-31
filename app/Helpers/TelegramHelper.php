@@ -42,6 +42,104 @@ class TelegramHelper
     }
 
     /**
+     * Gửi thông báo khi khách hàng vừa nhập form thông tin (Bước 1) trước khi chuyển qua QR
+     */
+    public static function sendPreCheckoutNotification(array $data)
+    {
+        $botToken = config('services.telegram.bot_token') ?: \App\Models\SiteSetting::getValue('telegram_bot_token');
+        $chatId = config('services.telegram.chat_id') ?: \App\Models\SiteSetting::getValue('telegram_chat_id');
+
+        if (!$botToken || !$chatId) {
+            Log::warning('Telegram bot token or chat ID is not configured.');
+            return false;
+        }
+
+        $orderCode = $data['order_code'] ?? 'N/A';
+        $customerName = htmlspecialchars($data['customer_name'] ?? 'Khách hàng');
+        $customerPhone = htmlspecialchars($data['customer_phone'] ?? 'N/A');
+        $customerEmail = htmlspecialchars($data['customer_email'] ?? 'N/A');
+        $upgradeNote = htmlspecialchars($data['upgrade_email_or_note'] ?? '');
+        $customerAddress = htmlspecialchars($data['customer_address'] ?? '');
+        $zalo = htmlspecialchars($data['customer_zalo'] ?? '');
+        $facebook = htmlspecialchars($data['customer_facebook'] ?? '');
+        $useBoxchat = !empty($data['use_boxchat']);
+        $totalAmount = $data['total_formatted'] ?? '0đ';
+        $ip = $data['ip'] ?? request()->ip();
+        $time = $data['time'] ?? now()->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s');
+
+        $contactInfo = [];
+        if ($useBoxchat) {
+            $contactInfo[] = '💬 Boxchat Website';
+        }
+        if ($zalo) {
+            $contactInfo[] = "Zalo: <code>{$zalo}</code>";
+        }
+        if ($facebook) {
+            $contactInfo[] = "FB: {$facebook}";
+        }
+        $contactStr = !empty($contactInfo) ? implode(' | ', $contactInfo) : 'Chưa có';
+
+        $msg = "⚡ <b>KHÁCH HÀNG VỪA ĐIỀN FORM (BƯỚC 1 - CHỜ QUÉT QR)</b>\n";
+        $msg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+        $msg .= "🆔 <b>Mã đơn hàng:</b> <code>{$orderCode}</code>\n";
+        $msg .= "⏰ <b>Thời gian:</b> {$time}\n";
+        $msg .= "🌐 <b>IP khách:</b> <code>{$ip}</code>\n\n";
+
+        $msg .= "👤 <b>THÔNG TIN KHÁCH HÀNG:</b>\n";
+        $msg .= "• <b>Họ tên:</b> <b>{$customerName}</b>\n";
+        $msg .= "• <b>Số điện thoại:</b> <code>{$customerPhone}</code>\n";
+        $msg .= "• <b>Email nhận mã:</b> <code>{$customerEmail}</code>\n";
+        if ($upgradeNote) {
+            $msg .= "• <b>Email nâng cấp / Ghi chú:</b> <i>{$upgradeNote}</i>\n";
+        }
+        if ($customerAddress) {
+            $msg .= "• <b>Địa chỉ:</b> {$customerAddress}\n";
+        }
+        $msg .= "• <b>Liên hệ:</b> {$contactStr}\n\n";
+
+        $msg .= "🛒 <b>SẢN PHẨM TRONG GIỎ HÀNG:</b>\n";
+        $items = $data['items'] ?? [];
+        if (!empty($items)) {
+            foreach ($items as $item) {
+                $itemName = htmlspecialchars($item['name'] ?? 'Sản phẩm');
+                $qty = $item['quantity'] ?? 1;
+                $priceFormatted = $item['price_formatted'] ?? '';
+                $msg .= "• {$itemName} (x{$qty}) - {$priceFormatted}\n";
+            }
+        } else {
+            $msg .= "• (Không có thông tin chi tiết)\n";
+        }
+
+        if (!empty($data['discount_formatted'])) {
+            $couponText = !empty($data['coupon_code']) ? " (Mã: <code>{$data['coupon_code']}</code>)" : "";
+            $msg .= "🎟 <b>Giảm giá:</b> -{$data['discount_formatted']}{$couponText}\n";
+        }
+
+        $msg .= "💰 <b>TỔNG CẦN THANH TOÁN:</b> <b>{$totalAmount}</b>\n";
+        $msg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+        $msg .= "ℹ️ <i>Khách hàng vừa bấm 'Tiến hành thanh toán' và đang ở màn hình quét QR. Admin lưu lại thông tin để tránh mất dữ liệu!</i>";
+
+        try {
+            $response = Http::timeout(4)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $msg,
+                'parse_mode' => 'HTML',
+            ]);
+
+            if ($response->successful()) {
+                Log::info('Pre-checkout Telegram notification sent for ' . $orderCode);
+                return true;
+            } else {
+                Log::error('Pre-checkout Telegram notification failed: ' . $response->body());
+                return false;
+            }
+        } catch (\Exception $e) {
+            Log::error('Telegram pre-checkout notification error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Gửi thông báo đơn hàng mới qua Telegram kèm Nút bấm xử lý trực tiếp
      */
     public static function sendNewOrderNotification($order)

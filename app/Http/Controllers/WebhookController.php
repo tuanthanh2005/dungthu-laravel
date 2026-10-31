@@ -202,27 +202,25 @@ class WebhookController extends Controller
         }
 
         // 3. Check SePay API directly
-        $apiKey = config('services.sepay.key');
-        $accountNumber = config('services.vietqr.account_number', 'SEPTT20721');
+        $apiKey = config('services.sepay.key') ?: \App\Models\SiteSetting::getValue('sepay_api_key');
 
         if (!$apiKey) {
             Log::error('SePay API Key is not configured.');
-            return response()->json(['status' => 'pending', 'message' => 'Lỗi cấu hình hệ thống thanh toán. Vui lòng liên hệ Admin.']);
+            return response()->json(['status' => 'pending', 'message' => 'Lỗi cấu hình hệ thống thanh toán (Chưa cấu hình SePay API Key). Vui lòng liên hệ hỗ trợ.']);
         }
 
         try {
-            // Call User API (legacy list endpoint, matches user access token)
+            // Call User API (list transactions endpoint)
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Content-Type' => 'application/json'
             ])->timeout(10)->get('https://my.sepay.vn/userapi/transactions/list', [
-                'account_number' => $accountNumber,
-                'limit' => 20,
+                'limit' => 50,
             ]);
 
             if ($response->failed()) {
                 Log::error('Failed to fetch transactions from SePay API: ' . $response->body());
-                return response()->json(['status' => 'pending', 'message' => 'Không thể kết nối đến máy chủ SePay. Vui lòng thử lại sau.']);
+                return response()->json(['status' => 'pending', 'message' => 'Không thể kết nối đến máy chủ SePay. Vui lòng thử lại sau giây lát.']);
             }
 
             $data = $response->json();
@@ -230,14 +228,16 @@ class WebhookController extends Controller
 
             foreach ($transactions as $tx) {
                 $content = $tx['transaction_content'] ?? '';
+                $code = $tx['code'] ?? '';
                 $amount = (float) ($tx['amount_in'] ?? 0);
 
                 // Standardize comparison by removing hyphens (banks often strip special characters)
                 $normalizedContent = str_replace('-', '', $content);
+                $normalizedCode = str_replace('-', '', $code);
                 $normalizedOrderCode = str_replace('-', '', $orderCode);
 
-                // Check if description has the order code
-                if (stripos($normalizedContent, $normalizedOrderCode) !== false) {
+                // Check if description or code has the order code
+                if (stripos($normalizedContent, $normalizedOrderCode) !== false || (!empty($normalizedCode) && stripos($normalizedCode, $normalizedOrderCode) !== false)) {
                     Log::info("Manual Check: Found matching transaction on SePay API. TxID: " . ($tx['id'] ?? 'N/A') . ", Amount: {$amount}");
 
                     // Determine amount correctness
@@ -283,6 +283,11 @@ class WebhookController extends Controller
                             'status' => 'success',
                             'message' => 'Thanh toán thành công! Hệ thống đã ghi nhận giao dịch của bạn.'
                         ]);
+                    } else {
+                        return response()->json([
+                            'status' => 'pending',
+                            'message' => 'Giao dịch được tìm thấy nhưng số tiền (' . number_format($amount, 0, ',', '.') . 'đ) chưa đủ số tiền cần thanh toán (' . number_format($expectedAmount, 0, ',', '.') . 'đ).'
+                        ]);
                     }
                 }
             }
@@ -292,7 +297,7 @@ class WebhookController extends Controller
 
         return response()->json([
             'status' => 'pending',
-            'message' => 'Hệ thống chưa tìm thấy giao dịch. Vui lòng kiểm tra lại số tài khoản, nội dung và số tiền đã chuyển.'
+            'message' => 'Hệ thống chưa tìm thấy giao dịch chuyển khoản cho đơn hàng này. Nếu bạn vừa chuyển khoản, vui lòng đợi 10-30 giây để ngân hàng đồng bộ rồi bấm lại nhé.'
         ]);
     }
 

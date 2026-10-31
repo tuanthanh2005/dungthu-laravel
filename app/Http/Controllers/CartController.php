@@ -12,6 +12,7 @@ use App\Helpers\TelegramHelper;
 use App\Models\AbandonedCart;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderApprovedMail;
+use App\Mail\PreCheckoutAdminMail;
 
 class CartController extends Controller
 {
@@ -635,6 +636,119 @@ class CartController extends Controller
             DB::rollback();
             return redirect()->back()->with('error', 'Có lỗi xảy ra! Vui lòng thử lại.');
         }
+    }
+
+    /**
+     * Gửi thông tin toàn bộ form bước 1 qua Telegram & Email cho Admin trước khi sang màn hình quét QR
+     */
+    public function preNotify(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => 'required|email|max:255',
+            'customer_phone' => 'required|string|max:50',
+            'upgrade_email_or_note' => 'nullable|string|max:1000',
+            'customer_zalo' => 'nullable|string|max:100',
+            'customer_facebook' => 'nullable|string|max:255',
+            'customer_address' => 'nullable|string|max:500',
+            'use_boxchat' => 'nullable',
+            'order_code' => 'nullable|string|max:50',
+        ]);
+
+        $orderCode = $request->order_code ?: session('checkout_order_code', 'DT-' . strtoupper(\Illuminate\Support\Str::random(8)));
+
+        // Lưu thông tin khách hàng vào session tạm để không bao giờ bị mất
+        session()->put('pre_checkout_customer', [
+            'name' => $request->customer_name,
+            'email' => $request->customer_email,
+            'phone' => $request->customer_phone,
+            'note' => $request->upgrade_email_or_note,
+            'zalo' => $request->customer_zalo,
+            'facebook' => $request->customer_facebook,
+            'address' => $request->customer_address,
+            'use_boxchat' => $request->boolean('use_boxchat'),
+        ]);
+
+        // Lấy giỏ hàng từ session
+        $cart = session()->get('cart', []);
+        $items = [];
+        $total = 0;
+        $isEn = (app()->getLocale() === 'en');
+
+        foreach ($cart as $id => $details) {
+            $price = (float) $details['price'];
+            $qty = (int) ($details['quantity'] ?? 1);
+            $lineTotal = $price * $qty;
+            $total += $lineTotal;
+
+            $items[] = [
+                'name' => $details['name'] ?? 'Sản phẩm',
+                'quantity' => $qty,
+                'price' => $price,
+                'price_formatted' => $isEn ? ('$' . number_format($price, 2)) : (number_format($price, 0, ',', '.') . 'đ'),
+                'total_formatted' => $isEn ? ('$' . number_format($lineTotal, 2)) : (number_format($lineTotal, 0, ',', '.') . 'đ'),
+            ];
+        }
+
+        // Tính giảm giá nếu có coupon
+        $discountAmount = 0;
+        $couponCode = null;
+        if (session()->has('applied_coupon')) {
+            $coupon = \App\Models\Coupon::find(session('applied_coupon'));
+            if ($coupon) {
+                $discountAmount = (float) $coupon->value;
+                if ($isEn) {
+                    $rate = (float) \App\Models\SiteSetting::getValue('usd_exchange_rate', 25000);
+                    $discountAmount = $discountAmount / $rate;
+                }
+                $couponCode = $coupon->code;
+            }
+        }
+
+        $finalTotal = max(0, $total - $discountAmount);
+        $totalFormatted = $isEn ? ('$' . number_format($finalTotal, 2)) : (number_format($finalTotal, 0, ',', '.') . 'đ');
+        $discountFormatted = $discountAmount > 0 ? ($isEn ? ('$' . number_format($discountAmount, 2)) : (number_format($discountAmount, 0, ',', '.') . 'đ')) : null;
+
+        $payload = [
+            'order_code' => $orderCode,
+            'customer_name' => $request->customer_name,
+            'customer_email' => $request->customer_email,
+            'customer_phone' => $request->customer_phone,
+            'upgrade_email_or_note' => $request->upgrade_email_or_note,
+            'customer_zalo' => $request->customer_zalo,
+            'customer_facebook' => $request->customer_facebook,
+            'customer_address' => $request->customer_address,
+            'use_boxchat' => $request->boolean('use_boxchat'),
+            'items' => $items,
+            'coupon_code' => $couponCode,
+            'discount_amount' => $discountAmount,
+            'discount_formatted' => $discountFormatted,
+            'total_amount' => $finalTotal,
+            'total_formatted' => $totalFormatted,
+            'ip' => $request->ip(),
+            'time' => now()->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s'),
+        ];
+
+        // 1. Gửi Telegram cho Admin
+        try {
+            TelegramHelper::sendPreCheckoutNotification($payload);
+        } catch (\Exception $e) {
+            \Log::error('Error sending pre-checkout Telegram notification: ' . $e->getMessage());
+        }
+
+        // 2. Gửi Email cho Admin: tranthanhtuanfix@gmail.com
+        try {
+            Mail::to('tranthanhtuanfix@gmail.com')->send(new PreCheckoutAdminMail($payload));
+            \Log::info('Pre-checkout admin email sent to tranthanhtuanfix@gmail.com for ' . $orderCode);
+        } catch (\Exception $e) {
+            \Log::error('Error sending pre-checkout admin email: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pre-checkout notification sent successfully',
+            'order_code' => $orderCode
+        ]);
     }
 
     /**

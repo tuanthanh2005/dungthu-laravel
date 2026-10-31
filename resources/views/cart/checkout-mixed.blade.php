@@ -771,13 +771,54 @@
             facebookWrapper.classList.add('d-none');
         }
 
-        // Toggle screens
-        document.getElementById('checkout-step-1').classList.add('d-none');
-        document.getElementById('checkout-step-2').classList.remove('d-none');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const btnProceed = document.getElementById('btn-proceed-payment');
+        const originalBtnHtml = btnProceed.innerHTML;
+        btnProceed.disabled = true;
+        btnProceed.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>{{ __('Đang chuẩn bị cổng thanh toán...') }}';
 
-        // Start payment verification & polling & 5-min timer
-        startPaymentVerification();
+        const proceedToStep2 = () => {
+            btnProceed.disabled = false;
+            btnProceed.innerHTML = originalBtnHtml;
+
+            // Toggle screens
+            document.getElementById('checkout-step-1').classList.add('d-none');
+            document.getElementById('checkout-step-2').classList.remove('d-none');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Start payment verification & polling & 5-min timer
+            startPaymentVerification();
+        };
+
+        // Gửi toàn bộ thông tin form qua Telegram và Email cho Admin TRƯỚC KHI sang màn hình quét QR
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        fetch('{{ route('checkout.pre-notify') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                customer_name: name,
+                customer_email: email,
+                customer_phone: phone,
+                customer_address: address,
+                customer_zalo: zalo,
+                customer_facebook: facebook,
+                order_code: orderCode
+            }),
+            signal: controller.signal
+        })
+        .then(res => res.json())
+        .catch(err => {
+            console.warn('Pre-notify notice:', err);
+        })
+        .finally(() => {
+            clearTimeout(timeoutId);
+            proceedToStep2();
+        });
     });
 
     // Step 2 to Step 1 Back Navigation

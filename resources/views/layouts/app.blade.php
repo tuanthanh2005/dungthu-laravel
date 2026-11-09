@@ -433,6 +433,54 @@
         @endif
     @endguest
 
+    {{-- Modal Cảnh Báo Tài Khoản Vi Phạm (Chặn tài khoản không phải @gmail.com) --}}
+    @if(session('show_banned_modal'))
+        <div class="modal fade" id="suspiciousAccountModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true" style="z-index: 10600;">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg text-center" style="border-radius: 24px; overflow: hidden;">
+                    <div class="modal-body p-4 p-md-5">
+                        <div class="mb-3">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle" style="width: 80px; height: 80px; background-color: #fee2e2;">
+                                <i class="fas fa-user-slash fa-3x" style="color: #ef4444;"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold text-danger mb-2">{{ __('Cảnh Báo Vi Phạm') }}</h4>
+                        <p class="text-secondary mb-3 fw-semibold" style="font-size: 16px; line-height: 1.6;">
+                            {{ session('banned_modal_message', __('Tài khoản Đã Bị Vô Hiệu Hóa - Xin Hãy Đăng Nhập Gmail Có Đuôi gmail.com')) }
+                        </p>
+                        <div class="alert alert-light border small text-muted text-start mb-4 py-2 px-3 rounded-3" style="font-size: 12px; background: #f8fafc;">
+                            <i class="fas fa-shield-alt text-primary me-1"></i> {{ __('Hệ thống áp dụng chính sách bảo mật bắt buộc sử dụng tài khoản có đuôi @gmail.com. Mọi tài khoản khác hoặc có dấu hiệu bot tự động sẽ bị khóa để đảm bảo an toàn cho hệ thống.') }}
+                        </div>
+                        <a href="{{ route('login') }}" class="btn btn-danger btn-lg w-100 fw-bold rounded-pill shadow-sm py-2" style="background: #ef4444; border: none;">
+                            <i class="fas fa-sign-in-alt me-2"></i>{{ __('Đăng nhập tài khoản khác') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var modalEl = document.getElementById('suspiciousAccountModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    var modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '{{ __("Cảnh Báo Vi Phạm") }}',
+                        text: '{{ session("banned_modal_message", __("Tài khoản của bạn nghi ngờ vi phạm, xin hãy đăng nhập tài khoản khác.")) }}',
+                        confirmButtonText: '{{ __("Đăng nhập tài khoản khác") }}',
+                        confirmButtonColor: '#ef4444',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        window.location.href = @json(route('login'));
+                    });
+                }
+            });
+        </script>
+    @endif
+
 @stack('scripts')
 </body>
 </html>

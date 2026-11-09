@@ -251,6 +251,16 @@
                             <i class="fas fa-search compact-search-icon"></i>
                             <input type="text" name="search" class="compact-search-input" placeholder="Tìm tên hoặc email..." value="{{ request('search') }}">
                         </div>
+
+                        <div>
+                            <select name="filter" class="form-select rounded-pill px-3" style="border: 1px solid #cbd5e0; min-width: 170px; font-size: 0.9rem; font-weight: 500; cursor: pointer; color: #4a5568; background-color: #fff; height: 38px;" onchange="this.form.submit()">
+                                <option value="" {{ !request('filter') ? 'selected' : '' }}>Tất cả tài khoản</option>
+                                <option value="gmail" {{ request('filter') === 'gmail' ? 'selected' : '' }}>Chỉ đuôi @gmail.com</option>
+                                <option value="non_gmail" {{ request('filter') === 'non_gmail' ? 'selected' : '' }}>⚠️ Không phải @gmail.com ({{ $nonGmailCount }})</option>
+                                <option value="locked" {{ request('filter') === 'locked' ? 'selected' : '' }}>🔒 Đã bị khóa ({{ $lockedCount }})</option>
+                                <option value="active" {{ request('filter') === 'active' ? 'selected' : '' }}>✅ Đang hoạt động</option>
+                            </select>
+                        </div>
                         
                         <div>
                             <select name="sort" class="form-select rounded-pill px-3" style="border: 1px solid #cbd5e0; min-width: 180px; font-size: 0.9rem; font-weight: 500; cursor: pointer; color: #4a5568; background-color: #fff; height: 38px;" onchange="this.form.submit()">
@@ -262,11 +272,25 @@
                         </div>
                     </form>
                 </div>
-                <div class="stats-mini">
+                <div class="stats-mini flex-wrap gap-2">
+                    @if(isset($nonGmailCount) && $nonGmailCount > 0)
+                        <form action="{{ route('admin.users.lock-non-gmail') }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn khóa tất cả {{ $nonGmailCount }} tài khoản không có đuôi @gmail.com để chống spam/bot?');">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm fw-bold">
+                                <i class="fas fa-user-lock me-1"></i>Khóa {{ $nonGmailCount }} nick non-Gmail
+                            </button>
+                        </form>
+                    @endif
                     <div class="stats-mini-item">
                         <i class="fas fa-user text-primary me-1"></i>
                         <strong>{{ $users->total() }}</strong> người dùng
                     </div>
+                    @if(isset($lockedCount) && $lockedCount > 0)
+                        <div class="stats-mini-item text-danger border border-danger bg-danger-subtle">
+                            <i class="fas fa-lock text-danger me-1"></i>
+                            <strong>{{ $lockedCount }}</strong> đã khóa
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -298,7 +322,19 @@
                                             <small class="text-muted">{{ $user->phone }}</small>
                                         @endif
                                     </td>
-                                    <td>{{ $user->email }}</td>
+                                    <td>
+                                        <div>{{ $user->email }}</div>
+                                        @if(!str_ends_with(strtolower($user->email), '@gmail.com'))
+                                            <span class="badge bg-danger text-white rounded-pill px-2 py-0" style="font-size: 10px;" title="Email không phải tên miền @gmail.com">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>Non-Gmail
+                                            </span>
+                                        @endif
+                                        @if($user->is_locked)
+                                            <span class="badge bg-dark text-white rounded-pill px-2 py-0" style="font-size: 10px;" title="{{ $user->locked_reason ?? 'Tài khoản đã bị khóa' }}">
+                                                <i class="fas fa-lock me-1"></i>Đã khóa
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td>{{ $user->phone ?? 'Chưa cập nhật' }}</td>
                                     <td class="text-center">
                                         <span class="badge-orders">
@@ -340,11 +376,14 @@
                                             <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                         </select>
                                     </td>
-                                    <td class="text-center">
-                                        <button onclick="awardTickets({{ $user->id }}, '{{ $user->name }}', {{ $user->spin_tickets }})" class="view-btn me-1" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 6px 12px; font-size: 0.85rem;" title="Cấp lượt quay">
+                                    <td class="text-center" style="white-space: nowrap;">
+                                        <button onclick="awardTickets({{ $user->id }}, '{{ $user->name }}', {{ $user->spin_tickets }})" class="view-btn me-1" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 6px 10px; font-size: 0.85rem;" title="Cấp lượt quay">
                                             <i class="fas fa-ticket-alt"></i>
                                         </button>
-                                        <a href="{{ route('admin.users.history', $user->id) }}" class="view-btn" style="padding: 6px 12px; font-size: 0.85rem;" title="Xem trang lịch sử đầy đủ">
+                                        <button onclick="toggleUserLock({{ $user->id }}, '{{ addslashes($user->name) }}', {{ $user->is_locked ? 'true' : 'false' }})" class="view-btn me-1" style="background: {{ $user->is_locked ? '#10b981' : '#ef4444' }}; padding: 6px 10px; font-size: 0.85rem;" title="{{ $user->is_locked ? 'Mở khóa tài khoản' : 'Khóa tài khoản này' }}">
+                                            <i class="fas fa-{{ $user->is_locked ? 'unlock' : 'lock' }}"></i>
+                                        </button>
+                                        <a href="{{ route('admin.users.history', $user->id) }}" class="view-btn" style="padding: 6px 10px; font-size: 0.85rem;" title="Xem trang lịch sử đầy đủ">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -934,6 +973,49 @@ function viewUserOrdersDetail(userId, userName) {
             document.getElementById('userOrdersEmptyTitle').textContent = 'Lỗi tải dữ liệu';
             document.getElementById('userOrdersEmptyDesc').textContent = 'Không thể tải lịch sử đơn hàng. Vui lòng thử lại sau.';
         });
+}
+
+function toggleUserLock(userId, userName, isLocked) {
+    const actionText = isLocked ? 'mở khóa' : 'khóa';
+    if (!confirm(`Bạn có chắc chắn muốn ${actionText} tài khoản của "${userName}"?`)) {
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]') 
+        ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') 
+        : '';
+
+    fetch(`/admin/users/${userId}/toggle-lock`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: data.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => location.reload());
+            } else {
+                alert(data.message);
+                location.reload();
+            }
+        } else {
+            alert(data.message || 'Có lỗi xảy ra.');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Không thể cập nhật trạng thái tài khoản. Vui lòng thử lại.');
+    });
 }
 
 function escapeHtml(text) {

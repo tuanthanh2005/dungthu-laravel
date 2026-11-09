@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\CaptchaController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -157,6 +158,8 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->name('register.post');
+Route::post('/auth/send-register-otp', [AuthController::class, 'sendRegisterOtp'])->middleware('throttle:5,1')->name('auth.send-otp');
+Route::get('/captcha/image', [CaptchaController::class, 'generate'])->name('captcha.image');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Password Reset Routes
@@ -252,6 +255,8 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/users/{user}/orders-detail', [AdminController::class, 'userOrdersDetail'])->name('admin.users.orders-detail');
     Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
     Route::post('/users/{user}/award-tickets', [AdminController::class, 'awardTickets'])->name('admin.users.award-tickets');
+    Route::post('/users/{user}/toggle-lock', [AdminController::class, 'toggleLockUser'])->name('admin.users.toggle-lock');
+    Route::post('/users/lock-non-gmail', [AdminController::class, 'lockNonGmailUsers'])->name('admin.users.lock-non-gmail');
     Route::post('/coupons/generate', [AdminController::class, 'generateCoupon'])->name('admin.coupons.generate');
     
     // Coupon / Voucher Management (Exclusive to sieusuperadmin)

@@ -23,6 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_locked',
+        'locked_reason',
         'phone',
         'address',
         'spin_tickets',
@@ -48,6 +50,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_locked' => 'boolean',
         ];
     }
 

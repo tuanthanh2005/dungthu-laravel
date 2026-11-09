@@ -29,10 +29,34 @@ class GoogleController extends Controller
 
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
+            $email = strtolower(trim($googleUser->email));
 
-            $existingUser = User::where('email', $googleUser->email)->first();
+            // Kiểm tra chỉ chấp nhận đuôi @gmail.com
+            if (!str_ends_with($email, '@gmail.com')) {
+                $existingUser = User::where('email', $email)->first();
+                if ($existingUser) {
+                    $existingUser->update([
+                        'is_locked' => true,
+                        'locked_reason' => 'Email không có đuôi @gmail.com (Nghi ngờ vi phạm)',
+                    ]);
+                }
+
+                return redirect('/login')->with([
+                    'show_banned_modal' => true,
+                    'banned_modal_message' => 'Hệ thống chỉ chấp nhận tài khoản có đuôi @gmail.com. Tài khoản này nghi ngờ vi phạm, xin hãy đăng nhập tài khoản khác.',
+                ]);
+            }
+
+            $existingUser = User::where('email', $email)->first();
 
             if ($existingUser) {
+                if ($existingUser->is_locked) {
+                    return redirect('/login')->with([
+                        'show_banned_modal' => true,
+                        'banned_modal_message' => 'Tài khoản của bạn nghi ngờ vi phạm, xin hãy đăng nhập tài khoản khác.',
+                    ]);
+                }
+
                 Auth::login($existingUser);
                 session()->forget('guest_first_seen_at');
                 cookie()->queue(cookie()->forget('guest_first_seen_at'));

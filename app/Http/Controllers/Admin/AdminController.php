@@ -214,6 +214,20 @@ class AdminController extends Controller
                   ->orWhere('email', 'like', "%{$search}%");
             });
         }
+
+        // Support filter by account type / status
+        if ($request->filled('filter')) {
+            $filter = $request->input('filter');
+            if ($filter === 'non_gmail') {
+                $query->where('email', 'not like', '%@gmail.com');
+            } elseif ($filter === 'gmail') {
+                $query->where('email', 'like', '%@gmail.com');
+            } elseif ($filter === 'locked') {
+                $query->where('is_locked', true);
+            } elseif ($filter === 'active') {
+                $query->where('is_locked', false);
+            }
+        }
         
         $sort = $request->input('sort', 'newest');
         switch ($sort) {
@@ -234,7 +248,52 @@ class AdminController extends Controller
 
         $users = $query->paginate(10)->appends($request->query());
         
-        return view('admin.users.index', compact('users'));
+        $nonGmailCount = User::where('role', 'user')->where('email', 'not like', '%@gmail.com')->count();
+        $lockedCount = User::where('role', 'user')->where('is_locked', true)->count();
+
+        return view('admin.users.index', compact('users', 'nonGmailCount', 'lockedCount'));
+    }
+
+    /**
+     * Khóa hoặc mở khóa tài khoản người dùng
+     */
+    public function toggleLockUser(Request $request, User $user)
+    {
+        $newStatus = !$user->is_locked;
+        $user->update([
+            'is_locked' => $newStatus,
+            'locked_reason' => $newStatus ? 'Quản trị viên đã khóa tài khoản.' : null,
+        ]);
+
+        $msg = $newStatus 
+            ? "Đã khóa tài khoản {$user->email} thành công." 
+            : "Đã mở khóa tài khoản {$user->email} thành công.";
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'is_locked' => $newStatus,
+                'message' => $msg,
+            ]);
+        }
+
+        return back()->with('success', $msg);
+    }
+
+    /**
+     * Khóa toàn bộ các tài khoản người dùng không phải đuôi @gmail.com
+     */
+    public function lockNonGmailUsers(Request $request)
+    {
+        $count = User::where('role', 'user')
+            ->where('email', 'not like', '%@gmail.com')
+            ->where('is_locked', false)
+            ->update([
+                'is_locked' => true,
+                'locked_reason' => 'Email không có đuôi @gmail.com (Nghi ngờ vi phạm)',
+            ]);
+
+        return back()->with('success', "Đã khóa thành công {$count} tài khoản không phải đuôi @gmail.com!");
     }
 
     /**

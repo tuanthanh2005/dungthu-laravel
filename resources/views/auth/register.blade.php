@@ -381,7 +381,7 @@
                 <div class="form-group">
                     <div class="captcha-row">
                         <div class="captcha-img-holder">
-                            <img src="{{ route('captcha.image') }}" id="captchaImage" alt="Captcha" title="{{ __('Bấm vào ảnh để đổi mã khác') }}">
+                            <img src="{{ route('captcha.image') }}?t={{ time() }}" id="captchaImage" alt="Captcha" title="{{ __('Bấm vào ảnh để đổi mã khác') }}">
                             <button type="button" id="btnRefreshCaptcha" class="btn-refresh-captcha" title="{{ __('Đổi mã khác') }}">
                                 <i class="fas fa-sync-alt" id="refreshIcon"></i>
                             </button>
@@ -482,6 +482,9 @@
 
         if (captchaImage) {
             captchaImage.addEventListener('click', reloadCaptcha);
+            captchaImage.addEventListener('error', function() {
+                setTimeout(reloadCaptcha, 500);
+            }, { once: true });
         }
         if (btnRefreshCaptcha) {
             btnRefreshCaptcha.addEventListener('click', reloadCaptcha);

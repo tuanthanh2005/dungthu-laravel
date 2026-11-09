@@ -172,6 +172,8 @@ class BlockBadBots
                 'login/*',
                 'register',
                 'register/*',
+                'captcha',
+                'captcha/*',
                 'logout',
                 'forgot-password',
                 'forgot-password/*',
@@ -205,6 +207,7 @@ class BlockBadBots
                 $request->route() && (
                     $request->routeIs('login*') ||
                     $request->routeIs('register*') ||
+                    $request->routeIs('captcha*') ||
                     $request->routeIs('password.*') ||
                     $request->routeIs('affiliate.login*') ||
                     $request->routeIs('affiliate.register*') ||

@@ -351,7 +351,12 @@ class CartController extends Controller
         
         // Generate a unique order code in session to prevent changes on reload
         $now = now()->timestamp;
-        if (!session()->has('checkout_order_code') || !session()->has('checkout_order_time') || ($now - session('checkout_order_time') >= 300)) {
+        $currentOrderCode = session('checkout_order_code');
+        $isAlreadySavedInDb = $currentOrderCode && Order::where('order_code', $currentOrderCode)->exists();
+
+        // Nếu mã đơn hiện tại trong session đã được lưu vào CSDL (nghĩa là đã tạo đơn / hủy đơn trước đó),
+        // hoặc phiên đã quá 5 phút: Tạo mã đơn hàng mới để mỗi lần đặt là một đơn riêng biệt!
+        if ($isAlreadySavedInDb || !session()->has('checkout_order_code') || !session()->has('checkout_order_time') || ($now - session('checkout_order_time') >= 300)) {
             session()->put('checkout_order_code', 'DT-' . strtoupper(\Illuminate\Support\Str::random(8)));
             session()->put('checkout_order_time', $now);
         }
@@ -857,17 +862,20 @@ class CartController extends Controller
             ], 403);
         }
 
-        // 4. Giới hạn tần suất gửi theo IP (chống spam bot)
-        $clientIp = (string) ($request->header('cf-connecting-ip') ?: $request->ip());
-        $ipPreKey = 'pre_notify_rate_' . md5($clientIp);
-        $attempts = (int) \Illuminate\Support\Facades\Cache::get($ipPreKey, 0);
-        if ($attempts >= 6) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bạn đã gửi yêu cầu quá nhiều lần. Vui lòng chờ 15 phút.'
-            ], 429);
+        // 4. Giới hạn tần suất gửi theo IP (chống spam bot) - Bỏ qua đối với Admin
+        $isAdminUser = auth()->check() && (in_array(auth()->user()->role, ['superadmin_1', 'sieusuperadmin', 'admin', 'blog_editor'], true) || (bool) auth()->user()->is_admin);
+        if (!$isAdminUser) {
+            $clientIp = (string) ($request->header('cf-connecting-ip') ?: $request->ip());
+            $ipPreKey = 'pre_notify_rate_' . md5($clientIp);
+            $attempts = (int) \Illuminate\Support\Facades\Cache::get($ipPreKey, 0);
+            if ($attempts >= 15) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn đã gửi yêu cầu quá nhiều lần. Vui lòng chờ 15 phút.'
+                ], 429);
+            }
+            \Illuminate\Support\Facades\Cache::put($ipPreKey, $attempts + 1, now()->addMinutes(15));
         }
-        \Illuminate\Support\Facades\Cache::put($ipPreKey, $attempts + 1, now()->addMinutes(15));
 
         // 5. Validate dữ liệu & Bắt buộc email @gmail.com
         $validated = $request->validate([

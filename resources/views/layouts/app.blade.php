@@ -481,6 +481,88 @@
         </script>
     @endif
 
+    {{-- Modal Cảnh Báo Vi Phạm Hủy Đơn Quá 3 Lần --}}
+    <div class="modal fade" id="limitCancelledOrdersModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="limitCancelledOrdersModalLabel" aria-hidden="true" style="z-index: 10600;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg text-center" style="border-radius: 24px; overflow: hidden;">
+                <div class="modal-body p-4 p-md-5">
+                    <div class="mb-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px; background-color: #fee2e2;">
+                            <i class="fas fa-ban fa-3x" style="color: #ef4444;"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold text-danger mb-2" id="limitCancelledOrdersModalLabel">{{ __('Đã Đạt Giới Hạn Hủy Đơn') }}</h4>
+                    <p class="text-secondary mb-3 fw-semibold" style="font-size: 15px; line-height: 1.6;">
+                        {{ __('Tài khoản của bạn đã có 3 lần hủy đơn thanh toán. Hệ thống đã tạm khóa quyền tự đặt hàng do nghi ngờ vi phạm / spam đơn ảo.') }}
+                    </p>
+                    <div class="alert alert-warning border small text-muted text-start mb-4 py-2 px-3 rounded-3" style="font-size: 13px; background: #fffbeb; border-color: #fde68a !important;">
+                        <i class="fas fa-info-circle text-warning me-1"></i>
+                        <strong class="text-dark">{{ __('Hướng dẫn:') }}</strong> {{ __('Vui lòng liên hệ trực tiếp với Admin qua Zalo hoặc Boxchat để được hỗ trợ kiểm tra và mở khóa đặt hàng.') }}
+                    </div>
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                        <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-danger btn-lg flex-fill fw-bold rounded-pill shadow-sm py-2" style="background: #ef4444; border: none; font-size: 0.95rem;">
+                            <i class="fas fa-comment-dots me-2"></i>{{ __('Liên hệ Admin qua Zalo') }}
+                        </a>
+                        <button type="button" class="btn btn-light btn-lg px-4 rounded-pill border py-2" data-bs-dismiss="modal" style="font-size: 0.95rem;">
+                            {{ __('Đóng') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Đã Đạt Giới Hạn Đơn Chờ Xử Lý (Tối đa 2 đơn) --}}
+    <div class="modal fade" id="limitPendingOrdersModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="limitPendingOrdersModalLabel" aria-hidden="true" style="z-index: 10600;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg text-center" style="border-radius: 24px; overflow: hidden;">
+                <div class="modal-body p-4 p-md-5">
+                    <div class="mb-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px; background-color: #fef3c7;">
+                            <i class="fas fa-hourglass-half fa-3x" style="color: #d97706;"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-2" id="limitPendingOrdersModalLabel" style="color: #d97706;">{{ __('Đã Đạt Giới Hạn Đơn Chờ') }}</h4>
+                    <p class="text-secondary mb-3 fw-semibold" style="font-size: 15px; line-height: 1.6;">
+                        {{ __('Tài khoản của bạn hiện đang có 2 đơn hàng đang chờ xử lý. Hệ thống giới hạn tối đa 2 đơn chờ cùng lúc để đảm bảo đơn hàng được phục vụ chu đáo nhất.') }}
+                    </p>
+                    <div class="alert alert-info border small text-muted text-start mb-4 py-2 px-3 rounded-3" style="font-size: 13px; background: #eff6ff; border-color: #bfdbfe !important;">
+                        <i class="fas fa-clock text-primary me-1"></i>
+                        <strong class="text-dark">{{ __('Lưu ý:') }}</strong> {{ __('Vui lòng chờ 2 đơn hàng hiện tại được xử lý hoàn tất trước khi tạo thêm đơn hàng mới nhé.') }}
+                    </div>
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                        <a href="{{ route('user.orders') }}" class="btn btn-warning btn-lg flex-fill fw-bold rounded-pill shadow-sm py-2" style="background: #f59e0b; border: none; color: #fff; font-size: 0.95rem;">
+                            <i class="fas fa-clipboard-list me-2"></i>{{ __('Xem đơn hàng của tôi') }}
+                        </a>
+                        <button type="button" class="btn btn-light btn-lg px-4 rounded-pill border py-2" data-bs-dismiss="modal" style="font-size: 0.95rem;">
+                            {{ __('Đóng') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(session('show_cancelled_limit_modal'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var modalEl = document.getElementById('limitCancelledOrdersModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    new bootstrap.Modal(modalEl).show();
+                }
+            });
+        </script>
+    @elseif(session('show_pending_limit_modal'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var modalEl = document.getElementById('limitPendingOrdersModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    new bootstrap.Modal(modalEl).show();
+                }
+            });
+        </script>
+    @endif
+
 @stack('scripts')
 </body>
 </html>

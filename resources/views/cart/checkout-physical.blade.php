@@ -326,6 +326,31 @@
     const physicalForm = document.getElementById('checkout-form');
     if (physicalForm) {
         physicalForm.addEventListener('submit', function(e) {
+            const cancelledCount = {{ (int) ($cancelledOrdersCount ?? 0) }};
+            const pendingCount = {{ (int) ($pendingOrdersCount ?? 0) }};
+
+            if (cancelledCount >= 3) {
+                e.preventDefault();
+                const modalEl = document.getElementById('limitCancelledOrdersModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    new bootstrap.Modal(modalEl).show();
+                } else {
+                    alert('{{ __("Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán. Vui lòng liên hệ Admin để mua hàng!") }}');
+                }
+                return false;
+            }
+
+            if (pendingCount >= 2) {
+                e.preventDefault();
+                const modalEl = document.getElementById('limitPendingOrdersModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    new bootstrap.Modal(modalEl).show();
+                } else {
+                    alert('{{ __("Bạn đang có 2 đơn hàng đang chờ xử lý. Vui lòng chờ 2 đơn này hoàn tất trước khi tạo đơn mới!") }}');
+                }
+                return false;
+            }
+
             const emailInput = document.getElementsByName('customer_email')[0];
             const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
             if (!email.endsWith('@gmail.com')) {

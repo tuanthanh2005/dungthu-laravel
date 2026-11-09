@@ -356,17 +356,43 @@ class CartController extends Controller
             session()->put('checkout_order_time', $now);
         }
         $orderCode = session('checkout_order_code');
+
+        // Kiểm tra giới hạn hủy đơn (tối đa 3 lần) và giới hạn đơn chờ (tối đa 2 đơn)
+        $user = auth()->user();
+        $isAdmin = $user && (in_array($user->role, ['superadmin_1', 'sieusuperadmin', 'admin', 'blog_editor'], true) || (bool) $user->is_admin);
+
+        $cancelledOrdersCount = 0;
+        $pendingOrdersCount = 0;
+
+        if ($user && !$isAdmin) {
+            $cancelledOrdersCount = Order::where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhere('customer_email', $user->email);
+            })->where('status', 'cancelled')->count();
+
+            $pendingOrdersCount = Order::where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhere('customer_email', $user->email);
+            })->whereIn('status', ['pending', 'processing'])->count();
+
+            if ($cancelledOrdersCount >= 3) {
+                session()->flash('show_cancelled_limit_modal', true);
+            } elseif ($pendingOrdersCount >= 2) {
+                session()->flash('show_pending_limit_modal', true);
+            }
+        }
         
         // Chọn view thanh toán phù hợp
+        $viewData = compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal', 'orderCode', 'cancelledOrdersCount', 'pendingOrdersCount');
         if($hasDigital && $hasPhysical) {
             // Có cả 2 loại
-            return view('cart.checkout-mixed', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal', 'orderCode'));
+            return view('cart.checkout-mixed', $viewData);
         } elseif($hasDigital) {
             // Chỉ sản phẩm số/dịch vụ - thanh toán QR
-            return view('cart.checkout-digital', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal', 'orderCode'));
+            return view('cart.checkout-digital', $viewData);
         } else {
             // Chỉ sản phẩm vật lý - cần địa chỉ giao hàng
-            return view('cart.checkout-physical', compact('cart', 'isNewUser', 'discountAmount', 'couponCode', 'finalTotal', 'orderCode'));
+            return view('cart.checkout-physical', $viewData);
         }
     }
 
@@ -381,18 +407,38 @@ class CartController extends Controller
         // Kiểm tra tài khoản người dùng: Nếu bị khóa hoặc email không phải @gmail.com thì chặn ngay
         if (auth()->check()) {
             $currentUser = auth()->user();
-            if ($currentUser->is_locked || (!empty($currentUser->email) && !str_ends_with(strtolower(trim($currentUser->email)), '@gmail.com') && !$currentUser->is_admin)) {
+            $isAdmin = in_array($currentUser->role, ['superadmin_1', 'sieusuperadmin', 'admin', 'blog_editor'], true) || (bool) $currentUser->is_admin;
+
+            if ($currentUser->is_locked || (!empty($currentUser->email) && !str_ends_with(strtolower(trim($currentUser->email)), '@gmail.com') && !$isAdmin)) {
                 return redirect()->route('login')->with('error', 'Tài khoản của bạn đã bị khóa do vi phạm chính sách.');
             }
 
-            // Chống spam đơn hàng ảo làm cạn kho: Giới hạn tối đa 3 đơn pending trong vòng 15 phút
-            $pendingOrdersCount = Order::where('user_id', $currentUser->id)
-                ->where('status', 'pending')
-                ->where('created_at', '>=', now()->subMinutes(15))
-                ->count();
+            if (!$isAdmin) {
+                // 1. Kiểm tra giới hạn hủy đơn: Tối đa 3 lần hủy
+                $cancelledOrdersCount = Order::where(function($q) use ($currentUser) {
+                    $q->where('user_id', $currentUser->id)
+                      ->orWhere('customer_email', $currentUser->email);
+                })->where('status', 'cancelled')->count();
 
-            if ($pendingOrdersCount >= 3) {
-                return redirect()->route('user.orders')->with('error', 'Bạn đang có 3 đơn hàng đang chờ thanh toán. Vui lòng hoàn tất hoặc chờ đơn cũ hết hạn trước khi tạo đơn mới!');
+                if ($cancelledOrdersCount >= 3) {
+                    return redirect()->route('user.orders')->with([
+                        'error' => 'Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán. Vui lòng liên hệ Admin để được hỗ trợ mua hàng!',
+                        'show_cancelled_limit_modal' => true,
+                    ]);
+                }
+
+                // 2. Giới hạn đơn chờ: Tối đa 2 đơn đang xử lý
+                $pendingOrdersCount = Order::where(function($q) use ($currentUser) {
+                    $q->where('user_id', $currentUser->id)
+                      ->orWhere('customer_email', $currentUser->email);
+                })->whereIn('status', ['pending', 'processing'])->count();
+
+                if ($pendingOrdersCount >= 2) {
+                    return redirect()->route('user.orders')->with([
+                        'error' => 'Tài khoản của bạn hiện đang có 2 đơn hàng đang chờ xử lý. Vui lòng chờ 2 đơn hàng này hoàn tất trước khi tạo thêm đơn mới!',
+                        'show_pending_limit_modal' => true,
+                    ]);
+                }
             }
         }
 
@@ -762,11 +808,43 @@ class CartController extends Controller
         // 2. Kiểm tra tài khoản: Nếu bị khóa hoặc email không phải @gmail.com thì chặn ngay
         if (auth()->check()) {
             $currentUser = auth()->user();
-            if ($currentUser->is_locked || (!empty($currentUser->email) && !str_ends_with(strtolower(trim($currentUser->email)), '@gmail.com') && !$currentUser->is_admin)) {
+            $isAdmin = in_array($currentUser->role, ['superadmin_1', 'sieusuperadmin', 'admin', 'blog_editor'], true) || (bool) $currentUser->is_admin;
+
+            if ($currentUser->is_locked || (!empty($currentUser->email) && !str_ends_with(strtolower(trim($currentUser->email)), '@gmail.com') && !$isAdmin)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Tài khoản của bạn đã bị khóa do vi phạm chính sách.'
                 ], 403);
+            }
+
+            if (!$isAdmin) {
+                // Kiểm tra giới hạn 3 lần hủy đơn
+                $cancelledOrdersCount = Order::where(function($q) use ($currentUser) {
+                    $q->where('user_id', $currentUser->id)
+                      ->orWhere('customer_email', $currentUser->email);
+                })->where('status', 'cancelled')->count();
+
+                if ($cancelledOrdersCount >= 3) {
+                    return response()->json([
+                        'success' => false,
+                        'reason' => 'cancelled_limit',
+                        'message' => 'Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán và bị tạm khóa đặt hàng vì nghi ngờ vi phạm. Vui lòng liên hệ Admin để được hỗ trợ mua hàng!'
+                    ], 403);
+                }
+
+                // Giới hạn tối đa 2 đơn đang xử lý
+                $pendingOrdersCount = Order::where(function($q) use ($currentUser) {
+                    $q->where('user_id', $currentUser->id)
+                      ->orWhere('customer_email', $currentUser->email);
+                })->whereIn('status', ['pending', 'processing'])->count();
+
+                if ($pendingOrdersCount >= 2) {
+                    return response()->json([
+                        'success' => false,
+                        'reason' => 'pending_limit',
+                        'message' => 'Bạn đang có 2 đơn hàng đang chờ xử lý. Vui lòng chờ 2 đơn hàng này hoàn tất trước khi tạo thêm đơn mới!'
+                    ], 403);
+                }
             }
         }
 

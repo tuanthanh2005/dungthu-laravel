@@ -740,6 +740,31 @@
 
     // Step 1 to Step 2 Transition
     document.getElementById('btn-proceed-payment').addEventListener('click', function(e) {
+        const cancelledCount = {{ (int) ($cancelledOrdersCount ?? 0) }};
+        const pendingCount = {{ (int) ($pendingOrdersCount ?? 0) }};
+
+        // Chặn nếu đã có 3 lần hủy đơn
+        if (cancelledCount >= 3) {
+            const modalEl = document.getElementById('limitCancelledOrdersModal');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                new bootstrap.Modal(modalEl).show();
+            } else {
+                alert('{{ __("Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán. Vui lòng liên hệ Admin để mua hàng!") }}');
+            }
+            return;
+        }
+
+        // Chặn nếu đã có 2 đơn đang chờ xử lý
+        if (pendingCount >= 2) {
+            const modalEl = document.getElementById('limitPendingOrdersModal');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                new bootstrap.Modal(modalEl).show();
+            } else {
+                alert('{{ __("Bạn đang có 2 đơn hàng đang chờ xử lý. Vui lòng chờ 2 đơn này hoàn tất trước khi tạo đơn mới!") }}');
+            }
+            return;
+        }
+
         const name = document.getElementsByName('customer_name')[0].value.trim();
         const email = document.getElementsByName('customer_email')[0].value.trim();
         const phone = document.getElementsByName('customer_phone')[0].value.trim();
@@ -802,7 +827,7 @@
 
         // Gửi toàn bộ thông tin form qua Telegram và Email cho Admin TRƯỚC KHI sang màn hình quét QR
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
 
         fetch('{{ route('checkout.pre-notify') }}', {
             method: 'POST',
@@ -822,13 +847,37 @@
             }),
             signal: controller.signal
         })
-        .then(res => res.json())
-        .catch(err => {
-            console.warn('Pre-notify notice:', err);
-        })
-        .finally(() => {
+        .then(async res => {
             clearTimeout(timeoutId);
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                btnProceed.disabled = false;
+                btnProceed.innerHTML = originalBtnHtml;
+
+                if (data.reason === 'cancelled_limit' || (data.message && data.message.includes('hủy đơn'))) {
+                    const modalEl = document.getElementById('limitCancelledOrdersModal');
+                    if (modalEl && typeof bootstrap !== 'undefined') new bootstrap.Modal(modalEl).show();
+                    return;
+                }
+                if (data.reason === 'pending_limit' || (data.message && data.message.includes('chờ xử lý'))) {
+                    const modalEl = document.getElementById('limitPendingOrdersModal');
+                    if (modalEl && typeof bootstrap !== 'undefined') new bootstrap.Modal(modalEl).show();
+                    return;
+                }
+
+                alert(data.message || 'Không thể tạo phiên thanh toán. Vui lòng thử lại!');
+                return;
+            }
+
             proceedToStep2();
+        })
+        .catch(err => {
+            clearTimeout(timeoutId);
+            console.warn('Pre-notify notice:', err);
+            btnProceed.disabled = false;
+            btnProceed.innerHTML = originalBtnHtml;
+            alert('Không thể kết nối đến máy chủ. Vui lòng thử lại!');
         });
     });
 

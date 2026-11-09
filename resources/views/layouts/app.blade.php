@@ -497,13 +497,16 @@
                     </p>
                     <div class="alert alert-warning border small text-muted text-start mb-4 py-2 px-3 rounded-3" style="font-size: 13px; background: #fffbeb; border-color: #fde68a !important;">
                         <i class="fas fa-info-circle text-warning me-1"></i>
-                        <strong class="text-dark">{{ __('Hướng dẫn:') }}</strong> {{ __('Vui lòng liên hệ trực tiếp với Admin qua Zalo hoặc Boxchat để được hỗ trợ kiểm tra và mở khóa đặt hàng.') }}
+                        <strong class="text-dark">{{ __('Hướng dẫn:') }}</strong> {{ __('Vui lòng liên hệ trực tiếp với Admin qua Zalo hoặc Telegram để được hỗ trợ kiểm tra và mở khóa đặt hàng.') }}
                     </div>
                     <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                        <a href="https://zalo.me/0772698113" target="_blank" class="btn btn-danger btn-lg flex-fill fw-bold rounded-pill shadow-sm py-2" style="background: #ef4444; border: none; font-size: 0.95rem;">
-                            <i class="fas fa-comment-dots me-2"></i>{{ __('Liên hệ Admin qua Zalo') }}
+                        <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="btn btn-primary btn-lg flex-fill fw-bold rounded-pill shadow-sm py-2" style="background: #0068ff; border: none; font-size: 0.92rem;">
+                            <i class="fas fa-comment-dots me-2"></i>{{ __('Chat Zalo') }}
                         </a>
-                        <button type="button" class="btn btn-light btn-lg px-4 rounded-pill border py-2" data-bs-dismiss="modal" style="font-size: 0.95rem;">
+                        <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" class="btn btn-info btn-lg flex-fill fw-bold rounded-pill shadow-sm py-2 text-white" style="background: #0088cc; border: none; font-size: 0.92rem;">
+                            <i class="fab fa-telegram-plane me-2"></i>{{ __('Telegram') }}
+                        </a>
+                        <button type="button" class="btn btn-light btn-lg px-4 rounded-pill border py-2" data-bs-dismiss="modal" style="font-size: 0.92rem;">
                             {{ __('Đóng') }}
                         </button>
                     </div>

@@ -446,8 +446,8 @@
                         </div>
                         <h4 class="fw-bold text-danger mb-2">{{ __('Cảnh Báo Vi Phạm') }}</h4>
                         <p class="text-secondary mb-3 fw-semibold" style="font-size: 16px; line-height: 1.6;">
-                            {{ session('banned_modal_message', __('Tài khoản Đã Bị Vô Hiệu Hóa - Xin Hãy Đăng Nhập Gmail Có Đuôi gmail.com')) }
-                        </p>
+                            {{ session('banned_modal_message', __('Tài khoản Đã Bị Vô Hiệu Hóa - Xin Hãy Đăng Nhập Gmail Có Đuôi gmail.com')) }} 
+                        </p>    
                         <div class="alert alert-light border small text-muted text-start mb-4 py-2 px-3 rounded-3" style="font-size: 12px; background: #f8fafc;">
                             <i class="fas fa-shield-alt text-primary me-1"></i> {{ __('Hệ thống áp dụng chính sách bảo mật bắt buộc sử dụng tài khoản có đuôi @gmail.com. Mọi tài khoản khác hoặc có dấu hiệu bot tự động sẽ bị khóa để đảm bảo an toàn cho hệ thống.') }}
                         </div>

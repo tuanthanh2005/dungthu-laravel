@@ -53,25 +53,30 @@
                         <div class="card-body">
                             <form action="{{ route('checkout.place') }}" method="POST" id="checkout-form">
                                 @csrf
+                                <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+                                    <input type="text" name="hp_company_field" tabindex="-1" autocomplete="off" value="">
+                                    <input type="text" name="fax_number" tabindex="-1" autocomplete="off" value="">
+                                </div>
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">
                                         <i class="fas fa-user me-2 text-primary"></i>{{ __('Họ và tên người nhận') }}
                                     </label>
-                                    <input type="text" class="form-control form-control-lg" name="customer_name" required>
+                                    <input type="text" class="form-control form-control-lg" name="customer_name" value="{{ auth()->user()->name ?? old('customer_name') }}" required>
                                 </div>
                                 
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
-                                            <i class="fas fa-envelope me-2 text-primary"></i>{{ __('Email') }}
+                                            <i class="fas fa-envelope me-2 text-primary"></i>{{ __('Email') }} <small class="text-danger fw-normal">(@gmail.com)</small>
                                         </label>
-                                        <input type="email" class="form-control form-control-lg" name="customer_email" required>
+                                        <input type="email" class="form-control form-control-lg" name="customer_email" value="{{ auth()->user()->email ?? old('customer_email') }}" pattern=".+@gmail\.com$" title="Email phải có đuôi @gmail.com" placeholder="example@gmail.com" required>
+                                        <small class="text-muted">{{ __('Bắt buộc địa chỉ email có đuôi @gmail.com') }}</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
                                             <i class="fas fa-phone me-2 text-primary"></i>{{ __('Số điện thoại') }}
                                         </label>
-                                        <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
+                                        <input type="tel" class="form-control form-control-lg" name="customer_phone" value="{{ auth()->user()->phone ?? old('customer_phone') }}" required>
                                     </div>
                                 </div>
                                 
@@ -316,6 +321,20 @@
             return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
         return num.toLocaleString('vi-VN') + 'đ';
+    }
+
+    const physicalForm = document.getElementById('checkout-form');
+    if (physicalForm) {
+        physicalForm.addEventListener('submit', function(e) {
+            const emailInput = document.getElementsByName('customer_email')[0];
+            const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+            if (!email.endsWith('@gmail.com')) {
+                e.preventDefault();
+                alert('{{ __("Chỉ chấp nhận địa chỉ email có đuôi @gmail.com!") }}');
+                emailInput.focus();
+                return false;
+            }
+        });
     }
 </script>
 @endpush

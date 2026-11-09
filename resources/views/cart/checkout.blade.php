@@ -30,13 +30,17 @@
                 <div class="card-body">
                     <form action="{{ route('checkout.place') }}" method="POST" id="checkout-form">
                         @csrf
-                        <div class="mb-3">
-                            <label for="customer_name" class="form-label">{{ __('Họ và tên') }}</label>
-                            <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                        <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+                            <input type="text" name="hp_company_field" tabindex="-1" autocomplete="off" value="">
+                            <input type="text" name="fax_number" tabindex="-1" autocomplete="off" value="">
                         </div>
                         <div class="mb-3">
-                            <label for="customer_email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="customer_email" name="customer_email" required>
+                            <label for="customer_name" class="form-label">{{ __('Họ và tên') }}</label>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{ auth()->user()->name ?? old('customer_name') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customer_email" class="form-label">Email <small class="text-danger fw-normal">(@gmail.com)</small></label>
+                            <input type="email" class="form-control" id="customer_email" name="customer_email" value="{{ auth()->user()->email ?? old('customer_email') }}" pattern=".+@gmail\.com$" title="Email phải có đuôi @gmail.com" placeholder="example@gmail.com" required>
                         </div>
                         <div class="mb-3">
                             <label for="customer_phone" class="form-label">{{ __('Số điện thoại') }}</label>

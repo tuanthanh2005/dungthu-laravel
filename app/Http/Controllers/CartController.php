@@ -378,9 +378,15 @@ class CartController extends Controller
             return redirect()->route('shop')->with('error', 'Giỏ hàng của bạn đang trống!');
         }
 
-        // Chống spam đơn hàng ảo làm cạn kho: Giới hạn tối đa 3 đơn pending trong vòng 15 phút
+        // Kiểm tra tài khoản người dùng: Nếu bị khóa hoặc email không phải @gmail.com thì chặn ngay
         if (auth()->check()) {
-            $pendingOrdersCount = Order::where('user_id', auth()->id())
+            $currentUser = auth()->user();
+            if ($currentUser->is_locked || (!empty($currentUser->email) && !str_ends_with(strtolower(trim($currentUser->email)), '@gmail.com') && !$currentUser->is_admin)) {
+                return redirect()->route('login')->with('error', 'Tài khoản của bạn đã bị khóa do vi phạm chính sách.');
+            }
+
+            // Chống spam đơn hàng ảo làm cạn kho: Giới hạn tối đa 3 đơn pending trong vòng 15 phút
+            $pendingOrdersCount = Order::where('user_id', $currentUser->id)
                 ->where('status', 'pending')
                 ->where('created_at', '>=', now()->subMinutes(15))
                 ->count();
@@ -389,7 +395,21 @@ class CartController extends Controller
                 return redirect()->route('user.orders')->with('error', 'Bạn đang có 3 đơn hàng đang chờ thanh toán. Vui lòng hoàn tất hoặc chờ đơn cũ hết hạn trước khi tạo đơn mới!');
             }
         }
-        
+
+        // Honeypot check (nếu bot tự động điền trường ẩn)
+        if ($request->filled('hp_company_field') || $request->filled('fax_number')) {
+            \Log::warning("Bot detected via honeypot in placeOrder from IP: " . $request->ip());
+            abort(403, 'Yêu cầu không hợp lệ.');
+        }
+
+        // Chống spam đặt hàng theo IP: Tối đa 5 lần đặt hàng trong 15 phút từ 1 IP
+        $clientIp = (string) ($request->header('cf-connecting-ip') ?: $request->ip());
+        $ipOrderKey = 'ip_order_rate_' . md5($clientIp);
+        $orderAttempts = (int) \Illuminate\Support\Facades\Cache::get($ipOrderKey, 0);
+        if ($orderAttempts >= 5) {
+            return redirect()->back()->with('error', 'Bạn đã thực hiện quá nhiều yêu cầu đặt hàng. Vui lòng chờ 15 phút trước khi thử lại!');
+        }
+
         // Kiểm tra loại đơn hàng
         $hasPhysical = false;
         foreach($cart as $id => $details) {
@@ -400,11 +420,20 @@ class CartController extends Controller
             }
         }
         
-        // Validate theo loại đơn hàng
+        // Validate theo loại đơn hàng & Bắt buộc email @gmail.com
         $rules = [
-            'customer_name' => 'required',
-            'customer_email' => 'required|email',
-            'customer_phone' => 'required',
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => [
+                'required',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (!str_ends_with(strtolower(trim($value)), '@gmail.com')) {
+                        $fail('Địa chỉ email bắt buộc phải có đuôi @gmail.com!');
+                    }
+                }
+            ],
+            'customer_phone' => 'required|string|max:50',
         ];
         
         if($hasPhysical) {
@@ -672,6 +701,9 @@ class CartController extends Controller
 
             DB::commit();
             
+            // Ghi nhận lượt đặt hàng thành công của IP
+            \Illuminate\Support\Facades\Cache::put($ipOrderKey, $orderAttempts + 1, now()->addMinutes(15));
+            
             // Clear the "new user" flag after order is placed
             session()->forget('is_new_user');
             session()->forget('checkout_order_code');
@@ -718,9 +750,60 @@ class CartController extends Controller
      */
     public function preNotify(Request $request)
     {
+        // 1. Kiểm tra giỏ hàng - Bắt buộc không được trống
+        $cart = session()->get('cart', []);
+        if (empty($cart) || !is_array($cart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Giỏ hàng của bạn đang trống!'
+            ], 400);
+        }
+
+        // 2. Kiểm tra tài khoản: Nếu bị khóa hoặc email không phải @gmail.com thì chặn ngay
+        if (auth()->check()) {
+            $currentUser = auth()->user();
+            if ($currentUser->is_locked || (!empty($currentUser->email) && !str_ends_with(strtolower(trim($currentUser->email)), '@gmail.com') && !$currentUser->is_admin)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tài khoản của bạn đã bị khóa do vi phạm chính sách.'
+                ], 403);
+            }
+        }
+
+        // 3. Honeypot check (nếu bot tự động điền trường ẩn)
+        if ($request->filled('hp_company_field') || $request->filled('fax_number')) {
+            \Log::warning("Bot detected via honeypot in preNotify from IP: " . $request->ip());
+            return response()->json([
+                'success' => false,
+                'message' => 'Yêu cầu không hợp lệ.'
+            ], 403);
+        }
+
+        // 4. Giới hạn tần suất gửi theo IP (chống spam bot)
+        $clientIp = (string) ($request->header('cf-connecting-ip') ?: $request->ip());
+        $ipPreKey = 'pre_notify_rate_' . md5($clientIp);
+        $attempts = (int) \Illuminate\Support\Facades\Cache::get($ipPreKey, 0);
+        if ($attempts >= 6) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn đã gửi yêu cầu quá nhiều lần. Vui lòng chờ 15 phút.'
+            ], 429);
+        }
+        \Illuminate\Support\Facades\Cache::put($ipPreKey, $attempts + 1, now()->addMinutes(15));
+
+        // 5. Validate dữ liệu & Bắt buộc email @gmail.com
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
+            'customer_email' => [
+                'required',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (!str_ends_with(strtolower(trim($value)), '@gmail.com')) {
+                        $fail('Địa chỉ email bắt buộc phải có đuôi @gmail.com!');
+                    }
+                }
+            ],
             'customer_phone' => 'required|string|max:50',
             'upgrade_email_or_note' => 'nullable|string|max:1000',
             'customer_zalo' => 'nullable|string|max:100',

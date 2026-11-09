@@ -23,6 +23,11 @@ class BuffOrderController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if ($user && ($user->is_locked || (!empty($user->email) && !str_ends_with(strtolower(trim($user->email)), '@gmail.com') && !$user->is_admin))) {
+            return redirect()->route('login')->with('error', 'Tài khoản của bạn đã bị khóa do vi phạm chính sách.');
+        }
+
         $validated = $request->validate([
             'service_id' => 'required|exists:buff_services,id',
             'server_id' => 'required|exists:buff_servers,id',

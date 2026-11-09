@@ -40,7 +40,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhook/sepay',
             'api/telegram/webhook',
             'api/payment/*',
-            'api/checkout/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

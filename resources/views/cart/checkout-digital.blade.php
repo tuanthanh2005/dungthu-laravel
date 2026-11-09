@@ -289,6 +289,10 @@
                         <div class="card-body">
                             <form action="{{ route('checkout.place') }}" method="POST" id="checkout-form">
                                 @csrf
+                                <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+                                    <input type="text" name="hp_company_field" tabindex="-1" autocomplete="off" value="">
+                                    <input type="text" name="fax_number" tabindex="-1" autocomplete="off" value="">
+                                </div>
                                 <input type="hidden" name="payment_method" id="payment_method_input" value="{{ app()->getLocale() === 'en' ? 'crypto' : 'vietqr' }}">
                                 <input type="hidden" name="order_code" value="{{ $orderCode }}">
                                 <div class="row g-3 mb-3">
@@ -296,23 +300,23 @@
                                         <label class="form-label fw-bold">
                                             <i class="fas fa-user-circle me-2 text-primary"></i>{{ __('Họ và tên') }}
                                         </label>
-                                        <input type="text" class="form-control form-control-lg" name="customer_name" required>
+                                        <input type="text" class="form-control form-control-lg" name="customer_name" value="{{ auth()->user()->name ?? old('customer_name') }}" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
                                             <i class="fas fa-phone me-2 text-primary"></i>{{ __('Số điện thoại') }}
                                         </label>
-                                        <input type="tel" class="form-control form-control-lg" name="customer_phone" required>
+                                        <input type="tel" class="form-control form-control-lg" name="customer_phone" value="{{ auth()->user()->phone ?? old('customer_phone') }}" required>
                                     </div>
                                 </div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
-                                            <i class="fas fa-envelope me-2 text-primary"></i>Email
+                                            <i class="fas fa-envelope me-2 text-primary"></i>Email <small class="text-danger fw-normal">(@gmail.com)</small>
                                         </label>
-                                        <input type="email" class="form-control form-control-lg" name="customer_email" required>
-                                        <small class="text-muted">{{ __('Mã kích hoạt sẽ được gửi qua email') }}</small>
+                                        <input type="email" class="form-control form-control-lg" name="customer_email" value="{{ auth()->user()->email ?? old('customer_email') }}" pattern=".+@gmail\.com$" title="Email phải có đuôi @gmail.com" placeholder="example@gmail.com" required>
+                                        <small class="text-muted">{{ __('Mã kích hoạt sẽ được gửi qua email (Bắt buộc đuôi @gmail.com)') }}</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">
@@ -1055,6 +1059,13 @@
         // Form HTML5 Validation
         const form = document.getElementById('checkout-form');
         if (!form.reportValidity()) {
+            return;
+        }
+
+        // Kiểm tra email bắt buộc phải là @gmail.com
+        if (!email.toLowerCase().endsWith('@gmail.com')) {
+            alert('{{ __("Chỉ chấp nhận địa chỉ email có đuôi @gmail.com!") }}');
+            document.getElementsByName('customer_email')[0].focus();
             return;
         }
 

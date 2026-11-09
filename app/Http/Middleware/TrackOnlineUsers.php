@@ -88,48 +88,56 @@ class TrackOnlineUsers
      */
     private function shouldSkip(Request $request): bool
     {
-        // Skip non-GET requests
-        if (!$request->isMethod('GET')) {
-            return true;
-        }
-
-        // Skip bots, crawlers, scanners, and command line tools
-        $userAgent = strtolower((string) $request->userAgent());
-        if (empty(trim($userAgent)) || preg_match('/(curl|python|wget|sqlmap|nikto|bot|crawler|spider|scan)/i', $userAgent)) {
-            return true;
-        }
-
-        // Skip AJAX / JSON fetch requests (e.g. background polling calls like sidebar-counters)
-        if ($request->ajax() || $request->wantsJson() || $request->isXmlHttpRequest()) {
-            return true;
-        }
-
         $path = ltrim($request->path(), '/');
-
-        // Ignore API routes, asset routes, image routes, debugbar, websocket, background AJAX paths
-        $ignorePrefixes = [
-            'api/',
-            'admin/sidebar-counters',
-            'admin/chat/unread-count',
-            'admin/chat/messages',
-            'storage/',
-            'images/',
-            'build/',
-            'favicon',
-            'guest-chat',
-            '_debugbar',
-            'livewire',
-        ];
-
-        foreach ($ignorePrefixes as $prefix) {
-            if (str_starts_with($path, $prefix)) {
-                return true;
-            }
-        }
 
         // Ignore static asset extensions
         if (preg_match('/\.(png|jpg|jpeg|gif|svg|css|js|ico|woff|woff2|ttf|eot)$/i', $path)) {
             return true;
+        }
+
+        // Critical interactive routes that must ALWAYS be tracked (even if POST or AJAX/fetch)
+        // This ensures orders and checkout attempts are immediately visible in Admin "Khách đang xem"
+        $isHighPriorityRoute = str_starts_with($path, 'checkout')
+            || str_starts_with($path, 'api/checkout')
+            || str_starts_with($path, 'cart');
+
+        if (!$isHighPriorityRoute) {
+            // Skip non-GET requests for ordinary browsing
+            if (!$request->isMethod('GET')) {
+                return true;
+            }
+
+            // Skip background polling / AJAX requests
+            if ($request->ajax() || $request->wantsJson() || $request->isXmlHttpRequest()) {
+                return true;
+            }
+
+            // Ignore low-level / internal API & asset routes
+            $ignorePrefixes = [
+                'api/',
+                'admin/sidebar-counters',
+                'admin/chat/unread-count',
+                'admin/chat/messages',
+                'storage/',
+                'images/',
+                'build/',
+                'favicon',
+                'guest-chat',
+                '_debugbar',
+                'livewire',
+            ];
+
+            foreach ($ignorePrefixes as $prefix) {
+                if (str_starts_with($path, $prefix)) {
+                    return true;
+                }
+            }
+
+            // Skip known crawlers & scanners for normal pages
+            $userAgent = strtolower((string) $request->userAgent());
+            if (empty(trim($userAgent)) || preg_match('/(curl|python|wget|sqlmap|nikto|bot|crawler|spider|scan)/i', $userAgent)) {
+                return true;
+            }
         }
 
         return false;

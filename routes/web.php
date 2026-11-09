@@ -189,7 +189,7 @@ Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.r
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
     Route::post('/checkout/place', [CartController::class, 'placeOrder'])->middleware('throttle:5,1')->name('checkout.place');
-    Route::post('/api/checkout/pre-notify', [CartController::class, 'preNotify'])->middleware('throttle:30,1')->name('checkout.pre-notify');
+    Route::post('/api/checkout/pre-notify', [CartController::class, 'preNotify'])->middleware('throttle:5,1')->name('checkout.pre-notify');
     
     // Mini Game routes
     Route::get('/minigame', [\App\Http\Controllers\MiniGameController::class, 'index'])->name('minigame.index');

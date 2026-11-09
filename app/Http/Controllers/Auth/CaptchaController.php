@@ -95,3 +95,4 @@ class CaptchaController extends Controller
         ]);
     }
 }
+

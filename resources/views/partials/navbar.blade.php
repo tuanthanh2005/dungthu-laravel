@@ -973,10 +973,20 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': csrfToken || ''
                 }
             })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 403) {
+                    return res.json().then(data => {
+                        if (data && data.status === 'locked') {
+                            window.location.href = '{{ route("login") }}?banned=1';
+                        }
+                    });
+                }
+                return res.json();
+            })
             .then(data => {
                 if (data && data.success) {
                     onlineCountValEls.forEach(el => {

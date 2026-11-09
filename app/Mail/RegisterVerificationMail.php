@@ -52,3 +52,4 @@ class RegisterVerificationMail extends Mailable
         return [];
     }
 }
+

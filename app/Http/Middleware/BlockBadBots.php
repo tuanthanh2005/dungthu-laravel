@@ -123,16 +123,7 @@ class BlockBadBots
                             );
                         } catch (\Throwable $e) {}
 
-                        // Gửi thông báo Telegram về IP đáng nghi ngờ (Throttle 1 giờ / 1 IP)
-                        if (!Cache::has('telegram_notified_ip_' . $ip)) {
-                            Cache::put('telegram_notified_ip_' . $ip, true, now()->addHour());
-                            \App\Helpers\TelegramHelper::sendSuspiciousIpNotification(
-                                $ip,
-                                'Phát hiện tấn công / rà quét lỗ hổng SQL Injection hoặc XSS (Hệ thống đã tự động khóa IP 24h)',
-                                $userAgent,
-                                $request->fullUrl()
-                            );
-                        }
+                        // Đã tắt gửi thông báo Telegram khi phát hiện vi phạm để chống bị spam tin nhắn
                     }
 
                     return response('<h1>403 Access Denied</h1><p>Hành vi tấn công hoặc quét lỗ hổng đã bị phát hiện. Địa chỉ IP của bạn bị khóa 24 giờ.</p>', 403);

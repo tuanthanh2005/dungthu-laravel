@@ -255,19 +255,32 @@ class AdminController extends Controller
     }
 
     /**
-     * Khóa hoặc mở khóa tài khoản người dùng
+     * Khóa (Block) hoặc mở khóa tài khoản người dùng
      */
     public function toggleLockUser(Request $request, User $user)
     {
         $newStatus = !$user->is_locked;
+
+        // Bắt buộc nhập đúng mã xác thực SieuSuperAdmin để Block / Mở khóa
+        $pin = $request->input('admin_pin');
+        $expectedPin = (string) config('admin.action_pin', '12112004');
+
+        if (empty($pin) || $pin !== $expectedPin) {
+            $actionWord = $newStatus ? 'Block' : 'mở khóa';
+            return response()->json([
+                'success' => false,
+                'message' => "Mã xác thực không chính xác! Không thể {$actionWord} người dùng này.",
+            ], 403);
+        }
+
         $user->update([
             'is_locked' => $newStatus,
-            'locked_reason' => $newStatus ? 'Quản trị viên đã khóa tài khoản.' : null,
+            'locked_reason' => $newStatus ? 'SieuSuperAdmin đã Block tài khoản.' : null,
         ]);
 
         $msg = $newStatus 
-            ? "Đã khóa tài khoản {$user->email} thành công." 
-            : "Đã mở khóa tài khoản {$user->email} thành công.";
+            ? "Đã Block tài khoản {$user->email} thành công!" 
+            : "Đã mở khóa (Unblock) tài khoản {$user->email} thành công!";
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([

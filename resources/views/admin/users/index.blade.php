@@ -299,16 +299,17 @@
                     <table class="user-table">
                         <thead>
                             <tr>
-                                <th style="width: 4%">#</th>
-                                <th style="width: 15%">Họ tên</th>
-                                <th style="width: 15%">Email</th>
-                                <th style="width: 9%">Số ĐT</th>
-                                <th style="width: 6%" class="text-center">Số đơn</th>
-                                <th style="width: 12%" class="text-center">Lịch sử mua</th>
-                                <th style="width: 7%" class="text-center">Lượt quay</th>
-                                <th style="width: 11%" class="text-end">Tổng chi tiêu</th>
-                                <th style="width: 9%">Ngày đăng ký</th>
+                                <th style="width: 3%">#</th>
+                                <th style="width: 14%">Họ tên</th>
+                                <th style="width: 14%">Email</th>
+                                <th style="width: 8%">Số ĐT</th>
+                                <th style="width: 5%" class="text-center">Số đơn</th>
+                                <th style="width: 10%" class="text-center">Lịch sử mua</th>
+                                <th style="width: 6%" class="text-center">Lượt quay</th>
+                                <th style="width: 10%" class="text-end">Tổng chi tiêu</th>
+                                <th style="width: 8%">Ngày đăng ký</th>
                                 <th style="width: 6%" class="text-center">Quyền</th>
+                                <th style="width: 10%" class="text-center text-danger"><i class="fas fa-ban me-1"></i>Block</th>
                                 <th style="width: 6%" class="text-center">Thao tác</th>
                             </tr>
                         </thead>
@@ -376,12 +377,35 @@
                                             <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                         </select>
                                     </td>
+                                    <!-- Cột Block User (Yêu cầu mã xác thực khi bấm) -->
+                                    <td class="text-center" style="white-space: nowrap;">
+                                        @if($user->is_locked)
+                                            <div>
+                                                <span class="badge bg-danger rounded-pill px-2 py-1 mb-1 d-inline-block" style="font-size: 11px;">
+                                                    <i class="fas fa-user-slash me-1"></i>Đã Block
+                                                </span>
+                                            </div>
+                                            <button type="button" 
+                                                    onclick="blockUserAction({{ $user->id }}, '{{ addslashes($user->name) }}', true)" 
+                                                    class="btn btn-sm btn-outline-success rounded-pill px-2 py-0 fw-bold" 
+                                                    style="font-size: 11px;"
+                                                    title="Mở khóa tài khoản cho khách">
+                                                <i class="fas fa-unlock me-1"></i>Mở block
+                                            </button>
+                                        @else
+                                            <button type="button" 
+                                                    onclick="blockUserAction({{ $user->id }}, '{{ addslashes($user->name) }}', false)" 
+                                                    class="btn btn-sm btn-danger rounded-pill px-3 py-1 fw-bold shadow-sm" 
+                                                    style="font-size: 12px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none;"
+                                                    title="Yêu cầu mã xác thực để block user này">
+                                                <i class="fas fa-ban me-1"></i>Block user
+                                            </button>
+                                        @endif
+                                    </td>
+                                    <!-- Thao tác khác -->
                                     <td class="text-center" style="white-space: nowrap;">
                                         <button onclick="awardTickets({{ $user->id }}, '{{ $user->name }}', {{ $user->spin_tickets }})" class="view-btn me-1" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 6px 10px; font-size: 0.85rem;" title="Cấp lượt quay">
                                             <i class="fas fa-ticket-alt"></i>
-                                        </button>
-                                        <button onclick="toggleUserLock({{ $user->id }}, '{{ addslashes($user->name) }}', {{ $user->is_locked ? 'true' : 'false' }})" class="view-btn me-1" style="background: {{ $user->is_locked ? '#10b981' : '#ef4444' }}; padding: 6px 10px; font-size: 0.85rem;" title="{{ $user->is_locked ? 'Mở khóa tài khoản' : 'Khóa tài khoản này' }}">
-                                            <i class="fas fa-{{ $user->is_locked ? 'unlock' : 'lock' }}"></i>
                                         </button>
                                         <a href="{{ route('admin.users.history', $user->id) }}" class="view-btn" style="padding: 6px 10px; font-size: 0.85rem;" title="Xem trang lịch sử đầy đủ">
                                             <i class="fas fa-eye"></i>
@@ -975,12 +999,61 @@ function viewUserOrdersDetail(userId, userName) {
         });
 }
 
-function toggleUserLock(userId, userName, isLocked) {
-    const actionText = isLocked ? 'mở khóa' : 'khóa';
-    if (!confirm(`Bạn có chắc chắn muốn ${actionText} tài khoản của "${userName}"?`)) {
-        return;
-    }
+function blockUserAction(userId, userName, isCurrentlyBlocked) {
+    const actionText = isCurrentlyBlocked ? 'Mở Block (Mở khóa)' : 'BLOCK USER';
+    const actionColor = isCurrentlyBlocked ? '#10b981' : '#dc3545';
+    const actionDesc = isCurrentlyBlocked 
+        ? `Bạn có chắc chắn muốn mở khóa lại tài khoản cho khách hàng <strong>${escapeHtml(userName)}</strong>?`
+        : `Tài khoản của <strong>${escapeHtml(userName)}</strong> sẽ bị khóa và đăng xuất ngay lập tức khỏi mọi thiết bị.`;
 
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: `<span style="font-size: 20px;" class="fw-bold text-${isCurrentlyBlocked ? 'success' : 'danger'}"><i class="fas fa-${isCurrentlyBlocked ? 'unlock' : 'user-lock'} me-2"></i>Xác nhận ${actionText}</span>`,
+            html: `
+                <div class="text-start mb-3" style="font-size: 13.5px; color: #475569;">
+                    ${actionDesc}
+                </div>
+                <div class="text-start mb-2">
+                    <label class="form-label fw-bold small text-danger">
+                        <i class="fas fa-shield-alt me-1"></i>Nhập mã xác thực SieuSuperAdmin:
+                    </label>
+                    <input type="password" id="swalBlockPin" class="form-control rounded-3 text-center fw-bold fs-5" placeholder="Nhập mã xác thực..." maxlength="12" autocomplete="off">
+                </div>
+                <div class="text-muted small text-start" style="font-size: 11px;">
+                    <i class="fas fa-info-circle me-1"></i>Chỉ quản trị viên có mã xác thực bảo mật mới được phép thực hiện thao tác này.
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: `<i class="fas fa-check me-1"></i>Xác nhận ${actionText}`,
+            cancelButtonText: 'Hủy bỏ',
+            confirmButtonColor: actionColor,
+            focusConfirm: false,
+            didOpen: () => {
+                const pinInput = document.getElementById('swalBlockPin');
+                if (pinInput) pinInput.focus();
+            },
+            preConfirm: () => {
+                const pin = document.getElementById('swalBlockPin').value;
+                if (!pin || !pin.trim()) {
+                    Swal.showValidationMessage('Vui lòng nhập mã xác thực!');
+                    return false;
+                }
+                return pin.trim();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                executeBlockUser(userId, result.value);
+            }
+        });
+    } else {
+        const pin = window.prompt(`[XÁC THỰC] Nhập mã bảo mật để ${actionText} user "${userName}":`);
+        if (pin !== null && pin.trim()) {
+            executeBlockUser(userId, pin.trim());
+        }
+    }
+}
+
+function executeBlockUser(userId, pin) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]') 
         ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') 
         : '';
@@ -991,30 +1064,53 @@ function toggleUserLock(userId, userName, isLocked) {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': csrfToken
-        }
+        },
+        body: JSON.stringify({ admin_pin: pin })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
+    .then(async res => {
+        const data = await res.json();
+        return { ok: res.ok, status: res.status, data: data };
+    })
+    .then(result => {
+        if (result.ok && result.data.success) {
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     icon: 'success',
                     title: 'Thành công',
-                    text: data.message,
+                    text: result.data.message,
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => location.reload());
             } else {
-                alert(data.message);
+                alert(result.data.message);
                 location.reload();
             }
         } else {
-            alert(data.message || 'Có lỗi xảy ra.');
+            const errorMsg = result.data.message || 'Mã xác thực không chính xác!';
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Xác thực thất bại',
+                    text: errorMsg,
+                    confirmButtonColor: '#dc3545'
+                });
+            } else {
+                alert(errorMsg);
+            }
         }
     })
     .catch(err => {
         console.error(err);
-        alert('Không thể cập nhật trạng thái tài khoản. Vui lòng thử lại.');
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Không thể kết nối máy chủ để cập nhật trạng thái block user. Vui lòng thử lại!',
+                confirmButtonColor: '#dc3545'
+            });
+        } else {
+            alert('Lỗi hệ thống, vui lòng thử lại.');
+        }
     });
 }
 

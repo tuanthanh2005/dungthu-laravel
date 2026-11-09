@@ -434,7 +434,7 @@
     @endguest
 
     {{-- Modal Cảnh Báo Tài Khoản Vi Phạm (Chặn tài khoản không phải @gmail.com) --}}
-    @if(session('show_banned_modal'))
+    @if(session('show_banned_modal') || request('banned'))
         <div class="modal fade" id="suspiciousAccountModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true" style="z-index: 10600;">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg text-center" style="border-radius: 24px; overflow: hidden;">

@@ -58,22 +58,20 @@ class GuestFiveMinuteLimitTest extends TestCase
         ]);
     }
 
-    public function test_guest_after_5_minutes_can_access_forgot_password_page(): void
+    public function test_guest_access_forgot_password_page_redirects_to_login(): void
     {
         $response = $this->withSession(['guest_first_seen_at' => time() - 400])
             ->get(route('password.request'));
 
-        $response->assertStatus(200);
-        $response->assertViewIs('auth.forgot-password');
+        $response->assertRedirect(route('login', ['forgot' => 1]));
     }
 
-    public function test_guest_after_5_minutes_can_access_reset_password_page_with_token(): void
+    public function test_guest_access_reset_password_page_with_token_redirects_to_login(): void
     {
         $response = $this->withSession(['guest_first_seen_at' => time() - 400])
             ->get('/reset-password/sample-reset-token-12345?email=test@example.com');
 
-        $response->assertStatus(200);
-        $response->assertViewIs('auth.reset-password');
+        $response->assertRedirect(route('login', ['forgot' => 1]));
     }
 
     public function test_guest_after_5_minutes_can_access_login_and_register_pages(): void
@@ -87,20 +85,17 @@ class GuestFiveMinuteLimitTest extends TestCase
         $registerResponse->assertStatus(200);
     }
 
-    public function test_guest_after_5_minutes_can_submit_forgot_password_form(): void
+    public function test_guest_submitting_forgot_password_form_redirects_to_login(): void
     {
-        $user = User::factory()->create(['email' => 'guest_forgot@example.com']);
-
         $response = $this->withSession(['guest_first_seen_at' => time() - 400])
             ->post('/forgot-password', [
                 'email' => 'guest_forgot@example.com',
             ]);
 
-        // Should not redirect to login, but back (or with status)
-        $this->assertNotEquals(route('login'), $response->headers->get('Location'));
+        $response->assertRedirect(route('login', ['forgot' => 1]));
     }
 
-    public function test_guest_after_5_minutes_can_submit_reset_password_form(): void
+    public function test_guest_submitting_reset_password_form_redirects_to_login(): void
     {
         $response = $this->withSession(['guest_first_seen_at' => time() - 400])
             ->post('/reset-password', [
@@ -110,8 +105,7 @@ class GuestFiveMinuteLimitTest extends TestCase
                 'password_confirmation' => 'newpassword123',
             ]);
 
-        // Should not redirect to login page (which indicates 5-min blocker didn't block it)
-        $this->assertNotEquals(route('login'), $response->headers->get('Location'));
+        $response->assertRedirect(route('login', ['forgot' => 1]));
     }
 
     public function test_login_page_renders_vietnamese(): void
@@ -148,31 +142,10 @@ class GuestFiveMinuteLimitTest extends TestCase
         $response->assertSee('Sign up now');
     }
 
-    public function test_forgot_password_allows_5_attempts_and_blocks_6th_for_1_hour(): void
+    public function test_forgot_password_redirects_to_login_with_modal(): void
     {
-        \Illuminate\Support\Facades\RateLimiter::clear('forgot_password_ip:127.0.0.1');
-        \Illuminate\Support\Facades\RateLimiter::clear('forgot_password_email:' . md5('spam_user@example.com'));
-
-        $user = User::factory()->create(['email' => 'spam_user@example.com']);
-
-        // Attempts 1 to 5: All allowed
-        for ($i = 1; $i <= 5; $i++) {
-            $response = $this->post('/forgot-password', [
-                'email' => 'spam_user@example.com',
-            ]);
-            $response->assertSessionMissing('error');
-        }
-
-        // Attempt 6: Blocked for 1 hour!
-        $response6 = $this->post('/forgot-password', [
-            'email' => 'spam_user@example.com',
-        ]);
-
-        $response6->assertSessionHas('error');
-        $response6->assertSessionHasErrors('email');
-        
-        $error = session('errors')->first('email');
-        $this->assertStringContainsString('quá 5 lần', $error);
-        $this->assertStringContainsString('1 tiếng', $error);
+        $response = $this->get('/forgot-password');
+        $response->assertRedirect(route('login', ['forgot' => 1]));
+        $response->assertSessionHas('show_forgot_modal', true);
     }
 }

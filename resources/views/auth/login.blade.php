@@ -285,7 +285,7 @@
                     {{ __('Đăng Nhập') }}
                 </button>
 
-                <a href="{{ route('password.request') }}" class="forgot-link">
+                <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" class="forgot-link">
                     {{ __('Quên mật khẩu?') }}
                 </a>
 
@@ -306,10 +306,53 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Khôi Phục Mật Khẩu Qua Admin -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true" style="z-index: 10600;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg text-center" style="border-radius: 24px; overflow: hidden;">
+            <div class="modal-body p-4 p-md-5">
+                <div class="mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 80px; height: 80px; background-color: #eff6ff;">
+                        <i class="fas fa-key fa-3x" style="color: #2563eb;"></i>
+                    </div>
+                </div>
+                <h4 class="fw-bold text-dark mb-2" id="forgotPasswordModalLabel">{{ __('Khôi Phục Mật Khẩu') }}</h4>
+                <p class="text-secondary mb-3 fw-semibold" style="font-size: 14.5px; line-height: 1.6;">
+                    {{ __('Để bảo mật tối đa cho tài khoản của bạn, tính năng khôi phục mật khẩu tự động qua email đã tạm khóa. Vui lòng liên hệ Admin qua Zalo hoặc Telegram để được cấp lại mật khẩu ngay lập tức!') }}
+                </p>
+                <div class="alert alert-info border-0 small text-start mb-4 py-2 px-3 rounded-3" style="font-size: 13px; background: #f0fdf4; border: 1px solid #bbf7d0 !important; color: #166534;">
+                    <i class="fas fa-shield-alt text-success me-1"></i>
+                    <strong class="text-success">{{ __('Hỗ trợ 24/7:') }}</strong> {{ __('Admin sẽ xác minh thông tin tài khoản và cấp lại mật khẩu mới cho bạn trong vòng 1 - 3 phút.') }}
+                </div>
+                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                    <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="btn btn-primary btn-lg flex-fill fw-bold rounded-pill shadow-sm py-2" style="background: #0068ff; border: none; font-size: 0.95rem;">
+                        <i class="fas fa-comment-dots me-2"></i>{{ __('Chat Zalo Admin') }}
+                    </a>
+                    <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" class="btn btn-info btn-lg flex-fill fw-bold rounded-pill shadow-sm py-2 text-white" style="background: #0088cc; border: none; font-size: 0.95rem;">
+                        <i class="fab fa-telegram-plane me-2"></i>{{ __('Telegram Admin') }}
+                    </a>
+                    <button type="button" class="btn btn-light btn-lg px-4 rounded-pill border py-2" data-bs-dismiss="modal" style="font-size: 0.95rem;">
+                        {{ __('Đóng') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
     <script>
-        // No extra scripts needed for now
+        document.addEventListener('DOMContentLoaded', function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            if (@json(session('show_forgot_modal') ? true : false) || urlParams.has('forgot')) {
+                var forgotModalEl = document.getElementById('forgotPasswordModal');
+                if (forgotModalEl && typeof bootstrap !== 'undefined') {
+                    var forgotModal = new bootstrap.Modal(forgotModalEl);
+                    forgotModal.show();
+                }
+            }
+        });
     </script>
 @endpush

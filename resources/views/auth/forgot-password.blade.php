@@ -186,41 +186,26 @@
 
         <!-- Right Side -->
         <div class="auth-right">
-            <h2 class="auth-title">{{ __('Quên Mật Khẩu?') }}</h2>
-            <p class="auth-subtitle">{{ __('Nhập email để nhận link đặt lại mật khẩu') }}</p>
+            <h2 class="auth-title">{{ __('Khôi Phục Mật Khẩu') }}</h2>
+            <p class="auth-subtitle mb-3">{{ __('Liên hệ Quản trị viên để cấp lại mật khẩu') }}</p>
 
-            @if ($errors->any())
-                <div class="alert alert-danger border-0 rounded-4 mb-2 py-1 px-3 small shadow-sm" role="alert" style="font-size: 11px;">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    {{ $errors->first() }}
-                </div>
-            @endif
+            <div class="alert alert-info border-0 rounded-4 mb-3 py-2 px-3 small shadow-sm text-start" style="font-size: 13px; background: #f0fdf4; border: 1px solid #bbf7d0 !important; color: #166534;">
+                <i class="fas fa-shield-alt text-success me-1"></i>
+                {{ __('Để bảo mật tối đa cho tài khoản, tính năng tự động gửi link đặt lại mật khẩu qua email đã tạm khóa. Vui lòng liên hệ Admin qua Zalo hoặc Telegram để được cấp lại mật khẩu nhanh chóng (1-3 phút)!') }}
+            </div>
 
-            @if (session('status'))
-                <div class="alert alert-success border-0 rounded-4 mb-2 py-1 px-3 small shadow-sm" role="alert" style="font-size: 11px;">
-                    <i class="fas fa-check-circle me-2"></i>
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            <form action="{{ route('password.email') }}" method="POST">
-                @csrf
-
-                <div class="form-group">
-                    <div class="form-input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" name="email" class="auth-input" placeholder="{{ __('Email của bạn') }}" value="{{ old('email') }}" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="auth-btn">
-                    {{ __('Gửi Link Đặt Lại') }}
-                </button>
-
-                <a href="{{ route('login') }}" class="back-link">
-                    <i class="fas fa-arrow-left me-2"></i> {{ __('Quay lại Đăng nhập') }}
+            <div class="d-flex flex-column gap-2 mb-3">
+                <a href="{{ \App\Helpers\SupportHelper::getZaloLink() }}" target="_blank" class="btn btn-primary fw-bold rounded-pill shadow-sm py-2" style="background: #0068ff; border: none; font-size: 0.95rem;">
+                    <i class="fas fa-comment-dots me-2"></i>{{ __('Chat Zalo Admin') }}
                 </a>
-            </form>
+                <a href="{{ \App\Helpers\SupportHelper::getTelegramLink() }}" target="_blank" class="btn btn-info fw-bold rounded-pill shadow-sm py-2 text-white" style="background: #0088cc; border: none; font-size: 0.95rem;">
+                    <i class="fab fa-telegram-plane me-2"></i>{{ __('Telegram Admin') }}
+                </a>
+            </div>
+
+            <a href="{{ route('login') }}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i> {{ __('Quay lại Đăng nhập') }}
+            </a>
         </div>
     </div>
 </div>

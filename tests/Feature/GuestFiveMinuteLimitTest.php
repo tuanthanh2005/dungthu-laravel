@@ -148,4 +148,23 @@ class GuestFiveMinuteLimitTest extends TestCase
         $response->assertRedirect(route('login', ['forgot' => 1]));
         $response->assertSessionHas('show_forgot_modal', true);
     }
+
+    public function test_send_register_otp_enforces_360_seconds_cooldown(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $email = 'test_cooldown_' . time() . '@gmail.com';
+
+        // Lần 1: Thành công
+        $res1 = $this->postJson(route('auth.send-otp'), ['email' => $email]);
+        $res1->assertStatus(200);
+        $res1->assertJson(['success' => true]);
+
+        // Lần 2 (ngay lập tức): Bị chặn 429 với countdown 360s
+        $res2 = $this->postJson(route('auth.send-otp'), ['email' => $email]);
+        $res2->assertStatus(429);
+        $res2->assertJson(['success' => false]);
+        $this->assertArrayHasKey('remaining_seconds', $res2->json());
+        $this->assertGreaterThanOrEqual(358, $res2->json('remaining_seconds'));
+    }
 }

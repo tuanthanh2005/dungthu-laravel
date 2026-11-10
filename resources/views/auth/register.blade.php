@@ -122,7 +122,7 @@
         }
 
         .email-input-wrapper .auth-input {
-            padding-right: 95px;
+            padding-right: 135px;
         }
 
         .btn-send-otp {
@@ -134,7 +134,7 @@
             color: white;
             border: none;
             border-radius: 50px;
-            padding: 0 14px;
+            padding: 0 12px;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
@@ -144,6 +144,7 @@
             justify-content: center;
             z-index: 3;
             box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
         }
 
         .btn-send-otp:hover:not(:disabled) {
@@ -152,8 +153,9 @@
         }
 
         .btn-send-otp:disabled {
-            background: #cbd5e1;
-            color: #64748b;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
@@ -341,7 +343,6 @@
                         <input type="email" name="email" id="registerEmail" class="auth-input" placeholder="{{ __('Email của bạn (@gmail.com)') }}" value="{{ old('email') }}" autocomplete="email" required>
                         <button type="button" id="btnSendOtp" class="btn-send-otp" title="{{ __('Bấm để nhận mã xác thực qua Email') }}">
                             <span id="btnSendOtpText"><i class="fas fa-paper-plane me-1"></i>{{ __('Gửi mã') }}</span>
-                            <span id="btnSendOtpSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
                         </button>
                     </div>
                     <div id="emailNotice" class="otp-notice"></div>
@@ -462,7 +463,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         const btnSendOtp = document.getElementById('btnSendOtp');
         const btnSendOtpText = document.getElementById('btnSendOtpText');
-        const btnSendOtpSpinner = document.getElementById('btnSendOtpSpinner');
         const emailInput = document.getElementById('registerEmail');
         const emailNotice = document.getElementById('emailNotice');
         const verificationCodeInput = document.getElementById('verificationCode');
@@ -512,23 +512,48 @@
         // Kiểm tra ngay lúc tải trang (nếu có old value)
         checkSubmitButtonStatus();
 
-        // Xử lý gửi OTP qua AJAX
+        // Xử lý gửi OTP qua AJAX & Đếm ngược 360s với icon xoay
         let countdownTimer = null;
         function startCountdown(seconds) {
             clearInterval(countdownTimer);
             btnSendOtp.disabled = true;
-            let current = seconds;
+            let current = parseInt(seconds, 10);
+            if (isNaN(current) || current <= 0) current = 360;
 
-            countdownTimer = setInterval(function() {
-                current--;
+            // Lưu mốc thời gian hết hạn vào localStorage
+            const expireAt = Date.now() + (current * 1000);
+            localStorage.setItem('register_otp_cooldown_until', String(expireAt));
+
+            function renderCountdown() {
                 if (current <= 0) {
                     clearInterval(countdownTimer);
+                    localStorage.removeItem('register_otp_cooldown_until');
                     btnSendOtp.disabled = false;
                     btnSendOtpText.innerHTML = '<i class="fas fa-paper-plane me-1"></i>{{ __("Gửi lại") }}';
                 } else {
-                    btnSendOtpText.textContent = '{{ __("Gửi lại") }} (' + current + 's)';
+                    btnSendOtpText.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{{ __("Gửi lại") }} (' + current + 's)';
                 }
+            }
+
+            renderCountdown();
+
+            countdownTimer = setInterval(function() {
+                current--;
+                renderCountdown();
             }, 1000);
+        }
+
+        // Tự động khôi phục đếm ngược nếu người dùng reload / chuyển tab
+        const savedCooldownUntil = parseInt(localStorage.getItem('register_otp_cooldown_until') || '0', 10);
+        if (savedCooldownUntil > Date.now()) {
+            const remaining = Math.ceil((savedCooldownUntil - Date.now()) / 1000);
+            if (remaining > 0) {
+                const savedEmail = localStorage.getItem('register_otp_email');
+                if (savedEmail && emailInput && !emailInput.value) {
+                    emailInput.value = savedEmail;
+                }
+                startCountdown(remaining);
+            }
         }
 
         btnSendOtp.addEventListener('click', function() {
@@ -550,10 +575,9 @@
                 return;
             }
 
-            // Hiển thị trạng thái đang gửi
+            // Hiển thị trạng thái đang gửi với icon xoay
             btnSendOtp.disabled = true;
-            btnSendOtpText.classList.add('d-none');
-            btnSendOtpSpinner.classList.remove('d-none');
+            btnSendOtpText.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{{ __("Đang gửi...") }}';
             emailNotice.className = 'otp-notice';
             emailNotice.textContent = '';
 
@@ -575,24 +599,26 @@
                 return { status: response.status, data: data };
             })
             .then(function(result) {
-                btnSendOtpSpinner.classList.add('d-none');
-                btnSendOtpText.classList.remove('d-none');
-
                 if (result.status === 200 && result.data.success) {
+                    localStorage.setItem('register_otp_email', email);
                     emailNotice.className = 'otp-notice success';
                     emailNotice.innerHTML = '<i class="fas fa-check-circle me-1"></i>' + result.data.message;
-                    startCountdown(60);
+                    startCountdown(360);
                     verificationCodeInput.focus();
+                } else if (result.status === 429 && result.data && result.data.remaining_seconds) {
+                    emailNotice.className = 'otp-notice error';
+                    emailNotice.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>' + (result.data.message || 'Vui lòng đợi trước khi gửi lại mã.');
+                    startCountdown(result.data.remaining_seconds);
                 } else {
                     btnSendOtp.disabled = false;
+                    btnSendOtpText.innerHTML = '<i class="fas fa-paper-plane me-1"></i>{{ __("Gửi mã") }}';
                     emailNotice.className = 'otp-notice error';
                     emailNotice.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>' + (result.data.message || 'Lỗi gửi mã xác thực.');
                 }
             })
             .catch(function(err) {
-                btnSendOtpSpinner.classList.add('d-none');
-                btnSendOtpText.classList.remove('d-none');
                 btnSendOtp.disabled = false;
+                btnSendOtpText.innerHTML = '<i class="fas fa-paper-plane me-1"></i>{{ __("Gửi mã") }}';
                 emailNotice.className = 'otp-notice error';
                 emailNotice.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>Không thể kết nối đến máy chủ. Vui lòng thử lại sau.';
             });

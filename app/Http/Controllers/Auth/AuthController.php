@@ -148,14 +148,15 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // 3. Giới hạn tần suất gửi: 60s cooldown per email
+        // 3. Giới hạn tần suất gửi: 360s cooldown per email
         $recentOtp = EmailVerification::where('email', $email)
-            ->where('created_at', '>', now()->subSeconds(60))
+            ->where('created_at', '>', now()->subSeconds(360))
             ->first();
         if ($recentOtp) {
-            $remainingSeconds = max(1, 60 - now()->diffInSeconds($recentOtp->created_at));
+            $remainingSeconds = max(1, 360 - now()->diffInSeconds($recentOtp->created_at));
             return response()->json([
                 'success' => false,
+                'remaining_seconds' => $remainingSeconds,
                 'message' => "Vui lòng đợi {$remainingSeconds} giây trước khi yêu cầu gửi lại mã.",
             ], 429);
         }

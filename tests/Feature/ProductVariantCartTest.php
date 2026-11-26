@@ -202,4 +202,136 @@ class ProductVariantCartTest extends TestCase
         $response->assertSee(route('product.show', $product->slug));
         $response->assertDontSee('action="' . route('cart.add', $product->id) . '"', false);
     }
+
+    public function test_user_with_3_cancelled_orders_is_blocked_everywhere(): void
+    {
+        $user = \App\Models\User::factory()->create([
+            'email' => 'spammer_cancel@gmail.com',
+            'role' => 'user',
+        ]);
+
+        $product = Product::create([
+            'name' => 'Test Digital Pack',
+            'slug' => 'test-digital-pack-' . uniqid(),
+            'description' => 'Desc',
+            'price' => 50000,
+            'stock' => 10,
+            'category' => 'tech',
+            'delivery_type' => 'digital',
+        ]);
+
+        for ($i = 1; $i <= 3; $i++) {
+            \App\Models\Order::create([
+                'user_id' => $user->id,
+                'customer_name' => $user->name,
+                'customer_email' => $user->email,
+                'customer_phone' => '0900000000',
+                'customer_address' => 'Test',
+                'total_amount' => 50000,
+                'status' => 'cancelled',
+                'order_code' => 'DT-CANCEL' . $i,
+            ]);
+        }
+
+        // 1. Blocked on add to cart
+        $this->actingAs($user)
+            ->post(route('cart.add', $product->id))
+            ->assertRedirect(route('user.orders'))
+            ->assertSessionHas('show_cancelled_limit_modal', true);
+
+        // 2. Blocked on buyNow
+        $this->actingAs($user)
+            ->post(route('cart.buy-now', $product->id))
+            ->assertRedirect(route('user.orders'))
+            ->assertSessionHas('show_cancelled_limit_modal', true);
+
+        // 3. Blocked on checkout page (hard redirect, not rendering checkout)
+        $cart = [
+            (string) $product->id => [
+                'product_id' => $product->id,
+                'name' => $product->name,
+                'price' => 50000,
+                'quantity' => 1,
+            ],
+        ];
+        $this->actingAs($user)
+            ->withSession(['cart' => $cart])
+            ->get(route('checkout'))
+            ->assertRedirect(route('user.orders'))
+            ->assertSessionHas('show_cancelled_limit_modal', true);
+
+        // 4. Blocked on preNotify API (403)
+        $this->actingAs($user)
+            ->withSession(['cart' => $cart])
+            ->postJson(route('checkout.pre-notify'), [
+                'customer_name' => $user->name,
+                'customer_email' => $user->email,
+                'customer_phone' => '0900000000',
+                'order_code' => 'DT-TRY4TH',
+            ])
+            ->assertStatus(403)
+            ->assertJson(['reason' => 'cancelled_limit']);
+    }
+
+    public function test_user_with_2_cancelled_and_1_pending_cannot_create_4th_order(): void
+    {
+        $user = \App\Models\User::factory()->create([
+            'email' => 'almost_limit@gmail.com',
+            'role' => 'user',
+        ]);
+
+        $product = Product::create([
+            'name' => 'Test Digital Pack 2',
+            'slug' => 'test-digital-pack2-' . uniqid(),
+            'description' => 'Desc',
+            'price' => 50000,
+            'stock' => 10,
+            'category' => 'tech',
+            'delivery_type' => 'digital',
+        ]);
+
+        for ($i = 1; $i <= 2; $i++) {
+            \App\Models\Order::create([
+                'user_id' => $user->id,
+                'customer_name' => $user->name,
+                'customer_email' => $user->email,
+                'customer_phone' => '0900000000',
+                'customer_address' => 'Test',
+                'total_amount' => 50000,
+                'status' => 'cancelled',
+                'order_code' => 'DT-C2P1-C' . $i,
+            ]);
+        }
+
+        \App\Models\Order::create([
+            'user_id' => $user->id,
+            'customer_name' => $user->name,
+            'customer_email' => $user->email,
+            'customer_phone' => '0900000000',
+            'customer_address' => 'Test',
+            'total_amount' => 50000,
+            'status' => 'pending',
+            'order_code' => 'DT-C2P1-P1',
+        ]);
+
+        $cart = [
+            (string) $product->id => [
+                'product_id' => $product->id,
+                'name' => $product->name,
+                'price' => 50000,
+                'quantity' => 1,
+            ],
+        ];
+
+        $this->actingAs($user)
+            ->withSession(['cart' => $cart])
+            ->postJson(route('checkout.pre-notify'), [
+                'customer_name' => $user->name,
+                'customer_email' => $user->email,
+                'customer_phone' => '0900000000',
+                'order_code' => 'DT-TRY-EXTRA',
+            ])
+            ->assertStatus(403)
+            ->assertJson(['reason' => 'pending_limit']);
+    }
 }

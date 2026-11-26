@@ -74,8 +74,66 @@ class CartController extends Controller
         return view('cart.index', compact('cart'));
     }
 
+    private function getOrderLimitStatus($user, ?string $extraEmail = null): array
+    {
+        if (!$user) {
+            return ['blocked' => null, 'cancelled' => 0, 'pending' => 0];
+        }
+
+        $isAdmin = in_array($user->role, ['superadmin_1', 'sieusuperadmin', 'admin', 'blog_editor'], true) || (bool) $user->is_admin;
+        if ($isAdmin) {
+            return ['blocked' => null, 'cancelled' => 0, 'pending' => 0];
+        }
+
+        $emails = array_values(array_unique(array_filter([
+            strtolower(trim((string) $user->email)),
+            $extraEmail ? strtolower(trim($extraEmail)) : null,
+        ])));
+
+        $baseQuery = function () use ($user, $emails) {
+            return Order::where(function ($q) use ($user, $emails) {
+                $q->where('user_id', $user->id);
+                if (!empty($emails)) {
+                    $q->orWhereIn('customer_email', $emails);
+                }
+            });
+        };
+
+        $cancelled = $baseQuery()->where('status', 'cancelled')->count();
+        $pending = $baseQuery()->whereIn('status', ['pending', 'processing'])->count();
+
+        if ($cancelled >= 3) {
+            return ['blocked' => 'cancelled_limit', 'cancelled' => $cancelled, 'pending' => $pending];
+        }
+
+        if ($pending >= 2 || ($cancelled + $pending) >= 3) {
+            return ['blocked' => 'pending_limit', 'cancelled' => $cancelled, 'pending' => $pending];
+        }
+
+        return ['blocked' => null, 'cancelled' => $cancelled, 'pending' => $pending];
+    }
+
+    private function redirectForOrderLimit(string $reason)
+    {
+        if ($reason === 'cancelled_limit') {
+            return redirect()->route('user.orders')->with([
+                'error' => 'Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán. Vui lòng liên hệ Admin để được hỗ trợ mua hàng!',
+                'show_cancelled_limit_modal' => true,
+            ]);
+        }
+
+        return redirect()->route('user.orders')->with([
+            'error' => 'Tài khoản của bạn hiện đang có đơn hàng chờ xử lý đạt giới hạn cho phép. Vui lòng hoàn tất đơn hiện tại trước khi tạo thêm đơn mới!',
+            'show_pending_limit_modal' => true,
+        ]);
+    }
     public function add(Request $request, $id)
     {
+        $limitCheck = $this->getOrderLimitStatus(auth()->user());
+        if ($limitCheck['blocked'] === 'cancelled_limit') {
+            return $this->redirectForOrderLimit('cancelled_limit');
+        }
+
         $product = Product::findOrFail($id);
         $variantId = $request->input('variant_id');
         $variant = null;
@@ -124,6 +182,11 @@ class CartController extends Controller
 
     public function buyNow(Request $request, $id)
     {
+        $limitCheck = $this->getOrderLimitStatus(auth()->user());
+        if ($limitCheck['blocked']) {
+            return $this->redirectForOrderLimit($limitCheck['blocked']);
+        }
+
         $product = Product::findOrFail($id);
         $variantId = $request->input('variant_id');
         $variant = null;
@@ -362,29 +425,13 @@ class CartController extends Controller
         }
         $orderCode = session('checkout_order_code');
 
-        // Kiểm tra giới hạn hủy đơn (tối đa 3 lần) và giới hạn đơn chờ (tối đa 2 đơn)
-        $user = auth()->user();
-        $isAdmin = $user && (in_array($user->role, ['superadmin_1', 'sieusuperadmin', 'admin', 'blog_editor'], true) || (bool) $user->is_admin);
+        // Kiểm tra giới hạn hủy đơn (tối đa 3 lần) và giới hạn đơn chờ (tối đa 2 đơn) - Chặn cứng, không render trang thanh toán
+        $limitCheck = $this->getOrderLimitStatus(auth()->user());
+        $cancelledOrdersCount = $limitCheck['cancelled'];
+        $pendingOrdersCount = $limitCheck['pending'];
 
-        $cancelledOrdersCount = 0;
-        $pendingOrdersCount = 0;
-
-        if ($user && !$isAdmin) {
-            $cancelledOrdersCount = Order::where(function($q) use ($user) {
-                $q->where('user_id', $user->id)
-                  ->orWhere('customer_email', $user->email);
-            })->where('status', 'cancelled')->count();
-
-            $pendingOrdersCount = Order::where(function($q) use ($user) {
-                $q->where('user_id', $user->id)
-                  ->orWhere('customer_email', $user->email);
-            })->whereIn('status', ['pending', 'processing'])->count();
-
-            if ($cancelledOrdersCount >= 3) {
-                session()->flash('show_cancelled_limit_modal', true);
-            } elseif ($pendingOrdersCount >= 2) {
-                session()->flash('show_pending_limit_modal', true);
-            }
+        if ($limitCheck['blocked']) {
+            return $this->redirectForOrderLimit($limitCheck['blocked']);
         }
         
         // Chọn view thanh toán phù hợp
@@ -419,30 +466,9 @@ class CartController extends Controller
             }
 
             if (!$isAdmin) {
-                // 1. Kiểm tra giới hạn hủy đơn: Tối đa 3 lần hủy
-                $cancelledOrdersCount = Order::where(function($q) use ($currentUser) {
-                    $q->where('user_id', $currentUser->id)
-                      ->orWhere('customer_email', $currentUser->email);
-                })->where('status', 'cancelled')->count();
-
-                if ($cancelledOrdersCount >= 3) {
-                    return redirect()->route('user.orders')->with([
-                        'error' => 'Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán. Vui lòng liên hệ Admin để được hỗ trợ mua hàng!',
-                        'show_cancelled_limit_modal' => true,
-                    ]);
-                }
-
-                // 2. Giới hạn đơn chờ: Tối đa 2 đơn đang xử lý
-                $pendingOrdersCount = Order::where(function($q) use ($currentUser) {
-                    $q->where('user_id', $currentUser->id)
-                      ->orWhere('customer_email', $currentUser->email);
-                })->whereIn('status', ['pending', 'processing'])->count();
-
-                if ($pendingOrdersCount >= 2) {
-                    return redirect()->route('user.orders')->with([
-                        'error' => 'Tài khoản của bạn hiện đang có 2 đơn hàng đang chờ xử lý. Vui lòng chờ 2 đơn hàng này hoàn tất trước khi tạo thêm đơn mới!',
-                        'show_pending_limit_modal' => true,
-                    ]);
+                $limitCheck = $this->getOrderLimitStatus($currentUser, $request->input('customer_email'));
+                if ($limitCheck['blocked']) {
+                    return $this->redirectForOrderLimit($limitCheck['blocked']);
                 }
             }
         }
@@ -823,31 +849,19 @@ class CartController extends Controller
             }
 
             if (!$isAdmin) {
-                // Kiểm tra giới hạn 3 lần hủy đơn
-                $cancelledOrdersCount = Order::where(function($q) use ($currentUser) {
-                    $q->where('user_id', $currentUser->id)
-                      ->orWhere('customer_email', $currentUser->email);
-                })->where('status', 'cancelled')->count();
-
-                if ($cancelledOrdersCount >= 3) {
+                $limitCheck = $this->getOrderLimitStatus($currentUser, $request->input('customer_email'));
+                if ($limitCheck['blocked'] === 'cancelled_limit') {
                     return response()->json([
                         'success' => false,
                         'reason' => 'cancelled_limit',
                         'message' => 'Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán và bị tạm khóa đặt hàng vì nghi ngờ vi phạm. Vui lòng liên hệ Admin để được hỗ trợ mua hàng!'
                     ], 403);
                 }
-
-                // Giới hạn tối đa 2 đơn đang xử lý
-                $pendingOrdersCount = Order::where(function($q) use ($currentUser) {
-                    $q->where('user_id', $currentUser->id)
-                      ->orWhere('customer_email', $currentUser->email);
-                })->whereIn('status', ['pending', 'processing'])->count();
-
-                if ($pendingOrdersCount >= 2) {
+                if ($limitCheck['blocked'] === 'pending_limit') {
                     return response()->json([
                         'success' => false,
                         'reason' => 'pending_limit',
-                        'message' => 'Bạn đang có 2 đơn hàng đang chờ xử lý. Vui lòng chờ 2 đơn hàng này hoàn tất trước khi tạo thêm đơn mới!'
+                        'message' => 'Bạn đang có đơn hàng chờ xử lý đạt giới hạn cho phép. Vui lòng hoàn tất đơn hiện tại trước khi tạo thêm đơn mới!'
                     ], 403);
                 }
             }
@@ -1023,6 +1037,27 @@ class CartController extends Controller
                 'ip' => $request->ip(),
             ];
 
+            $lockKey = 'prenotify_order_lock_' . (auth()->id() ?: md5($request->ip()));
+            $lock = \Illuminate\Support\Facades\Cache::lock($lockKey, 10);
+            if (!$lock->get()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Hệ thống đang xử lý yêu cầu trước đó của bạn. Vui lòng đợi vài giây!'
+                ], 429);
+            }
+            try {
+            if (auth()->check()) {
+                $recheck = $this->getOrderLimitStatus(auth()->user(), $request->input('customer_email'));
+                if ($recheck['blocked']) {
+                    return response()->json([
+                        'success' => false,
+                        'reason' => $recheck['blocked'],
+                        'message' => $recheck['blocked'] === 'cancelled_limit'
+                            ? 'Tài khoản của bạn đã đạt giới hạn 3 lần hủy đơn thanh toán. Vui lòng liên hệ Admin để được hỗ trợ mua hàng!'
+                            : 'Bạn đang có đơn hàng chờ xử lý đạt giới hạn cho phép. Vui lòng hoàn tất đơn hiện tại trước khi tạo thêm đơn mới!'
+                    ], 403);
+                }
+            }
             $order = Order::where('order_code', $orderCode)->first();
             if ($order) {
                 if ($order->status !== 'completed' && $order->status !== 'processing') {
@@ -1073,6 +1108,9 @@ class CartController extends Controller
                         'price' => $price,
                     ]);
                 }
+            }
+            } finally {
+                optional($lock)->release();
             }
         } catch (\Exception $e) {
             \Log::error('Error recording pre-checkout unpaid order in preNotify: ' . $e->getMessage());

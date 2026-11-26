@@ -147,6 +147,65 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Xác nhận "Không hoàn tiền" trước khi Thêm vào giỏ / Mua ngay
+        document.addEventListener('submit', function (event) {
+            const form = event.target;
+            if (!(form instanceof HTMLFormElement)) return;
+            const submitter = event.submitter || null;
+            const action = (submitter && submitter.getAttribute('formaction')) || form.getAttribute('action') || '';
+            if (!/\/cart\/(add|buy-now)\//.test(action)) return;
+
+            if (form.dataset.refundConfirmed === '1') {
+                delete form.dataset.refundConfirmed;
+                return;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            const proceed = function () {
+                form.dataset.refundConfirmed = '1';
+                if (typeof form.requestSubmit === 'function') {
+                    form.requestSubmit(submitter && submitter.form === form ? submitter : undefined);
+                } else {
+                    if (submitter && submitter.getAttribute('formaction')) form.action = submitter.getAttribute('formaction');
+                    form.submit();
+                }
+            };
+
+            const title = @json(__('Bạn đã chắc chắn đọc kĩ mô tả gói chưa?'));
+            const note = @json(__('Lưu ý:'));
+            const policy = @json(__('Sau khi thanh toán không chấp nhận hoàn trả dưới bất kì hình thức nào (đổi ý, không có nhu cầu, mua nhầm,...).'));
+
+            if (typeof Swal === 'undefined') {
+                if (window.confirm(title + '\n\n' + note + ' ' + policy)) proceed();
+                return;
+            }
+
+            Swal.fire({
+                icon: 'warning',
+                title: title,
+                html: '<div style="text-align:left;font-size:15px;line-height:1.6;">'
+                    + '<div style="background:#fef2f2;border-left:4px solid #dc2626;padding:10px 12px;border-radius:8px;color:#991b1b;">'
+                    + '<i class="fas fa-ban me-1"></i><strong>' + note + '</strong> ' + policy
+                    + '</div></div>',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-check me-1"></i>' + @json(__('Tôi đã đọc kĩ & đồng ý')),
+                cancelButtonText: @json(__('Xem lại mô tả')),
+                confirmButtonColor: '#16a34a',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
+                focusCancel: true,
+                allowOutsideClick: false,
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    proceed();
+                } else if (result.dismiss === Swal.DismissReason.cancel && typeof window.scrollToProductDetails === 'function') {
+                    window.scrollToProductDetails();
+                }
+            });
+        }, true);
+
         // Give immediate feedback and prevent duplicate POSTs while checkout
         // is loading (slow networks otherwise allow repeated purchases).
         document.addEventListener('submit', function (event) {

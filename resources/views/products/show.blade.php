@@ -461,7 +461,7 @@
                         </span>
                     </div>
                     <p class="notice-desc">
-                        {{ __('Vui Lòng Kéo Xuống Đọc Kĩ Thông Tin Gói Bạn Đã Chọn Trước Khi Mua !!!') }}
+                        {{ __('Vui lòng kéo xuống đọc kĩ mô tả gói trước khi mua. Sản phẩm đã thanh toán KHÔNG hoàn tiền dưới bất kì hình thức nào (đổi ý, không có nhu cầu, mua nhầm,...)!') }}
                     </p>
                 </div>
 
@@ -630,6 +630,10 @@
                                     </div>
                                 </div>
 
+                                <div class="no-refund-policy alert alert-danger d-flex align-items-start gap-2 mb-3 py-2 px-3 rounded-3" style="font-size: 0.92rem; border-left: 4px solid #dc3545;">
+                                    <i class="fas fa-ban mt-1"></i>
+                                    <div><strong>{{ __('Lưu ý:') }}</strong> {{ __('Sau khi thanh toán không chấp nhận hoàn trả dưới bất kì hình thức nào (đổi ý, không có nhu cầu, mua nhầm,...).') }}</div>
+                                </div>
                                 <div id="variantSpecContentContainer">
                                     @php
                                         $isText = $product->isTextSpecs();

@@ -173,9 +173,9 @@
                 }
             };
 
-            const title = @json(__('Bạn đã chắc chắn đọc kĩ mô tả gói chưa?'));
-            const note = @json(__('Lưu ý:'));
-            const policy = @json(__('Sau khi thanh toán không chấp nhận hoàn trả dưới bất kì hình thức nào (đổi ý, không có nhu cầu, mua nhầm,...).'));
+            const title = {!! json_encode(__('Bạn đã chắc chắn đọc kĩ mô tả gói chưa?'), JSON_UNESCAPED_UNICODE) !!};
+            const note = {!! json_encode(__('Lưu ý:'), JSON_UNESCAPED_UNICODE) !!};
+            const policy = {!! json_encode(__('Sau khi thanh toán không chấp nhận hoàn trả dưới bất kì hình thức nào (đổi ý, không có nhu cầu, mua nhầm,...).'), JSON_UNESCAPED_UNICODE) !!};
 
             if (typeof Swal === 'undefined') {
                 if (window.confirm(title + '\n\n' + note + ' ' + policy)) proceed();
@@ -190,8 +190,8 @@
                     + '<i class="fas fa-ban me-1"></i><strong>' + note + '</strong> ' + policy
                     + '</div></div>',
                 showCancelButton: true,
-                confirmButtonText: '<i class="fas fa-check me-1"></i>' + @json(__('Tôi đã đọc kĩ & đồng ý')),
-                cancelButtonText: @json(__('Xem lại mô tả')),
+                confirmButtonText: '<i class="fas fa-check me-1"></i>' + {!! json_encode(__('Tôi đã đọc kĩ & đồng ý'), JSON_UNESCAPED_UNICODE) !!},
+                cancelButtonText: {!! json_encode(__('Xem lại mô tả'), JSON_UNESCAPED_UNICODE) !!},
                 confirmButtonColor: '#16a34a',
                 cancelButtonColor: '#6b7280',
                 reverseButtons: true,

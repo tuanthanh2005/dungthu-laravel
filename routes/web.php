@@ -255,6 +255,8 @@ Route::middleware(['auth', 'admin', 'admin.pin', 'admin.lock'])->prefix('admin')
     Route::get('/users/{user}/orders-detail', [AdminController::class, 'userOrdersDetail'])->name('admin.users.orders-detail');
     Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
     Route::post('/users/{user}/award-tickets', [AdminController::class, 'awardTickets'])->name('admin.users.award-tickets');
+    Route::get('/users/{user}/cancelled-orders', [AdminController::class, 'userCancelledOrders'])->name('admin.users.cancelled-orders');
+    Route::post('/users/{user}/clear-cancelled-orders', [AdminController::class, 'clearUserCancelledOrders'])->name('admin.users.clear-cancelled-orders');
     Route::post('/users/{user}/toggle-lock', [AdminController::class, 'toggleLockUser'])->name('admin.users.toggle-lock');
     Route::post('/users/lock-non-gmail', [AdminController::class, 'lockNonGmailUsers'])->name('admin.users.lock-non-gmail');
     Route::post('/coupons/generate', [AdminController::class, 'generateCoupon'])->name('admin.coupons.generate');

@@ -203,7 +203,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $query = User::where('role', 'user')
-            ->withCount('orders')
+            ->withCount(['orders', 'orders as cancelled_orders_count' => function ($q) { $q->where('status', 'cancelled'); }])
             ->withSum('orders', 'total_amount');
         
         // Support search by name or email
@@ -331,6 +331,95 @@ class AdminController extends Controller
         ]);
     }
 
+
+    public function userCancelledOrders(User $user)
+    {
+        $orders = Order::where(function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+                if (!empty($user->email)) {
+                    $q->orWhere('customer_email', $user->email);
+                }
+            })
+            ->where('status', 'cancelled')
+            ->with('orderItems.product')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($order) {
+                $items = $order->orderItems->map(function ($item) {
+                    $name = $item->product ? $item->product->name : 'Sản phẩm';
+                    if (!empty($item->variant_name)) {
+                        $name .= ' (' . $item->variant_name . ')';
+                    }
+                    return $name . ' x' . $item->quantity;
+                })->implode(', ');
+
+                return [
+                    'id' => $order->id,
+                    'order_code' => $order->order_code ?: ('#' . $order->id),
+                    'items' => $items ?: 'Không có sản phẩm',
+                    'total_amount' => number_format((float) $order->total_amount, 0, ',', '.') . 'đ',
+                    'status_note' => $order->status_note ?: 'Đơn đã hủy',
+                    'created_at' => $order->created_at ? $order->created_at->format('d/m/Y H:i') : '',
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+            'orders' => $orders,
+        ]);
+    }
+
+    public function clearUserCancelledOrders(Request $request, User $user)
+    {
+        $request->validate([
+            'order_ids' => 'required|array|min:1',
+            'order_ids.*' => 'integer',
+        ], [
+            'order_ids.required' => 'Vui lòng chọn ít nhất 1 đơn hủy để xóa.',
+            'order_ids.min' => 'Vui lòng chọn ít nhất 1 đơn hủy để xóa.',
+        ]);
+
+        $orderIds = array_map('intval', $request->input('order_ids', []));
+
+        $ordersToDelete = Order::whereIn('id', $orderIds)
+            ->where('status', 'cancelled')
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+                if (!empty($user->email)) {
+                    $q->orWhere('customer_email', $user->email);
+                }
+            })
+            ->get();
+
+        $deletedCount = 0;
+        foreach ($ordersToDelete as $order) {
+            $order->orderItems()->delete();
+            $order->delete();
+            $deletedCount++;
+        }
+
+        $remainingCancelled = Order::where(function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+                if (!empty($user->email)) {
+                    $q->orWhere('customer_email', $user->email);
+                }
+            })
+            ->where('status', 'cancelled')
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'deleted_count' => $deletedCount,
+            'remaining_cancelled' => $remainingCancelled,
+            'message' => "Đã xóa {$deletedCount} đơn hủy cho {$user->name}. Còn lại {$remainingCancelled} đơn hủy.",
+        ]);
+    }
+
     public function abandonedCarts()
     {
         $carts = AbandonedCart::query()
@@ -414,7 +503,7 @@ class AdminController extends Controller
     public function userHistory($id)
     {
         $user = User::with(['orders.orderItems.product'])
-            ->withCount('orders')
+            ->withCount(['orders', 'orders as cancelled_orders_count' => function ($q) { $q->where('status', 'cancelled'); }])
             ->withSum('orders', 'total_amount')
             ->findOrFail($id);
         

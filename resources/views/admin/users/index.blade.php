@@ -407,6 +407,12 @@
                                         <button onclick="awardTickets({{ $user->id }}, '{{ $user->name }}', {{ $user->spin_tickets }})" class="view-btn me-1" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 6px 10px; font-size: 0.85rem;" title="Cấp lượt quay">
                                             <i class="fas fa-ticket-alt"></i>
                                         </button>
+                                        <button type="button" onclick="openClearCancelledModal({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}')" class="view-btn me-1 position-relative" style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); padding: 6px 10px; font-size: 0.85rem;" title="Clear đơn hủy ({{ (int) ($user->cancelled_orders_count ?? 0) }} đơn hủy)">
+                                            <i class="fas fa-broom"></i>
+                                            @if(($user->cancelled_orders_count ?? 0) > 0)
+                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" style="font-size: 0.65rem; padding: 2px 5px;">{{ $user->cancelled_orders_count }}</span>
+                                            @endif
+                                        </button>
                                         <a href="{{ route('admin.users.history', $user->id) }}" class="view-btn" style="padding: 6px 10px; font-size: 0.85rem;" title="Xem trang lịch sử đầy đủ">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -504,6 +510,64 @@
     </div>
 </div>
 
+<!-- Modal Clear Đơn Hủy Khách Hàng -->
+<div class="modal fade" id="clearCancelledOrdersModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
+            <div class="modal-header text-white border-0" style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);">
+                <div>
+                    <h5 class="modal-title fw-bold mb-0">
+                        <i class="fas fa-broom me-2"></i>Clear Đơn Hủy — <span id="clearCancelledUserName"></span>
+                    </h5>
+                    <small class="opacity-75" id="clearCancelledUserEmail"></small>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="clearCancelledLoading" class="text-center py-4">
+                    <div class="spinner-border text-danger" role="status"></div>
+                    <div class="text-muted small mt-2">Đang tải danh sách đơn hủy...</div>
+                </div>
+                <div id="clearCancelledEmpty" class="text-center py-4 d-none">
+                    <i class="fas fa-check-circle text-success fa-3x mb-2"></i>
+                    <div class="fw-bold text-dark">Hồ sơ khách hàng đang đẹp!</div>
+                    <div class="text-muted small">Không có đơn hàng đã hủy nào cần xóa.</div>
+                </div>
+                <div id="clearCancelledContent" class="d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 px-3 bg-light rounded-3 border">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" id="selectAllCancelledOrders" onchange="toggleAllCancelledCheckboxes(this)">
+                            <label class="form-check-label fw-bold small" for="selectAllCancelledOrders">
+                                Chọn tất cả (<span id="totalCancelledCount">0</span> đơn hủy)
+                            </label>
+                        </div>
+                        <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1" id="selectedCancelledBadge">Đã chọn: 0</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40px;" class="text-center">#</th>
+                                    <th>Mã đơn</th>
+                                    <th>Sản phẩm</th>
+                                    <th class="text-end">Số tiền</th>
+                                    <th>Thời gian</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clearCancelledTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" id="btnConfirmClearCancelled" class="btn btn-danger rounded-pill px-4 fw-bold" onclick="confirmClearCancelledOrders()" disabled>
+                    <i class="fas fa-trash-alt me-1"></i>Xóa các đơn đã chọn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @push('scripts')
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1112,6 +1176,152 @@ function executeBlockUser(userId, pin) {
             alert('Lỗi hệ thống, vui lòng thử lại.');
         }
     });
+}
+
+let currentClearCancelledUserId = null;
+let currentClearCancelledUserName = '';
+
+function openClearCancelledModal(userId, userName, userEmail) {
+    currentClearCancelledUserId = userId;
+    currentClearCancelledUserName = userName;
+
+    document.getElementById('clearCancelledUserName').textContent = userName || '';
+    document.getElementById('clearCancelledUserEmail').textContent = userEmail || '';
+    document.getElementById('clearCancelledLoading').classList.remove('d-none');
+    document.getElementById('clearCancelledEmpty').classList.add('d-none');
+    document.getElementById('clearCancelledContent').classList.add('d-none');
+    document.getElementById('btnConfirmClearCancelled').disabled = true;
+    document.getElementById('selectAllCancelledOrders').checked = false;
+
+    const modalEl = document.getElementById('clearCancelledOrdersModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+
+    fetch(`/admin/users/${userId}/cancelled-orders`, {
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('clearCancelledLoading').classList.add('d-none');
+        const orders = (data && data.orders) ? data.orders : [];
+
+        if (orders.length === 0) {
+            document.getElementById('clearCancelledEmpty').classList.remove('d-none');
+            return;
+        }
+
+        document.getElementById('totalCancelledCount').textContent = orders.length;
+        const tbody = document.getElementById('clearCancelledTableBody');
+        tbody.innerHTML = orders.map(order => `
+            <tr style="cursor: pointer;" onclick="if(event.target.type !== 'checkbox'){ const cb = this.querySelector('.cancelled-order-cb'); cb.checked = !cb.checked; updateSelectedCancelledCount(); }">
+                <td class="text-center">
+                    <input type="checkbox" class="form-check-input cancelled-order-cb" value="${order.id}" onchange="updateSelectedCancelledCount()">
+                </td>
+                <td>
+                    <div class="fw-bold text-danger">#${order.id}</div>
+                    <small class="text-muted">${escapeHtml(order.order_code)}</small>
+                </td>
+                <td>
+                    <div class="fw-semibold text-dark">${escapeHtml(order.items)}</div>
+                    <small class="text-muted">${escapeHtml(order.status_note)}</small>
+                </td>
+                <td class="text-end fw-bold text-danger">${escapeHtml(order.total_amount)}</td>
+                <td><small class="text-muted">${escapeHtml(order.created_at)}</small></td>
+            </tr>
+        `).join('');
+
+        document.getElementById('clearCancelledContent').classList.remove('d-none');
+        updateSelectedCancelledCount();
+    })
+    .catch(() => {
+        document.getElementById('clearCancelledLoading').classList.add('d-none');
+        document.getElementById('clearCancelledEmpty').classList.remove('d-none');
+    });
+}
+
+function toggleAllCancelledCheckboxes(master) {
+    document.querySelectorAll('.cancelled-order-cb').forEach(cb => {
+        cb.checked = master.checked;
+    });
+    updateSelectedCancelledCount();
+}
+
+function updateSelectedCancelledCount() {
+    const all = document.querySelectorAll('.cancelled-order-cb');
+    const checked = document.querySelectorAll('.cancelled-order-cb:checked');
+    const selectAll = document.getElementById('selectAllCancelledOrders');
+    if (selectAll) {
+        selectAll.checked = all.length > 0 && checked.length === all.length;
+    }
+    document.getElementById('selectedCancelledBadge').textContent = `Đã chọn: ${checked.length}`;
+    document.getElementById('btnConfirmClearCancelled').disabled = checked.length === 0;
+}
+
+function confirmClearCancelledOrders() {
+    const orderIds = Array.from(document.querySelectorAll('.cancelled-order-cb:checked')).map(cb => parseInt(cb.value, 10));
+    if (!currentClearCancelledUserId || orderIds.length === 0) return;
+
+    const executeDelete = () => {
+        const btn = document.getElementById('btnConfirmClearCancelled');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xóa...';
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')
+            ? document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            : '';
+
+        fetch(`/admin/users/${currentClearCancelledUserId}/clear-cancelled-orders`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ order_ids: orderIds })
+        })
+        .then(async res => ({ ok: res.ok, data: await res.json().catch(() => ({})) }))
+        .then(result => {
+            btn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Xóa các đơn đã chọn';
+            if (result.ok && result.data.success) {
+                const modalEl = document.getElementById('clearCancelledOrdersModal');
+                bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã clear đơn hủy!',
+                        text: result.data.message,
+                        timer: 1800,
+                        showConfirmButton: false
+                    }).then(() => location.reload());
+                } else {
+                    alert(result.data.message);
+                    location.reload();
+                }
+            } else {
+                btn.disabled = false;
+                alert(result.data.message || 'Không thể xóa đơn hủy. Vui lòng thử lại!');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Xóa các đơn đã chọn';
+            alert('Lỗi kết nối máy chủ!');
+        });
+    };
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'warning',
+            title: `Xóa ${orderIds.length} đơn hủy?`,
+            text: `Xác nhận xóa ${orderIds.length} đơn đã hủy khỏi hồ sơ của "${currentClearCancelledUserName}" để khách có thể tiếp tục mua hàng.`,
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#dc3545'
+        }).then(r => { if (r.isConfirmed) executeDelete(); });
+    } else if (window.confirm(`Xác nhận xóa ${orderIds.length} đơn hủy của ${currentClearCancelledUserName}?`)) {
+        executeDelete();
+    }
 }
 
 function escapeHtml(text) {

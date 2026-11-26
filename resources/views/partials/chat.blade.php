@@ -1439,7 +1439,8 @@
             <i class="fas fa-chevron-right popover-arrow"></i>
         </a>
 
-        {{-- Gọi Trực Tiếp --}}
+        {{-- Gọi Trực Tiếp (TẠM ẨN do bị spam cuộc gọi - đổi false thành true để bật lại) --}}
+        @if(false)
         <a href="tel:{{ \App\Helpers\SupportHelper::getPhone() }}" onclick="closeSupportMenuPopover()" class="support-popover-item">
             <div class="popover-item-icon" style="background: #10b981; color: #fff;">
                 <i class="fas fa-phone-alt"></i>
@@ -1450,6 +1451,7 @@
             </div>
             <i class="fas fa-chevron-right popover-arrow"></i>
         </a>
+        @endif
 
         {{-- Kho Voucher --}}
         @auth

@@ -190,7 +190,8 @@
                     </div>
                 </div>
 
-                {{-- Phone Hotline Bar --}}
+                {{-- Phone Hotline Bar (TẠM ẨN do bị spam cuộc gọi - đổi false thành true để bật lại) --}}
+                @if(false)
                 <div class="p-3 bg-white rounded-3 shadow-sm border border-success border-opacity-25 d-flex align-items-center justify-content-between hotline-bar" style="border-left: 4px solid #16a34a !important;">
                     <div class="d-flex align-items-center gap-2 gap-sm-3">
                         <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 hotline-icon" style="width: 38px; height: 38px; background-color: #dcfce7;">
@@ -208,6 +209,7 @@
                         <i class="fas fa-phone" style="font-size: 10.5px;"></i> {{ __('Gọi ngay') }}
                     </a>
                 </div>
+                @endif
 
             </div>
 

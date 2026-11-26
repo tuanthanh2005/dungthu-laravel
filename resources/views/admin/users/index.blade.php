@@ -561,8 +561,8 @@
             </div>
             <div class="modal-footer border-0 bg-light">
                 <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" id="btnConfirmClearCancelled" class="btn btn-danger rounded-pill px-4 fw-bold" onclick="confirmClearCancelledOrders()" disabled>
-                    <i class="fas fa-trash-alt me-1"></i>Xóa các đơn đã chọn
+                <button type="button" id="btnConfirmClearCancelled" class="btn text-white rounded-pill px-4 fw-bold border-0 shadow-sm" style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);" onclick="confirmClearCancelledOrders()" disabled>
+                    <i class="fas fa-broom me-1"></i>Xóa các đơn đã chọn
                 </button>
             </div>
         </div>
@@ -1281,7 +1281,7 @@ function confirmClearCancelledOrders() {
         })
         .then(async res => ({ ok: res.ok, data: await res.json().catch(() => ({})) }))
         .then(result => {
-            btn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Xóa các đơn đã chọn';
+            btn.innerHTML = '<i class="fas fa-broom me-1"></i>Xóa các đơn đã chọn';
             if (result.ok && result.data.success) {
                 const modalEl = document.getElementById('clearCancelledOrdersModal');
                 bootstrap.Modal.getOrCreateInstance(modalEl).hide();
@@ -1304,7 +1304,7 @@ function confirmClearCancelledOrders() {
         })
         .catch(() => {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Xóa các đơn đã chọn';
+            btn.innerHTML = '<i class="fas fa-broom me-1"></i>Xóa các đơn đã chọn';
             alert('Lỗi kết nối máy chủ!');
         });
     };

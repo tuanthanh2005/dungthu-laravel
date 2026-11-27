@@ -16,16 +16,13 @@ class RequireAdminPin
         }
 
         $routeName = $request->route() ? $request->route()->getName() : null;
-        if ($routeName && (\Illuminate\Support\Str::is('admin.blogs*', $routeName) || \Illuminate\Support\Str::is('admin.blog-topics*', $routeName))) {
-            return $next($request);
-        }
-
-        $exemptPinRoutes = [
-            'admin.products.store',
-            'admin.products.update',
-            'admin.products.parse-variants-ai',
-        ];
-        if ($routeName && in_array($routeName, $exemptPinRoutes, true)) {
+        if ($routeName && (
+            \Illuminate\Support\Str::is('admin.blogs*', $routeName) ||
+            \Illuminate\Support\Str::is('admin.blog-topics*', $routeName) ||
+            \Illuminate\Support\Str::is('admin.products*', $routeName) ||
+            $routeName === 'admin.flash-sale.toggle' ||
+            $routeName === 'admin.google-indexing.submit-all-products'
+        )) {
             return $next($request);
         }
 

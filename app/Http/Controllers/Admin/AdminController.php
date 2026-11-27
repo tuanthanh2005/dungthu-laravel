@@ -1621,28 +1621,6 @@ class AdminController extends Controller
 
     public function deleteProduct(Request $request, Product $product)
     {
-        $password = (string) ($request->input('password') ?? $request->input('admin_pin') ?? $request->input('confirm_password') ?? $request->input('pin') ?? '');
-
-        if ($password === '') {
-            $msg = 'Vui lòng nhập mật khẩu xác nhận để xóa sản phẩm!';
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json(['success' => false, 'message' => $msg], 403);
-            }
-            return redirect()->back()->with('error', $msg);
-        }
-
-        $actionPin = (string) config('admin.action_pin', '12112004');
-        $gatePassword = (string) config('admin.gate_password', 'sieusuperadmin_secret_gate');
-        $isUserPassword = auth()->check() && \Illuminate\Support\Facades\Hash::check($password, auth()->user()->password);
-
-        if (!$isUserPassword && $password !== $actionPin && $password !== $gatePassword) {
-            $msg = 'Mật khẩu xác nhận không chính xác! Không thể xóa sản phẩm.';
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json(['success' => false, 'message' => $msg], 403);
-            }
-            return redirect()->back()->with('error', $msg);
-        }
-
         // Xóa ảnh nếu có
         if ($product->image) {
             $imagePath = parse_url($product->image, PHP_URL_PATH);

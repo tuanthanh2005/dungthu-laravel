@@ -1386,26 +1386,15 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
     function confirmDeleteCurrentProduct() {
         Swal.fire({
             title: 'Xác nhận xóa sản phẩm?',
-            html: `Bạn có chắc muốn xóa vĩnh viễn sản phẩm "<strong>{{ addslashes($product->name) }}</strong>"?<br><span class="text-danger small mt-2 d-block"><i class="fas fa-shield-alt me-1"></i>Hành động này không thể hoàn tác! Vui lòng nhập mật khẩu xác nhận:</span>`,
+            html: `Bạn có chắc muốn xóa vĩnh viễn sản phẩm "<strong>{{ addslashes($product->name) }}</strong>"?<br><span class="text-danger small mt-2 d-block"><i class="fas fa-exclamation-triangle me-1"></i>Hành động này không thể hoàn tác!</span>`,
             icon: 'warning',
-            input: 'password',
-            inputPlaceholder: 'Nhập mật khẩu hệ thống / mã PIN...',
-            inputAttributes: {
-                autocapitalize: 'off',
-                autocorrect: 'off',
-                autocomplete: 'current-password'
-            },
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#6c757d',
             confirmButtonText: '<i class="fas fa-trash me-1"></i> Đồng ý xóa',
             cancelButtonText: 'Hủy',
             showLoaderOnConfirm: true,
-            preConfirm: (password) => {
-                if (!password || password.trim() === '') {
-                    Swal.showValidationMessage('Vui lòng nhập mật khẩu xác nhận!');
-                    return false;
-                }
+            preConfirm: () => {
                 return fetch(@json(route('admin.products.delete', $product)), {
                     method: 'POST',
                     headers: {
@@ -1415,15 +1404,13 @@ Gói 3 tháng: 90k - bảo hành 90 ngày, kho 30"></textarea>
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body: new URLSearchParams({
-                        '_method': 'DELETE',
-                        'password': password,
-                        'admin_pin': password
+                        '_method': 'DELETE'
                     })
                 })
                 .then(response => {
                     return response.json().then(data => {
                         if (!response.ok || !data.success) {
-                            throw new Error(data.message || 'Mật khẩu xác nhận không chính xác!');
+                            throw new Error(data.message || 'Không thể xóa sản phẩm!');
                         }
                         return data;
                     });

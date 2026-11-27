@@ -167,7 +167,7 @@
                     </form>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <form action="{{ route('admin.flash-sale.toggle') }}" method="POST" class="d-inline ajax-global-toggle-form">
+                    <form action="{{ route('admin.flash-sale.toggle') }}" method="POST" class="d-inline ajax-global-toggle-form" data-admin-pin-skip="1">
                         @csrf
                         <button type="submit" class="btn {{ $flashSaleEnabled ? 'btn-outline-danger' : 'btn-outline-success' }} rounded-pill px-4">
                             <i class="fas fa-bolt me-2"></i><span>{{ $flashSaleEnabled ? 'Tắt' : 'Bật' }} Flash Sale</span>
@@ -303,7 +303,7 @@
                                 <strong class="text-primary">{{ number_format($product->price, 0, ',', '.') }}đ</strong>
                             </td>
                             <td>
-                                <form action="{{ route('admin.products.toggle-flash-sale', $product) }}" method="POST" class="d-inline ajax-toggle-form" data-type="flash-sale">
+                                <form action="{{ route('admin.products.toggle-flash-sale', $product) }}" method="POST" class="d-inline ajax-toggle-form" data-type="flash-sale" data-admin-pin-skip="1">
                                     @csrf
                                     <button type="submit" class="btn btn-sm {{ $product->is_flash_sale ? 'btn-danger' : 'btn-outline-danger' }}">
                                         <i class="fas fa-bolt me-1"></i><span>{{ $product->is_flash_sale ? 'Đang bật' : 'Bật' }}</span>
@@ -318,7 +318,7 @@
                                 @endif
                             </td>
                             <td>
-                                <form action="{{ route('admin.products.toggle-active', $product) }}" method="POST" class="d-inline ajax-toggle-form" data-type="active">
+                                <form action="{{ route('admin.products.toggle-active', $product) }}" method="POST" class="d-inline ajax-toggle-form" data-type="active" data-admin-pin-skip="1">
                                     @csrf
                                     <button type="submit" class="btn btn-sm {{ $product->is_active ? 'btn-success' : 'btn-secondary' }}" style="font-weight: 600; font-size: 11px; padding: 4px 10px; border-radius: 20px;">
                                         <i class="fas {{ $product->is_active ? 'fa-eye' : 'fa-eye-slash' }} me-1"></i>
@@ -328,19 +328,19 @@
                             </td>
                             <td>
                                 <div class="d-flex flex-column gap-1">
-                                    <form action="{{ route('admin.products.toggle-featured', $product) }}" method="POST" class="ajax-toggle-form" data-type="featured">
+                                    <form action="{{ route('admin.products.toggle-featured', $product) }}" method="POST" class="ajax-toggle-form" data-type="featured" data-admin-pin-skip="1">
                                         @csrf
                                         <button type="submit" class="btn btn-sm w-100 {{ $product->is_featured ? 'btn-warning' : 'btn-outline-warning' }}" style="font-size: 10px; padding: 2px 5px;">
                                             <i class="fas fa-star me-1"></i>Nổi bật
                                         </button>
                                     </form>
-                                    <form action="{{ route('admin.products.toggle-exclusive', $product) }}" method="POST" class="ajax-toggle-form" data-type="exclusive">
+                                    <form action="{{ route('admin.products.toggle-exclusive', $product) }}" method="POST" class="ajax-toggle-form" data-type="exclusive" data-admin-pin-skip="1">
                                         @csrf
                                         <button type="submit" class="btn btn-sm w-100 {{ $product->is_exclusive ? 'btn-info' : 'btn-outline-info' }}" style="font-size: 10px; padding: 2px 5px;">
                                             <i class="fas fa-gem me-1"></i>Độc quyền
                                         </button>
                                     </form>
-                                    <form action="{{ route('admin.products.toggle-combo-ai', $product) }}" method="POST" class="ajax-toggle-form" data-type="combo-ai">
+                                    <form action="{{ route('admin.products.toggle-combo-ai', $product) }}" method="POST" class="ajax-toggle-form" data-type="combo-ai" data-admin-pin-skip="1">
                                         @csrf
                                         <button type="submit" class="btn btn-sm w-100 {{ $product->is_combo_ai ? 'btn-success' : 'btn-outline-success' }}" style="font-size: 10px; padding: 2px 5px;">
                                             <i class="fas fa-robot me-1"></i>Combo AI
@@ -355,12 +355,13 @@
                                        title="Chỉnh sửa">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button type="button" class="btn btn-sm btn-outline-success rounded-0 btn-submit-index" data-url="{{ route('admin.google-indexing.submit-url') }}" data-target-url="{{ url('/product/' . $product->slug) }}" title="Gửi Index Google">
+                                    <button type="button" class="btn btn-sm btn-outline-success rounded-0 btn-submit-index" data-url="{{ route('admin.products.submit-index') }}" data-target-url="{{ url('/product/' . $product->slug) }}" title="Gửi Index Google">
                                         <i class="fab fa-google"></i>
                                     </button>
                                     <form action="{{ route('admin.products.clone', $product) }}" 
                                           method="POST" 
                                           class="d-inline"
+                                          data-admin-pin-skip="1"
                                           onsubmit="return confirm('Bạn có chắc muốn nhân bản sản phẩm này?')">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-outline-success rounded-0" title="Nhân bản (Clone)">
@@ -370,6 +371,7 @@
                                     <form action="{{ route('admin.products.delete', $product) }}" 
                                           method="POST" 
                                           class="d-inline ajax-delete-form"
+                                          data-admin-pin-skip="1"
                                           data-name="{{ $product->name }}">
                                         @csrf
                                         @method('DELETE')
@@ -414,13 +416,6 @@
             const targetUrl = this.getAttribute('data-target-url');
             const button = this;
             const originalHtml = button.innerHTML;
-            
-            const pin = window.prompt('Nhập mã xác nhận (PIN admin 8 số) để gửi Index lên Google:');
-            if (pin === null) return;
-            if (!/^\d{8}$/.test(pin)) {
-                alert('Mã xác nhận phải đúng 8 số.');
-                return;
-            }
 
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -433,8 +428,7 @@
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    url: targetUrl,
-                    admin_pin: pin
+                    url: targetUrl
                 })
             })
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
@@ -478,13 +472,6 @@
             const url = this.getAttribute('data-url');
             const button = this;
             const originalHtml = button.innerHTML;
-            
-            const pin = window.prompt('Nhập mã xác nhận (PIN admin 8 số) để gửi INDEX HÀNG LOẠT tất cả sản phẩm lên Google:');
-            if (pin === null) return;
-            if (!/^\d{8}$/.test(pin)) {
-                alert('Mã xác nhận phải đúng 8 số.');
-                return;
-            }
 
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi hàng loạt...';
@@ -496,9 +483,7 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    admin_pin: pin
-                })
+                body: JSON.stringify({})
             })
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
             .then(({ status, body }) => {
@@ -654,7 +639,13 @@
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(res => res.json())
+            .then(async res => {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    throw new Error(data.message || `Mã lỗi server: HTTP ${res.status}`);
+                }
+                return data;
+            })
             .then(data => {
                 if (data.success) {
                     Swal.fire({
@@ -673,13 +664,20 @@
                         button.className = 'btn btn-outline-success rounded-pill px-4';
                         button.innerHTML = '<i class="fas fa-bolt me-2"></i><span>Bật Flash Sale</span>';
                     }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: data.message || 'Không thể cập nhật trạng thái Flash Sale.'
+                    });
+                    button.innerHTML = originalContent;
                 }
             })
             .catch(err => {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Lỗi kết nối!',
-                    text: 'Không thể kết nối đến server.'
+                    title: 'Lỗi!',
+                    text: err.message || 'Không thể kết nối đến server.'
                 });
                 button.innerHTML = originalContent;
             })
@@ -689,7 +687,7 @@
         });
     }
 
-    // AJAX Delete Forms with Password / PIN Verification
+    // AJAX Delete Forms (không cần nhập PIN/mật khẩu)
     document.querySelectorAll('.ajax-delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -699,26 +697,15 @@
 
             Swal.fire({
                 title: 'Xác nhận xóa sản phẩm?',
-                html: `Bạn có chắc muốn xóa vĩnh viễn sản phẩm "<strong>${name}</strong>"?<br><span class="text-danger small mt-2 d-block"><i class="fas fa-shield-alt me-1"></i>Hành động này không thể hoàn tác! Vui lòng nhập mật khẩu xác nhận:</span>`,
+                html: `Bạn có chắc muốn xóa vĩnh viễn sản phẩm "<strong>${name}</strong>"?<br><span class="text-danger small mt-2 d-block"><i class="fas fa-exclamation-triangle me-1"></i>Hành động này không thể hoàn tác!</span>`,
                 icon: 'warning',
-                input: 'password',
-                inputPlaceholder: 'Nhập mật khẩu hệ thống / mã PIN...',
-                inputAttributes: {
-                    autocapitalize: 'off',
-                    autocorrect: 'off',
-                    autocomplete: 'current-password'
-                },
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#6c757d',
                 confirmButtonText: '<i class="fas fa-trash me-1"></i> Đồng ý xóa',
                 cancelButtonText: 'Hủy',
                 showLoaderOnConfirm: true,
-                preConfirm: (password) => {
-                    if (!password || password.trim() === '') {
-                        Swal.showValidationMessage('Vui lòng nhập mật khẩu xác nhận!');
-                        return false;
-                    }
+                preConfirm: () => {
                     return fetch(url, {
                         method: 'POST',
                         headers: {
@@ -728,15 +715,13 @@
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         body: new URLSearchParams({
-                            '_method': 'DELETE',
-                            'password': password,
-                            'admin_pin': password
+                            '_method': 'DELETE'
                         })
                     })
                     .then(response => {
                         return response.json().then(data => {
                             if (!response.ok || !data.success) {
-                                throw new Error(data.message || 'Mật khẩu xác nhận không chính xác!');
+                                throw new Error(data.message || 'Không thể xóa sản phẩm!');
                             }
                             return data;
                         });

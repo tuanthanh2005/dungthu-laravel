@@ -46,6 +46,7 @@ class AdminMiddleware
                 'admin.orders*',
                 'admin.chat*',
                 'admin.products*',
+                'admin.flash-sale.toggle',
                 'admin.categories*',
                 'admin.features*',
                 'admin.customer-durations*',
@@ -59,6 +60,7 @@ class AdminMiddleware
                 'admin.menu-settings*',
                 'admin.web-design*',
                 'admin.google-indexing.submit-all',
+                'admin.google-indexing.submit-all-products',
                 'admin.telegram*',
             ];
 
@@ -89,6 +91,7 @@ class AdminMiddleware
                 'admin.orders*',
                 'admin.chat*',
                 'admin.products*',
+                'admin.flash-sale.toggle',
                 'admin.categories*',
                 'admin.features*',
                 'admin.customer-durations*',
@@ -118,12 +121,12 @@ class AdminMiddleware
             return $next($request);
         }
 
-        $exemptPinRoutes = [
-            'admin.products.store',
-            'admin.products.update',
-            'admin.products.parse-variants-ai',
-        ];
-        if ($routeName && in_array($routeName, $exemptPinRoutes, true)) {
+        // MIỄN TRỪ HOÀN TOÀN MÃ PIN CHO TẤT CẢ ROUTE SẢN PHẨM (Thêm/Sửa/Xóa/Toggle/Clone/Flash Sale/Index/AI)
+        if ($routeName && (
+            \Illuminate\Support\Str::is('admin.products*', $routeName) ||
+            $routeName === 'admin.flash-sale.toggle' ||
+            $routeName === 'admin.google-indexing.submit-all-products'
+        )) {
             return $next($request);
         }
 

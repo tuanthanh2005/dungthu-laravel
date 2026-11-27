@@ -508,6 +508,16 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
         } catch (e) { return false; }
     }
 
+    function isProductPinExempt(form) {
+        try {
+            const action = form.getAttribute('action') || window.location.href;
+            const url = new URL(action, window.location.origin);
+            return url.pathname === '/admin/products' ||
+                   url.pathname.startsWith('/admin/products/') ||
+                   url.pathname === '/admin/flash-sale/toggle';
+        } catch (e) { return false; }
+    }
+
     function getIntendedMethod(form) {
         const method = (form.getAttribute('method') || 'get').toLowerCase();
         const override = form.querySelector('input[name="_method"]');
@@ -518,6 +528,7 @@ document.querySelectorAll('.admin-alert').forEach(function(el) {
         const form = e.target;
         if (!(form instanceof HTMLFormElement)) return;
         if (!isAdminAction(form)) return;
+        if (isProductPinExempt(form)) return;
         if (form.dataset.adminPinSkip === '1') return;
 
         const intended = getIntendedMethod(form);

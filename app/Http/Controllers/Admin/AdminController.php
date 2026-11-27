@@ -1029,16 +1029,38 @@ class AdminController extends Controller
     public function toggleProductActive(Product $product)
     {
         $product->is_active = !$product->is_active;
+
+        $hasVariants = $product->variants()->exists();
+
+        if (!$product->is_active) {
+            // Khi ẩn sản phẩm -> lập tức cập nhật hết hàng (cả sản phẩm và toàn bộ biến thể) để tránh người dùng vẫn mua được
+            if ($hasVariants) {
+                $product->variants()->update(['stock' => 0]);
+            }
+            $product->stock = 0;
+        } else {
+            // Khi bật hiển thị sản phẩm -> mặc định có 10 tồn kho
+            if ($hasVariants) {
+                $product->variants()->update(['stock' => 10]);
+                $totalVariantStock = (int) $product->activeVariants()->sum('stock');
+                $product->stock = $totalVariantStock > 0 ? $totalVariantStock : 10;
+            } else {
+                $product->stock = 10;
+            }
+        }
+
         $product->save();
 
-        $statusText = $product->is_active ? 'Hiển thị' : 'Ẩn';
-        $message = "Đã chuyển sản phẩm sang trạng thái {$statusText}!";
+        $message = $product->is_active
+            ? "Đã bật hiển thị sản phẩm (tồn kho mặc định: {$product->stock})!"
+            : 'Đã ẩn sản phẩm và cập nhật trạng thái Hết hàng!';
 
         if (request()->ajax() || request()->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => $message,
-                'value' => $product->is_active
+                'value' => $product->is_active,
+                'stock' => (int) $product->stock,
             ]);
         }
 
@@ -1487,6 +1509,15 @@ class AdminController extends Controller
             ];
         }
 
+        $wasActive = (bool) $product->is_active;
+        $isActive = $request->has('is_active');
+        $effectiveStock = (int) $request->stock;
+        if (!$isActive) {
+            $effectiveStock = 0;
+        } elseif (!$wasActive && $effectiveStock <= 0) {
+            $effectiveStock = 10;
+        }
+
           $product->update([
               'name' => $request->name,
               'name_en' => $request->name_en,
@@ -1499,7 +1530,7 @@ class AdminController extends Controller
               'sale_price_usd' => $request->has('is_on_sale') && $request->filled('sale_price_usd') ? $request->sale_price_usd : null,
               'category' => $categoryType,
               'category_id' => $categoryRecord->id,
-              'stock' => $request->stock,
+              'stock' => $effectiveStock,
               'fake_sold' => $request->input('fake_sold', 0),
               'specs' => $specs,
               'specs_en' => $specsEn,
@@ -1513,7 +1544,7 @@ class AdminController extends Controller
             'is_combo_ai' => $request->has('is_combo_ai') ? true : false,
             'is_flash_sale' => $request->has('is_flash_sale') ? true : false,
             'is_vpn' => $request->has('is_vpn') ? true : false,
-            'is_active' => $request->has('is_active') ? true : false,
+            'is_active' => $isActive,
             'duration_value' => $request->duration_value,
             'duration_type' => $request->duration_type,
         ]);
@@ -1540,12 +1571,27 @@ class AdminController extends Controller
         if ($hasVariants && !empty($variantNames)) {
             $keptIds = [];
             $totalVariantStock = 0;
+            $allSubmittedVariantsZero = true;
+            foreach ($variantNames as $idx => $vName) {
+                if (trim((string) $vName) !== '' && ($variantPrices[$idx] ?? null) !== null && ($variantPrices[$idx] ?? '') !== '') {
+                    if ((int) ($variantStocks[$idx] ?? 0) > 0) {
+                        $allSubmittedVariantsZero = false;
+                        break;
+                    }
+                }
+            }
+
             foreach ($variantNames as $index => $name) {
                 $name = trim($name);
                 $price = $variantPrices[$index] ?? null;
                 if (!empty($name) && $price !== null && $price !== '') {
                     $vId = $variantIds[$index] ?? null;
                     $stock = (int) ($variantStocks[$index] ?? 0);
+                    if (!$isActive) {
+                        $stock = 0;
+                    } elseif (!$wasActive && $allSubmittedVariantsZero) {
+                        $stock = 10;
+                    }
                     $salePrice = !empty($variantSalePrices[$index]) ? (float) $variantSalePrices[$index] : null;
                     $durationValue = !empty($variantDurationValues[$index]) ? (int) $variantDurationValues[$index] : null;
                     $durationType = !empty($variantDurationTypes[$index]) ? $variantDurationTypes[$index] : null;
@@ -1575,7 +1621,7 @@ class AdminController extends Controller
                 }
             }
             ProductVariant::where('product_id', $product->id)->whereNotIn('id', $keptIds)->delete();
-            $product->update(['stock' => $totalVariantStock]);
+            $product->update(['stock' => $isActive ? $totalVariantStock : 0]);
         } else {
             ProductVariant::where('product_id', $product->id)->delete();
         }

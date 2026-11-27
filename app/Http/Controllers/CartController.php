@@ -34,6 +34,13 @@ class CartController extends Controller
                 continue;
             }
 
+            if ($product->is_active === false) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm '{$product->name}' đã hết hàng và được xóa khỏi giỏ hàng.";
+                continue;
+            }
+
             if ($product->hasVariants() && !$variantId) {
                 unset($cart[$id]);
                 $adjusted = true;
@@ -135,6 +142,9 @@ class CartController extends Controller
         }
 
         $product = Product::findOrFail($id);
+        if ($product->is_active === false) {
+            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        }
         $variantId = $request->input('variant_id');
         $variant = null;
 
@@ -188,6 +198,9 @@ class CartController extends Controller
         }
 
         $product = Product::findOrFail($id);
+        if ($product->is_active === false) {
+            return redirect()->back()->with('error', 'Sản phẩm này hiện đã hết hàng!');
+        }
         $variantId = $request->input('variant_id');
         $variant = null;
 
@@ -252,13 +265,15 @@ class CartController extends Controller
             $variantId = $item['variant_id'] ?? null;
             $productId = $item['product_id'] ?? (is_numeric($id) ? (int)$id : (int)explode('_', $id)[0]);
 
+            $product = Product::find($productId);
             $maxStock = 0;
-            if ($variantId) {
-                $variant = ProductVariant::find($variantId);
-                $maxStock = $variant ? $variant->stock : 0;
-            } else {
-                $product = Product::find($productId);
-                $maxStock = $product ? $product->stock : 0;
+            if ($product && $product->is_active !== false) {
+                if ($variantId) {
+                    $variant = ProductVariant::find($variantId);
+                    $maxStock = ($variant && $variant->is_active) ? $variant->stock : 0;
+                } else {
+                    $maxStock = $product->stock;
+                }
             }
 
             if ($cart[$id]['quantity'] >= $maxStock) {
@@ -321,6 +336,13 @@ class CartController extends Controller
                 unset($cart[$id]);
                 $adjusted = true;
                 $messages[] = "Sản phẩm không tồn tại đã được xóa khỏi giỏ hàng.";
+                continue;
+            }
+
+            if ($product->is_active === false) {
+                unset($cart[$id]);
+                $adjusted = true;
+                $messages[] = "Sản phẩm '{$product->name}' đã hết hàng và được xóa khỏi giỏ hàng.";
                 continue;
             }
 
@@ -561,6 +583,11 @@ class CartController extends Controller
 
             if(!$product) {
                 $outOfStockMessages[] = "Sản phẩm không tồn tại.";
+                continue;
+            }
+
+            if ($product->is_active === false) {
+                $outOfStockMessages[] = "Sản phẩm '{$product->name}' đã hết hàng.";
                 continue;
             }
 

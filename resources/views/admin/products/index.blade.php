@@ -310,7 +310,7 @@
                                     </button>
                                 </form>
                             </td>
-                            <td>
+                            <td class="product-stock-cell">
                                 @if($product->stock > 0)
                                     <span class="badge bg-success">{{ $product->stock }}</span>
                                 @else
@@ -596,6 +596,17 @@
                             button.className = 'btn btn-sm btn-secondary';
                             button.style.borderRadius = '20px';
                             button.innerHTML = '<i class="fas fa-eye-slash me-1"></i><span>Đã ẩn</span>';
+                        }
+
+                        if (data.stock !== undefined) {
+                            const stockCell = form.closest('tr')?.querySelector('.product-stock-cell');
+                            if (stockCell) {
+                                if (Number(data.stock) > 0) {
+                                    stockCell.innerHTML = `<span class="badge bg-success">${Number(data.stock)}</span>`;
+                                } else {
+                                    stockCell.innerHTML = '<span class="badge bg-danger">Hết hàng</span>';
+                                }
+                            }
                         }
                     }
                 } else {

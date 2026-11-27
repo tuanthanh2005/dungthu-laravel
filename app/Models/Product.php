@@ -386,6 +386,9 @@ class Product extends Model
     // Check còn hàng
     public function isInStock(): bool
     {
+        if ($this->is_active === false) {
+            return false;
+        }
         if ($this->hasVariants()) {
             return (bool) ($this->available_stock > 0);
         }

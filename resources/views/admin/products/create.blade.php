@@ -222,7 +222,7 @@
         </div>
     @endif
 
-    <form id="productForm" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+    <form id="productForm" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" data-admin-pin-skip="1">
         @csrf
 
         <!-- 1. Thông tin cơ bản & Phân loại -->

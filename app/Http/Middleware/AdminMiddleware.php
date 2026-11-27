@@ -119,6 +119,8 @@ class AdminMiddleware
         }
 
         $exemptPinRoutes = [
+            'admin.products.store',
+            'admin.products.update',
             'admin.products.parse-variants-ai',
         ];
         if ($routeName && in_array($routeName, $exemptPinRoutes, true)) {

@@ -225,7 +225,7 @@
         </div>
     @endif
 
-    <form id="productForm" action="{{ route('admin.products.update', array_merge(['product' => $product->id], request()->only(['page', 'search', 'category', 'flash_sale']))) }}" method="POST" enctype="multipart/form-data">
+    <form id="productForm" action="{{ route('admin.products.update', array_merge(['product' => $product->id], request()->only(['page', 'search', 'category', 'flash_sale']))) }}" method="POST" enctype="multipart/form-data" data-admin-pin-skip="1">
         @csrf
         @method('PUT')
 

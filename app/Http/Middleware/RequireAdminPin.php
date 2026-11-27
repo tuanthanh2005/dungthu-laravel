@@ -20,6 +20,15 @@ class RequireAdminPin
             return $next($request);
         }
 
+        $exemptPinRoutes = [
+            'admin.products.store',
+            'admin.products.update',
+            'admin.products.parse-variants-ai',
+        ];
+        if ($routeName && in_array($routeName, $exemptPinRoutes, true)) {
+            return $next($request);
+        }
+
         $method = strtoupper($request->getMethod());
         if (in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
             return $next($request);
